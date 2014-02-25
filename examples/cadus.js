@@ -2,6 +2,7 @@
 // This example uses the GMapx v3 API, which we do not have an exports file for.
 goog.require('ol.Map');
 goog.require('ol.View2D');
+goog.require('ol.control.GoogleMapsGeocoder');
 goog.require('ol.interaction');
 goog.require('ol.interaction.DragPan');
 goog.require('ol.layer.Vector');
@@ -28,7 +29,9 @@ olmap.style['width'] = '100%';
 olmap.style['height'] = '100%';
 gmap.controls[google.maps.ControlPosition.TOP_LEFT].push(olmap);
 
-google.maps.event.addListenerOnce(gmap, 'tilesloaded', function() {
+var olGeocoder;
+
+google.maps.event.addListenerOnce(gmap, 'idle', function() {
 
   var vectorSource = new ol.source.GeoJSON(({
     object: {
@@ -82,4 +85,9 @@ google.maps.event.addListenerOnce(gmap, 'tilesloaded', function() {
   view.on('change:resolution', function() {
     gmap.setZoom(view.getZoom());
   });
+
+  olGeocoder = new ol.control.GoogleMapsGeocoder({
+    'target': 'gmaps-geocoder'
+  });
+  map.addControl(olGeocoder);
 });
