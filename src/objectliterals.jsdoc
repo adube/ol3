@@ -223,6 +223,12 @@
  */
 
 /**
+ * @typedef {Object} olx.control.GoogleMapsGeocoderOptions
+ * @property {Element|undefined} target Target.
+ * @todo stability experimental
+ */
+
+/**
  * @typedef {Object} olx.control.LogoOptions
  * @property {string|undefined} className CSS class name. Default is `ol-logo`.
  * @property {Element|undefined} target Target.
