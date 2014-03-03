@@ -311,6 +311,12 @@
  */
 
 /**
+ * @typedef {Object} olx.format.GMLOptions
+ * @property {string} featureNS Feature namespace.
+ * @property {string} featureType Feature type to parse.
+ */
+
+/**
  * @typedef {Object} olx.interaction.DoubleClickZoomOptions
  * @property {number|undefined} duration Animation duration in milliseconds. Default is `250`.
  * @property {number|undefined} delta The zoom delta applied on each double
@@ -320,7 +326,7 @@
 
 /**
  * @typedef {Object} olx.interaction.DragAndDropOptions
- * @property {Array.<function(new: ol.format.Format)>|undefined} formatConstructors
+ * @property {Array.<function(new: ol.format.Feature)>|undefined} formatConstructors
  *     Format constructors.
  * @property {ol.proj.ProjectionLike} reprojectTo Target projection. By
  *     default, the map's view's projection is used.
@@ -539,6 +545,8 @@
  *      (inclusive) at which this layer will be visible.
  * @property {number|undefined} maxResolution The maximum resolution
  *      (exclusive) below which this layer will be visible.
+ * @property {boolean|undefined} useInterimTilesOnError Use interim tiles on
+ *      error.  Default is `true`.
  * @todo stability experimental
  */
 
@@ -699,6 +707,21 @@
  */
 
 /**
+ * @typedef {Object} olx.source.OSMXMLOptions
+ * @property {Array.<ol.Attribution>|undefined} attributions Attributions.
+ * @property {Array.<ol.style.Style>|undefined} defaultStyle Default style.
+ * @property {Document|undefined} doc Document.
+ * @property {ol.Extent|undefined} extent Extent.
+ * @property {string|undefined} logo Logo.
+ * @property {Node|undefined| node Node.
+ * @property {ol.proj.ProjectionLike} projection Projection.
+ * @property {ol.proj.ProjectionLike} reprojectTo Re-project to.
+ * @property {string|undefined} text Text.
+ * @property {string|undefined} url URL.
+ * @property {Array.<string>|undefined} urls URLs.
+ */
+
+/**
  * @typedef {Object} olx.source.ImageCanvasOptions
  * @property {Array.<ol.Attribution>|undefined} attributions Attributions.
  * @property {ol.CanvasFunctionType} canvasFunction Canvas function. The function
@@ -851,7 +874,7 @@
  * @property {Array.<ol.Attribution>|undefined} attributions Attributions.
  * @property {Document|undefined} doc Document.
  * @property {ol.Extent|undefined} extent Extent.
- * @property {ol.format.Format} format Format.
+ * @property {ol.format.Feature} format Format.
  * @property {string|undefined} logo Logo.
  * @property {Node|undefined} node Node.
  * @property {Object|undefined} object Object.
