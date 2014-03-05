@@ -7,11 +7,16 @@ goog.require('goog.events');
 goog.require('goog.events.EventType');
 goog.require('goog.events.KeyCodes');
 goog.require('goog.string');
+goog.require('ol.Feature');
 goog.require('ol.MapBrowserEvent.EventType');
 goog.require('ol.View2D');
 goog.require('ol.control.Control');
 goog.require('ol.css');
+goog.require('ol.geom.Point');
+goog.require('ol.layer.Vector');
 goog.require('ol.proj');
+goog.require('ol.source.Vector');
+goog.require('ol.style.Style');
 
 
 
@@ -71,6 +76,19 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
       options.geocoderComponentRestrictions) ?
       options.geocoderComponentRestrictions : {};
 
+  /**
+   * @type {?ol.style.Style}
+   * @private
+   */
+  this.iconStyle_ = goog.asserts.assertInstanceof(
+      options.iconStyle, ol.style.Style) ? options.iconStyle : null;
+
+  /**
+   * @type {?ol.layer.Vector}
+   * @private
+   */
+  this.vectorLayer_ = null;
+
   goog.base(this, {
     element: element,
     target: options.target
@@ -99,10 +117,21 @@ ol.control.GoogleMapsGeocoder.prototype.setMap = function(map) {
   goog.base(this, 'setMap', map);
   if (!goog.isNull(map)) {
 
+    // enable reverse geocoding, if needed
     if (this.enableReverseGeocoding_ == true) {
       goog.events.listen(map, [
         ol.MapBrowserEvent.EventType.SINGLECLICK
       ], this.handleMapSingleClick_, false, this);
+    }
+
+    // create vector layer, if needed
+    if (!goog.isNull(this.iconStyle_)) {
+      this.vectorLayer_ = new ol.layer.Vector({
+        source: new ol.source.Vector({
+          features: []
+        })
+      });
+      map.addLayer(this.vectorLayer_);
     }
   }
 };
@@ -250,11 +279,18 @@ ol.control.GoogleMapsGeocoder.prototype.geocodeByCoordinate_ = function(
 ol.control.GoogleMapsGeocoder.prototype.handleGeocode_ = function(
     results, status) {
 
-  var input = this.input_;
-
-  var formatted_address, x, y;
+  var formatted_address, lat, lng;
   var result;
   var tmpOutput = [];
+  var input = this.input_;
+  var map = this.getMap();
+
+  var view = map.getView();
+  goog.asserts.assert(goog.isDef(view));
+  var view2D = view.getView2D();
+  goog.asserts.assertInstanceof(view2D, ol.View2D);
+
+  var projection = view2D.getProjection();
 
   if (status == google.maps.GeocoderStatus.OK) {
     if (results.length) {
@@ -262,20 +298,43 @@ ol.control.GoogleMapsGeocoder.prototype.handleGeocode_ = function(
       result = results[0];
 
       formatted_address = result.formatted_address;
-      x = result.geometry.location.lng();
-      y = result.geometry.location.lat();
+      lng = result.geometry.location.lng();
+      lat = result.geometry.location.lat();
 
       tmpOutput.push(formatted_address);
       tmpOutput.push('\n');
       tmpOutput.push('(');
-      tmpOutput.push(x);
+      tmpOutput.push(lng);
       tmpOutput.push(', ');
-      tmpOutput.push(y);
+      tmpOutput.push(lat);
       tmpOutput.push(')');
 
       //alert(tmpOutput.join(''));
 
       input.value = formatted_address;
+
+      // manage vector layer
+      if (!goog.isNull(this.iconStyle_)) {
+
+        // transform received coordinate (which is in lat, lng) into
+        // map projection
+        var transformedCoordinate = ol.proj.transform(
+            [lng, lat], 'EPSG:4326', projection.getCode());
+
+        // TODO: check if existing feature is already at the same location
+        //       before clearing it.  If so, no need to do anything.
+        var vectorSource = this.vectorLayer_.getSource();
+        goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
+        vectorSource.clear();
+
+        var feature = new ol.Feature({
+          geometry: new ol.geom.Point(transformedCoordinate)
+        });
+        feature.setStyle(this.iconStyle_);
+
+        vectorSource.addFeature(feature);
+      }
+
     } else {
       // TODO: manage no results
       alert('No results found');

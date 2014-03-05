@@ -9,6 +9,7 @@ goog.require('ol.layer.Vector');
 goog.require('ol.proj');
 goog.require('ol.source.GeoJSON');
 goog.require('ol.style.Fill');
+goog.require('ol.style.Icon');
 goog.require('ol.style.Stroke');
 goog.require('ol.style.Style');
 
@@ -76,6 +77,15 @@ gmap.controls[google.maps.ControlPosition.TOP_LEFT].push(olMapDiv);
 var olGeocoder = new ol.control.GoogleMapsGeocoder({
   'enableReverseGeocoding': true,
   'target': 'gmaps-geocoder',
-  'geocoderComponentRestrictions': {'country': 'CA'}
+  'geocoderComponentRestrictions': {'country': 'CA'},
+  'iconStyle': new ol.style.Style({
+    image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+      anchor: [0.5, 46],
+      anchorXUnits: 'fraction',
+      anchorYUnits: 'pixels',
+      opacity: 0.75,
+      src: 'data/icon.png'
+    }))
+  })
 });
 map.addControl(olGeocoder);
