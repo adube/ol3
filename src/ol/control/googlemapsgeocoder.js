@@ -233,8 +233,7 @@ ol.control.GoogleMapsGeocoder.prototype.geocodeByCoordinate_ = function(
 
   geocoder.geocode(
       {
-        'latLng': latlng,
-        'componentRestrictions': this.geocoderComponentRestrictions_
+        'latLng': latlng
       },
       function(results, status) {
         me.handleGeocode_(results, status);
