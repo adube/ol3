@@ -63,6 +63,14 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
     this.enableReverseGeocoding_ = false;
   }
 
+  /**
+   * @type {Object}
+   * @private
+   */
+  this.geocoderComponentRestrictions_ = goog.isDef(
+      options.geocoderComponentRestrictions) ?
+      options.geocoderComponentRestrictions : {};
+
   goog.base(this, {
     element: element,
     target: options.target
@@ -171,9 +179,15 @@ ol.control.GoogleMapsGeocoder.prototype.geocodeByAddress_ = function(address) {
   var me = this;
   var geocoder = this.geocoder_;
 
-  geocoder.geocode({'address': address}, function(results, status) {
-    me.handleGeocode_(results, status);
-  });
+  geocoder.geocode(
+      {
+        'address': address,
+        'componentRestrictions': this.geocoderComponentRestrictions_
+      },
+      function(results, status) {
+        me.handleGeocode_(results, status);
+      }
+  );
 };
 
 
@@ -217,9 +231,15 @@ ol.control.GoogleMapsGeocoder.prototype.geocodeByCoordinate_ = function(
   var lng = coordinate[0];
   var latlng = new google.maps.LatLng(lat, lng);
 
-  geocoder.geocode({'latLng': latlng}, function(results, status) {
-    me.handleGeocode_(results, status);
-  });
+  geocoder.geocode(
+      {
+        'latLng': latlng,
+        'componentRestrictions': this.geocoderComponentRestrictions_
+      },
+      function(results, status) {
+        me.handleGeocode_(results, status);
+      }
+  );
 };
 
 

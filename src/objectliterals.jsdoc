@@ -227,6 +227,8 @@
  * @property {Element|undefined} target Target.
  * @property {boolean|undefined} enableReverseGeocoding Whether to activate
  *     the reverse geocoding, i.e. click on the map to get an address.
+ * @property {Object|undefined} geocoderComponentRestrictions Used to restrict
+ *     results to a specific area
  * @todo stability experimental
  */
 

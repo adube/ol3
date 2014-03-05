@@ -75,6 +75,7 @@ gmap.controls[google.maps.ControlPosition.TOP_LEFT].push(olMapDiv);
 
 var olGeocoder = new ol.control.GoogleMapsGeocoder({
   'enableReverseGeocoding': true,
-  'target': 'gmaps-geocoder'
+  'target': 'gmaps-geocoder',
+  'geocoderComponentRestrictions': {'country': 'CA'}
 });
 map.addControl(olGeocoder);
