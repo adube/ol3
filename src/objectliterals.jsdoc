@@ -225,6 +225,8 @@
 /**
  * @typedef {Object} olx.control.GoogleMapsGeocoderOptions
  * @property {Element|undefined} target Target.
+ * @property {boolean|undefined} enableReverseGeocoding Whether to activate
+ *     the reverse geocoding, i.e. click on the map to get an address.
  * @todo stability experimental
  */
 

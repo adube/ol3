@@ -74,6 +74,7 @@ olMapDiv.parentNode.removeChild(olMapDiv);
 gmap.controls[google.maps.ControlPosition.TOP_LEFT].push(olMapDiv);
 
 var olGeocoder = new ol.control.GoogleMapsGeocoder({
+  'enableReverseGeocoding': true,
   'target': 'gmaps-geocoder'
 });
 map.addControl(olGeocoder);
