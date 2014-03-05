@@ -7,6 +7,7 @@ goog.require('goog.events');
 goog.require('goog.events.EventType');
 goog.require('goog.events.KeyCodes');
 goog.require('goog.string');
+goog.require('ol.MapBrowserEvent.EventType');
 goog.require('ol.View2D');
 goog.require('ol.control.Control');
 goog.require('ol.css');
@@ -91,7 +92,9 @@ ol.control.GoogleMapsGeocoder.prototype.setMap = function(map) {
   if (!goog.isNull(map)) {
 
     if (this.enableReverseGeocoding_ == true) {
-      map.on('singleclick', this.handleMapSingleClick_, this);
+      goog.events.listen(map, [
+        ol.MapBrowserEvent.EventType.SINGLECLICK
+      ], this.handleMapSingleClick_, false, this);
     }
   }
 };
@@ -106,7 +109,9 @@ ol.control.GoogleMapsGeocoder.prototype.disableReverseGeocoding = function() {
   if (this.enableReverseGeocoding_ == true) {
     this.enableReverseGeocoding_ = false;
     map = this.getMap();
-    map.un('singleclick', this.handleMapSingleClick_, this);
+    goog.events.unlisten(map, [
+      ol.MapBrowserEvent.EventType.SINGLECLICK
+    ], this.handleMapSingleClick_, false, this);
   }
 };
 
@@ -120,7 +125,9 @@ ol.control.GoogleMapsGeocoder.prototype.enableReverseGeocoding = function() {
   if (this.enableReverseGeocoding_ == false) {
     this.enableReverseGeocoding_ = true;
     map = this.getMap();
-    map.on('singleclick', this.handleMapSingleClick_, this);
+    goog.events.listen(map, [
+      ol.MapBrowserEvent.EventType.SINGLECLICK
+    ], this.handleMapSingleClick_, false, this);
   }
 };
 
