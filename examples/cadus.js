@@ -67,8 +67,8 @@ var map = new ol.Map({
   target: olMapDiv,
   view: view
 });
-view.setCenter([0, 0]);
-view.setZoom(1);
+view.setCenter([-7910219, 6176130]);
+view.setZoom(14);
 
 olMapDiv.parentNode.removeChild(olMapDiv);
 gmap.controls[google.maps.ControlPosition.TOP_LEFT].push(olMapDiv);
