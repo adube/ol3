@@ -325,6 +325,7 @@ def examples_star_json(name, match):
                 '../externs/closure-compiler.js',
                 '../externs/example.js',
                 '../externs/geojson.js',
+                '../externs/google_maps_api_v3_15.js',
                 '../externs/oli.js',
                 '../externs/proj4js.js',
                 '../externs/tilejson.js',

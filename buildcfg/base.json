@@ -51,6 +51,7 @@
     "../externs/bingmaps.js",
     "../externs/closure-compiler.js",
     "../externs/geojson.js",
+    "../externs/google_maps_api_v3_15.js",
     "../externs/oli.js",
     "../externs/proj4js.js",
     "../externs/tilejson.js",
