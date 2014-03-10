@@ -38,20 +38,32 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
   var input = goog.dom.createDom(goog.dom.TagName.INPUT, {
     'class': ''
   });
-  var button = goog.dom.createDom(goog.dom.TagName.BUTTON, {
+
+  var searchButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
     'class': ''
   });
-  var buttonText = goog.dom.createTextNode('GO');
-  goog.dom.appendChild(button, buttonText);
+  var searchButtonText = goog.dom.createTextNode('Search');
+  goog.dom.appendChild(searchButton, searchButtonText);
 
+  var clearButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
+    'class': ''
+  });
+  var clearButtonText = goog.dom.createTextNode('Clear');
+  goog.dom.appendChild(clearButton, clearButtonText);
 
   goog.dom.appendChild(element, input);
-  goog.dom.appendChild(element, button);
+  goog.dom.appendChild(element, searchButton);
+  goog.dom.appendChild(element, clearButton);
 
-  goog.events.listen(button, [
+  goog.events.listen(searchButton, [
     goog.events.EventType.TOUCHEND,
     goog.events.EventType.CLICK
-  ], this.handleButtonPress_, false, this);
+  ], this.handleSearchButtonPress_, false, this);
+
+  goog.events.listen(clearButton, [
+    goog.events.EventType.TOUCHEND,
+    goog.events.EventType.CLICK
+  ], this.handleClearButtonPress_, false, this);
 
   goog.events.listen(input, [
     goog.events.EventType.KEYPRESS
@@ -177,7 +189,7 @@ ol.control.GoogleMapsGeocoder.prototype.handleInputKeypress_ = function(
     browserEvent) {
 
   if (browserEvent.keyCode == goog.events.KeyCodes.ENTER) {
-    this.handleButtonPress_(browserEvent);
+    this.handleSearchButtonPress_(browserEvent);
   }
 };
 
@@ -186,7 +198,7 @@ ol.control.GoogleMapsGeocoder.prototype.handleInputKeypress_ = function(
  * @param {goog.events.BrowserEvent} browserEvent Browser event.
  * @private
  */
-ol.control.GoogleMapsGeocoder.prototype.handleButtonPress_ = function(
+ol.control.GoogleMapsGeocoder.prototype.handleSearchButtonPress_ = function(
     browserEvent) {
 
   browserEvent.preventDefault();
@@ -346,4 +358,29 @@ ol.control.GoogleMapsGeocoder.prototype.handleGeocode_ = function(
         status
     );
   }
+};
+
+
+/**
+ * @param {goog.events.BrowserEvent} browserEvent Browser event.
+ * @private
+ */
+ol.control.GoogleMapsGeocoder.prototype.handleClearButtonPress_ = function(
+    browserEvent) {
+
+  browserEvent.preventDefault();
+  this.clear_();
+};
+
+
+/**
+ * @private
+ */
+ol.control.GoogleMapsGeocoder.prototype.clear_ = function() {
+  var vectorSource = this.vectorLayer_.getSource();
+  goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
+  vectorSource.clear();
+
+  var input = this.input_;
+  input.value = '';
 };
