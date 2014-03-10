@@ -223,6 +223,18 @@
  */
 
 /**
+ * @typedef {Object} olx.control.GoogleMapsDirectionsOptions
+ * @property {Element|undefined} target Target.
+ * @property {Object|undefined} geocoderComponentRestrictions Used to restrict
+ *     results to a specific area
+ * @property {ol.style.Style} startIconStyle Styled used to symbolize the
+ *     geocoded location found, generally one with an icon image.
+ * @property {ol.style.Style} endIconStyle Styled used to symbolize the
+ *     geocoded location found, generally one with an icon image.
+ * @todo stability experimental
+ */
+
+/**
  * @typedef {Object} olx.control.GoogleMapsGeocoderOptions
  * @property {Element|undefined} target Target.
  * @property {boolean|undefined} enableReverseGeocoding Whether to activate
