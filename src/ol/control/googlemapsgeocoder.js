@@ -89,11 +89,10 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
       options.geocoderComponentRestrictions : {};
 
   /**
-   * @type {?ol.style.Style}
+   * @type {ol.style.Style}
    * @private
    */
-  this.iconStyle_ = goog.asserts.assertInstanceof(
-      options.iconStyle, ol.style.Style) ? options.iconStyle : null;
+  this.iconStyle_ = options.iconStyle;
 
   /**
    * @type {?ol.layer.Vector}
@@ -136,15 +135,13 @@ ol.control.GoogleMapsGeocoder.prototype.setMap = function(map) {
       ], this.handleMapSingleClick_, false, this);
     }
 
-    // create vector layer, if needed
-    if (!goog.isNull(this.iconStyle_)) {
-      this.vectorLayer_ = new ol.layer.Vector({
-        source: new ol.source.Vector({
-          features: []
-        })
-      });
-      map.addLayer(this.vectorLayer_);
-    }
+    // create vector layer
+    this.vectorLayer_ = new ol.layer.Vector({
+      source: new ol.source.Vector({
+        features: []
+      })
+    });
+    map.addLayer(this.vectorLayer_);
   }
 };
 
@@ -323,29 +320,25 @@ ol.control.GoogleMapsGeocoder.prototype.handleGeocode_ = function(
 
       //alert(tmpOutput.join(''));
 
+      // clear first
+      this.clear_();
+
+      // set returned value
       input.value = formatted_address;
 
-      // manage vector layer
-      if (!goog.isNull(this.iconStyle_)) {
+      // transform received coordinate (which is in lat, lng) into
+      // map projection
+      var transformedCoordinate = ol.proj.transform(
+          [lng, lat], 'EPSG:4326', projection.getCode());
 
-        // transform received coordinate (which is in lat, lng) into
-        // map projection
-        var transformedCoordinate = ol.proj.transform(
-            [lng, lat], 'EPSG:4326', projection.getCode());
+      var feature = new ol.Feature({
+        geometry: new ol.geom.Point(transformedCoordinate)
+      });
+      feature.setStyle(this.iconStyle_);
 
-        // TODO: check if existing feature is already at the same location
-        //       before clearing it.  If so, no need to do anything.
-        var vectorSource = this.vectorLayer_.getSource();
-        goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
-        vectorSource.clear();
-
-        var feature = new ol.Feature({
-          geometry: new ol.geom.Point(transformedCoordinate)
-        });
-        feature.setStyle(this.iconStyle_);
-
-        vectorSource.addFeature(feature);
-      }
+      var vectorSource = this.vectorLayer_.getSource();
+      goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
+      vectorSource.addFeature(feature);
 
     } else {
       // TODO: manage no results

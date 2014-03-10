@@ -229,7 +229,7 @@
  *     the reverse geocoding, i.e. click on the map to get an address.
  * @property {Object|undefined} geocoderComponentRestrictions Used to restrict
  *     results to a specific area
- * @property {ol.style.Style|undefined} iconStyle Styled used to symbolize the
+ * @property {ol.style.Style} iconStyle Styled used to symbolize the
  *     geocoded location found, generally one with an icon image.
  * @todo stability experimental
  */
