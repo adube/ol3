@@ -86,14 +86,6 @@ ol.control.GoogleMapsDirections = function(opt_options) {
     'geocoderComponentRestrictions': this.geocoderComponentRestrictions_,
     'iconStyle': this.endIconStyle_
   });
-
-
-  /**
-   * @private
-   * @type {google.maps.}
-   */
-  //this.directions_ = new google.maps.DirectionsService();
-
 };
 goog.inherits(ol.control.GoogleMapsDirections, ol.control.Control);
 
