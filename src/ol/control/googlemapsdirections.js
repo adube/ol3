@@ -3,6 +3,8 @@ goog.provide('ol.control.GoogleMapsDirections');
 goog.require('goog.asserts');
 goog.require('goog.dom');
 goog.require('goog.dom.TagName');
+goog.require('goog.events');
+goog.require('ol.Object');
 goog.require('ol.control.Control');
 goog.require('ol.control.GoogleMapsGeocoder');
 goog.require('ol.css');
@@ -44,6 +46,7 @@ ol.control.GoogleMapsDirections = function(opt_options) {
       options.geocoderComponentRestrictions) ?
       options.geocoderComponentRestrictions : {};
 
+
   /**
    * @type {ol.style.Style}
    * @private
@@ -62,6 +65,13 @@ ol.control.GoogleMapsDirections = function(opt_options) {
     element: element,
     target: options.target
   });
+
+
+  /**
+   * @type {google.maps.DirectionsService}
+   * @private
+   */
+  this.directionsService_ = new google.maps.DirectionsService();
 
 
   /**
@@ -86,6 +96,20 @@ ol.control.GoogleMapsDirections = function(opt_options) {
     'geocoderComponentRestrictions': this.geocoderComponentRestrictions_,
     'iconStyle': this.endIconStyle_
   });
+
+  goog.events.listen(
+      this.startGeocoder_,
+      ol.Object.getChangeEventType(
+          ol.control.GoogleMapsGeocoder.Property.LOCATION
+      ),
+      this.handleLocationChanged_, false, this);
+
+  goog.events.listen(
+      this.endGeocoder_,
+      ol.Object.getChangeEventType(
+          ol.control.GoogleMapsGeocoder.Property.LOCATION
+      ),
+      this.handleLocationChanged_, false, this);
 };
 goog.inherits(ol.control.GoogleMapsDirections, ol.control.Control);
 
@@ -99,4 +123,85 @@ ol.control.GoogleMapsDirections.prototype.setMap = function(map) {
     map.addControl(this.startGeocoder_);
     map.addControl(this.endGeocoder_);
   }
+};
+
+
+/**
+ * @param {goog.events.Event} event Event.
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.handleLocationChanged_ =
+    function(event) {
+
+  var currentGeocoder = event.target;
+  var startGeocoder = this.startGeocoder_;
+  var endGeocoder = this.endGeocoder_;
+  var otherGeocoder = (currentGeocoder === startGeocoder) ?
+      endGeocoder : startGeocoder;
+
+  var currentLocation = currentGeocoder.getLocation();
+  var otherLocation = otherGeocoder.getLocation();
+
+  if (goog.isDefAndNotNull(currentLocation)) {
+    currentGeocoder.disableReverseGeocoding();
+    if (goog.isDefAndNotNull(otherLocation)) {
+      this.route_(currentLocation, otherLocation);
+    } else {
+      otherGeocoder.enableReverseGeocoding();
+      this.clear_();
+    }
+  } else {
+    this.clear_();
+    if (goog.isDefAndNotNull(otherLocation)) {
+      currentGeocoder.enableReverseGeocoding();
+    } else {
+      startGeocoder.enableReverseGeocoding();
+      endGeocoder.disableReverseGeocoding();
+    }
+  }
+
+};
+
+
+/**
+ * @param {google.maps.LatLng} start Location
+ * @param {google.maps.LatLng} end Location
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.route_ = function(start, end) {
+
+  var me = this;
+  var service = this.directionsService_;
+
+  var request = {
+    origin: start,
+    destination: end,
+    optimizeWaypoints: true,
+    travelMode: google.maps.TravelMode.DRIVING
+  };
+
+  service.route(request, function(response, status) {
+    me.handleDirectionsResult_(response, status);
+  });
+};
+
+
+/**
+ * @param {google.maps.DirectionsResult} response
+ * @param {google.maps.DirectionsStatus} status
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
+    response, status) {
+
+  if (status == google.maps.DirectionsStatus.OK) {
+    alert(response.routes.length);
+  }
+};
+
+
+/**
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.clear_ = function() {
 };

@@ -122,6 +122,27 @@ goog.inherits(ol.control.GoogleMapsGeocoder, ol.control.Control);
 
 
 /**
+ * @enum {string}
+ */
+ol.control.GoogleMapsGeocoder.Property = {
+  LOCATION: 'location'
+};
+
+
+/**
+ * @return {google.maps.LatLng|undefined} Location
+ */
+ol.control.GoogleMapsGeocoder.prototype.getLocation = function() {
+  return /** @type {google.maps.LatLng|undefined} */ (
+      this.get(ol.control.GoogleMapsGeocoder.Property.LOCATION));
+};
+goog.exportProperty(
+    ol.control.GoogleMapsGeocoder.prototype,
+    'getLocation',
+    ol.control.GoogleMapsGeocoder.prototype.getLocation);
+
+
+/**
  * @inheritDoc
  */
 ol.control.GoogleMapsGeocoder.prototype.setMap = function(map) {
@@ -293,6 +314,7 @@ ol.control.GoogleMapsGeocoder.prototype.handleGeocode_ = function(
   var tmpOutput = [];
   var input = this.input_;
   var map = this.getMap();
+  var location;
 
   var view = map.getView();
   goog.asserts.assert(goog.isDef(view));
@@ -307,8 +329,9 @@ ol.control.GoogleMapsGeocoder.prototype.handleGeocode_ = function(
       result = results[0];
 
       formatted_address = result.formatted_address;
-      lng = result.geometry.location.lng();
-      lat = result.geometry.location.lat();
+      location = result.geometry.location;
+      lng = location.lng();
+      lat = location.lat();
 
       tmpOutput.push(formatted_address);
       tmpOutput.push('\n');
@@ -339,6 +362,9 @@ ol.control.GoogleMapsGeocoder.prototype.handleGeocode_ = function(
       var vectorSource = this.vectorLayer_.getSource();
       goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
       vectorSource.addFeature(feature);
+
+      this.setValues({'location': location});
+
 
     } else {
       // TODO: manage no results
@@ -376,4 +402,6 @@ ol.control.GoogleMapsGeocoder.prototype.clear_ = function() {
 
   var input = this.input_;
   input.value = '';
+
+  this.setValues({'location': null});
 };

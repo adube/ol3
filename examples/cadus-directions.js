@@ -75,6 +75,7 @@ olMapDiv.parentNode.removeChild(olMapDiv);
 gmap.controls[google.maps.ControlPosition.TOP_LEFT].push(olMapDiv);
 
 var directions = new ol.control.GoogleMapsDirections({
+  'gmap': gmap,
   'target': 'gmaps-directions',
   'geocoderComponentRestrictions': {'country': 'CA'},
   'startIconStyle': new ol.style.Style({
