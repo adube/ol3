@@ -511,6 +511,14 @@
  * @property {ol.Collection} features The features the interaction works on.
  */
 
+ /**
+ * @typedef {Object} olx.interaction.DryModifyOptions
+ * @property {number|undefined} pixelTolerance Pixel tolerance for considering
+ *     the pointer close enough to a vertex for editing. Default is 20 pixels.
+ * @property {ol.style.Style|Array.<ol.style.Style>|ol.feature.StyleFunction|undefined} style FeatureOverlay style.
+ * @property {ol.Collection} features The features the interaction works on.
+ */
+
 /**
  * @typedef {Object} olx.interaction.TouchRotateOptions
  * @property {number|undefined} threshold Minimal angle in radians to start a rotation.

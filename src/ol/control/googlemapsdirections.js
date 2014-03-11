@@ -5,6 +5,7 @@ goog.require('goog.asserts');
 goog.require('goog.dom');
 goog.require('goog.dom.TagName');
 goog.require('goog.events');
+goog.require('ol.Collection');
 goog.require('ol.Feature');
 goog.require('ol.Object');
 goog.require('ol.View2D');
@@ -13,9 +14,13 @@ goog.require('ol.control.GoogleMapsGeocoder');
 goog.require('ol.css');
 goog.require('ol.extent');
 goog.require('ol.geom.LineString');
+goog.require('ol.interaction.DryModify');
 goog.require('ol.layer.Vector');
 goog.require('ol.proj');
 goog.require('ol.source.Vector');
+goog.require('ol.style.Circle');
+goog.require('ol.style.Fill');
+goog.require('ol.style.Stroke');
 goog.require('ol.style.Style');
 
 
@@ -104,6 +109,29 @@ ol.control.GoogleMapsDirections = function(opt_options) {
       options.pixelBuffer : ol.control.GOOGLEMAPSDIRECTIONS_PIXEL_BUFFER;
 
 
+  /**
+   * @type {ol.Collection}
+   * @private
+   */
+  this.routeFeatures_ = new ol.Collection();
+
+  /**
+   * @type {ol.interaction.DryModify}
+   * @private
+   */
+  this.dryModify_ = new ol.interaction.DryModify({
+    features: this.routeFeatures_,
+    style: [
+      new ol.style.Style({
+        image: new ol.style.Circle({
+          radius: 5,
+          fill: new ol.style.Fill({color: 'white'}),
+          stroke: new ol.style.Stroke({color: 'black', width: 2})
+        })
+      })
+    ]
+  });
+
   goog.base(this, {
     element: element,
     target: options.target
@@ -166,6 +194,7 @@ ol.control.GoogleMapsDirections.prototype.setMap = function(map) {
     map.addLayer(this.vectorLayer_);
     map.addControl(this.startGeocoder_);
     map.addControl(this.endGeocoder_);
+    map.addInteraction(this.dryModify_);
   }
 };
 
@@ -256,6 +285,8 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
   var features = [];
   var coordinates;
 
+  var routeFeatures = this.routeFeatures_;
+
   if (status == google.maps.DirectionsStatus.OK) {
     goog.array.forEach(response.routes, function(route) {
       coordinates = [];
@@ -268,8 +299,13 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
       }, this);
       feature = new ol.Feature(new ol.geom.LineString(coordinates));
       features.push(feature);
+      routeFeatures.push(feature);
     }, this);
+
+    // add features to layer
     vectorSource.addFeatures(features);
+
+    // fit extent
     this.fitViewExtentToRoute_();
   }
 };
@@ -282,6 +318,9 @@ ol.control.GoogleMapsDirections.prototype.clear_ = function() {
   var vectorSource = this.vectorLayer_.getSource();
   goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
   vectorSource.clear();
+
+  var routeFeatures = this.routeFeatures_;
+  routeFeatures.clear();
 };
 
 
