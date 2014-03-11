@@ -181,6 +181,11 @@ ol.control.GoogleMapsDirections = function(opt_options) {
           ol.control.GoogleMapsGeocoder.Property.LOCATION
       ),
       this.handleLocationChanged_, false, this);
+
+  goog.events.listen(
+      this.dryModify_,
+      ol.interaction.DryModify.EventType.DRAG,
+      this.handleDryModifyDrag_, false, this);
 };
 goog.inherits(ol.control.GoogleMapsDirections, ol.control.Control);
 
@@ -384,4 +389,17 @@ ol.control.GoogleMapsDirections.prototype.fitViewExtentToRoute_ = function() {
   extent = ol.extent.buffer(extent, buffer);
 
   view2D.fitExtent(extent, size);
+};
+
+
+/**
+ * @param {Object|goog.events.Event|null|string} evt
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.handleDryModifyDrag_ = function(evt) {
+
+  var dryModify = evt.target;
+
+  window.console.log(dryModify.coordinate_);
+
 };

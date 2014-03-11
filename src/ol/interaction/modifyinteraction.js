@@ -354,6 +354,14 @@ ol.interaction.Modify.prototype.createOrUpdateVertexFeature_ =
 
 
 /**
+ * @param {ol.Coordinate} coordinates Coordinates.
+ * @return {ol.Feature} Vertex feature.
+ */
+ol.interaction.Modify.prototype.createOrUpdateVertexFeature =
+    ol.interaction.Modify.prototype.createOrUpdateVertexFeature_;
+
+
+/**
  * @inheritDoc
  */
 ol.interaction.Modify.prototype.handleDragStart = function(evt) {
