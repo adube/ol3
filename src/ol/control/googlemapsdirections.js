@@ -11,11 +11,19 @@ goog.require('ol.View2D');
 goog.require('ol.control.Control');
 goog.require('ol.control.GoogleMapsGeocoder');
 goog.require('ol.css');
+goog.require('ol.extent');
 goog.require('ol.geom.LineString');
 goog.require('ol.layer.Vector');
 goog.require('ol.proj');
 goog.require('ol.source.Vector');
 goog.require('ol.style.Style');
+
+
+/**
+ * @define {number} Default buffer size in pixels to apply to the extent of
+ * the route or single geolocation when recentering the map view to it.
+ */
+ol.control.GOOGLEMAPSDIRECTIONS_PIXEL_BUFFER = 30;
 
 
 
@@ -86,6 +94,14 @@ ol.control.GoogleMapsDirections = function(opt_options) {
     }),
     style: this.lineStyle_
   });
+
+
+  /**
+   * @type {number}
+   * @private
+   */
+  this.pixelBuffer_ = goog.isDefAndNotNull(options.pixelBuffer) ?
+      options.pixelBuffer : ol.control.GOOGLEMAPSDIRECTIONS_PIXEL_BUFFER;
 
 
   goog.base(this, {
@@ -177,6 +193,7 @@ ol.control.GoogleMapsDirections.prototype.handleLocationChanged_ =
     } else {
       otherGeocoder.enableReverseGeocoding();
       this.clear_();
+      this.fitViewExtentToCoordinate_(currentGeocoder.getCoordinate());
     }
   } else {
     this.clear_();
@@ -253,6 +270,7 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
       features.push(feature);
     }, this);
     vectorSource.addFeatures(features);
+    this.fitViewExtentToRoute_();
   }
 };
 
@@ -264,4 +282,67 @@ ol.control.GoogleMapsDirections.prototype.clear_ = function() {
   var vectorSource = this.vectorLayer_.getSource();
   goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
   vectorSource.clear();
+};
+
+
+/**
+ * Fix map view extent to include coordinate if coordinate is outside
+ * extent.
+ * @param {ol.Coordinate} coordinate in map view projection
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.fitViewExtentToCoordinate_ =
+    function(coordinate) {
+
+  var map = this.getMap();
+
+  var view = map.getView();
+  goog.asserts.assert(goog.isDef(view));
+  var view2D = view.getView2D();
+  goog.asserts.assertInstanceof(view2D, ol.View2D);
+
+  var size = map.getSize();
+  goog.asserts.assertArray(size);
+
+  var extent = view2D.calculateExtent(size);
+
+  var resolution = view2D.getResolutionForExtent(extent, size);
+  var pixelBuffer = this.pixelBuffer_;
+  var buffer = resolution * pixelBuffer;
+
+  var smallExtent = ol.extent.buffer(extent, buffer * -1);
+
+  if (!ol.extent.containsCoordinate(smallExtent, coordinate)) {
+    ol.extent.extendCoordinate(extent, coordinate);
+    extent = ol.extent.buffer(extent, buffer);
+    view2D.fitExtent(extent, size);
+  }
+};
+
+
+/**
+ * Fix map view extent to route.
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.fitViewExtentToRoute_ = function() {
+  var map = this.getMap();
+
+  var size = map.getSize();
+  goog.asserts.assertArray(size);
+
+  var view = map.getView();
+  goog.asserts.assert(goog.isDef(view));
+  var view2D = view.getView2D();
+  goog.asserts.assertInstanceof(view2D, ol.View2D);
+
+  var vectorSource = this.vectorLayer_.getSource();
+  goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
+  var extent = vectorSource.getExtent();
+
+  var resolution = view2D.getResolutionForExtent(extent, size);
+  var pixelBuffer = this.pixelBuffer_;
+  var buffer = resolution * pixelBuffer;
+  extent = ol.extent.buffer(extent, buffer);
+
+  view2D.fitExtent(extent, size);
 };

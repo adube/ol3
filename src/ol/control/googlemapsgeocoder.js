@@ -143,6 +143,36 @@ goog.exportProperty(
 
 
 /**
+ * Returns the location transformed in the map view projection.
+ * @return {ol.Coordinate|undefined} Coordinate
+ */
+ol.control.GoogleMapsGeocoder.prototype.getCoordinate = function() {
+  var location = this.getLocation();
+  var lat = location.lat();
+  var lng = location.lng();
+
+  var map = this.getMap();
+
+  var view = map.getView();
+  goog.asserts.assert(goog.isDef(view));
+  var view2D = view.getView2D();
+  goog.asserts.assertInstanceof(view2D, ol.View2D);
+
+  var projection = view2D.getProjection();
+
+  var transformedCoordinate = ol.proj.transform(
+      [lng, lat], 'EPSG:4326', projection.getCode()
+      );
+
+  return transformedCoordinate;
+};
+goog.exportProperty(
+    ol.control.GoogleMapsGeocoder.prototype,
+    'getCoordinate',
+    ol.control.GoogleMapsGeocoder.prototype.getCoordinate);
+
+
+/**
  * @inheritDoc
  */
 ol.control.GoogleMapsGeocoder.prototype.setMap = function(map) {
