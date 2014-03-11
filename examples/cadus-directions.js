@@ -78,6 +78,12 @@ var directions = new ol.control.GoogleMapsDirections({
   'gmap': gmap,
   'target': 'gmaps-directions',
   'geocoderComponentRestrictions': {'country': 'CA'},
+  'lineStyle': new ol.style.Style({
+    stroke: new ol.style.Stroke({
+      color: [80, 140, 255, 0.6],
+      width: 6
+    })
+  }),
   'startIconStyle': new ol.style.Style({
     image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
       anchor: [0.5, 46],

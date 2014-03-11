@@ -1,13 +1,20 @@
 goog.provide('ol.control.GoogleMapsDirections');
 
+goog.require('goog.array');
 goog.require('goog.asserts');
 goog.require('goog.dom');
 goog.require('goog.dom.TagName');
 goog.require('goog.events');
+goog.require('ol.Feature');
 goog.require('ol.Object');
+goog.require('ol.View2D');
 goog.require('ol.control.Control');
 goog.require('ol.control.GoogleMapsGeocoder');
 goog.require('ol.css');
+goog.require('ol.geom.LineString');
+goog.require('ol.layer.Vector');
+goog.require('ol.proj');
+goog.require('ol.source.Vector');
 goog.require('ol.style.Style');
 
 
@@ -59,6 +66,26 @@ ol.control.GoogleMapsDirections = function(opt_options) {
    * @private
    */
   this.endIconStyle_ = options.endIconStyle;
+
+
+  /**
+   * User provided style for lines.
+   * @type {ol.style.Style|Array.<ol.style.Style>|ol.feature.StyleFunction}
+   * @private
+   */
+  this.lineStyle_ = options.lineStyle;
+
+
+  /**
+   * @type {?ol.layer.Vector}
+   * @private
+   */
+  this.vectorLayer_ = new ol.layer.Vector({
+    source: new ol.source.Vector({
+      features: []
+    }),
+    style: this.lineStyle_
+  });
 
 
   goog.base(this, {
@@ -120,6 +147,7 @@ goog.inherits(ol.control.GoogleMapsDirections, ol.control.Control);
 ol.control.GoogleMapsDirections.prototype.setMap = function(map) {
   goog.base(this, 'setMap', map);
   if (!goog.isNull(map)) {
+    map.addLayer(this.vectorLayer_);
     map.addControl(this.startGeocoder_);
     map.addControl(this.endGeocoder_);
   }
@@ -194,8 +222,37 @@ ol.control.GoogleMapsDirections.prototype.route_ = function(start, end) {
 ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
     response, status) {
 
+  var map = this.getMap();
+
+  var view = map.getView();
+  goog.asserts.assert(goog.isDef(view));
+  var view2D = view.getView2D();
+  goog.asserts.assertInstanceof(view2D, ol.View2D);
+
+  var projection = view2D.getProjection();
+
+  var vectorSource = this.vectorLayer_.getSource();
+  goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
+
+  var lat, location, lng, transformedCoordinate;
+  var feature;
+  var features = [];
+  var coordinates;
+
   if (status == google.maps.DirectionsStatus.OK) {
-    alert(response.routes.length);
+    goog.array.forEach(response.routes, function(route) {
+      coordinates = [];
+      goog.array.forEach(route.overview_path, function(location) {
+        lng = location.lng();
+        lat = location.lat();
+        transformedCoordinate = ol.proj.transform(
+            [lng, lat], 'EPSG:4326', projection.getCode());
+        coordinates.push(transformedCoordinate);
+      }, this);
+      feature = new ol.Feature(new ol.geom.LineString(coordinates));
+      features.push(feature);
+    }, this);
+    vectorSource.addFeatures(features);
   }
 };
 
@@ -204,4 +261,7 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
  * @private
  */
 ol.control.GoogleMapsDirections.prototype.clear_ = function() {
+  var vectorSource = this.vectorLayer_.getSource();
+  goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
+  vectorSource.clear();
 };

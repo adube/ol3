@@ -228,9 +228,11 @@
  * @property {Object|undefined} geocoderComponentRestrictions Used to restrict
  *     results to a specific area
  * @property {ol.style.Style} startIconStyle Styled used to symbolize the
- *     geocoded location found, generally one with an icon image.
+ *     geocoded start location found
  * @property {ol.style.Style} endIconStyle Styled used to symbolize the
- *     geocoded location found, generally one with an icon image.
+ *     geocoded end location found
+ * @property {ol.style.Style} lineStyle Styled used to symbolize the
+ *     route
  * @todo stability experimental
  */
 
