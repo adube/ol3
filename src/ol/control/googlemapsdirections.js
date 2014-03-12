@@ -5,6 +5,7 @@ goog.require('goog.asserts');
 goog.require('goog.dom');
 goog.require('goog.dom.TagName');
 goog.require('goog.events');
+goog.require('goog.events.EventType');
 goog.require('ol.Collection');
 goog.require('ol.Feature');
 goog.require('ol.Object');
@@ -62,10 +63,27 @@ ol.control.GoogleMapsDirections = function(opt_options) {
     'class': className + ' ' + ol.css.CLASS_UNSELECTABLE
   });
 
+  var addWaypointGeocoderButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
+    'class': ''
+  });
+  var addWaypointGeocoderButtonText = goog.dom.createTextNode('Add waypoint');
+  goog.dom.appendChild(
+      addWaypointGeocoderButton, addWaypointGeocoderButtonText);
+  goog.dom.appendChild(element, addWaypointGeocoderButton);
+  goog.events.listen(addWaypointGeocoderButton, [
+    goog.events.EventType.TOUCHEND,
+    goog.events.EventType.CLICK
+  ], this.handleAddWPGeocoderButtonPress_, false, this);
+
   var startGeocoderElement = goog.dom.createDom(goog.dom.TagName.DIV, {
     'class': 'ol-google-maps-directions-geocoder-start'
   });
   goog.dom.appendChild(element, startGeocoderElement);
+
+  var waypointGeocodersContainer = goog.dom.createDom(goog.dom.TagName.DIV, {
+    'class': 'ol-google-maps-directions-geocoder-waypoints'
+  });
+  goog.dom.appendChild(element, waypointGeocodersContainer);
 
   var endGeocoderElement = goog.dom.createDom(goog.dom.TagName.DIV, {
     'class': 'ol-google-maps-directions-geocoder-end'
@@ -110,6 +128,20 @@ ol.control.GoogleMapsDirections = function(opt_options) {
    * @private
    */
   this.waypointIconStyle_ = options.waypointIconStyle;
+
+
+  /**
+   * @type {Array.<(ol.control.GoogleMapsGeocoder)>}
+   * @private
+   */
+  this.waypointGeocoders_ = [];
+
+
+  /**
+   * @type {Element}
+   * @private
+   */
+  this.waypointGeocodersContainer_ = waypointGeocodersContainer;
 
 
   /**
@@ -267,31 +299,22 @@ ol.control.GoogleMapsDirections.prototype.handleLocationChanged_ =
     function(event) {
 
   var currentGeocoder = event.target;
+  var currentLocation = currentGeocoder.getLocation();
+
   var startGeocoder = this.startGeocoder_;
   var endGeocoder = this.endGeocoder_;
-  var otherGeocoder = (currentGeocoder === startGeocoder) ?
-      endGeocoder : startGeocoder;
 
-  var currentLocation = currentGeocoder.getLocation();
-  var otherLocation = otherGeocoder.getLocation();
+  var startLocation = startGeocoder.getLocation();
+  var endLocation = endGeocoder.getLocation();
 
-  if (goog.isDefAndNotNull(currentLocation)) {
-    currentGeocoder.disableReverseGeocoding();
-    if (goog.isDefAndNotNull(otherLocation)) {
-      this.route_(currentLocation, otherLocation);
-    } else {
-      otherGeocoder.enableReverseGeocoding();
-      this.clear_();
-      this.fitViewExtentToCoordinate_(currentGeocoder.getCoordinate());
-    }
-  } else {
-    this.clear_();
-    if (goog.isDefAndNotNull(otherLocation)) {
-      currentGeocoder.enableReverseGeocoding();
-    } else {
-      startGeocoder.enableReverseGeocoding();
-      endGeocoder.disableReverseGeocoding();
-    }
+  this.clear_();
+  this.toggleGeocoderReverseGeocodings_();
+
+  if (goog.isDefAndNotNull(startLocation) &&
+      goog.isDefAndNotNull(endLocation)) {
+    this.route_(startLocation, endLocation);
+  } else if (goog.isDefAndNotNull(currentLocation)) {
+    this.fitViewExtentToCoordinate_(currentGeocoder.getCoordinate());
   }
 
 };
@@ -368,9 +391,6 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
 
   var routeFeatures = this.routeFeatures_;
 
-  var waypoints = this.waypoints_;
-  var dryModify = this.dryModify_;
-
   if (status == google.maps.DirectionsStatus.OK) {
     goog.array.forEach(response.routes, function(route) {
       coordinates = [];
@@ -407,11 +427,6 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
 
     // fit extent
     this.fitViewExtentToRoute_();
-
-    // if limit of waypoints is reached, disable dryModify interaction
-    if (waypoints.length >= this.maxWaypoints_) {
-      map.removeInteraction(dryModify);
-    }
 
     // add features to layer
     vectorSource.addFeatures(features);
@@ -526,8 +541,8 @@ ol.control.GoogleMapsDirections.prototype.createWaypoint_ = function(
 
   var waypoints = this.waypoints_;
 
-  if (waypoints.length >= this.maxWaypoints_) {
-    // todo, throw error;
+  if (!this.canAddAnOtherWaypoint_()) {
+    // todo - throw error
     return;
   }
 
@@ -548,6 +563,155 @@ ol.control.GoogleMapsDirections.prototype.createWaypoint_ = function(
 
   waypoints.push(latLng);
 
+  this.manageNumWaypoints_();
+
   this.clear_();
   this.route_(null, null);
+};
+
+
+/**
+ * Add a new waypoint geocoder to the UI.
+ */
+ol.control.GoogleMapsDirections.prototype.addWaypointGeocoder = function() {
+
+  if (!this.canAddAnOtherWaypoint_()) {
+    // todo - show 'too many waypoints' message
+    return;
+  }
+
+  var map = this.getMap();
+  var container = this.waypointGeocodersContainer_;
+
+  var geocoder = new ol.control.GoogleMapsGeocoder({
+    'enableReverseGeocoding': false,
+    'target': container,
+    'geocoderComponentRestrictions': this.geocoderComponentRestrictions_,
+    'iconStyle': this.startIconStyle_
+  });
+
+  map.addControl(geocoder);
+
+  goog.events.listen(
+      geocoder,
+      ol.Object.getChangeEventType(
+          ol.control.GoogleMapsGeocoder.Property.LOCATION
+      ),
+      this.handleLocationChanged_, false, this);
+
+  this.waypointGeocoders_.push(geocoder);
+
+  this.toggleGeocoderReverseGeocodings_();
+
+  this.manageNumWaypoints_();
+
+};
+
+
+/**
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.toggleGeocoderReverseGeocodings_ =
+    function() {
+
+  var startGeocoder = this.startGeocoder_;
+  var endGeocoder = this.endGeocoder_;
+  var waypointGeocoders = this.waypointGeocoders_;
+
+  var startLocation = startGeocoder.getLocation();
+  var endLocation = endGeocoder.getLocation();
+  var waypointLocation;
+
+  var nullWaypointLocationFound = false;
+
+  if (!goog.isDefAndNotNull(startLocation)) {
+    // enable start, disable the others
+    startGeocoder.enableReverseGeocoding();
+    endGeocoder.disableReverseGeocoding();
+    goog.array.forEach(waypointGeocoders, function(waypointGeocoders) {
+      waypointGeocoders.disableReverseGeocoding();
+    }, this);
+  } else if (!goog.isDefAndNotNull(endLocation)) {
+    // enable first null waypoint found OR end if none was found, disable
+    // all the others
+    startGeocoder.disableReverseGeocoding();
+
+    goog.array.forEach(waypointGeocoders, function(waypointGeocoder) {
+      waypointLocation = waypointGeocoder.getLocation();
+      if (!goog.isDefAndNotNull(waypointLocation) &&
+          !nullWaypointLocationFound) {
+        nullWaypointLocationFound = true;
+        waypointGeocoder.enableReverseGeocoding();
+      } else {
+        waypointGeocoder.disableReverseGeocoding();
+      }
+    }, this);
+
+    if (nullWaypointLocationFound) {
+      endGeocoder.disableReverseGeocoding();
+    } else {
+      endGeocoder.enableReverseGeocoding();
+    }
+
+  } else {
+    // enable first null waypoint found if one is found, disable
+    // all the others
+    startGeocoder.disableReverseGeocoding();
+    endGeocoder.disableReverseGeocoding();
+    goog.array.forEach(waypointGeocoders, function(waypointGeocoder) {
+      waypointLocation = waypointGeocoder.getLocation();
+      if (!goog.isDefAndNotNull(waypointLocation) &&
+          !nullWaypointLocationFound) {
+        nullWaypointLocationFound = true;
+        waypointGeocoder.enableReverseGeocoding();
+      } else {
+        waypointGeocoder.disableReverseGeocoding();
+      }
+    }, this);
+  }
+
+};
+
+
+/**
+ * @param {goog.events.Event} event Event.
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.handleAddWPGeocoderButtonPress_ =
+    function(event) {
+  this.addWaypointGeocoder();
+};
+
+
+/**
+ * @private
+ * @return {boolean}
+ */
+ol.control.GoogleMapsDirections.prototype.canAddAnOtherWaypoint_ = function() {
+  var max = this.maxWaypoints_;
+  var waypoints = this.waypoints_;
+  var waypointGeocoders = this.waypointGeocoders_;
+
+  var total = waypoints.length + waypointGeocoders.length;
+
+  return (total < max);
+};
+
+
+/**
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.manageNumWaypoints_ = function() {
+  var map = this.getMap();
+  var dryModify = this.dryModify_;
+
+  if (this.canAddAnOtherWaypoint_()) {
+    if (!goog.isDefAndNotNull(dryModify.getMap())) {
+      map.addInteraction(dryModify);
+    }
+  } else {
+    if (goog.isDefAndNotNull(dryModify.getMap())) {
+      map.removeInteraction(dryModify);
+    }
+  }
 };
