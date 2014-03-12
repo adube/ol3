@@ -618,3 +618,11 @@ ol.interaction.Modify.prototype.insertVertex_ = function(segmentData, vertex) {
       newSegmentData2);
   this.dragSegments_.push([newSegmentData2, 0]);
 };
+
+
+/**
+ * @return {boolean}
+ */
+ol.interaction.Modify.prototype.isModifiable = function() {
+  return this.modifiable_;
+};

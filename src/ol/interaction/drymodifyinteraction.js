@@ -48,7 +48,7 @@ goog.exportProperty(
  * @inheritDoc
  */
 ol.interaction.DryModify.prototype.handleDragStart = function(evt) {
-  return true;
+  return this.isModifiable();
 };
 
 
