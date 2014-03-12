@@ -238,6 +238,7 @@
  *     map view to it.
  * @property {number|undefined} newWaypointDelay The number of milliseconds
  *     to wait before launching a route request that includes a new waypoint.
+ * @property {number|undefined} maxWaypoints The maximum allowed waypoints.
  * @todo stability experimental
  */
 

@@ -38,6 +38,13 @@ ol.control.GOOGLEMAPSDIRECTIONS_PIXEL_BUFFER = 30;
 ol.control.GOOGLEMAPSDIRECTIONS_NEW_WAYPOINT_DELAY = 300;
 
 
+/**
+ * @define {number} The maximum allowed waypoints.  Maps API for Business
+ * customers are allowed 23 waypoints.
+ */
+ol.control.GOOGLEMAPSDIRECTIONS_MAX_WAYPOINTS = 8;
+
+
 
 /**
  * Todo
@@ -144,6 +151,15 @@ ol.control.GoogleMapsDirections = function(opt_options) {
   this.newWaypointDelay_ = goog.isDef(options.newWaypointDelay) ?
       options.newWaypointDelay :
       ol.control.GOOGLEMAPSDIRECTIONS_NEW_WAYPOINT_DELAY;
+
+
+  /**
+   * @type {number}
+   * @private
+   */
+  this.maxWaypoints_ = goog.isDef(options.maxWaypoints) ?
+      options.maxWaypoints :
+      ol.control.GOOGLEMAPSDIRECTIONS_MAX_WAYPOINTS;
 
 
   /**
@@ -293,9 +309,20 @@ ol.control.GoogleMapsDirections.prototype.route_ = function(start, end) {
     return;
   }
 
+  var reqWaypoints = [];
+  var waypoints = this.waypoints_;
+
+  goog.array.forEach(waypoints, function(waypoint) {
+    reqWaypoints.push({
+      location: waypoint,
+      stopover: true
+    });
+  }, this);
+
   var request = {
     origin: start,
     destination: end,
+    waypoints: reqWaypoints,
     optimizeWaypoints: true,
     travelMode: google.maps.TravelMode.DRIVING
   };
@@ -333,6 +360,9 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
 
   var routeFeatures = this.routeFeatures_;
 
+  var waypoints = this.waypoints_;
+  var dryModify = this.dryModify_;
+
   if (status == google.maps.DirectionsStatus.OK) {
     goog.array.forEach(response.routes, function(route) {
       coordinates = [];
@@ -353,6 +383,11 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
 
     // fit extent
     this.fitViewExtentToRoute_();
+
+    // if limit of waypoints is reached, disable dryModify interaction
+    if (waypoints.length >= this.maxWaypoints_) {
+      map.removeInteraction(dryModify);
+    }
   }
 };
 
@@ -448,7 +483,7 @@ ol.control.GoogleMapsDirections.prototype.handleDryModifyDrag_ = function(evt) {
   }
 
   this.newWaypointTimerId_ = window.setTimeout(function() {
-    me.createOrUpdateWaypoint_(coordinate);
+    me.createWaypoint_(coordinate);
   }, this.newWaypointDelay_);
 
 };
@@ -458,10 +493,15 @@ ol.control.GoogleMapsDirections.prototype.handleDryModifyDrag_ = function(evt) {
  * @param {ol.Coordinate} coordinate
  * @private
  */
-ol.control.GoogleMapsDirections.prototype.createOrUpdateWaypoint_ = function(
+ol.control.GoogleMapsDirections.prototype.createWaypoint_ = function(
     coordinate) {
 
   var waypoints = this.waypoints_;
+
+  if (waypoints.length >= this.maxWaypoints_) {
+    // todo, throw error;
+    return;
+  }
 
   var map = this.getMap();
 
@@ -477,10 +517,6 @@ ol.control.GoogleMapsDirections.prototype.createOrUpdateWaypoint_ = function(
 
   var latLng = new google.maps.LatLng(
       transformedCoordinate[1], transformedCoordinate[0]);
-
-  if (!goog.array.isEmpty(waypoints)) {
-    goog.array.removeAt(waypoints, -1);
-  }
 
   waypoints.push(latLng);
 
