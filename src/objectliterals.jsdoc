@@ -236,6 +236,8 @@
  * @property {number|undefined} pixelBuffer Buffer size in pixels to apply
  *     to the extent of the route or single geolocation when recentering the
  *     map view to it.
+ * @property {number|undefined} newWaypointDelay The number of milliseconds
+ *     to wait before launching a route request that includes a new waypoint.
  * @todo stability experimental
  */
 

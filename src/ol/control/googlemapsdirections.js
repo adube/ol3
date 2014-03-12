@@ -31,6 +31,13 @@ goog.require('ol.style.Style');
 ol.control.GOOGLEMAPSDIRECTIONS_PIXEL_BUFFER = 30;
 
 
+/**
+ * @define {number} Default number of milliseconds to wait before launching
+ * a route request that includes a new waypoint.
+ */
+ol.control.GOOGLEMAPSDIRECTIONS_NEW_WAYPOINT_DELAY = 300;
+
+
 
 /**
  * Todo
@@ -114,6 +121,30 @@ ol.control.GoogleMapsDirections = function(opt_options) {
    * @private
    */
   this.routeFeatures_ = new ol.Collection();
+
+
+  /**
+   * @type {?number}
+   * @private
+   */
+  this.newWaypointTimerId_ = null;
+
+
+  /**
+   * @type {Array}
+   * @private
+   */
+  this.waypoints_ = [];
+
+
+  /**
+   * @type {number}
+   * @private
+   */
+  this.newWaypointDelay_ = goog.isDef(options.newWaypointDelay) ?
+      options.newWaypointDelay :
+      ol.control.GOOGLEMAPSDIRECTIONS_NEW_WAYPOINT_DELAY;
+
 
   /**
    * @type {ol.interaction.DryModify}
@@ -243,14 +274,24 @@ ol.control.GoogleMapsDirections.prototype.handleLocationChanged_ =
 
 
 /**
- * @param {google.maps.LatLng} start Location
- * @param {google.maps.LatLng} end Location
+ * @param {?google.maps.LatLng|undefined} start Location
+ * @param {?google.maps.LatLng|undefined} end Location
  * @private
  */
 ol.control.GoogleMapsDirections.prototype.route_ = function(start, end) {
 
   var me = this;
   var service = this.directionsService_;
+
+  start = (goog.isDefAndNotNull(start)) ?
+      start : this.startGeocoder_.getLocation();
+  end = (goog.isDefAndNotNull(end)) ?
+      end : this.endGeocoder_.getLocation();
+
+  if (!goog.isDefAndNotNull(start) || !goog.isDefAndNotNull(end)) {
+    // todo: throw error
+    return;
+  }
 
   var request = {
     origin: start,
@@ -398,8 +439,51 @@ ol.control.GoogleMapsDirections.prototype.fitViewExtentToRoute_ = function() {
  */
 ol.control.GoogleMapsDirections.prototype.handleDryModifyDrag_ = function(evt) {
 
+  var me = this;
   var dryModify = evt.target;
+  var coordinate = dryModify.coordinate_;
 
-  window.console.log(dryModify.coordinate_);
+  if (goog.isDefAndNotNull(this.newWaypointTimerId_)) {
+    window.clearTimeout(this.newWaypointTimerId_);
+  }
 
+  this.newWaypointTimerId_ = window.setTimeout(function() {
+    me.createOrUpdateWaypoint_(coordinate);
+  }, this.newWaypointDelay_);
+
+};
+
+
+/**
+ * @param {ol.Coordinate} coordinate
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.createOrUpdateWaypoint_ = function(
+    coordinate) {
+
+  var waypoints = this.waypoints_;
+
+  var map = this.getMap();
+
+  var view = map.getView();
+  goog.asserts.assert(goog.isDef(view));
+  var view2D = view.getView2D();
+  goog.asserts.assertInstanceof(view2D, ol.View2D);
+
+  var projection = view2D.getProjection();
+
+  var transformedCoordinate = ol.proj.transform(
+      coordinate, projection.getCode(), 'EPSG:4326');
+
+  var latLng = new google.maps.LatLng(
+      transformedCoordinate[1], transformedCoordinate[0]);
+
+  if (!goog.array.isEmpty(waypoints)) {
+    goog.array.removeAt(waypoints, -1);
+  }
+
+  waypoints.push(latLng);
+
+  this.clear_();
+  this.route_(null, null);
 };
