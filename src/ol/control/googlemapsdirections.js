@@ -14,6 +14,7 @@ goog.require('ol.control.GoogleMapsGeocoder');
 goog.require('ol.css');
 goog.require('ol.extent');
 goog.require('ol.geom.LineString');
+goog.require('ol.geom.Point');
 goog.require('ol.interaction.DryModify');
 goog.require('ol.layer.Vector');
 goog.require('ol.proj');
@@ -97,10 +98,18 @@ ol.control.GoogleMapsDirections = function(opt_options) {
 
   /**
    * User provided style for lines.
-   * @type {ol.style.Style|Array.<ol.style.Style>|ol.feature.StyleFunction}
+   * @type {Array.<(null|ol.style.Style)>|null|ol.feature.FeatureStyleFunction|ol.style.Style}
    * @private
    */
   this.lineStyle_ = options.lineStyle;
+
+
+  /**
+   * User provided style for waypoint icons.
+   * @type {Array.<(null|ol.style.Style)>|null|ol.feature.FeatureStyleFunction|ol.style.Style}
+   * @private
+   */
+  this.waypointIconStyle_ = options.waypointIconStyle;
 
 
   /**
@@ -110,8 +119,7 @@ ol.control.GoogleMapsDirections = function(opt_options) {
   this.vectorLayer_ = new ol.layer.Vector({
     source: new ol.source.Vector({
       features: []
-    }),
-    style: this.lineStyle_
+    })
   });
 
 
@@ -374,12 +382,28 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
         coordinates.push(transformedCoordinate);
       }, this);
       feature = new ol.Feature(new ol.geom.LineString(coordinates));
+      feature.setStyle(this.lineStyle_);
       features.push(feature);
       routeFeatures.push(feature);
-    }, this);
 
-    // add features to layer
-    vectorSource.addFeatures(features);
+      // for each 'legs' except the last, pick the destination as waypoint icon
+      goog.array.forEach(route.legs, function(leg, index, legs) {
+        // break on last leg
+        if (index == legs.length - 1) {
+          return true;
+        }
+
+        lng = leg.end_location.lng();
+        lat = leg.end_location.lat();
+        transformedCoordinate = ol.proj.transform(
+            [lng, lat], 'EPSG:4326', projection.getCode());
+
+        var feature = new ol.Feature(new ol.geom.Point(transformedCoordinate));
+        feature.setStyle(this.waypointIconStyle_);
+
+        features.push(feature);
+      }, this);
+    }, this);
 
     // fit extent
     this.fitViewExtentToRoute_();
@@ -388,7 +412,11 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
     if (waypoints.length >= this.maxWaypoints_) {
       map.removeInteraction(dryModify);
     }
+
+    // add features to layer
+    vectorSource.addFeatures(features);
   }
+
 };
 
 

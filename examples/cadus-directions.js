@@ -101,6 +101,15 @@ var directions = new ol.control.GoogleMapsDirections({
       opacity: 0.75,
       src: 'data/iconRed.png'
     }))
+  }),
+  'waypointIconStyle': new ol.style.Style({
+    image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+      anchor: [0.5, 46],
+      anchorXUnits: 'fraction',
+      anchorYUnits: 'pixels',
+      opacity: 0.75,
+      src: 'data/iconBW.png'
+    }))
   })
 });
 map.addControl(directions);
