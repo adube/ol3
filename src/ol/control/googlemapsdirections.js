@@ -344,10 +344,22 @@ ol.control.GoogleMapsDirections.prototype.route_ = function(start, end) {
 
   var reqWaypoints = [];
   var detours = this.detours_;
+  var waypointGeocoders = this.waypointGeocoders_;
+  var waypointLocation;
 
-  detours.forEach(function(waypoint) {
+  waypointGeocoders.forEach(function(waypointGeocoder) {
+    waypointLocation = waypointGeocoder.getLocation();
+    if (goog.isDefAndNotNull(waypointLocation)) {
+      reqWaypoints.push({
+        location: waypointLocation,
+        stopover: true
+      });
+    }
+  }, this);
+
+  detours.forEach(function(detour) {
     reqWaypoints.push({
-      location: waypoint,
+      location: detour,
       // TODO: this should be false, but when it is the route
       // doesn't get split...
       stopover: true
