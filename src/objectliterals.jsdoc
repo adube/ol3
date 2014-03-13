@@ -253,6 +253,8 @@
  *     results to a specific area
  * @property {ol.style.Style} iconStyle Styled used to symbolize the
  *     geocoded location found, generally one with an icon image.
+ * @property {boolean|undefined} removable Whether the control should show
+ *     a remove button or not.
  * @todo stability experimental
  */
 

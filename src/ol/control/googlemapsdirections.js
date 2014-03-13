@@ -131,10 +131,10 @@ ol.control.GoogleMapsDirections = function(opt_options) {
 
 
   /**
-   * @type {Array.<(ol.control.GoogleMapsGeocoder)>}
+   * @type {ol.Collection}
    * @private
    */
-  this.waypointGeocoders_ = [];
+  this.waypointGeocoders_ = new ol.Collection();
 
 
   /**
@@ -589,7 +589,8 @@ ol.control.GoogleMapsDirections.prototype.addWaypointGeocoder = function() {
     'enableReverseGeocoding': false,
     'target': container,
     'geocoderComponentRestrictions': this.geocoderComponentRestrictions_,
-    'iconStyle': this.startIconStyle_
+    'iconStyle': this.startIconStyle_,
+    'removable': true
   });
 
   map.addControl(geocoder);
@@ -600,6 +601,11 @@ ol.control.GoogleMapsDirections.prototype.addWaypointGeocoder = function() {
           ol.control.GoogleMapsGeocoder.Property.LOCATION
       ),
       this.handleLocationChanged_, false, this);
+
+  goog.events.listen(
+      geocoder,
+      ol.control.GoogleMapsGeocoder.EventType.REMOVE,
+      this.handleGeocoderRemove_, false, this);
 
   this.waypointGeocoders_.push(geocoder);
 
@@ -630,7 +636,7 @@ ol.control.GoogleMapsDirections.prototype.toggleGeocoderReverseGeocodings_ =
     // enable start, disable the others
     startGeocoder.enableReverseGeocoding();
     endGeocoder.disableReverseGeocoding();
-    goog.array.forEach(waypointGeocoders, function(waypointGeocoders) {
+    waypointGeocoders.forEach(function(waypointGeocoders) {
       waypointGeocoders.disableReverseGeocoding();
     }, this);
   } else if (!goog.isDefAndNotNull(endLocation)) {
@@ -638,7 +644,7 @@ ol.control.GoogleMapsDirections.prototype.toggleGeocoderReverseGeocodings_ =
     // all the others
     startGeocoder.disableReverseGeocoding();
 
-    goog.array.forEach(waypointGeocoders, function(waypointGeocoder) {
+    waypointGeocoders.forEach(function(waypointGeocoder) {
       waypointLocation = waypointGeocoder.getLocation();
       if (!goog.isDefAndNotNull(waypointLocation) &&
           !nullWaypointLocationFound) {
@@ -660,7 +666,7 @@ ol.control.GoogleMapsDirections.prototype.toggleGeocoderReverseGeocodings_ =
     // all the others
     startGeocoder.disableReverseGeocoding();
     endGeocoder.disableReverseGeocoding();
-    goog.array.forEach(waypointGeocoders, function(waypointGeocoder) {
+    waypointGeocoders.forEach(function(waypointGeocoder) {
       waypointLocation = waypointGeocoder.getLocation();
       if (!goog.isDefAndNotNull(waypointLocation) &&
           !nullWaypointLocationFound) {
@@ -694,7 +700,7 @@ ol.control.GoogleMapsDirections.prototype.canAddAnOtherWaypoint_ = function() {
   var waypoints = this.waypoints_;
   var waypointGeocoders = this.waypointGeocoders_;
 
-  var total = waypoints.length + waypointGeocoders.length;
+  var total = waypoints.length + waypointGeocoders.getLength();
 
   return (total < max);
 };
@@ -720,5 +726,58 @@ ol.control.GoogleMapsDirections.prototype.manageNumWaypoints_ = function() {
         this.dryModify_,
         ol.interaction.DryModify.EventType.DRAG,
         this.handleDryModifyDrag_, false, this);
+  }
+};
+
+
+/**
+ * @param {goog.events.Event} event Event.
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.handleGeocoderRemove_ = function(
+    event) {
+
+  var geocoder = event.target;
+  goog.asserts.assertInstanceof(geocoder, ol.control.GoogleMapsGeocoder);
+
+  var map = this.getMap();
+
+  map.removeControl(geocoder);
+
+  goog.events.unlisten(
+      geocoder,
+      ol.Object.getChangeEventType(
+          ol.control.GoogleMapsGeocoder.Property.LOCATION
+      ),
+      this.handleLocationChanged_, false, this);
+
+  goog.events.unlisten(
+      geocoder,
+      ol.control.GoogleMapsGeocoder.EventType.REMOVE,
+      this.handleGeocoderRemove_, false, this);
+
+  this.waypointGeocoders_.remove(geocoder);
+
+  this.manageNumWaypoints_();
+
+  this.toggleGeocoderReverseGeocodings_();
+
+  var startGeocoder = this.startGeocoder_;
+  var endGeocoder = this.endGeocoder_;
+
+  var startLocation = startGeocoder.getLocation();
+  var endLocation = endGeocoder.getLocation();
+
+  var geocoderLocation = geocoder.getLocation();
+
+  // trigger a new routing request only if the removed geocoder had a location
+  // and if there's a start and an end
+  if (goog.isDefAndNotNull(geocoderLocation) &&
+      goog.isDefAndNotNull(startLocation) &&
+      goog.isDefAndNotNull(endLocation)) {
+
+    this.clear_();
+
+    this.route_(startLocation, endLocation);
   }
 };

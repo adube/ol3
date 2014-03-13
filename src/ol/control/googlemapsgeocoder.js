@@ -7,6 +7,7 @@ goog.require('goog.events');
 goog.require('goog.events.EventType');
 goog.require('goog.events.KeyCodes');
 goog.require('goog.string');
+goog.require('goog.style');
 goog.require('ol.Feature');
 goog.require('ol.MapBrowserEvent.EventType');
 goog.require('ol.View2D');
@@ -28,46 +29,6 @@ goog.require('ol.style.Style');
  */
 ol.control.GoogleMapsGeocoder = function(opt_options) {
   var options = goog.isDef(opt_options) ? opt_options : {};
-
-  var className = 'ol-google-maps-geocoder';
-
-  var element = goog.dom.createDom(goog.dom.TagName.DIV, {
-    'class': className + ' ' + ol.css.CLASS_UNSELECTABLE
-  });
-
-  var input = goog.dom.createDom(goog.dom.TagName.INPUT, {
-    'class': ''
-  });
-
-  var searchButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
-    'class': ''
-  });
-  var searchButtonText = goog.dom.createTextNode('Search');
-  goog.dom.appendChild(searchButton, searchButtonText);
-
-  var clearButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
-    'class': ''
-  });
-  var clearButtonText = goog.dom.createTextNode('Clear');
-  goog.dom.appendChild(clearButton, clearButtonText);
-
-  goog.dom.appendChild(element, input);
-  goog.dom.appendChild(element, searchButton);
-  goog.dom.appendChild(element, clearButton);
-
-  goog.events.listen(searchButton, [
-    goog.events.EventType.TOUCHEND,
-    goog.events.EventType.CLICK
-  ], this.handleSearchButtonPress_, false, this);
-
-  goog.events.listen(clearButton, [
-    goog.events.EventType.TOUCHEND,
-    goog.events.EventType.CLICK
-  ], this.handleClearButtonPress_, false, this);
-
-  goog.events.listen(input, [
-    goog.events.EventType.KEYPRESS
-  ], this.handleInputKeypress_, false, this);
 
   /**
    * @type {boolean}
@@ -95,10 +56,70 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
   this.iconStyle_ = options.iconStyle;
 
   /**
+   * @type {boolean}
+   * @private
+   */
+  this.removable_ = goog.isDef(options.removable) ? options.removable : false;
+
+  /**
    * @type {?ol.layer.Vector}
    * @private
    */
   this.vectorLayer_ = null;
+
+
+  // === UI COMPONENTS ===
+  var className = 'ol-google-maps-geocoder';
+
+  var element = goog.dom.createDom(goog.dom.TagName.DIV, {
+    'class': className + ' ' + ol.css.CLASS_UNSELECTABLE
+  });
+
+  var input = goog.dom.createDom(goog.dom.TagName.INPUT, {
+    'class': ''
+  });
+
+  var searchButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
+    'class': ''
+  });
+  var searchButtonText = goog.dom.createTextNode('Search');
+  goog.dom.appendChild(searchButton, searchButtonText);
+
+  var clearButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
+    'class': ''
+  });
+  var clearButtonText = goog.dom.createTextNode('Clear');
+  goog.dom.appendChild(clearButton, clearButtonText);
+
+  var removeButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
+    'class': ''
+  });
+  var removeButtonText = goog.dom.createTextNode('Remove');
+  goog.dom.appendChild(removeButton, removeButtonText);
+
+  goog.dom.appendChild(element, input);
+  goog.dom.appendChild(element, searchButton);
+  goog.dom.appendChild(element, clearButton);
+  goog.dom.appendChild(element, removeButton);
+
+  goog.events.listen(searchButton, [
+    goog.events.EventType.TOUCHEND,
+    goog.events.EventType.CLICK
+  ], this.handleSearchButtonPress_, false, this);
+
+  goog.events.listen(clearButton, [
+    goog.events.EventType.TOUCHEND,
+    goog.events.EventType.CLICK
+  ], this.handleClearButtonPress_, false, this);
+
+  goog.events.listen(removeButton, [
+    goog.events.EventType.TOUCHEND,
+    goog.events.EventType.CLICK
+  ], this.handleRemoveButtonPress_, false, this);
+
+  goog.events.listen(input, [
+    goog.events.EventType.KEYPRESS
+  ], this.handleInputKeypress_, false, this);
 
   goog.base(this, {
     element: element,
@@ -117,8 +138,28 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
    */
   this.geocoder_ = new google.maps.Geocoder();
 
+  /**
+   * @private
+   * @type {Element}
+   */
+  this.removeButton_ = removeButton;
+
+  if (this.removable_) {
+    this.showRemoveButton();
+  } else {
+    this.hideRemoveButton();
+  }
+
 };
 goog.inherits(ol.control.GoogleMapsGeocoder, ol.control.Control);
+
+
+/**
+ * @enum {string}
+ */
+ol.control.GoogleMapsGeocoder.EventType = {
+  REMOVE: goog.events.getUniqueId('remove')
+};
 
 
 /**
@@ -176,7 +217,24 @@ goog.exportProperty(
  * @inheritDoc
  */
 ol.control.GoogleMapsGeocoder.prototype.setMap = function(map) {
+
+  if (goog.isNull(map)) {
+    var myMap = this.getMap();
+    if (!goog.isNull(myMap)) {
+
+      // disable reverse geocoding, if needed
+      if (this.enableReverseGeocoding_ == true) {
+        goog.events.unlisten(myMap, [
+          ol.MapBrowserEvent.EventType.SINGLECLICK
+        ], this.handleMapSingleClick_, false, this);
+      }
+
+      myMap.removeLayer(this.vectorLayer_);
+    }
+  }
+
   goog.base(this, 'setMap', map);
+
   if (!goog.isNull(map)) {
 
     // enable reverse geocoding, if needed
@@ -193,6 +251,7 @@ ol.control.GoogleMapsGeocoder.prototype.setMap = function(map) {
       })
     });
     map.addLayer(this.vectorLayer_);
+
   }
 };
 
@@ -419,6 +478,38 @@ ol.control.GoogleMapsGeocoder.prototype.handleClearButtonPress_ = function(
 
   browserEvent.preventDefault();
   this.clear_();
+};
+
+
+/**
+ * @param {goog.events.BrowserEvent} browserEvent Browser event.
+ * @private
+ */
+ol.control.GoogleMapsGeocoder.prototype.handleRemoveButtonPress_ = function(
+    browserEvent) {
+
+  browserEvent.preventDefault();
+
+  goog.events.dispatchEvent(this,
+      ol.control.GoogleMapsGeocoder.EventType.REMOVE);
+};
+
+
+/**
+ * Show the remove button
+ */
+ol.control.GoogleMapsGeocoder.prototype.showRemoveButton = function() {
+  this.removable_ = true;
+  goog.style.setStyle(this.removeButton_, 'display', '');
+};
+
+
+/**
+ * Hide the remove button
+ */
+ol.control.GoogleMapsGeocoder.prototype.hideRemoveButton = function() {
+  this.removable_ = false;
+  goog.style.setStyle(this.removeButton_, 'display', 'none');
 };
 
 
