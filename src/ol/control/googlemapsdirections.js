@@ -286,7 +286,7 @@ ol.control.GoogleMapsDirections.prototype.setMap = function(map) {
     map.addLayer(this.vectorLayer_);
     map.addControl(this.startGeocoder_);
     map.addControl(this.endGeocoder_);
-    map.addInteraction(this.dryModify_);
+    this.manageNumWaypoints_();
   }
 };
 
@@ -439,12 +439,14 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
  * @private
  */
 ol.control.GoogleMapsDirections.prototype.clear_ = function() {
+
+  var routeFeatures = this.routeFeatures_;
+  routeFeatures.clear();
+
   var vectorSource = this.vectorLayer_.getSource();
   goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
   vectorSource.clear();
 
-  var routeFeatures = this.routeFeatures_;
-  routeFeatures.clear();
 };
 
 
@@ -563,10 +565,10 @@ ol.control.GoogleMapsDirections.prototype.createWaypoint_ = function(
 
   waypoints.push(latLng);
 
-  this.manageNumWaypoints_();
-
   this.clear_();
   this.route_(null, null);
+
+  this.manageNumWaypoints_();
 };
 
 
@@ -706,12 +708,17 @@ ol.control.GoogleMapsDirections.prototype.manageNumWaypoints_ = function() {
   var dryModify = this.dryModify_;
 
   if (this.canAddAnOtherWaypoint_()) {
+    goog.events.listen(
+        this.dryModify_,
+        ol.interaction.DryModify.EventType.DRAG,
+        this.handleDryModifyDrag_, false, this);
     if (!goog.isDefAndNotNull(dryModify.getMap())) {
       map.addInteraction(dryModify);
     }
   } else {
-    if (goog.isDefAndNotNull(dryModify.getMap())) {
-      map.removeInteraction(dryModify);
-    }
+    goog.events.unlisten(
+        this.dryModify_,
+        ol.interaction.DryModify.EventType.DRAG,
+        this.handleDryModifyDrag_, false, this);
   }
 };
