@@ -238,8 +238,10 @@
  * @property {number|undefined} pixelBuffer Buffer size in pixels to apply
  *     to the extent of the route or single geolocation when recentering the
  *     map view to it.
- * @property {number|undefined} newWaypointDelay The number of milliseconds
- *     to wait before launching a route request that includes a new waypoint.
+ * @property {number|undefined} routeDelayOnWaypointDrag The number of
+ *     milliseconds to wait before launching a route request that includes
+ *     waypoint that has been dragged, whether to add a new detour or to
+ *     modify an existing waypoint of any type.
  * @property {number|undefined} maxWaypoints The maximum allowed waypoints.
  * @todo stability experimental
  */

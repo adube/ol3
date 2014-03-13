@@ -35,9 +35,10 @@ ol.control.GOOGLEMAPSDIRECTIONS_PIXEL_BUFFER = 30;
 
 /**
  * @define {number} Default number of milliseconds to wait before launching
- * a route request that includes a new waypoint.
+ * a route request that includes waypoint that has been dragged, whether
+ * to add a new detour or to modify an existing waypoint of any type.
  */
-ol.control.GOOGLEMAPSDIRECTIONS_NEW_WAYPOINT_DELAY = 300;
+ol.control.GOOGLEMAPSDIRECTIONS_ROUTE_DELAY_ON_WAYPOINT_DRAG = 300;
 
 
 /**
@@ -188,9 +189,10 @@ ol.control.GoogleMapsDirections = function(opt_options) {
    * @type {number}
    * @private
    */
-  this.newWaypointDelay_ = goog.isDef(options.newWaypointDelay) ?
-      options.newWaypointDelay :
-      ol.control.GOOGLEMAPSDIRECTIONS_NEW_WAYPOINT_DELAY;
+  this.routeDelayOnWaypointDrag_ =
+      goog.isDef(options.routeDelayOnWaypointDrag) ?
+      options.routeDelayOnWaypointDrag :
+      ol.control.GOOGLEMAPSDIRECTIONS_ROUTE_DELAY_ON_WAYPOINT_DRAG;
 
 
   /**
@@ -529,7 +531,7 @@ ol.control.GoogleMapsDirections.prototype.handleDryModifyDrag_ = function(evt) {
 
   this.newWaypointTimerId_ = window.setTimeout(function() {
     me.createWaypoint_(coordinate);
-  }, this.newWaypointDelay_);
+  }, this.routeDelayOnWaypointDrag_);
 
 };
 
