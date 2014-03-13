@@ -1,0 +1,28 @@
+{
+  "define": {
+    "ol.ENABLE_DOM": false,
+    "ol.ENABLE_WEBGL": false,
+    "ol.ENABLE_PROJ4JS" : false,
+    "ol.ENABLE_VECTOR": false,
+    "goog.dom.ASSUME_STANDARDS_MODE": true,
+    "goog.DEBUG": false
+  },
+  "inherits": "base.json",
+  "inputs": ["cadus-exports.js"],
+  "externs": [
+    "//json.js",
+    "../build/src/external/externs/types.js",
+    "../externs/bingmaps.js",
+    "../externs/closure-compiler.js",
+    "../externs/geojson.js",
+    "../externs/google_maps_api_v3_15.js",
+    "../externs/oli.js",
+    "../externs/proj4js.js",
+    "../externs/topojson.js",
+    "../externs/tilejson.js",
+    "../externs/vbarray.js"
+  ],
+  "paths": [
+    "../src"
+  ]
+}
