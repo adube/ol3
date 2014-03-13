@@ -124,11 +124,11 @@ ol.control.GoogleMapsDirections = function(opt_options) {
 
 
   /**
-   * User provided style for waypoint icons.
+   * User provided style for detour icons.
    * @type {Array.<(null|ol.style.Style)>|null|ol.feature.FeatureStyleFunction|ol.style.Style}
    * @private
    */
-  this.waypointIconStyle_ = options.waypointIconStyle;
+  this.detourIconStyle_ = options.detourIconStyle;
 
 
   /**
@@ -175,14 +175,14 @@ ol.control.GoogleMapsDirections = function(opt_options) {
    * @type {?number}
    * @private
    */
-  this.newWaypointTimerId_ = null;
+  this.newDetourTimerId_ = null;
 
 
   /**
-   * @type {Array}
+   * @type {ol.Collection}
    * @private
    */
-  this.waypoints_ = [];
+  this.detours_ = new ol.Collection();
 
 
   /**
@@ -343,11 +343,13 @@ ol.control.GoogleMapsDirections.prototype.route_ = function(start, end) {
   }
 
   var reqWaypoints = [];
-  var waypoints = this.waypoints_;
+  var detours = this.detours_;
 
-  goog.array.forEach(waypoints, function(waypoint) {
+  detours.forEach(function(waypoint) {
     reqWaypoints.push({
       location: waypoint,
+      // TODO: this should be false, but when it is the route
+      // doesn't get split...
       stopover: true
     });
   }, this);
@@ -421,7 +423,7 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
             [lng, lat], 'EPSG:4326', projection.getCode());
 
         var feature = new ol.Feature(new ol.geom.Point(transformedCoordinate));
-        feature.setStyle(this.waypointIconStyle_);
+        feature.setStyle(this.detourIconStyle_);
 
         features.push(feature);
       }, this);
@@ -525,12 +527,12 @@ ol.control.GoogleMapsDirections.prototype.handleDryModifyDrag_ = function(evt) {
   var dryModify = evt.target;
   var coordinate = dryModify.coordinate_;
 
-  if (goog.isDefAndNotNull(this.newWaypointTimerId_)) {
-    window.clearTimeout(this.newWaypointTimerId_);
+  if (goog.isDefAndNotNull(this.newDetourTimerId_)) {
+    window.clearTimeout(this.newDetourTimerId_);
   }
 
-  this.newWaypointTimerId_ = window.setTimeout(function() {
-    me.createWaypoint_(coordinate);
+  this.newDetourTimerId_ = window.setTimeout(function() {
+    me.createDetour_(coordinate);
   }, this.routeDelayOnWaypointDrag_);
 
 };
@@ -540,10 +542,10 @@ ol.control.GoogleMapsDirections.prototype.handleDryModifyDrag_ = function(evt) {
  * @param {ol.Coordinate} coordinate
  * @private
  */
-ol.control.GoogleMapsDirections.prototype.createWaypoint_ = function(
+ol.control.GoogleMapsDirections.prototype.createDetour_ = function(
     coordinate) {
 
-  var waypoints = this.waypoints_;
+  var detours = this.detours_;
 
   if (!this.canAddAnOtherWaypoint_()) {
     // todo - throw error
@@ -565,7 +567,7 @@ ol.control.GoogleMapsDirections.prototype.createWaypoint_ = function(
   var latLng = new google.maps.LatLng(
       transformedCoordinate[1], transformedCoordinate[0]);
 
-  waypoints.push(latLng);
+  detours.push(latLng);
 
   this.clear_();
   this.route_(null, null);
@@ -699,10 +701,10 @@ ol.control.GoogleMapsDirections.prototype.handleAddWPGeocoderButtonPress_ =
  */
 ol.control.GoogleMapsDirections.prototype.canAddAnOtherWaypoint_ = function() {
   var max = this.maxWaypoints_;
-  var waypoints = this.waypoints_;
+  var detours = this.detours_;
   var waypointGeocoders = this.waypointGeocoders_;
 
-  var total = waypoints.length + waypointGeocoders.getLength();
+  var total = detours.getLength() + waypointGeocoders.getLength();
 
   return (total < max);
 };

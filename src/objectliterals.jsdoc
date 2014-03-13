@@ -233,7 +233,7 @@
  *     geocoded end location found
  * @property {Array.<(null|ol.style.Style)>|null|ol.feature.FeatureStyleFunction|ol.style.Style} lineStyle
  *     Style used to symbolize the route
- * @property {Array.<(null|ol.style.Style)>|null|ol.feature.FeatureStyleFunction|ol.style.Style} waypointIconStyle
+ * @property {Array.<(null|ol.style.Style)>|null|ol.feature.FeatureStyleFunction|ol.style.Style} detourIconStyle
  *     Style used to symbolize the waypoint icons.
  * @property {number|undefined} pixelBuffer Buffer size in pixels to apply
  *     to the extent of the route or single geolocation when recentering the

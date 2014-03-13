@@ -102,7 +102,7 @@ var directions = new ol.control.GoogleMapsDirections({
       src: 'data/iconRed.png'
     }))
   }),
-  'waypointIconStyle': new ol.style.Style({
+  'detourIconStyle': new ol.style.Style({
     image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
       anchor: [0.5, 46],
       anchorXUnits: 'fraction',
