@@ -28,7 +28,8 @@ goog.inherits(ol.interaction.DryModify, ol.interaction.Modify);
  * @enum {string}
  */
 ol.interaction.DryModify.EventType = {
-  DRAG: goog.events.getUniqueId('drag')
+  DRAG: goog.events.getUniqueId('drag'),
+  DRAGEND: goog.events.getUniqueId('dragend')
 };
 
 
@@ -70,6 +71,7 @@ ol.interaction.DryModify.prototype.handleDrag = function(evt) {
  */
 ol.interaction.DryModify.prototype.handleDragEnd = function(evt) {
   this.removeVertexFeature_();
+  goog.events.dispatchEvent(this, ol.interaction.DryModify.EventType.DRAGEND);
 };
 
 

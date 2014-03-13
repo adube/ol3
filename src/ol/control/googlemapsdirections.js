@@ -221,6 +221,14 @@ ol.control.GoogleMapsDirections = function(opt_options) {
     ]
   });
 
+
+  /**
+   * @type {boolean}
+   * @private
+   */
+  this.createNewDetour_ = true;
+
+
   goog.base(this, {
     element: element,
     target: options.target
@@ -270,11 +278,6 @@ ol.control.GoogleMapsDirections = function(opt_options) {
           ol.control.GoogleMapsGeocoder.Property.LOCATION
       ),
       this.handleLocationChanged_, false, this);
-
-  goog.events.listen(
-      this.dryModify_,
-      ol.interaction.DryModify.EventType.DRAG,
-      this.handleDryModifyDrag_, false, this);
 };
 goog.inherits(ol.control.GoogleMapsDirections, ol.control.Control);
 
@@ -538,9 +541,19 @@ ol.control.GoogleMapsDirections.prototype.handleDryModifyDrag_ = function(evt) {
   }
 
   this.newDetourTimerId_ = window.setTimeout(function() {
-    me.createDetour_(coordinate);
+    me.createOrUpdateDetour_(coordinate);
   }, this.routeDelayOnWaypointDrag_);
 
+};
+
+
+/**
+ * @param {Object|goog.events.Event|null|string} evt
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.handleDryModifyDragEnd_ = function(
+    evt) {
+  this.createNewDetour_ = true;
 };
 
 
@@ -548,10 +561,11 @@ ol.control.GoogleMapsDirections.prototype.handleDryModifyDrag_ = function(evt) {
  * @param {ol.Coordinate} coordinate
  * @private
  */
-ol.control.GoogleMapsDirections.prototype.createDetour_ = function(
+ol.control.GoogleMapsDirections.prototype.createOrUpdateDetour_ = function(
     coordinate) {
 
   var detours = this.detours_;
+  var numDetours = detours.getLength();
 
   if (!this.canAddAnOtherWaypoint_()) {
     // todo - throw error
@@ -572,6 +586,12 @@ ol.control.GoogleMapsDirections.prototype.createDetour_ = function(
 
   var latLng = new google.maps.LatLng(
       transformedCoordinate[1], transformedCoordinate[0]);
+
+  if (this.createNewDetour_ == true) {
+    this.createNewDetour_ = false;
+  } else {
+    detours.removeAt(numDetours - 1);
+  }
 
   detours.push(latLng);
 
@@ -728,6 +748,11 @@ ol.control.GoogleMapsDirections.prototype.manageNumWaypoints_ = function() {
         this.dryModify_,
         ol.interaction.DryModify.EventType.DRAG,
         this.handleDryModifyDrag_, false, this);
+    goog.events.listen(
+        this.dryModify_,
+        ol.interaction.DryModify.EventType.DRAGEND,
+        this.handleDryModifyDragEnd_, false, this);
+
     if (!goog.isDefAndNotNull(dryModify.getMap())) {
       map.addInteraction(dryModify);
     }
@@ -736,6 +761,10 @@ ol.control.GoogleMapsDirections.prototype.manageNumWaypoints_ = function() {
         this.dryModify_,
         ol.interaction.DryModify.EventType.DRAG,
         this.handleDryModifyDrag_, false, this);
+    goog.events.unlisten(
+        this.dryModify_,
+        ol.interaction.DryModify.EventType.DRAGEND,
+        this.handleDryModifyDragEnd_, false, this);
   }
 };
 
