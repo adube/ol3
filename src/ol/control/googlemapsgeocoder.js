@@ -517,12 +517,16 @@ ol.control.GoogleMapsGeocoder.prototype.hideRemoveButton = function() {
  * @private
  */
 ol.control.GoogleMapsGeocoder.prototype.clear_ = function() {
-  var vectorSource = this.vectorLayer_.getSource();
-  goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
-  vectorSource.clear();
+  var location = this.getLocation();
 
-  var input = this.input_;
-  input.value = '';
+  if (goog.isDefAndNotNull(location)) {
+    var vectorSource = this.vectorLayer_.getSource();
+    goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
+    vectorSource.clear();
 
-  this.setValues({'location': null});
+    var input = this.input_;
+    input.value = '';
+
+    this.setValues({'location': null});
+  }
 };
