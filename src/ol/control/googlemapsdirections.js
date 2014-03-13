@@ -360,9 +360,7 @@ ol.control.GoogleMapsDirections.prototype.route_ = function(start, end) {
   detours.forEach(function(detour) {
     reqWaypoints.push({
       location: detour,
-      // TODO: this should be false, but when it is the route
-      // doesn't get split...
-      stopover: true
+      stopover: false
     });
   }, this);
 
@@ -406,6 +404,7 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
   var coordinates;
 
   var routeFeatures = this.routeFeatures_;
+  var detours = this.detours_;
 
   if (status == google.maps.DirectionsStatus.OK) {
     goog.array.forEach(response.routes, function(route) {
@@ -421,24 +420,19 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
       feature.setStyle(this.lineStyle_);
       features.push(feature);
       routeFeatures.push(feature);
+    }, this);
 
-      // for each 'legs' except the last, pick the destination as waypoint icon
-      goog.array.forEach(route.legs, function(leg, index, legs) {
-        // break on last leg
-        if (index == legs.length - 1) {
-          return true;
-        }
+    // add detour features
+    detours.forEach(function(detour) {
+      lng = detour.lng();
+      lat = detour.lat();
+      transformedCoordinate = ol.proj.transform(
+          [lng, lat], 'EPSG:4326', projection.getCode());
 
-        lng = leg.end_location.lng();
-        lat = leg.end_location.lat();
-        transformedCoordinate = ol.proj.transform(
-            [lng, lat], 'EPSG:4326', projection.getCode());
+      var feature = new ol.Feature(new ol.geom.Point(transformedCoordinate));
+      feature.setStyle(this.detourIconStyle_);
 
-        var feature = new ol.Feature(new ol.geom.Point(transformedCoordinate));
-        feature.setStyle(this.detourIconStyle_);
-
-        features.push(feature);
-      }, this);
+      features.push(feature);
     }, this);
 
     // fit extent
