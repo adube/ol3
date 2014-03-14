@@ -8,10 +8,13 @@ goog.require('ol.interaction.DragPan');
 goog.require('ol.layer.Vector');
 goog.require('ol.proj');
 goog.require('ol.source.GeoJSON');
+goog.require('ol.style.Circle');
 goog.require('ol.style.Fill');
 goog.require('ol.style.Icon');
 goog.require('ol.style.Stroke');
 goog.require('ol.style.Style');
+goog.require('ol.style.Text');
+
 
 
 var gmap = new google.maps.Map(document.getElementById('gmap'), {
@@ -74,6 +77,29 @@ view.setZoom(14);
 olMapDiv.parentNode.removeChild(olMapDiv);
 gmap.controls[google.maps.ControlPosition.TOP_LEFT].push(olMapDiv);
 
+var createDetourIconStyle = function() {
+  return function(resolution) {
+    var style = new ol.style.Style({
+      image: new ol.style.Circle({
+        radius: 5,
+        fill: new ol.style.Fill({color: 'white'}),
+        stroke: new ol.style.Stroke({color: 'black', width: 2})
+      }),
+      text: new ol.style.Text({
+        fill: new ol.style.Fill({color: 'red'}),
+        font: 'bold 14px Arial',
+        offsetX: 8,
+        offsetY: -3,
+        stroke: new ol.style.Stroke({color: 'black', width: 2}),
+        text: this.getProperties().myLabel,
+        textAlign: 'left',
+        textBaseline: 'bottom'
+      })
+    });
+    return [style];
+  };
+};
+
 var directions = new ol.control.GoogleMapsDirections({
   'gmap': gmap,
   'target': 'gmaps-directions',
@@ -102,15 +128,8 @@ var directions = new ol.control.GoogleMapsDirections({
       src: 'data/iconRed.png'
     }))
   }),
-  'detourIconStyle': new ol.style.Style({
-    image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
-      anchor: [0.5, 46],
-      anchorXUnits: 'fraction',
-      anchorYUnits: 'pixels',
-      opacity: 0.75,
-      src: 'data/iconBW.png'
-    }))
-  })
+  'detourLabelProperty': 'myLabel',
+  'detourIconStyle': createDetourIconStyle()
 });
 map.addControl(directions);
 

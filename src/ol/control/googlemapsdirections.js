@@ -8,6 +8,7 @@ goog.require('goog.events');
 goog.require('goog.events.EventType');
 goog.require('ol.Collection');
 goog.require('ol.Feature');
+goog.require('ol.MapBrowserEvent.EventType');
 goog.require('ol.Object');
 goog.require('ol.View2D');
 goog.require('ol.control.Control');
@@ -46,6 +47,12 @@ ol.control.GOOGLEMAPSDIRECTIONS_ROUTE_DELAY_ON_WAYPOINT_DRAG = 300;
  * customers are allowed 23 waypoints.
  */
 ol.control.GOOGLEMAPSDIRECTIONS_MAX_WAYPOINTS = 8;
+
+
+/**
+ * @define {string} Default property name to use as label for detour features
+ */
+ol.control.GOOGLEMAPSDIRECTIONS_DETOUR_LABEL_PROPERTY = 'label';
 
 
 
@@ -186,6 +193,13 @@ ol.control.GoogleMapsDirections = function(opt_options) {
 
 
   /**
+   * @type {ol.Collection}
+   * @private
+   */
+  this.detourFeatures_ = new ol.Collection();
+
+
+  /**
    * @type {number}
    * @private
    */
@@ -227,6 +241,22 @@ ol.control.GoogleMapsDirections = function(opt_options) {
    * @private
    */
   this.createNewDetour_ = true;
+
+
+  /**
+   * @type {?ol.Feature}
+   * @private
+   */
+  this.lastDetourFeatureOverPointer_ = null;
+
+
+  /**
+   * @type {string}
+   * @private
+   */
+  this.detourLabelProperty_ = goog.isDef(options.detourLabelProperty) ?
+      options.detourLabelProperty :
+      ol.control.GOOGLEMAPSDIRECTIONS_DETOUR_LABEL_PROPERTY;
 
 
   goog.base(this, {
@@ -292,6 +322,11 @@ ol.control.GoogleMapsDirections.prototype.setMap = function(map) {
     map.addControl(this.startGeocoder_);
     map.addControl(this.endGeocoder_);
     this.manageNumWaypoints_();
+
+    goog.events.listen(
+        map,
+        ol.MapBrowserEvent.EventType.POINTERMOVE,
+        this.handleMapPointerMove_, false, this);
   }
 };
 
@@ -408,6 +443,7 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
 
   var routeFeatures = this.routeFeatures_;
   var detours = this.detours_;
+  var detourFeatures = this.detourFeatures_;
 
   if (status == google.maps.DirectionsStatus.OK) {
     goog.array.forEach(response.routes, function(route) {
@@ -426,16 +462,20 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
     }, this);
 
     // add detour features
+    detourFeatures.clear();
     detours.forEach(function(detour) {
       lng = detour.lng();
       lat = detour.lat();
       transformedCoordinate = ol.proj.transform(
           [lng, lat], 'EPSG:4326', projection.getCode());
 
-      var feature = new ol.Feature(new ol.geom.Point(transformedCoordinate));
+      var feature = new ol.Feature({
+        geometry: new ol.geom.Point(transformedCoordinate)
+      });
       feature.setStyle(this.detourIconStyle_);
 
       features.push(feature);
+      detourFeatures.push(feature);
     }, this);
 
     // fit extent
@@ -818,5 +858,57 @@ ol.control.GoogleMapsDirections.prototype.handleGeocoderRemove_ = function(
     this.clear_();
 
     this.route_(startLocation, endLocation);
+  }
+};
+
+
+/**
+ * @param {goog.events.Event} event Event.
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.handleMapPointerMove_ = function(
+    event) {
+
+  var map = this.getMap();
+  var detourFeatures = this.detourFeatures_;
+
+  if (detourFeatures.getLength() > 0) {
+    var pixel = map.getEventPixel(event.originalEvent);
+    this.toggleDetourFeatureRemoveSymbol_(pixel);
+  }
+};
+
+
+/**
+ * @param {ol.Pixel} pixel Pixel.
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.toggleDetourFeatureRemoveSymbol_ =
+    function(pixel) {
+
+  var map = this.getMap();
+  var labelProperty = this.detourLabelProperty_;
+  var detourFeaturesArray = this.detourFeatures_.getArray();
+  var feature = map.forEachFeatureAtPixel(
+      pixel, function(feature, layer) {
+        if (detourFeaturesArray.indexOf(feature) != -1) {
+          return feature;
+        }
+      });
+
+  var lastFeature = this.lastDetourFeatureOverPointer_;
+
+  // clear last label, if required
+  if (goog.isDefAndNotNull(lastFeature) &&
+      (!goog.isDefAndNotNull(feature) || feature != lastFeature)) {
+    lastFeature.set(labelProperty, '');
+    this.lastDetourFeatureOverPointer_ = null;
+    //lastFeature = null;
+  }
+
+  // set new label, if required
+  if (goog.isDefAndNotNull(feature) && !goog.isDefAndNotNull(lastFeature)) {
+    feature.set(labelProperty, 'X');
+    this.lastDetourFeatureOverPointer_ = feature;
   }
 };
