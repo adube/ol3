@@ -449,11 +449,9 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
 
   var lat, location, lng, transformedCoordinate;
   var feature;
-  var features = [];
   var coordinates;
 
   var routeFeatures = this.routeFeatures_;
-  var detourFeatures = this.detourFeatures_;
 
   if (status == google.maps.DirectionsStatus.OK) {
     goog.array.forEach(response.routes, function(route) {
@@ -467,22 +465,44 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
       }, this);
       feature = new ol.Feature(new ol.geom.LineString(coordinates));
       feature.setStyle(this.lineStyle_);
-      features.push(feature);
       routeFeatures.push(feature);
     }, this);
 
-    // add detour features
-    detourFeatures.forEach(function(feature) {
-      features.push(feature);
-    }, this);
+    // draw
+    this.drawRoute_();
 
     // fit extent
     this.fitViewExtentToRoute_();
-
-    // add features to layer
-    vectorSource.addFeatures(features);
   }
 
+};
+
+
+/**
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.drawRoute_ = function() {
+
+  var vectorSource = this.vectorLayer_.getSource();
+  goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
+
+  var features = [];
+
+  var routeFeatures = this.routeFeatures_;
+  var detourFeatures = this.detourFeatures_;
+
+  // add route features
+  routeFeatures.forEach(function(feature) {
+    features.push(feature);
+  }, this);
+
+  // add detour features
+  detourFeatures.forEach(function(feature) {
+    features.push(feature);
+  }, this);
+
+  // add features to layer
+  vectorSource.addFeatures(features);
 };
 
 
@@ -938,11 +958,4 @@ ol.control.GoogleMapsDirections.prototype.removeDetourFeature_ =
     window.console.log('delete !!');
   }
 
-};
-
-
-/**
- * @private
- */
-ol.control.GoogleMapsDirections.prototype.drawRoute_ = function() {
 };
