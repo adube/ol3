@@ -189,13 +189,6 @@ ol.control.GoogleMapsDirections = function(opt_options) {
    * @type {ol.Collection}
    * @private
    */
-  this.detours_ = new ol.Collection();
-
-
-  /**
-   * @type {ol.Collection}
-   * @private
-   */
   this.detourFeatures_ = new ol.Collection();
 
 
@@ -385,8 +378,18 @@ ol.control.GoogleMapsDirections.prototype.route_ = function(start, end) {
     return;
   }
 
+  var map = this.getMap();
+
+  var view = map.getView();
+  goog.asserts.assert(goog.isDef(view));
+  var view2D = view.getView2D();
+  goog.asserts.assertInstanceof(view2D, ol.View2D);
+
+  var projection = view2D.getProjection();
+
   var reqWaypoints = [];
-  var detours = this.detours_;
+  var detourFeatures = this.detourFeatures_;
+  var detourLocation;
   var waypointGeocoders = this.waypointGeocoders_;
   var waypointLocation;
 
@@ -400,9 +403,12 @@ ol.control.GoogleMapsDirections.prototype.route_ = function(start, end) {
     }
   }, this);
 
-  detours.forEach(function(detour) {
+  detourFeatures.forEach(function(feature) {
+    detourLocation = ol.proj.transform(
+        feature.getGeometry().getCoordinates(),
+        projection.getCode(), 'EPSG:4326');
     reqWaypoints.push({
-      location: detour,
+      location: new google.maps.LatLng(detourLocation[1], detourLocation[0]),
       stopover: false
     });
   }, this);
@@ -447,7 +453,6 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
   var coordinates;
 
   var routeFeatures = this.routeFeatures_;
-  var detours = this.detours_;
   var detourFeatures = this.detourFeatures_;
 
   if (status == google.maps.DirectionsStatus.OK) {
@@ -467,20 +472,8 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
     }, this);
 
     // add detour features
-    detourFeatures.clear();
-    detours.forEach(function(detour) {
-      lng = detour.lng();
-      lat = detour.lat();
-      transformedCoordinate = ol.proj.transform(
-          [lng, lat], 'EPSG:4326', projection.getCode());
-
-      var feature = new ol.Feature({
-        geometry: new ol.geom.Point(transformedCoordinate)
-      });
-      feature.setStyle(this.detourIconStyle_);
-
+    detourFeatures.forEach(function(feature) {
       features.push(feature);
-      detourFeatures.push(feature);
     }, this);
 
     // fit extent
@@ -609,36 +602,26 @@ ol.control.GoogleMapsDirections.prototype.handleDryModifyDragEnd_ = function(
 ol.control.GoogleMapsDirections.prototype.createOrUpdateDetour_ = function(
     coordinate) {
 
-  var detours = this.detours_;
-  var numDetours = detours.getLength();
+  var detourFeatures = this.detourFeatures_;
+  var numDetourFeatures = detourFeatures.getLength();
 
   if (!this.canAddAnOtherWaypoint_()) {
     // todo - throw error
     return;
   }
 
-  var map = this.getMap();
-
-  var view = map.getView();
-  goog.asserts.assert(goog.isDef(view));
-  var view2D = view.getView2D();
-  goog.asserts.assertInstanceof(view2D, ol.View2D);
-
-  var projection = view2D.getProjection();
-
-  var transformedCoordinate = ol.proj.transform(
-      coordinate, projection.getCode(), 'EPSG:4326');
-
-  var latLng = new google.maps.LatLng(
-      transformedCoordinate[1], transformedCoordinate[0]);
+  var feature = new ol.Feature({
+    geometry: new ol.geom.Point(coordinate)
+  });
+  feature.setStyle(this.detourIconStyle_);
 
   if (this.createNewDetour_ == true) {
     this.createNewDetour_ = false;
   } else {
-    detours.removeAt(numDetours - 1);
+    detourFeatures.removeAt(numDetourFeatures - 1);
   }
 
-  detours.push(latLng);
+  detourFeatures.push(feature);
 
   this.clear_();
   this.route_(null, null);
@@ -772,10 +755,10 @@ ol.control.GoogleMapsDirections.prototype.handleAddWPGeocoderButtonPress_ =
  */
 ol.control.GoogleMapsDirections.prototype.canAddAnOtherWaypoint_ = function() {
   var max = this.maxWaypoints_;
-  var detours = this.detours_;
+  var detourFeatures = this.detourFeatures_;
   var waypointGeocoders = this.waypointGeocoders_;
 
-  var total = detours.getLength() + waypointGeocoders.getLength();
+  var total = detourFeatures.getLength() + waypointGeocoders.getLength();
 
   return (total < max);
 };
