@@ -48,7 +48,7 @@ goog.exportProperty(
 /**
  * @inheritDoc
  */
-ol.interaction.DryModify.prototype.handleDragStart = function(evt) {
+ol.interaction.DryModify.prototype.handlePointerDown = function(evt) {
   return this.isModifiable();
 };
 
@@ -56,7 +56,7 @@ ol.interaction.DryModify.prototype.handleDragStart = function(evt) {
 /**
  * @inheritDoc
  */
-ol.interaction.DryModify.prototype.handleDrag = function(evt) {
+ol.interaction.DryModify.prototype.handlePointerDrag = function(evt) {
   var vertex = evt.coordinate;
   this.createOrUpdateVertexFeature(vertex);
 
@@ -69,9 +69,10 @@ ol.interaction.DryModify.prototype.handleDrag = function(evt) {
 /**
  * @inheritDoc
  */
-ol.interaction.DryModify.prototype.handleDragEnd = function(evt) {
+ol.interaction.DryModify.prototype.handlePointerUp = function(evt) {
   this.removeVertexFeature_();
   goog.events.dispatchEvent(this, ol.interaction.DryModify.EventType.DRAGEND);
+  return false;
 };
 
 
