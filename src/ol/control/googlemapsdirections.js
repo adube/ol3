@@ -953,9 +953,13 @@ ol.control.GoogleMapsDirections.prototype.removeDetourFeature_ =
     function(pixel) {
 
   var feature = this.getDetourFeatureAtPixel_(pixel);
+  var detourFeatures = this.detourFeatures_;
 
   if (goog.isDefAndNotNull(feature)) {
-    window.console.log('delete !!');
+    detourFeatures.remove(feature);
+    this.lastDetourFeatureOverPointer_ = null;
+    this.clear_();
+    this.route_(null, null);
   }
 
 };
