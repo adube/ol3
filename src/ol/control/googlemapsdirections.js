@@ -327,6 +327,11 @@ ol.control.GoogleMapsDirections.prototype.setMap = function(map) {
         map,
         ol.MapBrowserEvent.EventType.POINTERMOVE,
         this.handleMapPointerMove_, false, this);
+
+    goog.events.listen(
+        map,
+        ol.MapBrowserEvent.EventType.SINGLECLICK,
+        this.handleMapSingleClick_, false, this);
   }
 };
 
@@ -886,8 +891,34 @@ ol.control.GoogleMapsDirections.prototype.handleMapPointerMove_ = function(
 ol.control.GoogleMapsDirections.prototype.toggleDetourFeatureRemoveSymbol_ =
     function(pixel) {
 
-  var map = this.getMap();
   var labelProperty = this.detourLabelProperty_;
+  var feature = this.getDetourFeatureAtPixel_(pixel);
+  var lastFeature = this.lastDetourFeatureOverPointer_;
+
+  // clear last label, if required
+  if (goog.isDefAndNotNull(lastFeature) &&
+      (!goog.isDefAndNotNull(feature) || feature != lastFeature)) {
+    lastFeature.set(labelProperty, '');
+    this.lastDetourFeatureOverPointer_ = null;
+  }
+
+  // set new label, if required
+  if (goog.isDefAndNotNull(feature) && !goog.isDefAndNotNull(lastFeature)) {
+    feature.set(labelProperty, 'X');
+    this.lastDetourFeatureOverPointer_ = feature;
+  }
+};
+
+
+/**
+ * @param {ol.Pixel} pixel Pixel.
+ * @return {?ol.Feature}
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.getDetourFeatureAtPixel_ = function(
+    pixel) {
+
+  var map = this.getMap();
   var detourFeaturesArray = this.detourFeatures_.getArray();
   var feature = map.forEachFeatureAtPixel(
       pixel, function(feature, layer) {
@@ -896,19 +927,39 @@ ol.control.GoogleMapsDirections.prototype.toggleDetourFeatureRemoveSymbol_ =
         }
       });
 
-  var lastFeature = this.lastDetourFeatureOverPointer_;
+  return feature;
+};
 
-  // clear last label, if required
-  if (goog.isDefAndNotNull(lastFeature) &&
-      (!goog.isDefAndNotNull(feature) || feature != lastFeature)) {
-    lastFeature.set(labelProperty, '');
-    this.lastDetourFeatureOverPointer_ = null;
-    //lastFeature = null;
+
+/**
+ * @param {goog.events.Event} event Event.
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.handleMapSingleClick_ = function(
+    event) {
+
+  this.removeDetourFeature_(event.pixel);
+};
+
+
+/**
+ * @param {ol.Pixel} pixel Pixel.
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.removeDetourFeature_ =
+    function(pixel) {
+
+  var feature = this.getDetourFeatureAtPixel_(pixel);
+
+  if (goog.isDefAndNotNull(feature)) {
+    window.console.log('delete !!');
   }
 
-  // set new label, if required
-  if (goog.isDefAndNotNull(feature) && !goog.isDefAndNotNull(lastFeature)) {
-    feature.set(labelProperty, 'X');
-    this.lastDetourFeatureOverPointer_ = feature;
-  }
+};
+
+
+/**
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.drawRoute_ = function() {
 };
