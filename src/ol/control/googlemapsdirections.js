@@ -959,6 +959,7 @@ ol.control.GoogleMapsDirections.prototype.removeDetourFeature_ =
     detourFeatures.remove(feature);
     this.lastDetourFeatureOverPointer_ = null;
     this.clear_();
+    this.toggleGeocoderReverseGeocodings_();
     this.route_(null, null);
   }
 
