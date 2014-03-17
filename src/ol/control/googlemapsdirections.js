@@ -899,6 +899,7 @@ ol.control.GoogleMapsDirections.prototype.setMap = function(map) {
     myMap.removeLayer(this.vectorLayer_);
     myMap.removeControl(this.startGeocoder_);
     myMap.removeControl(this.endGeocoder_);
+    myMap.removeControl(this.directionsPanel_);
 
     goog.events.unlisten(
         myMap,
@@ -919,6 +920,7 @@ ol.control.GoogleMapsDirections.prototype.setMap = function(map) {
     map.addLayer(this.vectorLayer_);
     map.addControl(this.startGeocoder_);
     map.addControl(this.endGeocoder_);
+    map.addControl(this.directionsPanel_);
     this.manageNumWaypoints_();
 
     goog.events.listen(
