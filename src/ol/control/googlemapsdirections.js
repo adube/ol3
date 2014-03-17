@@ -628,23 +628,7 @@ ol.control.GoogleMapsDirections.prototype.handleGeocoderRemove_ = function(
   var geocoder = event.target;
   goog.asserts.assertInstanceof(geocoder, ol.control.GoogleMapsGeocoder);
 
-  var map = this.getMap();
-
-  map.removeControl(geocoder);
-
-  goog.events.unlisten(
-      geocoder,
-      ol.Object.getChangeEventType(
-          ol.control.GoogleMapsGeocoder.Property.LOCATION
-      ),
-      this.handleLocationChanged_, false, this);
-
-  goog.events.unlisten(
-      geocoder,
-      ol.control.GoogleMapsGeocoder.EventType.REMOVE,
-      this.handleGeocoderRemove_, false, this);
-
-  this.waypointGeocoders_.remove(geocoder);
+  this.removeWaypointGeocoder_(geocoder);
 
   this.manageNumWaypoints_();
 
@@ -762,6 +746,20 @@ ol.control.GoogleMapsDirections.prototype.manageNumWaypoints_ = function() {
 
 
 /**
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.removeAllWaypointGeocoders_ =
+    function() {
+  var geocoder;
+  while (this.waypointGeocoders_.getLength() > 0) {
+    geocoder = this.waypointGeocoders_.getAt(0);
+    goog.asserts.assertInstanceof(geocoder, ol.control.GoogleMapsGeocoder);
+    this.removeWaypointGeocoder_(geocoder);
+  }
+};
+
+
+/**
  * @param {ol.Pixel} pixel Pixel.
  * @private
  */
@@ -779,6 +777,33 @@ ol.control.GoogleMapsDirections.prototype.removeDetourFeature_ =
     this.route_(null, null);
   }
 
+};
+
+
+/**
+ * @param {ol.control.GoogleMapsGeocoder} geocoder Waypoint geocoder to remove.
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.removeWaypointGeocoder_ = function(
+    geocoder) {
+
+  var map = this.getMap();
+
+  map.removeControl(geocoder);
+
+  goog.events.unlisten(
+      geocoder,
+      ol.Object.getChangeEventType(
+          ol.control.GoogleMapsGeocoder.Property.LOCATION
+      ),
+      this.handleLocationChanged_, false, this);
+
+  goog.events.unlisten(
+      geocoder,
+      ol.control.GoogleMapsGeocoder.EventType.REMOVE,
+      this.handleGeocoderRemove_, false, this);
+
+  this.waypointGeocoders_.remove(geocoder);
 };
 
 
@@ -855,7 +880,28 @@ ol.control.GoogleMapsDirections.prototype.route_ = function(start, end) {
  * @inheritDoc
  */
 ol.control.GoogleMapsDirections.prototype.setMap = function(map) {
+
+  var myMap = this.getMap();
+  if (goog.isNull(map) && !goog.isNull(myMap)) {
+    myMap.removeLayer(this.vectorLayer_);
+    myMap.removeControl(this.startGeocoder_);
+    myMap.removeControl(this.endGeocoder_);
+
+    goog.events.unlisten(
+        myMap,
+        ol.MapBrowserEvent.EventType.POINTERMOVE,
+        this.handleMapPointerMove_, false, this);
+
+    goog.events.unlisten(
+        myMap,
+        ol.MapBrowserEvent.EventType.SINGLECLICK,
+        this.handleMapSingleClick_, false, this);
+
+    this.removeAllWaypointGeocoders_();
+  }
+
   goog.base(this, 'setMap', map);
+
   if (!goog.isNull(map)) {
     map.addLayer(this.vectorLayer_);
     map.addControl(this.startGeocoder_);
