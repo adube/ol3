@@ -306,25 +306,367 @@ goog.inherits(ol.control.GoogleMapsDirections, ol.control.Control);
 
 
 /**
- * @inheritDoc
+ * Add a new waypoint geocoder to the UI.
  */
-ol.control.GoogleMapsDirections.prototype.setMap = function(map) {
-  goog.base(this, 'setMap', map);
-  if (!goog.isNull(map)) {
-    map.addLayer(this.vectorLayer_);
-    map.addControl(this.startGeocoder_);
-    map.addControl(this.endGeocoder_);
-    this.manageNumWaypoints_();
+ol.control.GoogleMapsDirections.prototype.addWaypointGeocoder = function() {
 
-    goog.events.listen(
-        map,
-        ol.MapBrowserEvent.EventType.POINTERMOVE,
-        this.handleMapPointerMove_, false, this);
+  if (!this.canAddAnOtherWaypoint_()) {
+    // todo - show 'too many waypoints' message
+    return;
+  }
 
-    goog.events.listen(
-        map,
-        ol.MapBrowserEvent.EventType.SINGLECLICK,
-        this.handleMapSingleClick_, false, this);
+  var map = this.getMap();
+  var container = this.waypointGeocodersContainer_;
+
+  var geocoder = new ol.control.GoogleMapsGeocoder({
+    'enableReverseGeocoding': false,
+    'target': container,
+    'geocoderComponentRestrictions': this.geocoderComponentRestrictions_,
+    'iconStyle': this.startIconStyle_,
+    'removable': true
+  });
+
+  map.addControl(geocoder);
+
+  goog.events.listen(
+      geocoder,
+      ol.Object.getChangeEventType(
+          ol.control.GoogleMapsGeocoder.Property.LOCATION
+      ),
+      this.handleLocationChanged_, false, this);
+
+  goog.events.listen(
+      geocoder,
+      ol.control.GoogleMapsGeocoder.EventType.REMOVE,
+      this.handleGeocoderRemove_, false, this);
+
+  this.waypointGeocoders_.push(geocoder);
+
+  this.toggleGeocoderReverseGeocodings_();
+
+  this.manageNumWaypoints_();
+
+};
+
+
+/**
+ * @private
+ * @return {boolean}
+ */
+ol.control.GoogleMapsDirections.prototype.canAddAnOtherWaypoint_ = function() {
+  var max = this.maxWaypoints_;
+  var detourFeatures = this.detourFeatures_;
+  var waypointGeocoders = this.waypointGeocoders_;
+
+  var total = detourFeatures.getLength() + waypointGeocoders.getLength();
+
+  return (total < max);
+};
+
+
+/**
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.clear_ = function() {
+
+  var routeFeatures = this.routeFeatures_;
+  routeFeatures.clear();
+
+  var vectorSource = this.vectorLayer_.getSource();
+  goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
+  vectorSource.clear();
+
+};
+
+
+/**
+ * @param {ol.Coordinate} coordinate
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.createOrUpdateDetour_ = function(
+    coordinate) {
+
+  var detourFeatures = this.detourFeatures_;
+  var numDetourFeatures = detourFeatures.getLength();
+
+  if (!this.canAddAnOtherWaypoint_()) {
+    // todo - throw error
+    return;
+  }
+
+  var feature = new ol.Feature({
+    geometry: new ol.geom.Point(coordinate)
+  });
+  feature.setStyle(this.detourIconStyle_);
+
+  if (this.createNewDetour_ == true) {
+    this.createNewDetour_ = false;
+  } else {
+    detourFeatures.removeAt(numDetourFeatures - 1);
+  }
+
+  detourFeatures.push(feature);
+
+  this.clear_();
+  this.route_(null, null);
+
+  this.manageNumWaypoints_();
+};
+
+
+/**
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.drawRoute_ = function() {
+
+  var vectorSource = this.vectorLayer_.getSource();
+  goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
+
+  var features = [];
+
+  var routeFeatures = this.routeFeatures_;
+  var detourFeatures = this.detourFeatures_;
+
+  // add route features
+  routeFeatures.forEach(function(feature) {
+    features.push(feature);
+  }, this);
+
+  // add detour features
+  detourFeatures.forEach(function(feature) {
+    features.push(feature);
+  }, this);
+
+  // add features to layer
+  vectorSource.addFeatures(features);
+};
+
+
+/**
+ * Fix map view extent to include coordinate if coordinate is outside
+ * extent.
+ * @param {ol.Coordinate} coordinate in map view projection
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.fitViewExtentToCoordinate_ =
+    function(coordinate) {
+
+  var map = this.getMap();
+
+  var view = map.getView();
+  goog.asserts.assert(goog.isDef(view));
+  var view2D = view.getView2D();
+  goog.asserts.assertInstanceof(view2D, ol.View2D);
+
+  var size = map.getSize();
+  goog.asserts.assertArray(size);
+
+  var extent = view2D.calculateExtent(size);
+
+  var resolution = view2D.getResolutionForExtent(extent, size);
+  var pixelBuffer = this.pixelBuffer_;
+  var buffer = resolution * pixelBuffer;
+
+  var smallExtent = ol.extent.buffer(extent, buffer * -1);
+
+  if (!ol.extent.containsCoordinate(smallExtent, coordinate)) {
+    ol.extent.extendCoordinate(extent, coordinate);
+    extent = ol.extent.buffer(extent, buffer);
+    view2D.fitExtent(extent, size);
+  }
+};
+
+
+/**
+ * Fix map view extent to route.
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.fitViewExtentToRoute_ = function() {
+  var map = this.getMap();
+
+  var size = map.getSize();
+  goog.asserts.assertArray(size);
+
+  var view = map.getView();
+  goog.asserts.assert(goog.isDef(view));
+  var view2D = view.getView2D();
+  goog.asserts.assertInstanceof(view2D, ol.View2D);
+
+  var vectorSource = this.vectorLayer_.getSource();
+  goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
+  var extent = vectorSource.getExtent();
+
+  var resolution = view2D.getResolutionForExtent(extent, size);
+  var pixelBuffer = this.pixelBuffer_;
+  var buffer = resolution * pixelBuffer;
+  extent = ol.extent.buffer(extent, buffer);
+
+  view2D.fitExtent(extent, size);
+};
+
+
+/**
+ * @param {ol.Pixel} pixel Pixel.
+ * @return {?ol.Feature}
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.getDetourFeatureAtPixel_ = function(
+    pixel) {
+
+  var map = this.getMap();
+  var detourFeaturesArray = this.detourFeatures_.getArray();
+  var feature = map.forEachFeatureAtPixel(
+      pixel, function(feature, layer) {
+        if (detourFeaturesArray.indexOf(feature) != -1) {
+          return feature;
+        }
+      });
+
+  return feature;
+};
+
+
+/**
+ * @param {goog.events.Event} event Event.
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.handleAddWPGeocoderButtonPress_ =
+    function(event) {
+  this.addWaypointGeocoder();
+};
+
+
+/**
+ * @param {google.maps.DirectionsResult} response
+ * @param {google.maps.DirectionsStatus} status
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
+    response, status) {
+
+  var map = this.getMap();
+
+  var view = map.getView();
+  goog.asserts.assert(goog.isDef(view));
+  var view2D = view.getView2D();
+  goog.asserts.assertInstanceof(view2D, ol.View2D);
+
+  var projection = view2D.getProjection();
+
+  var vectorSource = this.vectorLayer_.getSource();
+  goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
+
+  var lat, location, lng, transformedCoordinate;
+  var feature;
+  var coordinates;
+
+  var routeFeatures = this.routeFeatures_;
+
+  if (status == google.maps.DirectionsStatus.OK) {
+    goog.array.forEach(response.routes, function(route) {
+      coordinates = [];
+      goog.array.forEach(route.overview_path, function(location) {
+        lng = location.lng();
+        lat = location.lat();
+        transformedCoordinate = ol.proj.transform(
+            [lng, lat], 'EPSG:4326', projection.getCode());
+        coordinates.push(transformedCoordinate);
+      }, this);
+      feature = new ol.Feature(new ol.geom.LineString(coordinates));
+      feature.setStyle(this.lineStyle_);
+      routeFeatures.push(feature);
+    }, this);
+
+    // draw
+    this.drawRoute_();
+
+    // fit extent
+    this.fitViewExtentToRoute_();
+  }
+
+};
+
+
+/**
+ * @param {Object|goog.events.Event|null|string} evt
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.handleDryModifyDrag_ = function(evt) {
+
+  var me = this;
+  var dryModify = evt.target;
+  var coordinate = dryModify.coordinate_;
+
+  if (goog.isDefAndNotNull(this.newDetourTimerId_)) {
+    window.clearTimeout(this.newDetourTimerId_);
+  }
+
+  this.newDetourTimerId_ = window.setTimeout(function() {
+    me.createOrUpdateDetour_(coordinate);
+  }, this.routeDelayOnWaypointDrag_);
+
+};
+
+
+/**
+ * @param {Object|goog.events.Event|null|string} evt
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.handleDryModifyDragEnd_ = function(
+    evt) {
+  this.createNewDetour_ = true;
+};
+
+
+/**
+ * @param {goog.events.Event} event Event.
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.handleGeocoderRemove_ = function(
+    event) {
+
+  var geocoder = event.target;
+  goog.asserts.assertInstanceof(geocoder, ol.control.GoogleMapsGeocoder);
+
+  var map = this.getMap();
+
+  map.removeControl(geocoder);
+
+  goog.events.unlisten(
+      geocoder,
+      ol.Object.getChangeEventType(
+          ol.control.GoogleMapsGeocoder.Property.LOCATION
+      ),
+      this.handleLocationChanged_, false, this);
+
+  goog.events.unlisten(
+      geocoder,
+      ol.control.GoogleMapsGeocoder.EventType.REMOVE,
+      this.handleGeocoderRemove_, false, this);
+
+  this.waypointGeocoders_.remove(geocoder);
+
+  this.manageNumWaypoints_();
+
+  this.toggleGeocoderReverseGeocodings_();
+
+  var startGeocoder = this.startGeocoder_;
+  var endGeocoder = this.endGeocoder_;
+
+  var startLocation = startGeocoder.getLocation();
+  var endLocation = endGeocoder.getLocation();
+
+  var geocoderLocation = geocoder.getLocation();
+
+  // trigger a new routing request only if the removed geocoder had a location
+  // and if there's a start and an end
+  if (goog.isDefAndNotNull(geocoderLocation) &&
+      goog.isDefAndNotNull(startLocation) &&
+      goog.isDefAndNotNull(endLocation)) {
+
+    this.clear_();
+
+    this.route_(startLocation, endLocation);
   }
 };
 
@@ -353,6 +695,88 @@ ol.control.GoogleMapsDirections.prototype.handleLocationChanged_ =
     this.route_(startLocation, endLocation);
   } else if (goog.isDefAndNotNull(currentLocation)) {
     this.fitViewExtentToCoordinate_(currentGeocoder.getCoordinate());
+  }
+
+};
+
+
+/**
+ * @param {goog.events.Event} event Event.
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.handleMapPointerMove_ = function(
+    event) {
+
+  var map = this.getMap();
+  var detourFeatures = this.detourFeatures_;
+
+  if (detourFeatures.getLength() > 0) {
+    var pixel = map.getEventPixel(event.originalEvent);
+    this.toggleDetourFeatureRemoveSymbol_(pixel);
+  }
+};
+
+
+/**
+ * @param {goog.events.Event} event Event.
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.handleMapSingleClick_ = function(
+    event) {
+
+  this.removeDetourFeature_(event.pixel);
+};
+
+
+/**
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.manageNumWaypoints_ = function() {
+  var map = this.getMap();
+  var dryModify = this.dryModify_;
+
+  if (this.canAddAnOtherWaypoint_()) {
+    goog.events.listen(
+        this.dryModify_,
+        ol.interaction.DryModify.EventType.DRAG,
+        this.handleDryModifyDrag_, false, this);
+    goog.events.listen(
+        this.dryModify_,
+        ol.interaction.DryModify.EventType.DRAGEND,
+        this.handleDryModifyDragEnd_, false, this);
+
+    if (!goog.isDefAndNotNull(dryModify.getMap())) {
+      map.addInteraction(dryModify);
+    }
+  } else {
+    goog.events.unlisten(
+        this.dryModify_,
+        ol.interaction.DryModify.EventType.DRAG,
+        this.handleDryModifyDrag_, false, this);
+    goog.events.unlisten(
+        this.dryModify_,
+        ol.interaction.DryModify.EventType.DRAGEND,
+        this.handleDryModifyDragEnd_, false, this);
+  }
+};
+
+
+/**
+ * @param {ol.Pixel} pixel Pixel.
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.removeDetourFeature_ =
+    function(pixel) {
+
+  var feature = this.getDetourFeatureAtPixel_(pixel);
+  var detourFeatures = this.detourFeatures_;
+
+  if (goog.isDefAndNotNull(feature)) {
+    detourFeatures.remove(feature);
+    this.lastDetourFeatureOverPointer_ = null;
+    this.clear_();
+    this.toggleGeocoderReverseGeocodings_();
+    this.route_(null, null);
   }
 
 };
@@ -428,269 +852,52 @@ ol.control.GoogleMapsDirections.prototype.route_ = function(start, end) {
 
 
 /**
- * @param {google.maps.DirectionsResult} response
- * @param {google.maps.DirectionsStatus} status
- * @private
+ * @inheritDoc
  */
-ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
-    response, status) {
+ol.control.GoogleMapsDirections.prototype.setMap = function(map) {
+  goog.base(this, 'setMap', map);
+  if (!goog.isNull(map)) {
+    map.addLayer(this.vectorLayer_);
+    map.addControl(this.startGeocoder_);
+    map.addControl(this.endGeocoder_);
+    this.manageNumWaypoints_();
 
-  var map = this.getMap();
+    goog.events.listen(
+        map,
+        ol.MapBrowserEvent.EventType.POINTERMOVE,
+        this.handleMapPointerMove_, false, this);
 
-  var view = map.getView();
-  goog.asserts.assert(goog.isDef(view));
-  var view2D = view.getView2D();
-  goog.asserts.assertInstanceof(view2D, ol.View2D);
-
-  var projection = view2D.getProjection();
-
-  var vectorSource = this.vectorLayer_.getSource();
-  goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
-
-  var lat, location, lng, transformedCoordinate;
-  var feature;
-  var coordinates;
-
-  var routeFeatures = this.routeFeatures_;
-
-  if (status == google.maps.DirectionsStatus.OK) {
-    goog.array.forEach(response.routes, function(route) {
-      coordinates = [];
-      goog.array.forEach(route.overview_path, function(location) {
-        lng = location.lng();
-        lat = location.lat();
-        transformedCoordinate = ol.proj.transform(
-            [lng, lat], 'EPSG:4326', projection.getCode());
-        coordinates.push(transformedCoordinate);
-      }, this);
-      feature = new ol.Feature(new ol.geom.LineString(coordinates));
-      feature.setStyle(this.lineStyle_);
-      routeFeatures.push(feature);
-    }, this);
-
-    // draw
-    this.drawRoute_();
-
-    // fit extent
-    this.fitViewExtentToRoute_();
-  }
-
-};
-
-
-/**
- * @private
- */
-ol.control.GoogleMapsDirections.prototype.drawRoute_ = function() {
-
-  var vectorSource = this.vectorLayer_.getSource();
-  goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
-
-  var features = [];
-
-  var routeFeatures = this.routeFeatures_;
-  var detourFeatures = this.detourFeatures_;
-
-  // add route features
-  routeFeatures.forEach(function(feature) {
-    features.push(feature);
-  }, this);
-
-  // add detour features
-  detourFeatures.forEach(function(feature) {
-    features.push(feature);
-  }, this);
-
-  // add features to layer
-  vectorSource.addFeatures(features);
-};
-
-
-/**
- * @private
- */
-ol.control.GoogleMapsDirections.prototype.clear_ = function() {
-
-  var routeFeatures = this.routeFeatures_;
-  routeFeatures.clear();
-
-  var vectorSource = this.vectorLayer_.getSource();
-  goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
-  vectorSource.clear();
-
-};
-
-
-/**
- * Fix map view extent to include coordinate if coordinate is outside
- * extent.
- * @param {ol.Coordinate} coordinate in map view projection
- * @private
- */
-ol.control.GoogleMapsDirections.prototype.fitViewExtentToCoordinate_ =
-    function(coordinate) {
-
-  var map = this.getMap();
-
-  var view = map.getView();
-  goog.asserts.assert(goog.isDef(view));
-  var view2D = view.getView2D();
-  goog.asserts.assertInstanceof(view2D, ol.View2D);
-
-  var size = map.getSize();
-  goog.asserts.assertArray(size);
-
-  var extent = view2D.calculateExtent(size);
-
-  var resolution = view2D.getResolutionForExtent(extent, size);
-  var pixelBuffer = this.pixelBuffer_;
-  var buffer = resolution * pixelBuffer;
-
-  var smallExtent = ol.extent.buffer(extent, buffer * -1);
-
-  if (!ol.extent.containsCoordinate(smallExtent, coordinate)) {
-    ol.extent.extendCoordinate(extent, coordinate);
-    extent = ol.extent.buffer(extent, buffer);
-    view2D.fitExtent(extent, size);
+    goog.events.listen(
+        map,
+        ol.MapBrowserEvent.EventType.SINGLECLICK,
+        this.handleMapSingleClick_, false, this);
   }
 };
 
 
 /**
- * Fix map view extent to route.
+ * @param {ol.Pixel} pixel Pixel.
  * @private
  */
-ol.control.GoogleMapsDirections.prototype.fitViewExtentToRoute_ = function() {
-  var map = this.getMap();
+ol.control.GoogleMapsDirections.prototype.toggleDetourFeatureRemoveSymbol_ =
+    function(pixel) {
 
-  var size = map.getSize();
-  goog.asserts.assertArray(size);
+  var labelProperty = this.detourLabelProperty_;
+  var feature = this.getDetourFeatureAtPixel_(pixel);
+  var lastFeature = this.lastDetourFeatureOverPointer_;
 
-  var view = map.getView();
-  goog.asserts.assert(goog.isDef(view));
-  var view2D = view.getView2D();
-  goog.asserts.assertInstanceof(view2D, ol.View2D);
-
-  var vectorSource = this.vectorLayer_.getSource();
-  goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
-  var extent = vectorSource.getExtent();
-
-  var resolution = view2D.getResolutionForExtent(extent, size);
-  var pixelBuffer = this.pixelBuffer_;
-  var buffer = resolution * pixelBuffer;
-  extent = ol.extent.buffer(extent, buffer);
-
-  view2D.fitExtent(extent, size);
-};
-
-
-/**
- * @param {Object|goog.events.Event|null|string} evt
- * @private
- */
-ol.control.GoogleMapsDirections.prototype.handleDryModifyDrag_ = function(evt) {
-
-  var me = this;
-  var dryModify = evt.target;
-  var coordinate = dryModify.coordinate_;
-
-  if (goog.isDefAndNotNull(this.newDetourTimerId_)) {
-    window.clearTimeout(this.newDetourTimerId_);
+  // clear last label, if required
+  if (goog.isDefAndNotNull(lastFeature) &&
+      (!goog.isDefAndNotNull(feature) || feature != lastFeature)) {
+    lastFeature.set(labelProperty, '');
+    this.lastDetourFeatureOverPointer_ = null;
   }
 
-  this.newDetourTimerId_ = window.setTimeout(function() {
-    me.createOrUpdateDetour_(coordinate);
-  }, this.routeDelayOnWaypointDrag_);
-
-};
-
-
-/**
- * @param {Object|goog.events.Event|null|string} evt
- * @private
- */
-ol.control.GoogleMapsDirections.prototype.handleDryModifyDragEnd_ = function(
-    evt) {
-  this.createNewDetour_ = true;
-};
-
-
-/**
- * @param {ol.Coordinate} coordinate
- * @private
- */
-ol.control.GoogleMapsDirections.prototype.createOrUpdateDetour_ = function(
-    coordinate) {
-
-  var detourFeatures = this.detourFeatures_;
-  var numDetourFeatures = detourFeatures.getLength();
-
-  if (!this.canAddAnOtherWaypoint_()) {
-    // todo - throw error
-    return;
+  // set new label, if required
+  if (goog.isDefAndNotNull(feature) && !goog.isDefAndNotNull(lastFeature)) {
+    feature.set(labelProperty, 'X');
+    this.lastDetourFeatureOverPointer_ = feature;
   }
-
-  var feature = new ol.Feature({
-    geometry: new ol.geom.Point(coordinate)
-  });
-  feature.setStyle(this.detourIconStyle_);
-
-  if (this.createNewDetour_ == true) {
-    this.createNewDetour_ = false;
-  } else {
-    detourFeatures.removeAt(numDetourFeatures - 1);
-  }
-
-  detourFeatures.push(feature);
-
-  this.clear_();
-  this.route_(null, null);
-
-  this.manageNumWaypoints_();
-};
-
-
-/**
- * Add a new waypoint geocoder to the UI.
- */
-ol.control.GoogleMapsDirections.prototype.addWaypointGeocoder = function() {
-
-  if (!this.canAddAnOtherWaypoint_()) {
-    // todo - show 'too many waypoints' message
-    return;
-  }
-
-  var map = this.getMap();
-  var container = this.waypointGeocodersContainer_;
-
-  var geocoder = new ol.control.GoogleMapsGeocoder({
-    'enableReverseGeocoding': false,
-    'target': container,
-    'geocoderComponentRestrictions': this.geocoderComponentRestrictions_,
-    'iconStyle': this.startIconStyle_,
-    'removable': true
-  });
-
-  map.addControl(geocoder);
-
-  goog.events.listen(
-      geocoder,
-      ol.Object.getChangeEventType(
-          ol.control.GoogleMapsGeocoder.Property.LOCATION
-      ),
-      this.handleLocationChanged_, false, this);
-
-  goog.events.listen(
-      geocoder,
-      ol.control.GoogleMapsGeocoder.EventType.REMOVE,
-      this.handleGeocoderRemove_, false, this);
-
-  this.waypointGeocoders_.push(geocoder);
-
-  this.toggleGeocoderReverseGeocodings_();
-
-  this.manageNumWaypoints_();
-
 };
 
 
@@ -754,213 +961,6 @@ ol.control.GoogleMapsDirections.prototype.toggleGeocoderReverseGeocodings_ =
         waypointGeocoder.disableReverseGeocoding();
       }
     }, this);
-  }
-
-};
-
-
-/**
- * @param {goog.events.Event} event Event.
- * @private
- */
-ol.control.GoogleMapsDirections.prototype.handleAddWPGeocoderButtonPress_ =
-    function(event) {
-  this.addWaypointGeocoder();
-};
-
-
-/**
- * @private
- * @return {boolean}
- */
-ol.control.GoogleMapsDirections.prototype.canAddAnOtherWaypoint_ = function() {
-  var max = this.maxWaypoints_;
-  var detourFeatures = this.detourFeatures_;
-  var waypointGeocoders = this.waypointGeocoders_;
-
-  var total = detourFeatures.getLength() + waypointGeocoders.getLength();
-
-  return (total < max);
-};
-
-
-/**
- * @private
- */
-ol.control.GoogleMapsDirections.prototype.manageNumWaypoints_ = function() {
-  var map = this.getMap();
-  var dryModify = this.dryModify_;
-
-  if (this.canAddAnOtherWaypoint_()) {
-    goog.events.listen(
-        this.dryModify_,
-        ol.interaction.DryModify.EventType.DRAG,
-        this.handleDryModifyDrag_, false, this);
-    goog.events.listen(
-        this.dryModify_,
-        ol.interaction.DryModify.EventType.DRAGEND,
-        this.handleDryModifyDragEnd_, false, this);
-
-    if (!goog.isDefAndNotNull(dryModify.getMap())) {
-      map.addInteraction(dryModify);
-    }
-  } else {
-    goog.events.unlisten(
-        this.dryModify_,
-        ol.interaction.DryModify.EventType.DRAG,
-        this.handleDryModifyDrag_, false, this);
-    goog.events.unlisten(
-        this.dryModify_,
-        ol.interaction.DryModify.EventType.DRAGEND,
-        this.handleDryModifyDragEnd_, false, this);
-  }
-};
-
-
-/**
- * @param {goog.events.Event} event Event.
- * @private
- */
-ol.control.GoogleMapsDirections.prototype.handleGeocoderRemove_ = function(
-    event) {
-
-  var geocoder = event.target;
-  goog.asserts.assertInstanceof(geocoder, ol.control.GoogleMapsGeocoder);
-
-  var map = this.getMap();
-
-  map.removeControl(geocoder);
-
-  goog.events.unlisten(
-      geocoder,
-      ol.Object.getChangeEventType(
-          ol.control.GoogleMapsGeocoder.Property.LOCATION
-      ),
-      this.handleLocationChanged_, false, this);
-
-  goog.events.unlisten(
-      geocoder,
-      ol.control.GoogleMapsGeocoder.EventType.REMOVE,
-      this.handleGeocoderRemove_, false, this);
-
-  this.waypointGeocoders_.remove(geocoder);
-
-  this.manageNumWaypoints_();
-
-  this.toggleGeocoderReverseGeocodings_();
-
-  var startGeocoder = this.startGeocoder_;
-  var endGeocoder = this.endGeocoder_;
-
-  var startLocation = startGeocoder.getLocation();
-  var endLocation = endGeocoder.getLocation();
-
-  var geocoderLocation = geocoder.getLocation();
-
-  // trigger a new routing request only if the removed geocoder had a location
-  // and if there's a start and an end
-  if (goog.isDefAndNotNull(geocoderLocation) &&
-      goog.isDefAndNotNull(startLocation) &&
-      goog.isDefAndNotNull(endLocation)) {
-
-    this.clear_();
-
-    this.route_(startLocation, endLocation);
-  }
-};
-
-
-/**
- * @param {goog.events.Event} event Event.
- * @private
- */
-ol.control.GoogleMapsDirections.prototype.handleMapPointerMove_ = function(
-    event) {
-
-  var map = this.getMap();
-  var detourFeatures = this.detourFeatures_;
-
-  if (detourFeatures.getLength() > 0) {
-    var pixel = map.getEventPixel(event.originalEvent);
-    this.toggleDetourFeatureRemoveSymbol_(pixel);
-  }
-};
-
-
-/**
- * @param {ol.Pixel} pixel Pixel.
- * @private
- */
-ol.control.GoogleMapsDirections.prototype.toggleDetourFeatureRemoveSymbol_ =
-    function(pixel) {
-
-  var labelProperty = this.detourLabelProperty_;
-  var feature = this.getDetourFeatureAtPixel_(pixel);
-  var lastFeature = this.lastDetourFeatureOverPointer_;
-
-  // clear last label, if required
-  if (goog.isDefAndNotNull(lastFeature) &&
-      (!goog.isDefAndNotNull(feature) || feature != lastFeature)) {
-    lastFeature.set(labelProperty, '');
-    this.lastDetourFeatureOverPointer_ = null;
-  }
-
-  // set new label, if required
-  if (goog.isDefAndNotNull(feature) && !goog.isDefAndNotNull(lastFeature)) {
-    feature.set(labelProperty, 'X');
-    this.lastDetourFeatureOverPointer_ = feature;
-  }
-};
-
-
-/**
- * @param {ol.Pixel} pixel Pixel.
- * @return {?ol.Feature}
- * @private
- */
-ol.control.GoogleMapsDirections.prototype.getDetourFeatureAtPixel_ = function(
-    pixel) {
-
-  var map = this.getMap();
-  var detourFeaturesArray = this.detourFeatures_.getArray();
-  var feature = map.forEachFeatureAtPixel(
-      pixel, function(feature, layer) {
-        if (detourFeaturesArray.indexOf(feature) != -1) {
-          return feature;
-        }
-      });
-
-  return feature;
-};
-
-
-/**
- * @param {goog.events.Event} event Event.
- * @private
- */
-ol.control.GoogleMapsDirections.prototype.handleMapSingleClick_ = function(
-    event) {
-
-  this.removeDetourFeature_(event.pixel);
-};
-
-
-/**
- * @param {ol.Pixel} pixel Pixel.
- * @private
- */
-ol.control.GoogleMapsDirections.prototype.removeDetourFeature_ =
-    function(pixel) {
-
-  var feature = this.getDetourFeatureAtPixel_(pixel);
-  var detourFeatures = this.detourFeatures_;
-
-  if (goog.isDefAndNotNull(feature)) {
-    detourFeatures.remove(feature);
-    this.lastDetourFeatureOverPointer_ = null;
-    this.clear_();
-    this.toggleGeocoderReverseGeocodings_();
-    this.route_(null, null);
   }
 
 };
