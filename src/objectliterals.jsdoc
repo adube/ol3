@@ -251,6 +251,13 @@
  *     waypoint that has been dragged, whether to add a new detour or to
  *     modify an existing waypoint of any type.
  * @property {number|undefined} maxWaypoints The maximum allowed waypoints.
+ * @property {Element} panel Target for the directions panel.
+ * @todo stability experimental
+ */
+
+/**
+ * @typedef {Object} olx.control.GoogleMapsDirectionsPanelOptions
+ * @property {Element|undefined} target Target.
  * @todo stability experimental
  */
 

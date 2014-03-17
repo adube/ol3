@@ -129,7 +129,8 @@ var directions = new ol.control.GoogleMapsDirections({
     }))
   }),
   'detourLabelProperty': 'myLabel',
-  'detourIconStyle': createDetourIconStyle()
+  'detourIconStyle': createDetourIconStyle(),
+  'panel': 'gmaps-directions-panel'
 });
 map.addControl(directions);
 

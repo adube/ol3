@@ -12,6 +12,7 @@ goog.require('ol.MapBrowserEvent.EventType');
 goog.require('ol.Object');
 goog.require('ol.View2D');
 goog.require('ol.control.Control');
+goog.require('ol.control.GoogleMapsDirectionsPanel');
 goog.require('ol.control.GoogleMapsGeocoder');
 goog.require('ol.css');
 goog.require('ol.extent');
@@ -250,6 +251,15 @@ ol.control.GoogleMapsDirections = function(opt_options) {
   this.detourLabelProperty_ = goog.isDef(options.detourLabelProperty) ?
       options.detourLabelProperty :
       ol.control.GOOGLEMAPSDIRECTIONS_DETOUR_LABEL_PROPERTY;
+
+
+  /**
+   * @type {ol.control.GoogleMapsDirectionsPanel}
+   * @private
+   */
+  this.directionsPanel_ = new ol.control.GoogleMapsDirectionsPanel({
+    target: options.panel
+  });
 
 
   goog.base(this, {
@@ -582,6 +592,9 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
 
     // fit extent
     this.fitViewExtentToRoute_();
+
+    // set directions in panel
+    this.directionsPanel_.setDirections(response);
   }
 
 };
