@@ -433,7 +433,7 @@ ol.control.GoogleMapsGeocoder.prototype.handleGeocode_ = function(
       //alert(tmpOutput.join(''));
 
       // clear first
-      this.clear_();
+      this.clear_(false);
 
       // set returned value
       input.value = formatted_address;
@@ -477,7 +477,7 @@ ol.control.GoogleMapsGeocoder.prototype.handleClearButtonPress_ = function(
     browserEvent) {
 
   browserEvent.preventDefault();
-  this.clear_();
+  this.clear_(true);
 };
 
 
@@ -514,9 +514,10 @@ ol.control.GoogleMapsGeocoder.prototype.hideRemoveButton = function() {
 
 
 /**
+ * @param {boolean} setLocation Whether to set the location value to null or not
  * @private
  */
-ol.control.GoogleMapsGeocoder.prototype.clear_ = function() {
+ol.control.GoogleMapsGeocoder.prototype.clear_ = function(setLocation) {
   var location = this.getLocation();
 
   if (goog.isDefAndNotNull(location)) {
@@ -527,6 +528,8 @@ ol.control.GoogleMapsGeocoder.prototype.clear_ = function() {
     var input = this.input_;
     input.value = '';
 
-    this.setValues({'location': null});
+    if (setLocation) {
+      this.setValues({'location': null});
+    }
   }
 };
