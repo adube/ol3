@@ -4,6 +4,7 @@ goog.require('goog.array');
 goog.require('goog.asserts');
 goog.require('goog.dom');
 goog.require('goog.dom.TagName');
+goog.require('goog.dom.classes');
 goog.require('goog.string');
 goog.require('ol.control.Control');
 
@@ -136,7 +137,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createLegElement_ =
   });
 
   // header
-  goog.dom.appendChild(element, this.createLegHeaderElement_(leg));
+  goog.dom.appendChild(element, this.createLegHeaderElement_(leg, true));
 
   // summary
   var summaryEl = goog.dom.createDom(goog.dom.TagName.DIV, {
@@ -165,11 +166,12 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createLegElement_ =
 /**
  * Create the header for a leg
  * @param {Object} leg
+ * @param {boolean} start Whether to use the start address or not (use end)
  * @return {Element}
  * @private
  */
 ol.control.GoogleMapsDirectionsPanel.prototype.createLegHeaderElement_ =
-    function(leg) {
+    function(leg, start) {
 
   var classPrefix = this.classPrefix_;
 
@@ -182,7 +184,8 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createLegHeaderElement_ =
   // text
   var textEl = goog.dom.createDom(goog.dom.TagName.DIV, {});
   goog.dom.appendChild(element, textEl);
-  goog.dom.appendChild(textEl, goog.dom.createTextNode(leg.start_address));
+  var text = (start) ? leg.start_address : leg.end_address;
+  goog.dom.appendChild(textEl, goog.dom.createTextNode(text));
 
   return element;
 };
@@ -203,13 +206,8 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createTailElement_ =
     'class': classPrefix + '-tail'
   });
 
-  // header - todo, should be a table
-  var headerEl = goog.dom.createDom(goog.dom.TagName.DIV, {
-    'class': classPrefix + '-tail-header'
-  });
-  goog.dom.appendChild(element, headerEl);
-  var headerText = goog.dom.createTextNode(leg.end_address);
-  goog.dom.appendChild(headerEl, headerText);
+  // header
+  goog.dom.appendChild(element, this.createLegHeaderElement_(leg, false));
 
   return element;
 };
@@ -236,7 +234,8 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createStepElement_ =
     'class': classPrefix + '-step-maneuver'
   });
   if (goog.isDefAndNotNull(step.maneuver)) {
-    maneuverEl.innerHTML = step.maneuver;
+    goog.dom.classes.add(maneuverEl,
+        classPrefix + '-step-maneuver-' + step.maneuver);
   }
   goog.dom.appendChild(element, maneuverEl);
 
