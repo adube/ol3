@@ -56,6 +56,14 @@ ol.control.GoogleMapsDirectionsPanel.prototype.copyrightText =
 
 
 /**
+ * i18n - copyright
+ * @type {string}
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.totalDistanceText =
+    'Distance Totale';
+
+
+/**
  * Clear the current directions.
  */
 ol.control.GoogleMapsDirectionsPanel.prototype.clearDirections = function() {
@@ -116,6 +124,27 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createRouteElement_ =
   var element = goog.dom.createDom(goog.dom.TagName.DIV, {
     'class': classPrefix + '-route'
   });
+
+  // total distance
+  var totalDistance = 0;
+  var totalDistanceText;
+  goog.array.forEach(route.legs, function(leg) {
+    totalDistance += leg.distance.value;
+  }, this);
+  if (totalDistance > 100) {
+    // todo - add i18n related formats for numbers
+    totalDistanceText = goog.string.makeSafe(
+        Math.round(totalDistance / 1000 * 10) / 10 + ' km');
+  } else {
+    totalDistanceText = goog.string.makeSafe(totalDistance + ' m');
+  }
+  totalDistanceText = this.totalDistanceText + ': ' + totalDistanceText;
+  var totalDistanceEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+    'class': classPrefix + '-route-total-distance'
+  });
+  goog.dom.appendChild(element, totalDistanceEl);
+  goog.dom.appendChild(
+      totalDistanceEl, goog.dom.createTextNode(totalDistanceText));
 
   // legs
   goog.array.forEach(route.legs, function(leg) {

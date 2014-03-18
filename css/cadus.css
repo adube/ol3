@@ -2,6 +2,11 @@
  * GoogleMapsDirectionsPanel
  */
 
+.ol-gmdp-route-total-distance {
+  margin: 10px 0;
+}
+
+
 .ol-gmdp-leg-header div {
   background: #eee;
   border: 1px solid silver;
