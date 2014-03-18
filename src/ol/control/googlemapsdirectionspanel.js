@@ -126,13 +126,8 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createLegElement_ =
     'class': 'ol-google-maps-directions-panel-leg'
   });
 
-  // header - todo, should be a table
-  var headerEl = goog.dom.createDom(goog.dom.TagName.DIV, {
-    'class': 'ol-google-maps-directions-panel-leg-header'
-  });
-  goog.dom.appendChild(element, headerEl);
-  var headerText = goog.dom.createTextNode(leg.start_address);
-  goog.dom.appendChild(headerEl, headerText);
+  // header
+  goog.dom.appendChild(element, this.createLegHeaderElement_(leg));
 
   // summary
   var summaryEl = goog.dom.createDom(goog.dom.TagName.DIV, {
@@ -153,6 +148,30 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createLegElement_ =
     stepEl = this.createStepElement_(step, index);
     goog.dom.appendChild(table, stepEl);
   }, this);
+
+  return element;
+};
+
+
+/**
+ * Create the header for a leg
+ * @param {Object} leg
+ * @return {Element}
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.createLegHeaderElement_ =
+    function(leg) {
+
+  var element = goog.dom.createDom(goog.dom.TagName.DIV, {
+    'class': 'ol-google-maps-directions-panel-leg-header'
+  });
+
+  // icon - todo
+
+  // text
+  var textEl = goog.dom.createDom(goog.dom.TagName.DIV, {});
+  goog.dom.appendChild(element, textEl);
+  goog.dom.appendChild(textEl, goog.dom.createTextNode(leg.start_address));
 
   return element;
 };
