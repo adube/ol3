@@ -258,6 +258,8 @@
 /**
  * @typedef {Object} olx.control.GoogleMapsDirectionsPanelOptions
  * @property {Element|undefined} target Target.
+ * @property {number|undefined} pixelBuffer Buffer size in pixels to apply
+ *     to the map view extent when checking if a coordinate is in the extent.
  * @todo stability experimental
  */
 
