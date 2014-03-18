@@ -1,0 +1,37 @@
+/**
+ * GoogleMapsDirectionsPanel
+ */
+
+.ol-gmdp-leg-header div {
+  background: #eee;
+  border: 1px solid silver;
+  padding: 10px 0;
+  margin: 10px 0;
+  vertical-align: middle;
+}
+
+.ol-gmdp-steps {
+  width: 100%;
+}
+
+.ol-gmdp-step {
+  border-top: 1px solid #cdcdcd;
+  vertical-align: top;
+}
+
+.ol-gmdp-step td {
+  padding: .3em 3px;
+  margin: 0;
+}
+
+.ol-gmdp-step-maneuver {
+  width: 20px;
+}
+
+.ol-gmdp-step-num {
+  width: 20px;
+}
+
+.ol-gmdp-step-distance {
+  width: 50px;
+}
