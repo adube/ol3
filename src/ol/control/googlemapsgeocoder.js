@@ -69,30 +69,30 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
 
 
   // === UI COMPONENTS ===
-  var className = 'ol-google-maps-geocoder';
+  var classPrefix = 'ol-gmg';
 
   var element = goog.dom.createDom(goog.dom.TagName.DIV, {
-    'class': className + ' ' + ol.css.CLASS_UNSELECTABLE
+    'class': classPrefix + ' ' + ol.css.CLASS_UNSELECTABLE
   });
 
   var input = goog.dom.createDom(goog.dom.TagName.INPUT, {
-    'class': ''
+    'class': classPrefix + '-input-text'
   });
 
   var searchButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
-    'class': ''
+    'class': classPrefix + '-search-button'
   });
   var searchButtonText = goog.dom.createTextNode('Search');
   goog.dom.appendChild(searchButton, searchButtonText);
 
   var clearButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
-    'class': ''
+    'class': classPrefix + '-clear-button'
   });
   var clearButtonText = goog.dom.createTextNode('Clear');
   goog.dom.appendChild(clearButton, clearButtonText);
 
   var removeButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
-    'class': ''
+    'class': classPrefix + '-remove-button'
   });
   var removeButtonText = goog.dom.createTextNode('Remove');
   goog.dom.appendChild(removeButton, removeButtonText);

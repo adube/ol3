@@ -66,14 +66,14 @@ ol.control.GOOGLEMAPSDIRECTIONS_DETOUR_LABEL_PROPERTY = 'label';
 ol.control.GoogleMapsDirections = function(opt_options) {
   var options = goog.isDef(opt_options) ? opt_options : {};
 
-  var className = 'ol-google-maps-directions';
+  var classPrefix = 'ol-gmds';
 
   var element = goog.dom.createDom(goog.dom.TagName.DIV, {
-    'class': className + ' ' + ol.css.CLASS_UNSELECTABLE
+    'class': classPrefix + ' ' + ol.css.CLASS_UNSELECTABLE
   });
 
   var addWaypointGeocoderButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
-    'class': ''
+    'class': classPrefix + '-add-waypoint-button'
   });
   var addWaypointGeocoderButtonText = goog.dom.createTextNode('Add waypoint');
   goog.dom.appendChild(
@@ -85,17 +85,17 @@ ol.control.GoogleMapsDirections = function(opt_options) {
   ], this.handleAddWPGeocoderButtonPress_, false, this);
 
   var startGeocoderElement = goog.dom.createDom(goog.dom.TagName.DIV, {
-    'class': 'ol-google-maps-directions-geocoder-start'
+    'class': classPrefix + '-geocoder-start'
   });
   goog.dom.appendChild(element, startGeocoderElement);
 
   var waypointGeocodersContainer = goog.dom.createDom(goog.dom.TagName.DIV, {
-    'class': 'ol-google-maps-directions-geocoder-waypoints'
+    'class': classPrefix + '-geocoder-waypoints'
   });
   goog.dom.appendChild(element, waypointGeocodersContainer);
 
   var endGeocoderElement = goog.dom.createDom(goog.dom.TagName.DIV, {
-    'class': 'ol-google-maps-directions-geocoder-end'
+    'class': classPrefix + '-geocoder-end'
   });
   goog.dom.appendChild(element, endGeocoderElement);
 

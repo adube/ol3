@@ -18,10 +18,16 @@ goog.require('ol.control.Control');
 ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
   var options = goog.isDef(opt_options) ? opt_options : {};
 
-  var className = 'ol-google-maps-directions-panel';
+  var classPrefix = 'ol-gmdp';
+
+  /**
+   * @type {string}
+   * @private
+   */
+  this.classPrefix_ = classPrefix;
 
   var element = goog.dom.createDom(goog.dom.TagName.DIV, {
-    'class': className + ' ' + ol.css.CLASS_UNSELECTABLE
+    'class': classPrefix + ' ' + ol.css.CLASS_UNSELECTABLE
   });
 
   goog.base(this, {
@@ -57,6 +63,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.setDirections = function(
 
   var element = this.element;
   var routeEl;
+  var classPrefix = this.classPrefix_;
 
   // remove routes
   // todo: manage inner components
@@ -70,7 +77,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.setDirections = function(
 
   // copyright
   var copyright = goog.dom.createDom(goog.dom.TagName.DIV, {
-    'class': 'ol-google-maps-directions-panel-copyright'
+    'class': classPrefix + '-copyright'
   });
   goog.dom.appendChild(element, copyright);
   var copyrightText = goog.dom.createTextNode(this.copyrightText);
@@ -90,9 +97,10 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createRouteElement_ =
 
   var legEl;
   var tailEl;
+  var classPrefix = this.classPrefix_;
 
   var element = goog.dom.createDom(goog.dom.TagName.DIV, {
-    'class': 'ol-google-maps-directions-panel-route'
+    'class': classPrefix + '-route'
   });
 
   // legs
@@ -121,9 +129,10 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createLegElement_ =
     function(leg) {
 
   var stepEl;
+  var classPrefix = this.classPrefix_;
 
   var element = goog.dom.createDom(goog.dom.TagName.DIV, {
-    'class': 'ol-google-maps-directions-panel-leg'
+    'class': classPrefix + '-leg'
   });
 
   // header
@@ -131,7 +140,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createLegElement_ =
 
   // summary
   var summaryEl = goog.dom.createDom(goog.dom.TagName.DIV, {
-    'class': 'ol-google-maps-directions-panel-leg-summary'
+    'class': classPrefix + '-leg-summary'
   });
   goog.dom.appendChild(element, summaryEl);
   var summaryText = goog.dom.createTextNode(
@@ -140,7 +149,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createLegElement_ =
 
   // steps
   var table = goog.dom.createDom(goog.dom.TagName.TABLE, {
-    'class': 'ol-google-maps-directions-panel-steps'
+    'class': classPrefix + '-steps'
   });
   goog.dom.appendChild(element, table);
 
@@ -162,8 +171,10 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createLegElement_ =
 ol.control.GoogleMapsDirectionsPanel.prototype.createLegHeaderElement_ =
     function(leg) {
 
+  var classPrefix = this.classPrefix_;
+
   var element = goog.dom.createDom(goog.dom.TagName.DIV, {
-    'class': 'ol-google-maps-directions-panel-leg-header'
+    'class': classPrefix + '-leg-header'
   });
 
   // icon - todo
@@ -186,13 +197,15 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createLegHeaderElement_ =
 ol.control.GoogleMapsDirectionsPanel.prototype.createTailElement_ =
     function(leg) {
 
+  var classPrefix = this.classPrefix_;
+
   var element = goog.dom.createDom(goog.dom.TagName.DIV, {
-    'class': 'ol-google-maps-directions-panel-tail'
+    'class': classPrefix + '-tail'
   });
 
   // header - todo, should be a table
   var headerEl = goog.dom.createDom(goog.dom.TagName.DIV, {
-    'class': 'ol-google-maps-directions-panel-tail-header'
+    'class': classPrefix + '-tail-header'
   });
   goog.dom.appendChild(element, headerEl);
   var headerText = goog.dom.createTextNode(leg.end_address);
@@ -212,13 +225,15 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createTailElement_ =
 ol.control.GoogleMapsDirectionsPanel.prototype.createStepElement_ =
     function(step, index) {
 
+  var classPrefix = this.classPrefix_;
+
   var element = goog.dom.createDom(goog.dom.TagName.TR, {
-    'class': 'ol-google-maps-directions-panel-step'
+    'class': classPrefix + '-step'
   });
 
   // maneuver
   var maneuverEl = goog.dom.createDom(goog.dom.TagName.TD, {
-    'class': 'ol-google-maps-directions-panel-step-maneuver'
+    'class': classPrefix + '-step-maneuver'
   });
   if (goog.isDefAndNotNull(step.maneuver)) {
     maneuverEl.innerHTML = step.maneuver;
@@ -227,21 +242,21 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createStepElement_ =
 
   // num
   var numEl = goog.dom.createDom(goog.dom.TagName.TD, {
-    'class': 'ol-google-maps-directions-panel-step-num'
+    'class': classPrefix + '-step-num'
   });
   numEl.innerHTML = goog.string.makeSafe(index + 1 + '.');
   goog.dom.appendChild(element, numEl);
 
   // instructions
   var instructionsEl = goog.dom.createDom(goog.dom.TagName.TD, {
-    'class': 'ol-google-maps-directions-panel-step-instructions'
+    'class': classPrefix + '-step-instructions'
   });
   instructionsEl.innerHTML = step.instructions;
   goog.dom.appendChild(element, instructionsEl);
 
   // distance
   var distanceEl = goog.dom.createDom(goog.dom.TagName.TD, {
-    'class': 'ol-google-maps-directions-panel-step-distance'
+    'class': classPrefix + '-step-distance'
   });
   distanceEl.innerHTML = step.distance.text;
   goog.dom.appendChild(element, distanceEl);
