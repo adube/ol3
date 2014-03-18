@@ -5,8 +5,20 @@ goog.require('goog.asserts');
 goog.require('goog.dom');
 goog.require('goog.dom.TagName');
 goog.require('goog.dom.classes');
+goog.require('goog.events');
+goog.require('goog.events.EventType');
 goog.require('goog.string');
+goog.require('ol.View2D');
 goog.require('ol.control.Control');
+goog.require('ol.extent');
+goog.require('ol.proj');
+
+
+/**
+ * @define {number} Default buffer size in pixels to apply to the map view
+ * extent when checking if a coordinate is in the extent.
+ */
+ol.control.GOOGLEMAPSDIRECTIONSPANEL_PIXEL_BUFFER = 30;
 
 
 
@@ -26,6 +38,14 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
    * @private
    */
   this.classPrefix_ = classPrefix;
+
+  /**
+   * @type {number}
+   * @private
+   */
+  this.pixelBuffer_ = goog.isDefAndNotNull(options.pixelBuffer) ?
+      options.pixelBuffer : ol.control.GOOGLEMAPSDIRECTIONSPANEL_PIXEL_BUFFER;
+
 
   var element = goog.dom.createDom(goog.dom.TagName.DIV, {
     'class': classPrefix + ' ' + ol.css.CLASS_UNSELECTABLE
@@ -267,8 +287,24 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createStepElement_ =
 
   var classPrefix = this.classPrefix_;
 
+  var map = this.getMap();
+
+  var view = map.getView();
+  goog.asserts.assert(goog.isDef(view));
+  var view2D = view.getView2D();
+  goog.asserts.assertInstanceof(view2D, ol.View2D);
+
+  var projection = view2D.getProjection();
+
+  var lat = step.start_location.lat();
+  var lng = step.start_location.lng();
+  var transformedCoordinate = ol.proj.transform(
+      [lng, lat], 'EPSG:4326', projection.getCode());
+
   var element = goog.dom.createDom(goog.dom.TagName.TR, {
-    'class': classPrefix + '-step'
+    'class': classPrefix + '-step',
+    'data-x': transformedCoordinate[0],
+    'data-y': transformedCoordinate[1]
   });
 
   // maneuver
@@ -302,5 +338,69 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createStepElement_ =
   distanceEl.innerHTML = step.distance.text;
   goog.dom.appendChild(element, distanceEl);
 
+  // event listeners
+  goog.events.listen(element, [
+    goog.events.EventType.TOUCHEND,
+    goog.events.EventType.CLICK
+  ], this.handleStepElementPress_, false, this);
+
   return element;
+};
+
+
+/**
+ * @param {goog.events.BrowserEvent} browserEvent Browser event.
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.handleStepElementPress_ =
+    function(browserEvent) {
+
+  browserEvent.preventDefault();
+
+  var element = browserEvent.currentTarget;
+  var coordinate = [
+    window.parseFloat(element.getAttribute('data-x')),
+    window.parseFloat(element.getAttribute('data-y'))
+  ];
+
+  this.fitViewExtentToCoordinate_(coordinate);
+
+  // todo: create popup
+  window.console.log('create popup');
+
+};
+
+
+/**
+ * Fix map view extent to include coordinate if coordinate is outside
+ * extent.
+ * @param {ol.Coordinate} coordinate in map view projection
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.fitViewExtentToCoordinate_ =
+    function(coordinate) {
+
+  var map = this.getMap();
+
+  var view = map.getView();
+  goog.asserts.assert(goog.isDef(view));
+  var view2D = view.getView2D();
+  goog.asserts.assertInstanceof(view2D, ol.View2D);
+
+  var size = map.getSize();
+  goog.asserts.assertArray(size);
+
+  var extent = view2D.calculateExtent(size);
+
+  var resolution = view2D.getResolutionForExtent(extent, size);
+  var pixelBuffer = this.pixelBuffer_;
+  var buffer = resolution * pixelBuffer;
+
+  var smallExtent = ol.extent.buffer(extent, buffer * -1);
+
+  if (!ol.extent.containsCoordinate(smallExtent, coordinate)) {
+    ol.extent.extendCoordinate(extent, coordinate);
+    extent = ol.extent.buffer(extent, buffer);
+    view2D.fitExtent(extent, size);
+  }
 };

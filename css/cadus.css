@@ -6,6 +6,9 @@
   margin: 10px 0;
 }
 
+.ol-gmdp-leg-header div {
+  cursor: pointer;
+}
 
 .ol-gmdp-leg-header div {
   background: #eee;
@@ -21,6 +24,7 @@
 
 .ol-gmdp-step {
   border-top: 1px solid #cdcdcd;
+  cursor: pointer;
   vertical-align: top;
 }
 
