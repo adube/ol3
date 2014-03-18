@@ -56,6 +56,20 @@ ol.control.GoogleMapsDirectionsPanel.prototype.copyrightText =
 
 
 /**
+ * Clear the current directions.
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.clearDirections = function() {
+
+  var element = this.element;
+
+  // todo - at some point, we may want to browse all children to unlisten
+  // events
+  goog.dom.removeChildren(element);
+
+};
+
+
+/**
  * Build the direction panel content using the passed direction results.
  * @param {google.maps.DirectionsResult} directionsResult
  */
@@ -66,9 +80,8 @@ ol.control.GoogleMapsDirectionsPanel.prototype.setDirections = function(
   var routeEl;
   var classPrefix = this.classPrefix_;
 
-  // remove routes
-  // todo: manage inner components
-  goog.dom.removeChildren(element);
+  // first, clear any previous direction infos
+  this.clearDirections();
 
   // add routes
   goog.array.forEach(directionsResult.routes, function(route) {

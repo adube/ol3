@@ -386,6 +386,7 @@ ol.control.GoogleMapsDirections.prototype.clear_ = function() {
   goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
   vectorSource.clear();
 
+  this.directionsPanel_.clearDirections();
 };
 
 
