@@ -8,6 +8,7 @@ goog.require('goog.dom.classes');
 goog.require('goog.events');
 goog.require('goog.events.EventType');
 goog.require('goog.string');
+goog.require('ol.Collection');
 goog.require('ol.MapBrowserEvent.EventType');
 goog.require('ol.Overlay');
 goog.require('ol.OverlayPositioning');
@@ -72,6 +73,14 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
     'class': classPrefix + ' ' + ol.css.CLASS_UNSELECTABLE
   });
 
+
+  /**
+   * @type {ol.Collection}
+   * @private
+   */
+  this.elements_ = new ol.Collection();
+
+
   var popupEl = goog.dom.createDom(goog.dom.TagName.DIV, {
     'class': classPrefix + '-popup ' + ol.css.CLASS_UNSELECTABLE
   });
@@ -129,12 +138,19 @@ ol.control.GoogleMapsDirectionsPanel.prototype.totalDistanceText =
  */
 ol.control.GoogleMapsDirectionsPanel.prototype.clearDirections = function() {
 
-  var element = this.element;
+  // browse elements that had events listeners: unlisten
+  this.elements_.forEach(function(element) {
+    goog.events.unlisten(element, [
+      goog.events.EventType.TOUCHEND,
+      goog.events.EventType.CLICK
+    ], this.handleElementPress_, false, this);
+  }, this);
+  this.elements_.clear();
 
-  // todo - at some point, we may want to browse all children to unlisten
-  // events
-  goog.dom.removeChildren(element);
+  // remove children
+  goog.dom.removeChildren(this.element);
 
+  // destroy popup
   this.destroyPopup_();
 };
 
@@ -314,6 +330,8 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createLegHeaderElement_ =
     goog.events.EventType.CLICK
   ], this.handleElementPress_, false, this);
 
+  this.elements_.push(element);
+
   return element;
 };
 
@@ -409,6 +427,8 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createStepElement_ =
     goog.events.EventType.TOUCHEND,
     goog.events.EventType.CLICK
   ], this.handleElementPress_, false, this);
+
+  this.elements_.push(element);
 
   return element;
 };
@@ -635,6 +655,8 @@ ol.control.GoogleMapsDirectionsPanel.prototype.setMap = function(map) {
         myMap,
         ol.MapBrowserEvent.EventType.SINGLECLICK,
         this.handleMapSingleClick_, false, this);
+
+    this.clearDirections();
   }
 
   goog.base(this, 'setMap', map);
