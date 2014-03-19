@@ -260,7 +260,10 @@ ol.control.GoogleMapsDirections = function(opt_options) {
    * @private
    */
   this.directionsPanel_ = new ol.control.GoogleMapsDirectionsPanel({
-    target: options.panel
+    target: options.panel,
+    pixelBuffer: this.pixelBuffer_,
+    cornerPixelSize: goog.isDef(options.cornerPixelSize) ?
+        (options.cornerPixelSize) : undefined
   });
 
 

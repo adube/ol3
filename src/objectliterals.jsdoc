@@ -255,6 +255,9 @@
  * @property {number|undefined} modifyPixelTolerance Pixel tolerance for
  *      considering the pointer close enough to a vertex for editing.
  *      Default is 8 pixels.
+ * @property {number|undefined} cornerPixelSize Size in pixels of the top-left,
+ *      top-right, bottom-left and bottom-right corners where a popup position
+ *      should never be.  This should set around half the size of the popup.
  * @todo stability experimental
  */
 

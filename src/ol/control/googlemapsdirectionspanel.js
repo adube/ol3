@@ -10,10 +10,19 @@ goog.require('goog.events.EventType');
 goog.require('goog.string');
 goog.require('ol.MapBrowserEvent.EventType');
 goog.require('ol.Overlay');
+goog.require('ol.OverlayPositioning');
 goog.require('ol.View2D');
 goog.require('ol.control.Control');
 goog.require('ol.extent');
 goog.require('ol.proj');
+
+
+/**
+ * @define {number} Default xize in pixels of the top-left, top-right,
+ * bottom-left and bottom-right corners where a popup position should never
+ * be.  This should set around half the size of the popup.
+ */
+ol.control.GOOGLEMAPSDIRECTIONSPANEL_CORNER_PIXEL_SIZE = 100;
 
 
 /**
@@ -41,6 +50,16 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
    */
   this.classPrefix_ = classPrefix;
 
+
+  /**
+   * @type {number}
+   * @private
+   */
+  this.cornerPixelSize_ = goog.isDefAndNotNull(options.cornerPixelSize) ?
+      options.cornerPixelSize :
+      ol.control.GOOGLEMAPSDIRECTIONSPANEL_CORNER_PIXEL_SIZE;
+
+
   /**
    * @type {number}
    * @private
@@ -63,9 +82,15 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
    */
   this.popup_ = new ol.Overlay({
     element: popupEl,
-    positioning: 'bottom-center',
+    positioning: ol.OverlayPositioning.BOTTOM_CENTER,
     stopEvent: false
   });
+
+  /**
+   * @type {string}
+   * @private
+   */
+  this.popupPlacement_ = 'top';
 
   goog.base(this, {
     element: element,
@@ -409,11 +434,14 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createPopup_ = function(
   // set content and show using popover (requires bootstrap)
   jQuery(popupEl).popover({
     'animation': false,
-    'placement': 'top',
+    'placement': this.popupPlacement_,
     'html': true,
     'content': content
   });
-  jQuery(popupEl).popover('show');
+
+  window.setTimeout(function() {
+    jQuery(popupEl).popover('show');
+  }, 50);
 };
 
 
@@ -428,12 +456,16 @@ ol.control.GoogleMapsDirectionsPanel.prototype.destroyPopup_ = function() {
 
 
 /**
- * Fix map view extent to include coordinate if coordinate is outside
- * extent.
+ * Check if a popup can be safely shown at the specified coordinate.
+ * It can't if:
+ *  - it's outside the extent of the view of the map, including a buffer
+ *  - it's in one of the 4 corner extents where there wouldn't be enough
+ *    space to show the popup.
  * @param {ol.Coordinate} coordinate in map view projection
+ * @return {boolean}
  * @private
  */
-ol.control.GoogleMapsDirectionsPanel.prototype.fitViewExtentToCoordinate_ =
+ol.control.GoogleMapsDirectionsPanel.prototype.coordinateIsPopupSafe_ =
     function(coordinate) {
 
   var map = this.getMap();
@@ -454,11 +486,139 @@ ol.control.GoogleMapsDirectionsPanel.prototype.fitViewExtentToCoordinate_ =
 
   var smallExtent = ol.extent.buffer(extent, buffer * -1);
 
+  // popup is not safe if too close to the edge of the map, which is
+  // calculated using buffer
   if (!ol.extent.containsCoordinate(smallExtent, coordinate)) {
-    ol.extent.extendCoordinate(extent, coordinate);
-    extent = ol.extent.buffer(extent, buffer);
-    view2D.fitExtent(extent, size);
+    return false;
   }
+
+  var cornerPixelSize = this.cornerPixelSize_;
+  var cornerSize = resolution * cornerPixelSize;
+
+  var outerBottomLeft = ol.extent.getBottomLeft(extent);
+  var outerTopRight = ol.extent.getTopRight(extent);
+
+  var outerLeft = outerBottomLeft[0];
+  var outerBottom = outerBottomLeft[1];
+  var outerRight = outerTopRight[0];
+  var outerTop = outerTopRight[1];
+
+  var innerLeft = outerLeft + cornerSize;
+  var innerBottom = outerBottom + cornerSize;
+  var innerRight = outerRight - cornerSize;
+  var innerTop = outerTop - cornerSize;
+
+  var topLeftCorner = ol.extent.createOrUpdate(
+      outerLeft, innerTop, innerLeft, outerTop);
+
+  var topRightCorner = ol.extent.createOrUpdate(
+      innerRight, innerTop, outerRight, outerTop);
+
+  var bottomLeftCorner = ol.extent.createOrUpdate(
+      outerLeft, outerBottom, innerLeft, innerBottom);
+
+  var bottomRightCorner = ol.extent.createOrUpdate(
+      innerRight, outerBottom, outerRight, innerBottom);
+
+  // popup is not safe if coordinate is inside one of the 4 corners of the map
+  if (ol.extent.containsCoordinate(topLeftCorner, coordinate) ||
+      ol.extent.containsCoordinate(topRightCorner, coordinate) ||
+      ol.extent.containsCoordinate(bottomLeftCorner, coordinate) ||
+      ol.extent.containsCoordinate(bottomRightCorner, coordinate)) {
+    return false;
+  }
+
+  return true;
+};
+
+
+/**
+ * Calculate and set the best possible positioning of the popup given a
+ * specific coordinate.
+ * @param {ol.Coordinate} coordinate in map view projection
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.calculatePopupPositioning_ =
+    function(coordinate) {
+
+  var map = this.getMap();
+
+  var view = map.getView();
+  goog.asserts.assert(goog.isDef(view));
+  var view2D = view.getView2D();
+  goog.asserts.assertInstanceof(view2D, ol.View2D);
+
+  var size = map.getSize();
+  goog.asserts.assertArray(size);
+
+  var extent = view2D.calculateExtent(size);
+
+  var resolution = view2D.getResolutionForExtent(extent, size);
+
+  var cornerPixelSize = this.cornerPixelSize_;
+  var cornerSize = resolution * cornerPixelSize;
+
+  var outerBottomLeft = ol.extent.getBottomLeft(extent);
+  var outerTopRight = ol.extent.getTopRight(extent);
+
+  var outerLeft = outerBottomLeft[0];
+  var outerBottom = outerBottomLeft[1];
+  var outerRight = outerTopRight[0];
+  var outerTop = outerTopRight[1];
+
+  var innerLeft = outerLeft + cornerSize;
+  var innerRight = outerRight - cornerSize;
+  var innerTop = outerTop - cornerSize;
+
+  // Here's a preview of the 4 extents, i.e. 'zones'.
+  // The bottom one is bigger to have highest priority for popups with the
+  // arrow pointing down in most cases
+  //
+  // -------------
+  // | |___t___| |
+  // |l|       |r|
+  // | |   b   | |
+  // -------------
+
+  var bottomExtent = ol.extent.createOrUpdate(
+      innerLeft, outerBottom, innerRight, innerTop);
+
+  var topExtent = ol.extent.createOrUpdate(
+      innerLeft, innerTop, innerRight, outerTop);
+
+  var leftExtent = ol.extent.createOrUpdate(
+      outerLeft, outerBottom, innerLeft, outerTop);
+
+  var rightExtent = ol.extent.createOrUpdate(
+      innerRight, outerBottom, outerRight, outerTop);
+
+  if (ol.extent.containsCoordinate(bottomExtent, coordinate)) {
+    this.popupPlacement_ = 'top';
+    this.popup_.setPositioning(ol.OverlayPositioning.BOTTOM_CENTER);
+  } else if (ol.extent.containsCoordinate(topExtent, coordinate)) {
+    this.popupPlacement_ = 'bottom';
+    this.popup_.setPositioning(ol.OverlayPositioning.TOP_CENTER);
+  } else if (ol.extent.containsCoordinate(leftExtent, coordinate)) {
+    this.popupPlacement_ = 'right';
+    this.popup_.setPositioning(ol.OverlayPositioning.CENTER_LEFT);
+  } else if (ol.extent.containsCoordinate(rightExtent, coordinate)) {
+    this.popupPlacement_ = 'left';
+    this.popup_.setPositioning(ol.OverlayPositioning.CENTER_RIGHT);
+  } else {
+    this.resetPopupPositioning_();
+  }
+
+};
+
+
+/**
+ * Reset the popup positioning to the default values.
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.resetPopupPositioning_ =
+    function() {
+  this.popupPlacement_ = 'top';
+  this.popup_.setPositioning(ol.OverlayPositioning.BOTTOM_CENTER);
 };
 
 
@@ -500,6 +660,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.handleElementPress_ =
   browserEvent.preventDefault();
 
   var element = browserEvent.currentTarget;
+  var map, view, view2D;
 
   // get coordinate from element
   var coordinate = [
@@ -507,10 +668,21 @@ ol.control.GoogleMapsDirectionsPanel.prototype.handleElementPress_ =
     window.parseFloat(element.getAttribute('data-y'))
   ];
 
-  // fix view extent to coordinate
-  this.fitViewExtentToCoordinate_(coordinate);
+  if (this.coordinateIsPopupSafe_(coordinate)) {
+    this.calculatePopupPositioning_(coordinate);
+  } else {
+    this.resetPopupPositioning_();
 
-  // show popup at coordinate with updated content
+    map = this.getMap();
+
+    view = map.getView();
+    goog.asserts.assert(goog.isDef(view));
+    view2D = view.getView2D();
+    goog.asserts.assertInstanceof(view2D, ol.View2D);
+
+    view2D.setCenter(coordinate);
+  }
+
   this.createPopup_(coordinate, element.getAttribute('data-instructions'));
 };
 
