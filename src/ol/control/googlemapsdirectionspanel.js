@@ -367,43 +367,6 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createStepElement_ =
 
 
 /**
- * @param {goog.events.BrowserEvent} browserEvent Browser event.
- * @private
- */
-ol.control.GoogleMapsDirectionsPanel.prototype.handleStepElementPress_ =
-    function(browserEvent) {
-
-  browserEvent.preventDefault();
-
-  var element = browserEvent.currentTarget;
-  var popup = this.popup_;
-  var popupEl = popup.getElement();
-
-  // get coordinate from element
-  var coordinate = [
-    window.parseFloat(element.getAttribute('data-x')),
-    window.parseFloat(element.getAttribute('data-y'))
-  ];
-
-  // fix view extent to coordinate
-  this.fitViewExtentToCoordinate_(coordinate);
-
-  // show popup at coordinate with updated content
-  popup.setPosition(coordinate);
-
-  // popover - in bootstrap
-  $(popupEl).popover('destroy');
-  jQuery(popupEl).popover({
-    'animation': false,
-    'placement': 'top',
-    'html': true,
-    'content': element.getAttribute('data-instructions')
-  });
-  jQuery(popupEl).popover('show');
-};
-
-
-/**
  * @private
  */
 ol.control.GoogleMapsDirectionsPanel.prototype.destroyPopup_ = function() {
@@ -484,4 +447,41 @@ ol.control.GoogleMapsDirectionsPanel.prototype.handleMapSingleClick_ =
     function(event) {
 
   this.destroyPopup_();
+};
+
+
+/**
+ * @param {goog.events.BrowserEvent} browserEvent Browser event.
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.handleStepElementPress_ =
+    function(browserEvent) {
+
+  browserEvent.preventDefault();
+
+  var element = browserEvent.currentTarget;
+  var popup = this.popup_;
+  var popupEl = popup.getElement();
+
+  // get coordinate from element
+  var coordinate = [
+    window.parseFloat(element.getAttribute('data-x')),
+    window.parseFloat(element.getAttribute('data-y'))
+  ];
+
+  // fix view extent to coordinate
+  this.fitViewExtentToCoordinate_(coordinate);
+
+  // show popup at coordinate with updated content
+  popup.setPosition(coordinate);
+
+  // popover - in bootstrap
+  $(popupEl).popover('destroy');
+  jQuery(popupEl).popover({
+    'animation': false,
+    'placement': 'top',
+    'html': true,
+    'content': element.getAttribute('data-instructions')
+  });
+  jQuery(popupEl).popover('show');
 };
