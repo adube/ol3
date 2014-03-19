@@ -287,7 +287,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createLegHeaderElement_ =
   goog.events.listen(element, [
     goog.events.EventType.TOUCHEND,
     goog.events.EventType.CLICK
-  ], this.handleLegHeaderElementPress_, false, this);
+  ], this.handleElementPress_, false, this);
 
   return element;
 };
@@ -383,7 +383,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createStepElement_ =
   goog.events.listen(element, [
     goog.events.EventType.TOUCHEND,
     goog.events.EventType.CLICK
-  ], this.handleStepElementPress_, false, this);
+  ], this.handleElementPress_, false, this);
 
   return element;
 };
@@ -491,6 +491,31 @@ ol.control.GoogleMapsDirectionsPanel.prototype.setMap = function(map) {
 
 
 /**
+ * @param {goog.events.BrowserEvent} browserEvent Browser event.
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.handleElementPress_ =
+    function(browserEvent) {
+
+  browserEvent.preventDefault();
+
+  var element = browserEvent.currentTarget;
+
+  // get coordinate from element
+  var coordinate = [
+    window.parseFloat(element.getAttribute('data-x')),
+    window.parseFloat(element.getAttribute('data-y'))
+  ];
+
+  // fix view extent to coordinate
+  this.fitViewExtentToCoordinate_(coordinate);
+
+  // show popup at coordinate with updated content
+  this.createPopup_(coordinate, element.getAttribute('data-instructions'));
+};
+
+
+/**
  * @param {goog.events.Event} event Event.
  * @private
  */
@@ -498,54 +523,4 @@ ol.control.GoogleMapsDirectionsPanel.prototype.handleMapSingleClick_ =
     function(event) {
 
   this.destroyPopup_();
-};
-
-
-/**
- * @param {goog.events.BrowserEvent} browserEvent Browser event.
- * @private
- */
-ol.control.GoogleMapsDirectionsPanel.prototype.handleStepElementPress_ =
-    function(browserEvent) {
-
-  browserEvent.preventDefault();
-
-  var element = browserEvent.currentTarget;
-
-  // get coordinate from element
-  var coordinate = [
-    window.parseFloat(element.getAttribute('data-x')),
-    window.parseFloat(element.getAttribute('data-y'))
-  ];
-
-  // fix view extent to coordinate
-  this.fitViewExtentToCoordinate_(coordinate);
-
-  // show popup at coordinate with updated content
-  this.createPopup_(coordinate, element.getAttribute('data-instructions'));
-};
-
-
-/**
- * @param {goog.events.BrowserEvent} browserEvent Browser event.
- * @private
- */
-ol.control.GoogleMapsDirectionsPanel.prototype.handleLegHeaderElementPress_ =
-    function(browserEvent) {
-
-  browserEvent.preventDefault();
-
-  var element = browserEvent.currentTarget;
-
-  // get coordinate from element
-  var coordinate = [
-    window.parseFloat(element.getAttribute('data-x')),
-    window.parseFloat(element.getAttribute('data-y'))
-  ];
-
-  // fix view extent to coordinate
-  this.fitViewExtentToCoordinate_(coordinate);
-
-  // show popup at coordinate with updated content
-  this.createPopup_(coordinate, element.getAttribute('data-instructions'));
 };
