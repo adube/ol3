@@ -254,8 +254,25 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createLegHeaderElement_ =
 
   var classPrefix = this.classPrefix_;
 
+  var map = this.getMap();
+
+  var view = map.getView();
+  goog.asserts.assert(goog.isDef(view));
+  var view2D = view.getView2D();
+  goog.asserts.assertInstanceof(view2D, ol.View2D);
+
+  var projection = view2D.getProjection();
+
+  var lat = (start) ? leg.start_location.lat() : leg.end_location.lat();
+  var lng = (start) ? leg.start_location.lng() : leg.end_location.lng();
+  var transformedCoordinate = ol.proj.transform(
+      [lng, lat], 'EPSG:4326', projection.getCode());
+
   var element = goog.dom.createDom(goog.dom.TagName.DIV, {
-    'class': classPrefix + '-leg-header'
+    'class': classPrefix + '-leg-header',
+    'data-x': transformedCoordinate[0],
+    'data-y': transformedCoordinate[1],
+    'data-instructions': (start) ? leg.start_address : leg.end_address
   });
 
   // icon - todo
@@ -265,6 +282,12 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createLegHeaderElement_ =
   goog.dom.appendChild(element, textEl);
   var text = (start) ? leg.start_address : leg.end_address;
   goog.dom.appendChild(textEl, goog.dom.createTextNode(text));
+
+  // event listeners
+  goog.events.listen(element, [
+    goog.events.EventType.TOUCHEND,
+    goog.events.EventType.CLICK
+  ], this.handleLegHeaderElementPress_, false, this);
 
   return element;
 };
@@ -367,6 +390,34 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createStepElement_ =
 
 
 /**
+ * @param {ol.Coordinate} coordinate Coordinate used to position the popup
+ * @param {string} content Content of the popup, can be html
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.createPopup_ = function(
+    coordinate, content) {
+
+  var popup = this.popup_;
+  var popupEl = popup.getElement();
+
+  // destroy old one first
+  $(popupEl).popover('destroy');
+
+  // set position
+  popup.setPosition(coordinate);
+
+  // set content and show using popover (requires bootstrap)
+  jQuery(popupEl).popover({
+    'animation': false,
+    'placement': 'top',
+    'html': true,
+    'content': content
+  });
+  jQuery(popupEl).popover('show');
+};
+
+
+/**
  * @private
  */
 ol.control.GoogleMapsDirectionsPanel.prototype.destroyPopup_ = function() {
@@ -460,8 +511,6 @@ ol.control.GoogleMapsDirectionsPanel.prototype.handleStepElementPress_ =
   browserEvent.preventDefault();
 
   var element = browserEvent.currentTarget;
-  var popup = this.popup_;
-  var popupEl = popup.getElement();
 
   // get coordinate from element
   var coordinate = [
@@ -473,15 +522,30 @@ ol.control.GoogleMapsDirectionsPanel.prototype.handleStepElementPress_ =
   this.fitViewExtentToCoordinate_(coordinate);
 
   // show popup at coordinate with updated content
-  popup.setPosition(coordinate);
+  this.createPopup_(coordinate, element.getAttribute('data-instructions'));
+};
 
-  // popover - in bootstrap
-  $(popupEl).popover('destroy');
-  jQuery(popupEl).popover({
-    'animation': false,
-    'placement': 'top',
-    'html': true,
-    'content': element.getAttribute('data-instructions')
-  });
-  jQuery(popupEl).popover('show');
+
+/**
+ * @param {goog.events.BrowserEvent} browserEvent Browser event.
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.handleLegHeaderElementPress_ =
+    function(browserEvent) {
+
+  browserEvent.preventDefault();
+
+  var element = browserEvent.currentTarget;
+
+  // get coordinate from element
+  var coordinate = [
+    window.parseFloat(element.getAttribute('data-x')),
+    window.parseFloat(element.getAttribute('data-y'))
+  ];
+
+  // fix view extent to coordinate
+  this.fitViewExtentToCoordinate_(coordinate);
+
+  // show popup at coordinate with updated content
+  this.createPopup_(coordinate, element.getAttribute('data-instructions'));
 };
