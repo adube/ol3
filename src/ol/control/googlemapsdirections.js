@@ -218,6 +218,8 @@ ol.control.GoogleMapsDirections = function(opt_options) {
    */
   this.dryModify_ = new ol.interaction.DryModify({
     features: this.routeFeatures_,
+    pixelTolerance: goog.isDef(options.modifyPixelTolerance) ?
+        options.modifyPixelTolerance : 8,
     style: [
       new ol.style.Style({
         image: new ol.style.Circle({

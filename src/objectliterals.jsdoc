@@ -252,6 +252,9 @@
  *     modify an existing waypoint of any type.
  * @property {number|undefined} maxWaypoints The maximum allowed waypoints.
  * @property {Element} panel Target for the directions panel.
+ * @property {number|undefined} modifyPixelTolerance Pixel tolerance for
+ *      considering the pointer close enough to a vertex for editing.
+ *      Default is 8 pixels.
  * @todo stability experimental
  */
 
