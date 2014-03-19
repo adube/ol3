@@ -431,6 +431,26 @@ ol.control.GoogleMapsDirections.prototype.createOrUpdateDetour_ = function(
 
 
 /**
+ * Disable all geocoder reverse geocoding.
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.disableGeocoderReverseGeocodings_ =
+    function() {
+
+  var startGeocoder = this.startGeocoder_;
+  var endGeocoder = this.endGeocoder_;
+  var waypointGeocoders = this.waypointGeocoders_;
+
+  startGeocoder.disableReverseGeocoding();
+  endGeocoder.disableReverseGeocoding();
+  waypointGeocoders.forEach(function(waypointGeocoder) {
+    waypointGeocoder.disableReverseGeocoding();
+  }, this);
+
+};
+
+
+/**
  * @private
  */
 ol.control.GoogleMapsDirections.prototype.drawRoute_ = function() {
@@ -958,12 +978,18 @@ ol.control.GoogleMapsDirections.prototype.toggleDetourFeatureRemoveSymbol_ =
       (!goog.isDefAndNotNull(feature) || feature != lastFeature)) {
     lastFeature.set(labelProperty, '');
     this.lastDetourFeatureOverPointer_ = null;
+
+    // re-enable reverse geocoding
+    this.toggleGeocoderReverseGeocodings_();
   }
 
   // set new label, if required
   if (goog.isDefAndNotNull(feature) && !goog.isDefAndNotNull(lastFeature)) {
     feature.set(labelProperty, 'X');
     this.lastDetourFeatureOverPointer_ = feature;
+
+    // mouse is over a detour feature, temporarly disable reverse geocoding
+    this.disableGeocoderReverseGeocodings_();
   }
 };
 
