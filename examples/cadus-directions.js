@@ -5,6 +5,7 @@ goog.require('ol.View2D');
 goog.require('ol.control.GoogleMapsDirections');
 goog.require('ol.interaction');
 goog.require('ol.interaction.DragPan');
+goog.require('ol.interaction.DragStyleCursor');
 goog.require('ol.layer.Vector');
 goog.require('ol.proj');
 goog.require('ol.source.GeoJSON');
@@ -66,7 +67,10 @@ var map = new ol.Map({
     altShiftDragRotate: false,
     dragPan: false,
     touchRotate: false
-  }).extend([new ol.interaction.DragPan({kinetic: false})]),
+  }).extend([
+    new ol.interaction.DragPan({kinetic: false}),
+    new ol.interaction.DragStyleCursor()
+  ]),
   renderer: 'canvas',
   target: olMapDiv,
   view: view
