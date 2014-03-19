@@ -44,3 +44,12 @@
 .ol-gmdp-step-distance {
   width: 50px;
 }
+
+/**
+ * GoogleMapsDirectionsPanel
+ */
+
+.ol-overlaycontainer .popover {
+  width: 300px;
+  max-width: 300px;
+}

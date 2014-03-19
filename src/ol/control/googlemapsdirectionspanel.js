@@ -8,6 +8,8 @@ goog.require('goog.dom.classes');
 goog.require('goog.events');
 goog.require('goog.events.EventType');
 goog.require('goog.string');
+goog.require('ol.MapBrowserEvent.EventType');
+goog.require('ol.Overlay');
 goog.require('ol.View2D');
 goog.require('ol.control.Control');
 goog.require('ol.extent');
@@ -49,6 +51,20 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
 
   var element = goog.dom.createDom(goog.dom.TagName.DIV, {
     'class': classPrefix + ' ' + ol.css.CLASS_UNSELECTABLE
+  });
+
+  var popupEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+    'class': classPrefix + '-popup ' + ol.css.CLASS_UNSELECTABLE
+  });
+
+  /**
+   * @type {ol.Overlay}
+   * @private
+   */
+  this.popup_ = new ol.Overlay({
+    element: popupEl,
+    positioning: 'bottom-center',
+    stopEvent: false
   });
 
   goog.base(this, {
@@ -94,6 +110,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.clearDirections = function() {
   // events
   goog.dom.removeChildren(element);
 
+  this.destroyPopup_();
 };
 
 
@@ -304,7 +321,8 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createStepElement_ =
   var element = goog.dom.createDom(goog.dom.TagName.TR, {
     'class': classPrefix + '-step',
     'data-x': transformedCoordinate[0],
-    'data-y': transformedCoordinate[1]
+    'data-y': transformedCoordinate[1],
+    'data-instructions': step.instructions
   });
 
   // maneuver
@@ -358,16 +376,40 @@ ol.control.GoogleMapsDirectionsPanel.prototype.handleStepElementPress_ =
   browserEvent.preventDefault();
 
   var element = browserEvent.currentTarget;
+  var popup = this.popup_;
+  var popupEl = popup.getElement();
+
+  // get coordinate from element
   var coordinate = [
     window.parseFloat(element.getAttribute('data-x')),
     window.parseFloat(element.getAttribute('data-y'))
   ];
 
+  // fix view extent to coordinate
   this.fitViewExtentToCoordinate_(coordinate);
 
-  // todo: create popup
-  window.console.log('create popup');
+  // show popup at coordinate with updated content
+  popup.setPosition(coordinate);
 
+  // popover - in bootstrap
+  $(popupEl).popover('destroy');
+  jQuery(popupEl).popover({
+    'animation': false,
+    'placement': 'top',
+    'html': true,
+    'content': element.getAttribute('data-instructions')
+  });
+  jQuery(popupEl).popover('show');
+};
+
+
+/**
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.destroyPopup_ = function() {
+  var popup = this.popup_;
+  var popupEl = popup.getElement();
+  jQuery(popupEl).popover('destroy');
 };
 
 
@@ -403,4 +445,43 @@ ol.control.GoogleMapsDirectionsPanel.prototype.fitViewExtentToCoordinate_ =
     extent = ol.extent.buffer(extent, buffer);
     view2D.fitExtent(extent, size);
   }
+};
+
+
+/**
+ * @inheritDoc
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.setMap = function(map) {
+
+  var myMap = this.getMap();
+  if (goog.isNull(map) && !goog.isNull(myMap)) {
+    myMap.removeOverlay(this.popup_);
+
+    goog.events.unlisten(
+        myMap,
+        ol.MapBrowserEvent.EventType.SINGLECLICK,
+        this.handleMapSingleClick_, false, this);
+  }
+
+  goog.base(this, 'setMap', map);
+
+  if (!goog.isNull(map)) {
+    map.addOverlay(this.popup_);
+
+    goog.events.listen(
+        map,
+        ol.MapBrowserEvent.EventType.SINGLECLICK,
+        this.handleMapSingleClick_, false, this);
+  }
+};
+
+
+/**
+ * @param {goog.events.Event} event Event.
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.handleMapSingleClick_ =
+    function(event) {
+
+  this.destroyPopup_();
 };
