@@ -1,4 +1,14 @@
 {
+
+  "ambiguate-properties": false,
+  "disambiguate-properties": false,
+  "mode": "SIMPLE",
+  "output-wrapper": [
+    "var CLOSURE_NO_DEPS = true;\n",
+    "%output%"
+  ],
+  "pretty-print": true,
+
   "define": {
     "ol.ENABLE_DOM": false,
     "ol.ENABLE_WEBGL": false,
