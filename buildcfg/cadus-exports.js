@@ -79,6 +79,11 @@ goog.exportProperty(
     'setZoom',
     ol.View2D.prototype.setZoom);
 
+goog.exportProperty(
+    ol.Object.prototype,
+    'getProperties',
+    ol.Object.prototype.getProperties);
+
 goog.exportSymbol(
     'ol.style.Circle',
     ol.style.Circle);
