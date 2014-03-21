@@ -686,8 +686,8 @@ ol.control.GoogleMapsDirectionsPanel.prototype.handleElementPress_ =
 
   // get coordinate from element
   var coordinate = [
-    window.parseFloat(element.getAttribute('data-x')),
-    window.parseFloat(element.getAttribute('data-y'))
+    parseFloat(element.getAttribute('data-x')),
+    parseFloat(element.getAttribute('data-y'))
   ];
 
   if (this.coordinateIsPopupSafe_(coordinate)) {
