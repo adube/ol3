@@ -1,5 +1,3 @@
-// FIXME works for View2D only
-
 goog.provide('ol.interaction.KeyboardZoom');
 
 goog.require('goog.asserts');
@@ -11,19 +9,21 @@ goog.require('ol.interaction.Interaction');
 
 
 /**
+ * @classdesc
  * Allows the user to zoom the map using keyboard + and -.
  * Note that, although this interaction is by default included in maps,
  * the keys can only be used when browser focus is on the element to which
  * the keyboard events are attached. By default, this is the map div,
- * though you can change this with the `keyboardTargetElement` in
+ * though you can change this with the `keyboardEventTarget` in
  * {@link ol.Map}. `document` never loses focus but, for any other element,
  * focus will have to be on, and returned to, this element if the keys are to
  * function.
  * See also {@link ol.interaction.KeyboardPan}.
+ *
  * @constructor
  * @param {olx.interaction.KeyboardZoomOptions=} opt_options Options.
  * @extends {ol.interaction.Interaction}
- * @todo stability experimental
+ * @api stable
  */
 ol.interaction.KeyboardZoom = function(opt_options) {
 
@@ -69,8 +69,8 @@ ol.interaction.KeyboardZoom.prototype.handleMapBrowserEvent =
       var map = mapBrowserEvent.map;
       var delta = (charCode == '+'.charCodeAt(0)) ? this.delta_ : -this.delta_;
       map.render();
-      // FIXME works for View2D only
-      var view = map.getView().getView2D();
+      var view = map.getView();
+      goog.asserts.assert(goog.isDef(view));
       ol.interaction.Interaction.zoomByDelta(
           map, view, delta, undefined, this.duration_);
       mapBrowserEvent.preventDefault();

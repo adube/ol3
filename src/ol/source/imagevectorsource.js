@@ -1,22 +1,22 @@
 goog.provide('ol.source.ImageVector');
 
 goog.require('goog.asserts');
-goog.require('goog.dom');
-goog.require('goog.dom.TagName');
 goog.require('goog.events');
 goog.require('goog.events.EventType');
 goog.require('goog.vec.Mat4');
+goog.require('ol.dom');
 goog.require('ol.extent');
-goog.require('ol.feature');
 goog.require('ol.render.canvas.ReplayGroup');
 goog.require('ol.renderer.vector');
 goog.require('ol.source.ImageCanvas');
 goog.require('ol.source.Vector');
+goog.require('ol.style.Style');
 goog.require('ol.vec.Mat4');
 
 
 
 /**
+ * @classdesc
  * An image source whose images are canvas elements into which vector features
  * read from a vector source (`ol.source.Vector`) are drawn. An
  * `ol.source.ImageVector` object is to be used as the `source` of an image
@@ -30,7 +30,7 @@ goog.require('ol.vec.Mat4');
  * @constructor
  * @extends {ol.source.ImageCanvas}
  * @param {olx.source.ImageVectorOptions} options Options.
- * @todo stability experimental
+ * @api
  */
 ol.source.ImageVector = function(options) {
 
@@ -42,11 +42,11 @@ ol.source.ImageVector = function(options) {
 
   /**
    * @private
-   * @type {!ol.feature.StyleFunction}
+   * @type {!ol.style.StyleFunction}
    */
-  this.styleFunction_ = goog.isDef(options.style) ?
-      ol.feature.createStyleFunction(options.style) :
-      ol.feature.defaultStyleFunction;
+  this.styleFunction_ = goog.isDefAndNotNull(options.style) ?
+      ol.style.createStyleFunction(options.style) :
+      ol.style.defaultStyleFunction;
 
   /**
    * @private
@@ -56,17 +56,9 @@ ol.source.ImageVector = function(options) {
 
   /**
    * @private
-   * @type {HTMLCanvasElement}
-   */
-  this.canvasElement_ = /** @type {HTMLCanvasElement} */
-      (goog.dom.createElement(goog.dom.TagName.CANVAS));
-
-  /**
-   * @private
    * @type {CanvasRenderingContext2D}
    */
-  this.canvasContext_ = /** @type {CanvasRenderingContext2D} */
-      (this.canvasElement_.getContext('2d'));
+  this.canvasContext_ = ol.dom.createCanvasContext2D();
 
   /**
    * @private
@@ -83,7 +75,6 @@ ol.source.ImageVector = function(options) {
   goog.base(this, {
     attributions: options.attributions,
     canvasFunction: goog.bind(this.canvasFunctionInternal_, this),
-    extent: options.extent,
     logo: options.logo,
     projection: options.projection,
     ratio: options.ratio,
@@ -110,12 +101,12 @@ goog.inherits(ol.source.ImageVector, ol.source.ImageCanvas);
 ol.source.ImageVector.prototype.canvasFunctionInternal_ =
     function(extent, resolution, pixelRatio, size, projection) {
 
-  var tolerance = resolution / (2 * pixelRatio);
-  var replayGroup = new ol.render.canvas.ReplayGroup(tolerance, extent,
+  var replayGroup = new ol.render.canvas.ReplayGroup(
+      ol.renderer.vector.getTolerance(resolution, pixelRatio), extent,
       resolution);
 
   var loading = false;
-  this.source_.forEachFeatureInExtent(extent,
+  this.source_.forEachFeatureInExtentAtResolution(extent, resolution,
       /**
        * @param {ol.Feature} feature Feature.
        */
@@ -130,8 +121,8 @@ ol.source.ImageVector.prototype.canvasFunctionInternal_ =
   }
 
   if (this.canvasSize_[0] != size[0] || this.canvasSize_[1] != size[1]) {
-    this.canvasElement_.width = size[0];
-    this.canvasElement_.height = size[1];
+    this.canvasContext_.canvas.width = size[0];
+    this.canvasContext_.canvas.height = size[1];
     this.canvasSize_[0] = size[0];
     this.canvasSize_[1] = size[1];
   } else {
@@ -145,20 +136,20 @@ ol.source.ImageVector.prototype.canvasFunctionInternal_ =
 
   this.replayGroup_ = replayGroup;
 
-  return this.canvasElement_;
+  return this.canvasContext_.canvas;
 };
 
 
 /**
  * @inheritDoc
  */
-ol.source.ImageVector.prototype.forEachFeatureAtPixel =
-    function(extent, resolution, rotation, coordinate, callback) {
+ol.source.ImageVector.prototype.forEachFeatureAtPixel = function(
+    extent, resolution, rotation, coordinate, skippedFeatureUids, callback) {
   if (goog.isNull(this.replayGroup_)) {
     return undefined;
   } else {
     return this.replayGroup_.forEachGeometryAtPixel(
-        extent, resolution, 0, coordinate, {},
+        extent, resolution, 0, coordinate, skippedFeatureUids,
         /**
          * @param {ol.geom.Geometry} geometry Geometry.
          * @param {Object} data Data.
@@ -169,6 +160,15 @@ ol.source.ImageVector.prototype.forEachFeatureAtPixel =
           return callback(feature);
         });
   }
+};
+
+
+/**
+ * @return {ol.source.Vector} Source.
+ * @api
+ */
+ol.source.ImageVector.prototype.getSource = function() {
+  return this.source_;
 };
 
 
@@ -225,14 +225,12 @@ ol.source.ImageVector.prototype.renderFeature_ =
   if (!goog.isDefAndNotNull(styles)) {
     return false;
   }
-  // simplify to a tolerance of half a device pixel
-  var squaredTolerance =
-      resolution * resolution / (4 * pixelRatio * pixelRatio);
   var i, ii, loading = false;
   for (i = 0, ii = styles.length; i < ii; ++i) {
     loading = ol.renderer.vector.renderFeature(
-        replayGroup, feature, styles[i], squaredTolerance, feature,
-        this.handleImageChange_, this) || loading;
+        replayGroup, feature, styles[i],
+        ol.renderer.vector.getSquaredTolerance(resolution, pixelRatio),
+        feature, this.handleImageChange_, this) || loading;
   }
   return loading;
 };

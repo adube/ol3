@@ -8,47 +8,25 @@
  * @externs
  */
 
-// @see https://code.google.com/p/closure-compiler/issues/detail?id=1060
+/** @type {number} */
+Touch.prototype.force;
 
-/** @type {Date} */
-HTMLInputElement.prototype.valueAsDate;
 
 /** @type {number} */
-HTMLInputElement.prototype.valueAsNumber;
+Touch.prototype.radiusX;
 
 
-// @see https://code.google.com/p/closure-compiler/issues/detail?id=1084
-
-/** @type {?number} */
-DeviceRotationRate.prototype.alpha;
-
-/** @type {?number} */
-DeviceRotationRate.prototype.beta;
-
-/** @type {?number} */
-DeviceRotationRate.prototype.gamma;
+/** @type {number} */
+Touch.prototype.radiusY;
 
 
-// @see https://code.google.com/p/closure-compiler/issues/detail?id=1088
-
-/** @type {?number} */
-DeviceOrientationEvent.prototype.webkitCompassAccuracy;
-
-/** @type {?number} */
-DeviceOrientationEvent.prototype.webkitCompassHeading;
+/** @type {number} */
+Touch.prototype.webkitForce;
 
 
-// IE 11 fullscreen API
-// http://msdn.microsoft.com/en-us/library/ie/dn265028(v=vs.85).aspx
+/** @type {number} */
+Touch.prototype.webkitRadiusX;
 
-/** @return {void} */
-Element.prototype.msRequestFullscreen = function() {};
 
-/** @return {void} */
-Element.prototype.msExitFullscreen = function() {};
-
-/** @type {boolean} */
-Document.prototype.msFullscreenEnabled;
-
-/** @type {Element} */
-Document.prototype.msFullscreenElement;
+/** @type {number} */
+Touch.prototype.webkitRadiusY;

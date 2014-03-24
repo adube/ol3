@@ -10,6 +10,8 @@ goog.require('ol.FeatureOverlay');
 goog.require('ol.Map');
 goog.require('ol.MapBrowserEvent');
 goog.require('ol.MapBrowserEvent.EventType');
+goog.require('ol.events.condition');
+goog.require('ol.feature');
 goog.require('ol.geom.GeometryType');
 goog.require('ol.geom.LineString');
 goog.require('ol.geom.MultiLineString');
@@ -19,17 +21,23 @@ goog.require('ol.geom.Point');
 goog.require('ol.geom.Polygon');
 goog.require('ol.interaction.Pointer');
 goog.require('ol.source.Vector');
-goog.require('ol.style.Circle');
-goog.require('ol.style.Fill');
-goog.require('ol.style.Stroke');
-goog.require('ol.style.Style');
 
 
 /**
  * @enum {string}
  */
 ol.DrawEventType = {
+  /**
+   * Triggered upon feature draw start
+   * @event ol.DrawEvent#drawstart
+   * @api stable
+   */
   DRAWSTART: 'drawstart',
+  /**
+   * Triggered upon feature draw end
+   * @event ol.DrawEvent#drawend
+   * @api stable
+   */
   DRAWEND: 'drawend'
 };
 
@@ -47,7 +55,9 @@ ol.DrawEvent = function(type, feature) {
   goog.base(this, type);
 
   /**
+   * The feature being drawn.
    * @type {ol.Feature}
+   * @api stable
    */
   this.feature = feature;
 
@@ -57,11 +67,14 @@ goog.inherits(ol.DrawEvent, goog.events.Event);
 
 
 /**
- * Interaction that allows drawing geometries
+ * @classdesc
+ * Interaction that allows drawing geometries.
+ *
  * @constructor
  * @extends {ol.interaction.Pointer}
+ * @fires ol.DrawEvent
  * @param {olx.interaction.DrawOptions} options Options.
- * @todo stability experimental
+ * @api stable
  */
 ol.interaction.Draw = function(options) {
 
@@ -173,61 +186,29 @@ ol.interaction.Draw = function(options) {
         options.style : ol.interaction.Draw.getDefaultStyleFunction()
   });
 
+  /**
+   * Name of the geometry attribute for newly created features.
+   * @type {string|undefined}
+   * @private
+   */
+  this.geometryName_ = options.geometryName;
+
+  /**
+   * @private
+   * @type {ol.events.ConditionType}
+   */
+  this.condition_ = goog.isDef(options.condition) ?
+      options.condition : ol.events.condition.noModifierKeys;
+
 };
 goog.inherits(ol.interaction.Draw, ol.interaction.Pointer);
 
 
 /**
- * @return {ol.feature.StyleFunction} Styles.
+ * @return {ol.style.StyleFunction} Styles.
  */
 ol.interaction.Draw.getDefaultStyleFunction = function() {
-  /** @type {Object.<ol.geom.GeometryType, Array.<ol.style.Style>>} */
-  var styles = {};
-  styles[ol.geom.GeometryType.POLYGON] = [
-    new ol.style.Style({
-      fill: new ol.style.Fill({
-        color: [255, 255, 255, 0.5]
-      })
-    })
-  ];
-  styles[ol.geom.GeometryType.MULTI_POLYGON] =
-      styles[ol.geom.GeometryType.POLYGON];
-
-  styles[ol.geom.GeometryType.LINE_STRING] = [
-    new ol.style.Style({
-      stroke: new ol.style.Stroke({
-        color: [255, 255, 255, 1],
-        width: 5
-      })
-    }),
-    new ol.style.Style({
-      stroke: new ol.style.Stroke({
-        color: [0, 153, 255, 1],
-        width: 3
-      })
-    })
-  ];
-  styles[ol.geom.GeometryType.MULTI_LINE_STRING] =
-      styles[ol.geom.GeometryType.LINE_STRING];
-
-  styles[ol.geom.GeometryType.POINT] = [
-    new ol.style.Style({
-      image: new ol.style.Circle({
-        radius: 7,
-        fill: new ol.style.Fill({
-          color: [0, 153, 255, 1]
-        }),
-        stroke: new ol.style.Stroke({
-          color: [255, 255, 255, 0.75],
-          width: 1.5
-        })
-      }),
-      zIndex: 100000
-    })
-  ];
-  styles[ol.geom.GeometryType.MULTI_POINT] =
-      styles[ol.geom.GeometryType.POINT];
-
+  var styles = ol.feature.createDefaultEditingStyles();
   return function(feature, resolution) {
     return styles[feature.getGeometry().getType()];
   };
@@ -271,8 +252,12 @@ ol.interaction.Draw.prototype.handleMapBrowserEvent = function(event) {
  * @return {boolean} Pass the event to other interactions.
  */
 ol.interaction.Draw.prototype.handlePointerDown = function(event) {
-  this.downPx_ = event.pixel;
-  return true;
+  if (this.condition_(event)) {
+    this.downPx_ = event.pixel;
+    return true;
+  } else {
+    return false;
+  }
 };
 
 
@@ -316,6 +301,8 @@ ol.interaction.Draw.prototype.handlePointerMove_ = function(event) {
     this.startDrawing_(event);
   } else if (!goog.isNull(this.finishCoordinate_)) {
     this.modifyDrawing_(event);
+  } else {
+    this.createOrUpdateSketchPoint_(event);
   }
   return true;
 };
@@ -364,6 +351,23 @@ ol.interaction.Draw.prototype.atFinish_ = function(event) {
 
 
 /**
+ * @param {ol.MapBrowserEvent} event Event.
+ * @private
+ */
+ol.interaction.Draw.prototype.createOrUpdateSketchPoint_ = function(event) {
+  var coordinates = event.coordinate.slice();
+  if (goog.isNull(this.sketchPoint_)) {
+    this.sketchPoint_ = new ol.Feature(new ol.geom.Point(coordinates));
+    this.updateSketchFeatures_();
+  } else {
+    var sketchPointGeom = this.sketchPoint_.getGeometry();
+    goog.asserts.assertInstanceof(sketchPointGeom, ol.geom.Point);
+    sketchPointGeom.setCoordinates(coordinates);
+  }
+};
+
+
+/**
  * Start the drawing.
  * @param {ol.MapBrowserEvent} event Event.
  * @private
@@ -375,8 +379,6 @@ ol.interaction.Draw.prototype.startDrawing_ = function(event) {
   if (this.mode_ === ol.interaction.DrawMode.POINT) {
     geometry = new ol.geom.Point(start.slice());
   } else {
-    this.sketchPoint_ = new ol.Feature(new ol.geom.Point(start.slice()));
-
     if (this.mode_ === ol.interaction.DrawMode.LINE_STRING) {
       geometry = new ol.geom.LineString([start.slice(), start.slice()]);
     } else if (this.mode_ === ol.interaction.DrawMode.POLYGON) {
@@ -387,7 +389,11 @@ ol.interaction.Draw.prototype.startDrawing_ = function(event) {
     }
   }
   goog.asserts.assert(goog.isDef(geometry));
-  this.sketchFeature_ = new ol.Feature(geometry);
+  this.sketchFeature_ = new ol.Feature();
+  if (goog.isDef(this.geometryName_)) {
+    this.sketchFeature_.setGeometryName(this.geometryName_);
+  }
+  this.sketchFeature_.setGeometry(geometry);
   this.updateSketchFeatures_();
   this.dispatchEvent(new ol.DrawEvent(ol.DrawEventType.DRAWSTART,
       this.sketchFeature_));
@@ -450,7 +456,7 @@ ol.interaction.Draw.prototype.modifyDrawing_ = function(event) {
 ol.interaction.Draw.prototype.addToDrawing_ = function(event) {
   var coordinate = event.coordinate;
   var geometry = this.sketchFeature_.getGeometry();
-  var coordinates, last;
+  var coordinates;
   if (this.mode_ === ol.interaction.DrawMode.LINE_STRING) {
     this.finishCoordinate_ = coordinate.slice();
     goog.asserts.assertInstanceof(geometry, ol.geom.LineString);
@@ -538,7 +544,10 @@ ol.interaction.Draw.prototype.abortDrawing_ = function() {
  * @private
  */
 ol.interaction.Draw.prototype.updateSketchFeatures_ = function() {
-  var sketchFeatures = [this.sketchFeature_];
+  var sketchFeatures = [];
+  if (!goog.isNull(this.sketchFeature_)) {
+    sketchFeatures.push(this.sketchFeature_);
+  }
   if (!goog.isNull(this.sketchLine_)) {
     sketchFeatures.push(this.sketchLine_);
   }

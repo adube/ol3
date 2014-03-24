@@ -1,11 +1,10 @@
 goog.provide('ol.source.TileDebug');
 
-goog.require('goog.dom');
-goog.require('goog.dom.TagName');
 goog.require('ol.Tile');
 goog.require('ol.TileCache');
 goog.require('ol.TileCoord');
 goog.require('ol.TileState');
+goog.require('ol.dom');
 goog.require('ol.source.Tile');
 goog.require('ol.tilegrid.TileGrid');
 
@@ -54,14 +53,7 @@ ol.DebugTile_.prototype.getImage = function(opt_context) {
   } else {
 
     var tileSize = this.tileSize_;
-
-    var canvas = /** @type {HTMLCanvasElement} */
-        (goog.dom.createElement(goog.dom.TagName.CANVAS));
-    canvas.width = tileSize;
-    canvas.height = tileSize;
-
-    var context = /** @type {CanvasRenderingContext2D} */
-        (canvas.getContext('2d'));
+    var context = ol.dom.createCanvasContext2D(tileSize, tileSize);
 
     context.strokeStyle = 'black';
     context.strokeRect(0.5, 0.5, tileSize + 0.5, tileSize + 0.5);
@@ -73,8 +65,8 @@ ol.DebugTile_.prototype.getImage = function(opt_context) {
     context.fillText(
         this.tileCoord_.toString(), tileSize / 2, tileSize / 2);
 
-    this.canvasByContext_[key] = canvas;
-    return canvas;
+    this.canvasByContext_[key] = context.canvas;
+    return context.canvas;
 
   }
 };
@@ -82,15 +74,21 @@ ol.DebugTile_.prototype.getImage = function(opt_context) {
 
 
 /**
+ * @classdesc
+ * A pseudo tile source, which does not fetch tiles from a server, but renders
+ * a grid outline for the tile grid/projection along with the coordinates for
+ * each tile. See examples/canvas-tiles for an example.
+ *
+ * Uses Canvas context2d, so requires Canvas support.
+ *
  * @constructor
  * @extends {ol.source.Tile}
  * @param {olx.source.TileDebugOptions} options Debug tile options.
- * @todo stability experimental
+ * @api
  */
 ol.source.TileDebug = function(options) {
 
   goog.base(this, {
-    extent: options.extent,
     opaque: false,
     projection: options.projection,
     tileGrid: options.tileGrid

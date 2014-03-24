@@ -1,10 +1,7 @@
 goog.provide('ol.source.TileImage');
 
 goog.require('goog.asserts');
-goog.require('ol.Attribution');
-goog.require('ol.Extent');
 goog.require('ol.ImageTile');
-goog.require('ol.Tile');
 goog.require('ol.TileCache');
 goog.require('ol.TileCoord');
 goog.require('ol.TileLoadFunctionType');
@@ -12,33 +9,17 @@ goog.require('ol.TileState');
 goog.require('ol.TileUrlFunction');
 goog.require('ol.TileUrlFunctionType');
 goog.require('ol.source.Tile');
-goog.require('ol.tilegrid.TileGrid');
-
-
-/**
- * @typedef {{attributions: (Array.<ol.Attribution>|undefined),
- *            crossOrigin: (null|string|undefined),
- *            extent: (ol.Extent|undefined),
- *            logo: (string|undefined),
- *            opaque: (boolean|undefined),
- *            projection: ol.proj.ProjectionLike,
- *            tileClass: (function(new: ol.ImageTile, ol.TileCoord,
- *                                 ol.TileState, string, ?string,
- *                                 ol.TileLoadFunctionType)|undefined),
- *            tileGrid: (ol.tilegrid.TileGrid|undefined),
- *            tileLoadFunction: (ol.TileLoadFunctionType|undefined),
- *            tileUrlFunction: (ol.TileUrlFunctionType|undefined)}}
- * @todo stability experimental
- */
-ol.source.TileImageOptions;
 
 
 
 /**
+ * @classdesc
+ * Base class for sources providing images divided into a tile grid.
+ *
  * @constructor
  * @extends {ol.source.Tile}
- * @param {ol.source.TileImageOptions} options Image tile options.
- * @todo stability experimental
+ * @param {olx.source.TileImageOptions} options Image tile options.
+ * @api
  */
 ol.source.TileImage = function(options) {
 
@@ -48,7 +29,8 @@ ol.source.TileImage = function(options) {
     logo: options.logo,
     opaque: options.opaque,
     projection: options.projection,
-    tileGrid: options.tileGrid
+    tileGrid: options.tileGrid,
+    tilePixelRatio: options.tilePixelRatio
   });
 
   /**
@@ -141,7 +123,37 @@ ol.source.TileImage.prototype.getTile =
 
 
 /**
+ * @return {ol.TileLoadFunctionType} TileLoadFunction
+ * @api
+ */
+ol.source.TileImage.prototype.getTileLoadFunction = function() {
+  return this.tileLoadFunction;
+};
+
+
+/**
+ * @return {ol.TileUrlFunctionType} TileUrlFunction
+ * @api
+ */
+ol.source.TileImage.prototype.getTileUrlFunction = function() {
+  return this.tileUrlFunction;
+};
+
+
+/**
+ * @param {ol.TileLoadFunctionType} tileLoadFunction Tile load function.
+ * @api
+ */
+ol.source.TileImage.prototype.setTileLoadFunction = function(tileLoadFunction) {
+  this.tileCache.clear();
+  this.tileLoadFunction = tileLoadFunction;
+  this.dispatchChangeEvent();
+};
+
+
+/**
  * @param {ol.TileUrlFunctionType} tileUrlFunction Tile URL function.
+ * @api
  */
 ol.source.TileImage.prototype.setTileUrlFunction = function(tileUrlFunction) {
   // FIXME It should be possible to be more intelligent and avoid clearing the

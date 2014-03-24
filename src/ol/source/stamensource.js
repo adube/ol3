@@ -1,6 +1,7 @@
 goog.provide('ol.source.Stamen');
 
 goog.require('goog.asserts');
+goog.require('ol');
 goog.require('ol.Attribution');
 goog.require('ol.source.OSM');
 goog.require('ol.source.XYZ');
@@ -78,10 +79,13 @@ ol.source.StamenProviderConfig = {
 
 
 /**
+ * @classdesc
+ * Layer source for the Stamen tile server.
+ *
  * @constructor
  * @extends {ol.source.XYZ}
  * @param {olx.source.StamenOptions} options Stamen options.
- * @todo stability experimental
+ * @api
  */
 ol.source.Stamen = function(options) {
 
@@ -93,8 +97,9 @@ ol.source.Stamen = function(options) {
   goog.asserts.assert(options.layer in ol.source.StamenLayerConfig);
   var layerConfig = ol.source.StamenLayerConfig[options.layer];
 
+  var protocol = ol.IS_HTTPS ? 'https:' : 'http:';
   var url = goog.isDef(options.url) ? options.url :
-      '//{a-d}.tile.stamen.com/' + options.layer + '/{z}/{x}/{y}.' +
+      protocol + '//{a-d}.tile.stamen.com/' + options.layer + '/{z}/{x}/{y}.' +
       layerConfig.extension;
 
   goog.base(this, {

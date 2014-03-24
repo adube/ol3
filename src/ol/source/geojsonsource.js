@@ -1,15 +1,19 @@
 goog.provide('ol.source.GeoJSON');
 
 goog.require('ol.format.GeoJSON');
-goog.require('ol.source.VectorFile');
+goog.require('ol.source.StaticVector');
 
 
 
 /**
+ * @classdesc
+ * Static vector source in GeoJSON format
+ *
  * @constructor
- * @extends {ol.source.VectorFile}
+ * @extends {ol.source.StaticVector}
+ * @fires ol.source.VectorEvent
  * @param {olx.source.GeoJSONOptions=} opt_options Options.
- * @todo stability experimental
+ * @api
  */
 ol.source.GeoJSON = function(opt_options) {
 
@@ -30,4 +34,4 @@ ol.source.GeoJSON = function(opt_options) {
   });
 
 };
-goog.inherits(ol.source.GeoJSON, ol.source.VectorFile);
+goog.inherits(ol.source.GeoJSON, ol.source.StaticVector);

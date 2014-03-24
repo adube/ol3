@@ -1,6 +1,5 @@
 goog.provide('ol.format.TopoJSON');
 
-goog.require('goog.array');
 goog.require('goog.asserts');
 goog.require('goog.object');
 goog.require('ol.Feature');
@@ -16,10 +15,13 @@ goog.require('ol.proj');
 
 
 /**
+ * @classdesc
+ * Feature format for reading and writing data in the TopoJSON format.
+ *
  * @constructor
  * @extends {ol.format.JSONFeature}
  * @param {olx.format.TopoJSONOptions=} opt_options Options.
- * @todo stability experimental
+ * @api
  */
 ol.format.TopoJSON = function(opt_options) {
 
@@ -51,10 +53,11 @@ ol.format.TopoJSON.EXTENSIONS_ = ['.topojson'];
  *     values indicate arcs need to be reversed.
  * @param {Array.<Array.<ol.Coordinate>>} arcs Array of arcs (already
  *     transformed).
- * @return {Array.<Array.<ol.Coordinate>>} Coordinates array.
+ * @return {Array.<ol.Coordinate>} Coordinates array.
  * @private
  */
 ol.format.TopoJSON.concatenateArcs_ = function(indices, arcs) {
+  /** @type {Array.<ol.Coordinate>} */
   var coordinates = [];
   var index, arc;
   var i, ii;
@@ -94,7 +97,7 @@ ol.format.TopoJSON.concatenateArcs_ = function(indices, arcs) {
 ol.format.TopoJSON.readPointGeometry_ =
     function(object, scale, translate) {
   var coordinates = object.coordinates;
-  if (goog.isDef(scale) && goog.isDef(translate)) {
+  if (!goog.isNull(scale) && !goog.isNull(translate)) {
     ol.format.TopoJSON.transformVertex_(coordinates, scale, translate);
   }
   return new ol.geom.Point(coordinates);
@@ -114,7 +117,7 @@ ol.format.TopoJSON.readMultiPointGeometry_ = function(object, scale,
     translate) {
   var coordinates = object.coordinates;
   var i, ii;
-  if (goog.isDef(scale) && goog.isDef(translate)) {
+  if (!goog.isNull(scale) && !goog.isNull(translate)) {
     for (i = 0, ii = coordinates.length; i < ii; ++i) {
       ol.format.TopoJSON.transformVertex_(coordinates[i], scale, translate);
     }
@@ -133,7 +136,7 @@ ol.format.TopoJSON.readMultiPointGeometry_ = function(object, scale,
  */
 ol.format.TopoJSON.readLineStringGeometry_ = function(object, arcs) {
   var coordinates = ol.format.TopoJSON.concatenateArcs_(object.arcs, arcs);
-  return new ol.geom.LineString(goog.array.flatten(coordinates));
+  return new ol.geom.LineString(coordinates);
 };
 
 
@@ -258,7 +261,7 @@ ol.format.TopoJSON.readFeatureFromGeometry_ = function(object, arcs,
     feature.setId(object.id);
   }
   if (goog.isDef(object.properties)) {
-    feature.setValues(object.properties);
+    feature.setProperties(object.properties);
   }
   return feature;
 };
@@ -270,6 +273,7 @@ ol.format.TopoJSON.readFeatureFromGeometry_ = function(object, arcs,
  * @function
  * @param {ArrayBuffer|Document|Node|Object|string} source Source.
  * @return {Array.<ol.Feature>} Features.
+ * @api
  */
 ol.format.TopoJSON.prototype.readFeatures;
 
@@ -379,6 +383,7 @@ ol.format.TopoJSON.transformVertex_ = function(vertex, scale, translate) {
  * @function
  * @param {ArrayBuffer|Document|Node|Object|string} object Source.
  * @return {ol.proj.Projection} Projection.
+ * @api
  */
 ol.format.TopoJSON.prototype.readProjection = function(object) {
   return this.defaultProjection_;

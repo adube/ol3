@@ -269,21 +269,8 @@ ol.pointer.PointerEvent.HAS_BUTTONS = false;
  */
 (function() {
   try {
-    var ev = ol.pointer.PointerEvent.createMouseEvent('click', {buttons: 1});
+    var ev = new MouseEvent('click', {buttons: 1});
     ol.pointer.PointerEvent.HAS_BUTTONS = ev.buttons === 1;
   } catch (e) {
   }
 })();
-
-
-/**
- * Warning is suppressed because Closure thinks the MouseEvent
- * constructor takes no arguments.
- * @param {string} inType The type of the event to create.
- * @param {Object} inDict An dictionary of initial event properties.
- * @return {MouseEvent}
- * @suppress {checkTypes}
- */
-ol.pointer.PointerEvent.createMouseEvent = function(inType, inDict) {
-  return new MouseEvent(inType, inDict);
-};
