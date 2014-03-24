@@ -16,6 +16,7 @@ goog.require('ol.control.GoogleMapsDirectionsPanel');
 goog.require('ol.control.GoogleMapsGeocoder');
 goog.require('ol.css');
 goog.require('ol.extent');
+goog.require('ol.format.MTJSON');
 goog.require('ol.geom.LineString');
 goog.require('ol.geom.Point');
 goog.require('ol.interaction.DryModify');
@@ -361,6 +362,53 @@ ol.control.GoogleMapsDirections.prototype.addWaypointGeocoder = function() {
 
   this.manageNumWaypoints_();
 
+};
+
+
+/**
+ * @inheritDoc
+ */
+ol.control.GoogleMapsDirections.prototype.setMap = function(map) {
+
+  var myMap = this.getMap();
+  if (goog.isNull(map) && !goog.isNull(myMap)) {
+    myMap.removeLayer(this.vectorLayer_);
+    myMap.removeControl(this.startGeocoder_);
+    myMap.removeControl(this.endGeocoder_);
+    myMap.removeControl(this.directionsPanel_);
+
+    goog.events.unlisten(
+        myMap,
+        ol.MapBrowserEvent.EventType.POINTERMOVE,
+        this.handleMapPointerMove_, false, this);
+
+    goog.events.unlisten(
+        myMap,
+        ol.MapBrowserEvent.EventType.SINGLECLICK,
+        this.handleMapSingleClick_, false, this);
+
+    this.removeAllWaypointGeocoders_();
+  }
+
+  goog.base(this, 'setMap', map);
+
+  if (!goog.isNull(map)) {
+    map.addLayer(this.vectorLayer_);
+    map.addControl(this.startGeocoder_);
+    map.addControl(this.endGeocoder_);
+    map.addControl(this.directionsPanel_);
+    this.manageNumWaypoints_();
+
+    goog.events.listen(
+        map,
+        ol.MapBrowserEvent.EventType.POINTERMOVE,
+        this.handleMapPointerMove_, false, this);
+
+    goog.events.listen(
+        map,
+        ol.MapBrowserEvent.EventType.SINGLECLICK,
+        this.handleMapSingleClick_, false, this);
+  }
 };
 
 
@@ -912,53 +960,6 @@ ol.control.GoogleMapsDirections.prototype.route_ = function(start, end) {
   service.route(request, function(response, status) {
     me.handleDirectionsResult_(response, status);
   });
-};
-
-
-/**
- * @inheritDoc
- */
-ol.control.GoogleMapsDirections.prototype.setMap = function(map) {
-
-  var myMap = this.getMap();
-  if (goog.isNull(map) && !goog.isNull(myMap)) {
-    myMap.removeLayer(this.vectorLayer_);
-    myMap.removeControl(this.startGeocoder_);
-    myMap.removeControl(this.endGeocoder_);
-    myMap.removeControl(this.directionsPanel_);
-
-    goog.events.unlisten(
-        myMap,
-        ol.MapBrowserEvent.EventType.POINTERMOVE,
-        this.handleMapPointerMove_, false, this);
-
-    goog.events.unlisten(
-        myMap,
-        ol.MapBrowserEvent.EventType.SINGLECLICK,
-        this.handleMapSingleClick_, false, this);
-
-    this.removeAllWaypointGeocoders_();
-  }
-
-  goog.base(this, 'setMap', map);
-
-  if (!goog.isNull(map)) {
-    map.addLayer(this.vectorLayer_);
-    map.addControl(this.startGeocoder_);
-    map.addControl(this.endGeocoder_);
-    map.addControl(this.directionsPanel_);
-    this.manageNumWaypoints_();
-
-    goog.events.listen(
-        map,
-        ol.MapBrowserEvent.EventType.POINTERMOVE,
-        this.handleMapPointerMove_, false, this);
-
-    goog.events.listen(
-        map,
-        ol.MapBrowserEvent.EventType.SINGLECLICK,
-        this.handleMapSingleClick_, false, this);
-  }
 };
 
 
