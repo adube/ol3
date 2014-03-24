@@ -1,15 +1,19 @@
 goog.provide('ol.source.OSM');
 
+goog.require('ol');
 goog.require('ol.Attribution');
 goog.require('ol.source.XYZ');
 
 
 
 /**
+ * @classdesc
+ * Layer source for the OpenStreetMap tile server.
+ *
  * @constructor
  * @extends {ol.source.XYZ}
  * @param {olx.source.OSMOptions=} opt_options Open Street Map options.
- * @todo stability experimental
+ * @api
  */
 ol.source.OSM = function(opt_options) {
 
@@ -25,8 +29,9 @@ ol.source.OSM = function(opt_options) {
   var crossOrigin = goog.isDef(options.crossOrigin) ?
       options.crossOrigin : 'anonymous';
 
+  var protocol = ol.IS_HTTPS ? 'https:' : 'http:';
   var url = goog.isDef(options.url) ?
-      options.url : '//{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      options.url : protocol + '//{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 
   goog.base(this, {
     attributions: attributions,
@@ -44,6 +49,7 @@ goog.inherits(ol.source.OSM, ol.source.XYZ);
 /**
  * @const
  * @type {ol.Attribution}
+ * @api
  */
 ol.source.OSM.DATA_ATTRIBUTION = new ol.Attribution({
   html: 'Data &copy; ' +
@@ -56,6 +62,7 @@ ol.source.OSM.DATA_ATTRIBUTION = new ol.Attribution({
 /**
  * @const
  * @type {ol.Attribution}
+ * @api
  */
 ol.source.OSM.TILE_ATTRIBUTION = new ol.Attribution({
   html: 'Tiles &copy; ' +

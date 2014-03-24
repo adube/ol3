@@ -1,6 +1,5 @@
-goog.require('ol.Collection');
 goog.require('ol.Map');
-goog.require('ol.View2D');
+goog.require('ol.View');
 goog.require('ol.interaction');
 goog.require('ol.interaction.Modify');
 goog.require('ol.interaction.Select');
@@ -13,6 +12,7 @@ goog.require('ol.style.Style');
 
 
 var styleFunction = (function() {
+  /* jshint -W069 */
   var styles = {};
   var image = new ol.style.Circle({
     radius: 5,
@@ -57,6 +57,7 @@ var styleFunction = (function() {
   return function(feature, resolution) {
     return styles[feature.getGeometry().getType()] || styles['default'];
   };
+  /* jshint +W069 */
 })();
 
 var source = new ol.source.GeoJSON(
@@ -126,8 +127,8 @@ var source = new ol.source.GeoJSON(
               'coordinates': [
                 [[[-5e6, 6e6], [-5e6, 8e6], [-3e6, 8e6],
                     [-3e6, 6e6], [-5e6, 6e6]]],
-                [[[-2e6, 6e6], [-2e6, 8e6], [0e6, 8e6],
-                    [0e6, 6e6], [-2e6, 6e6]]],
+                [[[-2e6, 6e6], [-2e6, 8e6], [0, 8e6],
+                    [0, 6e6], [-2e6, 6e6]]],
                 [[[1e6, 6e6], [1e6, 8e6], [3e6, 8e6],
                     [3e6, 6e6], [1e6, 6e6]]]
               ]
@@ -140,7 +141,7 @@ var source = new ol.source.GeoJSON(
               'geometries': [
                 {
                   'type': 'LineString',
-                  'coordinates': [[-5e6, -5e6], [0e6, -5e6]]
+                  'coordinates': [[-5e6, -5e6], [0, -5e6]]
                 },
                 {
                   'type': 'Point',
@@ -165,6 +166,7 @@ var layer = new ol.layer.Vector({
 });
 
 var overlayStyle = (function() {
+  /* jshint -W069 */
   var styles = {};
   styles['Polygon'] = [
     new ol.style.Style({
@@ -225,6 +227,7 @@ var overlayStyle = (function() {
   return function(feature, resolution) {
     return styles[feature.getGeometry().getType()];
   };
+  /* jshint +W069 */
 })();
 
 var select = new ol.interaction.Select({
@@ -239,9 +242,8 @@ var modify = new ol.interaction.Modify({
 var map = new ol.Map({
   interactions: ol.interaction.defaults().extend([select, modify]),
   layers: [layer],
-  renderer: 'canvas',
   target: 'map',
-  view: new ol.View2D({
+  view: new ol.View({
     center: [0, 1000000],
     zoom: 2
   })

@@ -48,6 +48,7 @@ describe('ol.layer.Layer', function() {
 
     it('provides default layerState', function() {
       expect(layer.getLayerState()).to.eql({
+        layer: layer,
         brightness: 0,
         contrast: 1,
         hue: 0,
@@ -90,6 +91,7 @@ describe('ol.layer.Layer', function() {
       expect(layer.getMinResolution()).to.be(0.25);
       expect(layer.get('foo')).to.be(42);
       expect(layer.getLayerState()).to.eql({
+        layer: layer,
         brightness: 0.5,
         contrast: 10,
         hue: 180,
@@ -102,6 +104,55 @@ describe('ol.layer.Layer', function() {
       });
 
       goog.dispose(layer);
+    });
+
+  });
+
+  describe('visibleAtResolution', function() {
+    var layer;
+
+    beforeEach(function() {
+      layer = new ol.layer.Layer({
+        source: new ol.source.Source({
+          projection: ol.proj.get('EPSG:4326')
+        })
+      });
+    });
+
+    afterEach(function() {
+      goog.dispose(layer);
+    });
+
+    it('returns false if layer is not visible', function() {
+      layer.setVisible(false);
+      layer.setMinResolution(3);
+      layer.setMaxResolution(5);
+      var layerState = layer.getLayerState();
+      expect(ol.layer.Layer.visibleAtResolution(layerState, 4)).to.be(false);
+    });
+
+    it('returns false if resolution lower than minResolution', function() {
+      layer.setVisible(true);
+      layer.setMinResolution(3);
+      layer.setMaxResolution(5);
+      var layerState = layer.getLayerState();
+      expect(ol.layer.Layer.visibleAtResolution(layerState, 2)).to.be(false);
+    });
+
+    it('returns false if resolution greater than maxResolution', function() {
+      layer.setVisible(true);
+      layer.setMinResolution(3);
+      layer.setMaxResolution(5);
+      var layerState = layer.getLayerState();
+      expect(ol.layer.Layer.visibleAtResolution(layerState, 6)).to.be(false);
+    });
+
+    it('returns true otherwise', function() {
+      layer.setVisible(true);
+      layer.setMinResolution(3);
+      layer.setMaxResolution(5);
+      var layerState = layer.getLayerState();
+      expect(ol.layer.Layer.visibleAtResolution(layerState, 4)).to.be(true);
     });
 
   });
@@ -132,6 +183,7 @@ describe('ol.layer.Layer', function() {
       layer.setMaxResolution(500);
       layer.setMinResolution(0.25);
       expect(layer.getLayerState()).to.eql({
+        layer: layer,
         brightness: -0.7,
         contrast: 0.3,
         hue: -0.3,
@@ -152,6 +204,7 @@ describe('ol.layer.Layer', function() {
       layer.setSaturation(-0.7);
       layer.setVisible(false);
       expect(layer.getLayerState()).to.eql({
+        layer: layer,
         brightness: 1,
         contrast: 0,
         hue: 42,
@@ -170,6 +223,7 @@ describe('ol.layer.Layer', function() {
       layer.setSaturation(42);
       layer.setVisible(true);
       expect(layer.getLayerState()).to.eql({
+        layer: layer,
         brightness: -1,
         contrast: 42,
         hue: -100,

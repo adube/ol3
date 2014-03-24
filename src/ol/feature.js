@@ -7,6 +7,7 @@ goog.require('goog.events.EventType');
 goog.require('goog.functions');
 goog.require('ol.Object');
 goog.require('ol.geom.Geometry');
+goog.require('ol.geom.GeometryType');
 goog.require('ol.style.Circle');
 goog.require('ol.style.Fill');
 goog.require('ol.style.Stroke');
@@ -15,13 +16,22 @@ goog.require('ol.style.Style');
 
 
 /**
+ * @classdesc
+ * A vector object for geographical features with a geometry and other
+ * attribute properties, similar to the features in vector file formats like
+ * GeoJSON.
+ * Features can be styled individually or use the style of their vector layer.
+ * Note that attribute properties are set as {@link ol.Object} properties on the
+ * feature object, so they are observable, and have get/set accessors.
+ *
  * @constructor
  * @extends {ol.Object}
- * @param {ol.geom.Geometry|Object.<string, *>=} opt_geometryOrValues
- *     Values or geometry.
- * @todo stability experimental
+ * @fires change Triggered when the geometry or style of the feature changes.
+ * @param {ol.geom.Geometry|Object.<string, *>=} opt_geometryOrProperties
+ *     Geometry or properties.
+ * @api
  */
-ol.Feature = function(opt_geometryOrValues) {
+ol.Feature = function(opt_geometryOrProperties) {
 
   goog.base(this);
 
@@ -61,25 +71,47 @@ ol.Feature = function(opt_geometryOrValues) {
       this, ol.Object.getChangeEventType(this.geometryName_),
       this.handleGeometryChanged_, false, this);
 
-  if (goog.isDefAndNotNull(opt_geometryOrValues)) {
-    if (opt_geometryOrValues instanceof ol.geom.Geometry) {
-      var geometry = /** @type {ol.geom.Geometry} */ (opt_geometryOrValues);
+  if (goog.isDef(opt_geometryOrProperties)) {
+    if (opt_geometryOrProperties instanceof ol.geom.Geometry ||
+        goog.isNull(opt_geometryOrProperties)) {
+      var geometry = /** @type {ol.geom.Geometry} */ (opt_geometryOrProperties);
       this.setGeometry(geometry);
     } else {
-      goog.asserts.assert(goog.isObject(opt_geometryOrValues));
-      var values = /** @type {Object.<string, *>} */ (opt_geometryOrValues);
-      this.setValues(values);
+      goog.asserts.assert(goog.isObject(opt_geometryOrProperties));
+      var properties = /** @type {Object.<string, *>} */
+          (opt_geometryOrProperties);
+      this.setProperties(properties);
     }
-  } else {
-    this.setGeometry(null);
   }
 };
 goog.inherits(ol.Feature, ol.Object);
 
 
 /**
+ * Clone this feature. If the original feature has a geometry it
+ * is also cloned. The feature id is not set in the clone.
+ * @return {ol.Feature} The clone.
+ * @api
+ */
+ol.Feature.prototype.clone = function() {
+  var clone = new ol.Feature(this.getProperties());
+  clone.setGeometryName(this.getGeometryName());
+  var geometry = this.getGeometry();
+  if (goog.isDefAndNotNull(geometry)) {
+    clone.setGeometry(geometry.clone());
+  }
+  var style = this.getStyle();
+  if (!goog.isNull(style)) {
+    clone.setStyle(style);
+  }
+  return clone;
+};
+
+
+/**
  * @return {ol.geom.Geometry|undefined} Geometry.
- * @todo stability experimental
+ * @api
+ * @observable
  */
 ol.Feature.prototype.getGeometry = function() {
   return /** @type {ol.geom.Geometry|undefined} */ (
@@ -93,7 +125,7 @@ goog.exportProperty(
 
 /**
  * @return {number|string|undefined} Id.
- * @todo stability experimental
+ * @api
  */
 ol.Feature.prototype.getId = function() {
   return this.id_;
@@ -102,7 +134,7 @@ ol.Feature.prototype.getId = function() {
 
 /**
  * @return {string} Geometry property name.
- * @todo stability experimental
+ * @api
  */
 ol.Feature.prototype.getGeometryName = function() {
   return this.geometryName_;
@@ -112,7 +144,7 @@ ol.Feature.prototype.getGeometryName = function() {
 /**
  * @return {ol.style.Style|Array.<ol.style.Style>|
  *     ol.feature.FeatureStyleFunction} User provided style.
- * @todo stability experimental
+ * @api
  */
 ol.Feature.prototype.getStyle = function() {
   return this.style_;
@@ -121,7 +153,7 @@ ol.Feature.prototype.getStyle = function() {
 
 /**
  * @return {ol.feature.FeatureStyleFunction|undefined} Style function.
- * @todo stability experimental
+ * @api
  */
 ol.Feature.prototype.getStyleFunction = function() {
   return this.styleFunction_;
@@ -148,13 +180,15 @@ ol.Feature.prototype.handleGeometryChanged_ = function() {
   if (goog.isDefAndNotNull(geometry)) {
     this.geometryChangeKey_ = goog.events.listen(geometry,
         goog.events.EventType.CHANGE, this.handleGeometryChange_, false, this);
+    this.dispatchChangeEvent();
   }
 };
 
 
 /**
  * @param {ol.geom.Geometry|undefined} geometry Geometry.
- * @todo stability experimental
+ * @api
+ * @observable
  */
 ol.Feature.prototype.setGeometry = function(geometry) {
   this.set(this.geometryName_, geometry);
@@ -168,7 +202,7 @@ goog.exportProperty(
 /**
  * @param {ol.style.Style|Array.<ol.style.Style>|
  *     ol.feature.FeatureStyleFunction} style Feature style.
- * @todo stability experimental
+ * @api
  */
 ol.Feature.prototype.setStyle = function(style) {
   this.style_ = style;
@@ -179,16 +213,17 @@ ol.Feature.prototype.setStyle = function(style) {
 
 /**
  * @param {number|string|undefined} id Id.
- * @todo stability experimental
+ * @api
  */
 ol.Feature.prototype.setId = function(id) {
   this.id_ = id;
+  this.dispatchChangeEvent();
 };
 
 
 /**
  * @param {string} name Geometry property name.
- * @todo stability experimental
+ * @api
  */
 ol.Feature.prototype.setGeometryName = function(name) {
   goog.events.unlisten(
@@ -209,7 +244,7 @@ ol.Feature.prototype.setGeometryName = function(name) {
  * {@link ol.Feature} to be styled.
  *
  * @typedef {function(this: ol.Feature, number): Array.<ol.style.Style>}
- * @todo stability experimental
+ * @api
  */
 ol.feature.FeatureStyleFunction;
 
@@ -219,7 +254,6 @@ ol.feature.FeatureStyleFunction;
  * @param {number} resolution Resolution.
  * @return {Array.<ol.style.Style>} Style.
  * @this {ol.Feature}
- * @todo stability experimental
  */
 ol.feature.defaultFeatureStyleFunction = function(resolution) {
   var fill = new ol.style.Fill({
@@ -259,7 +293,7 @@ ol.feature.defaultFeatureStyleFunction = function(resolution) {
  * {@link ol.style.Style}. This way e.g. a vector layer can be styled.
  *
  * @typedef {function(ol.Feature, number): Array.<ol.style.Style>}
- * @todo stability experimental
+ * @api
  */
 ol.feature.StyleFunction;
 
@@ -268,7 +302,6 @@ ol.feature.StyleFunction;
  * @param {ol.Feature} feature Feature.
  * @param {number} resolution Resolution.
  * @return {Array.<ol.style.Style>} Style.
- * @todo stability experimental
  */
 ol.feature.defaultStyleFunction = function(feature, resolution) {
   var featureStyleFunction = feature.getStyleFunction();
@@ -343,4 +376,68 @@ ol.feature.createStyleFunction = function(obj) {
     styleFunction = goog.functions.constant(styles);
   }
   return styleFunction;
+};
+
+
+/**
+ * Default styles for editing features.
+ * @return {Object.<ol.geom.GeometryType, Array.<ol.style.Style>>} Styles
+ */
+ol.feature.createDefaultEditingStyles = function() {
+  /** @type {Object.<ol.geom.GeometryType, Array.<ol.style.Style>>} */
+  var styles = {};
+  var white = [255, 255, 255, 1];
+  var blue = [0, 153, 255, 1];
+  var width = 3;
+  styles[ol.geom.GeometryType.POLYGON] = [
+    new ol.style.Style({
+      fill: new ol.style.Fill({
+        color: [255, 255, 255, 0.5]
+      })
+    })
+  ];
+  styles[ol.geom.GeometryType.MULTI_POLYGON] =
+      styles[ol.geom.GeometryType.POLYGON];
+
+  styles[ol.geom.GeometryType.LINE_STRING] = [
+    new ol.style.Style({
+      stroke: new ol.style.Stroke({
+        color: white,
+        width: width + 2
+      })
+    }),
+    new ol.style.Style({
+      stroke: new ol.style.Stroke({
+        color: blue,
+        width: width
+      })
+    })
+  ];
+  styles[ol.geom.GeometryType.MULTI_LINE_STRING] =
+      styles[ol.geom.GeometryType.LINE_STRING];
+
+  styles[ol.geom.GeometryType.POINT] = [
+    new ol.style.Style({
+      image: new ol.style.Circle({
+        radius: width * 2,
+        fill: new ol.style.Fill({
+          color: blue
+        }),
+        stroke: new ol.style.Stroke({
+          color: white,
+          width: width / 2
+        })
+      }),
+      zIndex: Infinity
+    })
+  ];
+  styles[ol.geom.GeometryType.MULTI_POINT] =
+      styles[ol.geom.GeometryType.POINT];
+
+  styles[ol.geom.GeometryType.GEOMETRY_COLLECTION] =
+      styles[ol.geom.GeometryType.POLYGON].concat(
+          styles[ol.geom.GeometryType.POINT]
+      );
+
+  return styles;
 };

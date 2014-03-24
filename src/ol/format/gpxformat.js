@@ -17,9 +17,12 @@ goog.require('ol.xml');
 
 
 /**
+ * @classdesc
+ * Feature format for reading and writing data in the GPX format.
+ *
  * @constructor
  * @extends {ol.format.XMLFeature}
- * @todo stability experimental
+ * @api
  */
 ol.format.GPX = function() {
   goog.base(this);
@@ -162,7 +165,7 @@ ol.format.GPX.readRte_ = function(node, objectStack) {
   var geometry = new ol.geom.LineString(null);
   geometry.setFlatCoordinates(ol.geom.GeometryLayout.XYZM, flatCoordinates);
   var feature = new ol.Feature(geometry);
-  feature.setValues(values);
+  feature.setProperties(values);
   return feature;
 };
 
@@ -192,7 +195,7 @@ ol.format.GPX.readTrk_ = function(node, objectStack) {
   geometry.setFlatCoordinates(
       ol.geom.GeometryLayout.XYZM, flatCoordinates, ends);
   var feature = new ol.Feature(geometry);
-  feature.setValues(values);
+  feature.setProperties(values);
   return feature;
 };
 
@@ -215,7 +218,7 @@ ol.format.GPX.readWpt_ = function(node, objectStack) {
   var geometry = new ol.geom.Point(
       coordinates, ol.geom.GeometryLayout.XYZM);
   var feature = new ol.Feature(geometry);
-  feature.setValues(values);
+  feature.setProperties(values);
   return feature;
 };
 
@@ -369,6 +372,7 @@ ol.format.GPX.WPT_PARSERS_ = ol.xml.makeParsersNS(
  * @function
  * @param {ArrayBuffer|Document|Node|Object|string} source Source.
  * @return {ol.Feature} Feature.
+ * @api
  */
 ol.format.GPX.prototype.readFeature;
 
@@ -378,8 +382,7 @@ ol.format.GPX.prototype.readFeature;
  */
 ol.format.GPX.prototype.readFeatureFromNode = function(node) {
   goog.asserts.assert(node.nodeType == goog.dom.NodeType.ELEMENT);
-  if (goog.array.indexOf(ol.format.GPX.NAMESPACE_URIS_, node.namespaceURI) ==
-      -1) {
+  if (!goog.array.contains(ol.format.GPX.NAMESPACE_URIS_, node.namespaceURI)) {
     return null;
   }
   var featureReader = ol.format.GPX.FEATURE_READER_[node.localName];
@@ -400,6 +403,7 @@ ol.format.GPX.prototype.readFeatureFromNode = function(node) {
  * @function
  * @param {ArrayBuffer|Document|Node|Object|string} source Source.
  * @return {Array.<ol.Feature>} Features.
+ * @api
  */
 ol.format.GPX.prototype.readFeatures;
 
@@ -409,8 +413,7 @@ ol.format.GPX.prototype.readFeatures;
  */
 ol.format.GPX.prototype.readFeaturesFromNode = function(node) {
   goog.asserts.assert(node.nodeType == goog.dom.NodeType.ELEMENT);
-  if (goog.array.indexOf(ol.format.GPX.NAMESPACE_URIS_, node.namespaceURI) ==
-      -1) {
+  if (!goog.array.contains(ol.format.GPX.NAMESPACE_URIS_, node.namespaceURI)) {
     return [];
   }
   if (node.localName == 'gpx') {
@@ -430,8 +433,10 @@ ol.format.GPX.prototype.readFeaturesFromNode = function(node) {
 /**
  * Read the projection from a GPX source.
  *
+ * @function
  * @param {ArrayBuffer|Document|Node|Object|string} source Source.
  * @return {ol.proj.Projection} Projection.
+ * @api
  */
 ol.format.GPX.prototype.readProjection;
 
@@ -490,6 +495,7 @@ ol.format.GPX.writeWptType_ = function(node, coordinate, objectStack) {
   ol.xml.setAttributeNS(node, null, 'lat', coordinate[1]);
   ol.xml.setAttributeNS(node, null, 'lon', coordinate[0]);
   var geometryLayout = goog.object.get(context, 'geometryLayout');
+  /* jshint -W086 */
   switch (geometryLayout) {
     case ol.geom.GeometryLayout.XYZM:
       if (coordinate[3] !== 0) {
@@ -505,6 +511,7 @@ ol.format.GPX.writeWptType_ = function(node, coordinate, objectStack) {
         goog.object.set(properties, 'time', coordinate[2]);
       }
   }
+  /* jshint +W086 */
   var orderedKeys = ol.format.GPX.WPT_TYPE_SEQUENCE_[namespaceURI];
   var values = ol.xml.makeSequence(properties, orderedKeys);
   ol.xml.pushSerializeAndPop(/** @type {ol.xml.NodeStackItem} */
@@ -791,7 +798,6 @@ ol.format.GPX.GPX_SERIALIZERS_ = ol.xml.makeStructureNS(
 /**
  * @constructor
  * @extends {ol.format.GPX}
- * @todo stability experimental
  */
 ol.format.GPX.V1_1 = function() {
   goog.base(this);
@@ -805,6 +811,7 @@ goog.inherits(ol.format.GPX.V1_1, ol.format.GPX);
  * @function
  * @param {Array.<ol.Feature>} features Features.
  * @return {ArrayBuffer|Node|Object|string} Result.
+ * @api
  */
 ol.format.GPX.prototype.writeFeatures;
 

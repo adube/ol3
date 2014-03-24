@@ -10,11 +10,15 @@ goog.require('ol.proj.Units');
 
 
 /**
+ * @classdesc
+ * Projection object for web/spherical Mercator (EPSG:3857).
+ *
  * @constructor
  * @extends {ol.proj.Projection}
  * @param {string} code Code.
+ * @private
  */
-ol.proj.EPSG3857 = function(code) {
+ol.proj.EPSG3857_ = function(code) {
   goog.base(this, {
     code: code,
     units: ol.proj.Units.METERS,
@@ -22,7 +26,15 @@ ol.proj.EPSG3857 = function(code) {
     global: true
   });
 };
-goog.inherits(ol.proj.EPSG3857, ol.proj.Projection);
+goog.inherits(ol.proj.EPSG3857_, ol.proj.Projection);
+
+
+/**
+ * @inheritDoc
+ */
+ol.proj.EPSG3857_.prototype.getPointResolution = function(resolution, point) {
+  return resolution / ol.math.cosh(point[1] / ol.proj.EPSG3857.RADIUS);
+};
 
 
 /**
@@ -59,7 +71,8 @@ ol.proj.EPSG3857.CODES = [
   'EPSG:102100',
   'EPSG:102113',
   'EPSG:900913',
-  'urn:ogc:def:crs:EPSG:6.18:3:3857'
+  'urn:ogc:def:crs:EPSG:6.18:3:3857',
+  'http://www.opengis.net/gml/srs/epsg.xml#3857'
 ];
 
 
@@ -72,7 +85,7 @@ ol.proj.EPSG3857.CODES = [
 ol.proj.EPSG3857.PROJECTIONS = goog.array.map(
     ol.proj.EPSG3857.CODES,
     function(code) {
-      return new ol.proj.EPSG3857(code);
+      return new ol.proj.EPSG3857_(code);
     });
 
 
@@ -133,12 +146,4 @@ ol.proj.EPSG3857.toEPSG4326 = function(input, opt_output, opt_dimension) {
         Math.exp(input[i + 1] / ol.proj.EPSG3857.RADIUS)) / Math.PI - 90;
   }
   return output;
-};
-
-
-/**
- * @inheritDoc
- */
-ol.proj.EPSG3857.prototype.getPointResolution = function(resolution, point) {
-  return resolution / ol.math.cosh(point[1] / ol.proj.EPSG3857.RADIUS);
 };

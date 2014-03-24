@@ -1,17 +1,31 @@
 goog.provide('ol.layer.Vector');
 
-goog.require('goog.array');
 goog.require('goog.object');
 goog.require('ol.feature');
 goog.require('ol.layer.Layer');
 
 
+/**
+ * @enum {string}
+ */
+ol.layer.VectorProperty = {
+  RENDER_ORDER: 'renderOrder'
+};
+
+
 
 /**
+ * @classdesc
+ * Vector data that is rendered client-side.
+ * Note that any property set in the options is set as a {@link ol.Object}
+ * property on the layer object; for example, setting `title: 'My Title'` in the
+ * options means that `title` is observable, and has get/set accessors.
+ *
  * @constructor
  * @extends {ol.layer.Layer}
+ * @fires ol.render.Event
  * @param {olx.layer.VectorOptions=} opt_options Options.
- * @todo stability experimental
+ * @api
  */
 ol.layer.Vector = function(opt_options) {
 
@@ -46,10 +60,21 @@ goog.inherits(ol.layer.Vector, ol.layer.Layer);
 
 
 /**
+ * @return {function(ol.Feature, ol.Feature): number|null|undefined} Render
+ *     order.
+ */
+ol.layer.Vector.prototype.getRenderOrder = function() {
+  return /** @type {function(ol.Feature, ol.Feature):number|null|undefined} */ (
+      this.get(ol.layer.VectorProperty.RENDER_ORDER));
+};
+
+
+/**
  * Get the style for features.  This returns whatever was passed to the `style`
  * option at construction or to the `setStyle` method.
  * @return {ol.style.Style|Array.<ol.style.Style>|ol.feature.StyleFunction}
  *     Layer style.
+ * @api
  */
 ol.layer.Vector.prototype.getStyle = function() {
   return this.style_;
@@ -59,10 +84,19 @@ ol.layer.Vector.prototype.getStyle = function() {
 /**
  * Get the style function.
  * @return {ol.feature.StyleFunction|undefined} Layer style function.
- * @todo stability experimental
+ * @api
  */
 ol.layer.Vector.prototype.getStyleFunction = function() {
   return this.styleFunction_;
+};
+
+
+/**
+ * @param {function(ol.Feature, ol.Feature):number|null|undefined} renderOrder
+ *     Render order.
+ */
+ol.layer.Vector.prototype.setRenderOrder = function(renderOrder) {
+  this.set(ol.layer.VectorProperty.RENDER_ORDER, renderOrder);
 };
 
 
@@ -72,7 +106,7 @@ ol.layer.Vector.prototype.getStyleFunction = function() {
  * an array of styles.
  * @param {ol.style.Style|Array.<ol.style.Style>|ol.feature.StyleFunction} style
  *     Layer style.
- * @todo stability experimental
+ * @api
  */
 ol.layer.Vector.prototype.setStyle = function(style) {
   this.style_ = style;

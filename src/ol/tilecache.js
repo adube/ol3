@@ -1,16 +1,10 @@
 goog.provide('ol.TileCache');
 
 goog.require('goog.asserts');
-goog.require('ol.Tile');
+goog.require('ol');
 goog.require('ol.TileCoord');
 goog.require('ol.TileRange');
 goog.require('ol.structs.LRUCache');
-
-
-/**
- * @define {number} Default high water mark.
- */
-ol.DEFAULT_TILE_CACHE_HIGH_WATER_MARK = 2048;
 
 
 

@@ -153,10 +153,10 @@ describe('ol.extent', function() {
     });
   });
 
-  describe('getForView2DAndSize', function() {
+  describe('getForViewAndSize', function() {
 
     it('works for a unit square', function() {
-      var extent = ol.extent.getForView2DAndSize(
+      var extent = ol.extent.getForViewAndSize(
           [0, 0], 1, 0, [1, 1]);
       expect(extent[0]).to.be(-0.5);
       expect(extent[2]).to.be(0.5);
@@ -165,7 +165,7 @@ describe('ol.extent', function() {
     });
 
     it('works for center', function() {
-      var extent = ol.extent.getForView2DAndSize(
+      var extent = ol.extent.getForViewAndSize(
           [5, 10], 1, 0, [1, 1]);
       expect(extent[0]).to.be(4.5);
       expect(extent[2]).to.be(5.5);
@@ -174,7 +174,7 @@ describe('ol.extent', function() {
     });
 
     it('works for rotation', function() {
-      var extent = ol.extent.getForView2DAndSize(
+      var extent = ol.extent.getForViewAndSize(
           [0, 0], 1, Math.PI / 4, [1, 1]);
       expect(extent[0]).to.roughlyEqual(-Math.sqrt(0.5), 1e-9);
       expect(extent[2]).to.roughlyEqual(Math.sqrt(0.5), 1e-9);
@@ -183,7 +183,7 @@ describe('ol.extent', function() {
     });
 
     it('works for resolution', function() {
-      var extent = ol.extent.getForView2DAndSize(
+      var extent = ol.extent.getForViewAndSize(
           [0, 0], 2, 0, [1, 1]);
       expect(extent[0]).to.be(-1);
       expect(extent[2]).to.be(1);
@@ -192,7 +192,7 @@ describe('ol.extent', function() {
     });
 
     it('works for size', function() {
-      var extent = ol.extent.getForView2DAndSize(
+      var extent = ol.extent.getForViewAndSize(
           [0, 0], 1, 0, [10, 5]);
       expect(extent[0]).to.be(-5);
       expect(extent[2]).to.be(5);
@@ -425,12 +425,13 @@ describe('ol.extent', function() {
 
   });
 
-  describe('transform', function() {
+  describe('#applyTransform()', function() {
 
     it('does transform', function() {
       var transformFn = ol.proj.getTransform('EPSG:4326', 'EPSG:3857');
       var sourceExtent = [-15, -30, 45, 60];
-      var destinationExtent = ol.extent.transform(sourceExtent, transformFn);
+      var destinationExtent = ol.extent.applyTransform(
+          sourceExtent, transformFn);
       expect(destinationExtent).not.to.be(undefined);
       expect(destinationExtent).not.to.be(null);
       // FIXME check values with third-party tool
@@ -456,7 +457,8 @@ describe('ol.extent', function() {
         return output;
       };
       var sourceExtent = [-15, -30, 45, 60];
-      var destinationExtent = ol.extent.transform(sourceExtent, transformFn);
+      var destinationExtent = ol.extent.applyTransform(
+          sourceExtent, transformFn);
       expect(destinationExtent).not.to.be(undefined);
       expect(destinationExtent).not.to.be(null);
       expect(destinationExtent[0]).to.be(-45);

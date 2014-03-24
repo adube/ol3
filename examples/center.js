@@ -1,5 +1,6 @@
 goog.require('ol.Map');
-goog.require('ol.View2D');
+goog.require('ol.View');
+goog.require('ol.control');
 goog.require('ol.geom.Point');
 goog.require('ol.geom.SimpleGeometry');
 goog.require('ol.layer.Tile');
@@ -38,7 +39,7 @@ var vectorLayer = new ol.layer.Vector({
   source: source,
   style: style
 });
-var view = new ol.View2D({
+var view = new ol.View({
   center: [0, 0],
   zoom: 1
 });
@@ -49,8 +50,12 @@ var map = new ol.Map({
     }),
     vectorLayer
   ],
-  renderer: 'canvas',
   target: 'map',
+  controls: ol.control.defaults({
+    attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
+      collapsible: false
+    })
+  }),
   view: view
 });
 

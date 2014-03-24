@@ -1,5 +1,5 @@
 goog.require('ol.Map');
-goog.require('ol.View2D');
+goog.require('ol.View');
 goog.require('ol.geom.MultiPoint');
 goog.require('ol.layer.Tile');
 goog.require('ol.source.MapQuest');
@@ -14,9 +14,8 @@ var map = new ol.Map({
       source: new ol.source.MapQuest({layer: 'sat'})
     })
   ],
-  renderer: 'canvas',
   target: 'map',
-  view: new ol.View2D({
+  view: new ol.View({
     center: [0, 0],
     zoom: 2
   })
@@ -24,6 +23,7 @@ var map = new ol.Map({
 
 var imageStyle = new ol.style.Circle({
   radius: 5,
+  snapToPixel: false,
   fill: new ol.style.Fill({color: 'yellow'}),
   stroke: new ol.style.Stroke({color: 'red', width: 1})
 });

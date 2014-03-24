@@ -1,13 +1,18 @@
 goog.require('ol.Map');
-goog.require('ol.View2D');
+goog.require('ol.View');
+goog.require('ol.control');
+goog.require('ol.format.OSMXML');
 goog.require('ol.layer.Tile');
 goog.require('ol.layer.Vector');
+goog.require('ol.loadingstrategy');
+goog.require('ol.proj');
 goog.require('ol.source.BingMaps');
-goog.require('ol.source.OSMXML');
+goog.require('ol.source.ServerVector');
 goog.require('ol.style.Circle');
 goog.require('ol.style.Fill');
 goog.require('ol.style.Stroke');
 goog.require('ol.style.Style');
+goog.require('ol.tilegrid.XYZ');
 
 var styles = {
   'amenity': {
@@ -83,9 +88,21 @@ var styles = {
   }
 };
 
-var vectorSource = new ol.source.OSMXML({
-  projection: 'EPSG:3857',
-  url: 'data/osm/map.osm'
+var vectorSource = new ol.source.ServerVector({
+  format: new ol.format.OSMXML(),
+  loader: function(extent, resolution, projection) {
+    var epsg4326Extent =
+        ol.proj.transformExtent(extent, projection, 'EPSG:4326');
+    var url = 'http://overpass-api.de/api/xapi?map?bbox=' +
+        epsg4326Extent.join(',');
+    $.ajax(url).then(function(response) {
+      vectorSource.addFeatures(vectorSource.readFeatures(response));
+    });
+  },
+  strategy: ol.loadingstrategy.createTile(new ol.tilegrid.XYZ({
+    maxZoom: 19
+  })),
+  projection: 'EPSG:3857'
 });
 
 var vector = new ol.layer.Vector({
@@ -114,10 +131,15 @@ var raster = new ol.layer.Tile({
 
 var map = new ol.Map({
   layers: [raster, vector],
-  renderer: 'canvas',
   target: document.getElementById('map'),
-  view: new ol.View2D({
+  controls: ol.control.defaults({
+    attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
+      collapsible: false
+    })
+  }),
+  view: new ol.View({
     center: [739218, 5906096],
+    maxZoom: 19,
     zoom: 17
   })
 });
