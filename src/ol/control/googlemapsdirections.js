@@ -268,6 +268,13 @@ ol.control.GoogleMapsDirections = function(opt_options) {
   });
 
 
+  /**
+   * @type {ol.format.MTJSON}
+   * @private
+   */
+  this.format_ = new ol.format.MTJSON();
+
+
   goog.base(this, {
     element: element,
     target: options.target
@@ -362,6 +369,32 @@ ol.control.GoogleMapsDirections.prototype.addWaypointGeocoder = function() {
 
   this.manageNumWaypoints_();
 
+};
+
+
+/**
+ * todo - change this method to fetch the source from a remote server, then
+ *        read its response
+ * @param {Object} source
+ */
+ol.control.GoogleMapsDirections.prototype.load = function(source) {
+  var format = this.format_;
+
+  var object = format.read(source);
+  window.console.log(object);
+};
+
+
+/**
+ * Collect the elements to save, write them as MTJSON then save.
+ */
+ol.control.GoogleMapsDirections.prototype.save = function() {
+  var format = this.format_;
+
+  var source = {};
+
+  var object = format.write(source);
+  window.console.log(object);
 };
 
 
