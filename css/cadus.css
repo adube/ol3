@@ -45,6 +45,10 @@
   width: 50px;
 }
 
+.ol-gmdp-selector-item {
+  cursor: pointer;
+}
+
 /**
  * GoogleMapsDirectionsPanel
  */

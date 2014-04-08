@@ -68,17 +68,59 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
   this.pixelBuffer_ = goog.isDefAndNotNull(options.pixelBuffer) ?
       options.pixelBuffer : ol.control.GOOGLEMAPSDIRECTIONSPANEL_PIXEL_BUFFER;
 
-
   var element = goog.dom.createDom(goog.dom.TagName.DIV, {
     'class': classPrefix + ' ' + ol.css.CLASS_UNSELECTABLE
   });
 
 
   /**
+   * The container element for the route selector
+   * @type {Element}
+   * @private
+   */
+  this.routeSelectorEl_ = goog.dom.createDom(goog.dom.TagName.DIV, {
+    'class': classPrefix + '-selector'
+  });
+  goog.dom.appendChild(element, this.routeSelectorEl_);
+
+  var routeSelectorToggleEl = goog.dom.createDom(goog.dom.TagName.A, {
+    'class': classPrefix + '-selector-toggle'
+  });
+  // todo - i18n
+  goog.dom.appendChild(routeSelectorToggleEl, goog.dom.createTextNode(
+      'Suggested routes'));
+  goog.dom.appendChild(this.routeSelectorEl_, routeSelectorToggleEl);
+
+  /**
+   * The container element for route to select
+   * @type {Element}
+   * @private
+   */
+  this.routeSelectorListEl_ = goog.dom.createDom(goog.dom.TagName.OL, {
+    'class': classPrefix + '-selector-list'
+  });
+  goog.dom.appendChild(this.routeSelectorEl_, this.routeSelectorListEl_);
+
+
+  /**
+   * The container element for routes
+   * @type {Element}
+   * @private
+   */
+  this.routesEl_ = goog.dom.createDom(goog.dom.TagName.DIV, {
+    'class': classPrefix + '-routes'
+  });
+  goog.dom.appendChild(element, this.routesEl_);
+
+
+  /**
+   * A collection of LegHeader, Tail and Step that can be clicked to show
+   * a popup on the map.  Keep track of them in order to listen and unlisten
+   * to browser events accordingly.
    * @type {ol.Collection}
    * @private
    */
-  this.elements_ = new ol.Collection();
+  this.clickableDirectionElements_ = new ol.Collection();
 
 
   var popupEl = goog.dom.createDom(goog.dom.TagName.DIV, {
@@ -138,17 +180,21 @@ ol.control.GoogleMapsDirectionsPanel.prototype.totalDistanceText =
  */
 ol.control.GoogleMapsDirectionsPanel.prototype.clearDirections = function() {
 
-  // browse elements that had events listeners: unlisten
-  this.elements_.forEach(function(element) {
+  // browse LegHeader, Tail and Step elements that had events listeners
+  // to unlisten them
+  this.clickableDirectionElements_.forEach(function(element) {
     goog.events.unlisten(element, [
       goog.events.EventType.TOUCHEND,
       goog.events.EventType.CLICK
     ], this.handleElementPress_, false, this);
   }, this);
-  this.elements_.clear();
+  this.clickableDirectionElements_.clear();
+
+  // todo - do the same for selector elements
 
   // remove children
-  goog.dom.removeChildren(this.element);
+  goog.dom.removeChildren(this.routesEl_);
+  goog.dom.removeChildren(this.routeSelectorListEl_);
 
   // destroy popup
   this.destroyPopup_();
@@ -162,7 +208,8 @@ ol.control.GoogleMapsDirectionsPanel.prototype.clearDirections = function() {
 ol.control.GoogleMapsDirectionsPanel.prototype.setDirections = function(
     directionsResult) {
 
-  var element = this.element;
+  var routesEl = this.routesEl_;
+  var routeSelectorListEl = this.routeSelectorListEl_;
   var routeEl;
   var classPrefix = this.classPrefix_;
 
@@ -172,14 +219,19 @@ ol.control.GoogleMapsDirectionsPanel.prototype.setDirections = function(
   // add routes
   goog.array.forEach(directionsResult.routes, function(route) {
     routeEl = this.createRouteElement_(route);
-    goog.dom.appendChild(element, routeEl);
+    goog.dom.appendChild(routesEl, routeEl);
+
+    goog.dom.appendChild(
+        routeSelectorListEl,
+        this.createRouteSelectorItemElement_(route)
+    );
   }, this);
 
   // copyright
   var copyright = goog.dom.createDom(goog.dom.TagName.DIV, {
     'class': classPrefix + '-copyright'
   });
-  goog.dom.appendChild(element, copyright);
+  goog.dom.appendChild(routesEl, copyright);
   var copyrightText = goog.dom.createTextNode(this.copyrightText);
   goog.dom.appendChild(copyright, copyrightText);
 
@@ -204,19 +256,8 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createRouteElement_ =
   });
 
   // total distance
-  var totalDistance = 0;
-  var totalDistanceText;
-  goog.array.forEach(route.legs, function(leg) {
-    totalDistance += leg.distance.value;
-  }, this);
-  if (totalDistance > 100) {
-    // todo - add i18n related formats for numbers
-    totalDistanceText = goog.string.makeSafe(
-        Math.round(totalDistance / 1000 * 10) / 10 + ' km');
-  } else {
-    totalDistanceText = goog.string.makeSafe(totalDistance + ' m');
-  }
-  totalDistanceText = this.totalDistanceText + ': ' + totalDistanceText;
+  var totalDistanceText = this.totalDistanceText + ': ' +
+      this.calculateRouteTotalDistance_(route);
   var totalDistanceEl = goog.dom.createDom(goog.dom.TagName.DIV, {
     'class': classPrefix + '-route-total-distance'
   });
@@ -235,6 +276,54 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createRouteElement_ =
   goog.asserts.assertObject(lastLeg);
   tailEl = this.createTailElement_(lastLeg);
   goog.dom.appendChild(element, tailEl);
+
+  return element;
+};
+
+
+/**
+ * Create all elements required for a route for the selector list.
+ * @param {google.maps.DirectionsRoute} route
+ * @return {Element}
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.createRouteSelectorItemElement_ =
+    function(route) {
+
+  var classPrefix = this.classPrefix_;
+
+  var element = goog.dom.createDom(goog.dom.TagName.LI, {
+    'class': classPrefix + '-selector-item'
+  });
+
+  // info
+  var infoEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+    'class': classPrefix + '-selector-item-info'
+  });
+  goog.dom.appendChild(element, infoEl);
+
+  // total distance
+  var totalDistanceEl = goog.dom.createDom(goog.dom.TagName.SPAN);
+  goog.dom.appendChild(totalDistanceEl,
+      goog.dom.createTextNode(this.calculateRouteTotalDistance_(route)));
+  goog.dom.appendChild(infoEl, totalDistanceEl);
+
+  goog.dom.appendChild(infoEl, goog.dom.createTextNode(', '));
+
+  // total duration
+  var totalDurationEl = goog.dom.createDom(goog.dom.TagName.SPAN);
+  goog.dom.appendChild(totalDurationEl,
+      goog.dom.createTextNode(this.calculateRouteTotalDuration_(route)));
+  goog.dom.appendChild(infoEl, totalDurationEl);
+
+  // summary
+  if (goog.isDefAndNotNull(route.summary)) {
+    var summaryEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+      'class': classPrefix + '-selector-item-summary'
+    });
+    goog.dom.appendChild(element, summaryEl);
+    goog.dom.appendChild(summaryEl, goog.dom.createTextNode(route.summary));
+  }
 
   return element;
 };
@@ -330,7 +419,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createLegHeaderElement_ =
     goog.events.EventType.CLICK
   ], this.handleElementPress_, false, this);
 
-  this.elements_.push(element);
+  this.clickableDirectionElements_.push(element);
 
   return element;
 };
@@ -428,7 +517,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createStepElement_ =
     goog.events.EventType.CLICK
   ], this.handleElementPress_, false, this);
 
-  this.elements_.push(element);
+  this.clickableDirectionElements_.push(element);
 
   return element;
 };
@@ -628,6 +717,75 @@ ol.control.GoogleMapsDirectionsPanel.prototype.calculatePopupPositioning_ =
     this.resetPopupPositioning_();
   }
 
+};
+
+
+/**
+ * Calculate and returns the total distance of a route as plain text.
+ * @param {google.maps.DirectionsRoute} route
+ * @return {string}
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.calculateRouteTotalDistance_ =
+    function(route) {
+
+  var totalDistance = 0;
+  var totalDistanceText;
+
+  goog.array.forEach(route.legs, function(leg) {
+    totalDistance += leg.distance.value;
+  }, this);
+
+  if (totalDistance > 100) {
+    // todo - add i18n related formats for numbers
+    totalDistanceText = goog.string.makeSafe(
+        Math.round(totalDistance / 1000 * 10) / 10 + ' km');
+  } else {
+    totalDistanceText = goog.string.makeSafe(totalDistance + ' m');
+  }
+
+  return totalDistanceText;
+};
+
+
+/**
+ * Calculate and returns the total duration of a route as plain text.
+ * @param {google.maps.DirectionsRoute} route
+ * @return {string}
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.calculateRouteTotalDuration_ =
+    function(route) {
+
+  var totalDuration = 0;
+  var totalDurationContent = [];
+
+  goog.array.forEach(route.legs, function(leg) {
+    totalDuration += leg.duration.value;
+  }, this);
+
+  if (totalDuration > 3600) {
+    var hours = Math.floor(totalDuration / 3600);
+    var remainingDuration = totalDuration - hours * 3600;
+    totalDurationContent.push(hours);
+
+    // todo - i18n
+    var hoursSuffix = 'heure';
+    hoursSuffix += (hours > 1) ? 's' : '';
+    totalDurationContent.push(hoursSuffix);
+  } else {
+    var remainingDuration = totalDuration;
+  }
+
+  var minutes = Math.floor(remainingDuration / 60);
+  totalDurationContent.push(minutes);
+
+  // todo - i18n
+  var minutesSuffix = ' minute';
+  minutesSuffix += (minutes > 1) ? 's' : '';
+  totalDurationContent.push(minutesSuffix);
+
+  return goog.string.makeSafe(totalDurationContent.join(' '));
 };
 
 
