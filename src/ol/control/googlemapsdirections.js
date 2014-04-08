@@ -496,7 +496,7 @@ ol.control.GoogleMapsDirections.prototype.createOrUpdateDetour_ = function(
   });
   feature.setStyle(this.detourIconStyle_);
 
-  if (this.createNewDetour_ == true) {
+  if (this.createNewDetour_ === true) {
     this.createNewDetour_ = false;
   } else {
     detourFeatures.removeAt(numDetourFeatures - 1);
