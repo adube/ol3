@@ -774,7 +774,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.calculateRouteTotalDuration_ =
     hoursSuffix += (hours > 1) ? 's' : '';
     totalDurationContent.push(hoursSuffix);
   } else {
-    var remainingDuration = totalDuration;
+    remainingDuration = totalDuration;
   }
 
   var minutes = Math.floor(remainingDuration / 60);
