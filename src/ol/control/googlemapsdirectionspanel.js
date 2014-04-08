@@ -778,6 +778,9 @@ ol.control.GoogleMapsDirectionsPanel.prototype.calculateRouteTotalDuration_ =
   }
 
   var minutes = Math.floor(remainingDuration / 60);
+  if (remainingDuration - minutes * 60 >= 30) {
+    minutes++;
+  }
   totalDurationContent.push(minutes);
 
   // todo - i18n
