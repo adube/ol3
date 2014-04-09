@@ -83,5 +83,6 @@
 
 .ol-gmg-results li:hover{
   background-color: #5ec5d5;
+  cursor: pointer;
 }
 

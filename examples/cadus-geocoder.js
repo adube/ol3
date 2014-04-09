@@ -77,6 +77,8 @@ gmap.controls[google.maps.ControlPosition.TOP_LEFT].push(olMapDiv);
 var olGeocoder = new ol.control.GoogleMapsGeocoder({
   'enableReverseGeocoding': true,
   'target': 'gmaps-geocoder',
+  'enableCurrentPosition': true,
+  'currentPositionText': 'Ma position',
   'geocoderComponentRestrictions': {'country': 'CA'},
   'iconStyle': new ol.style.Style({
     image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({

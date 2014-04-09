@@ -164,12 +164,7 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
   /**
    * @type {Array}
    */
-  this.optionalResults = [{
-    'formatted_address': 'My Location',
-    'geometry': {
-      'location': new google.maps.LatLng(46, -72)
-    }
-  }];
+  this.optionalResults = [];
 
   /**
    * @private
@@ -200,6 +195,49 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
    * @type {?number} timeout
    */
   this.searchingTimeout_ = null;
+
+
+  /**
+   * @type {number}
+   */
+  this.currentPositionDelay = goog.isDef(options.currentPositionDelay) ?
+      options.currentPositionDelay : 60000;
+
+  /**
+   * @private
+   * @type {?number} timeout
+   */
+  this.currentPositionTimeout_ = null;
+
+
+  /**
+   * @private
+   * @type {Object} timeout
+   */
+  this.currentPosition_ = null;
+
+
+  /**
+   * @type {String}
+   */
+  this.currentPositionText = goog.isDef(options.currentPositionText) ?
+      options.currentPositionText : 'My position';
+
+
+  /**
+   * @type {boolean}
+   * @private
+   */
+  if (goog.isDefAndNotNull(options.enableCurrentPosition) &&
+      goog.isBoolean(options.enableCurrentPosition) &&
+      navigator.geolocation) {
+
+    this.enableCurrentPosition_ = true;
+    this.getCurrentPosition_();
+  } else {
+    this.enableCurrentPosition_ = false;
+  }
+
 
   /**
    * @private
@@ -374,16 +412,31 @@ ol.control.GoogleMapsGeocoder.prototype.handleInputInput_ = function(
   var input = this.input_;
   var value = input.value;
 
-  if (!goog.string.isEmptySafe(value) && value.length >= this.characters_) {
-    if (this.allowSearching_) {
-      this.geocodeByAddress_(value, false, this.optionalResults);
-      this.allowSearching_ = false;
+  if (!goog.string.isEmptySafe(value)) {
+    if (value.length >= this.characters_) {
+      if (this.allowSearching_) {
+        this.geocodeByAddress_(value, false, this.optionalResults);
+        this.allowSearching_ = false;
+      }
+
+      this.resetSearchingTimeout_();
     }
 
-    this.resetTimeout_();
+    this.getCurrentPosition_();
   } else {
     this.clearGeocodeResults_();
   }
+};
+
+
+/**
+ * @param {goog.events.BrowserEvent} browserEvent Browser event.
+ * @private
+ */
+ol.control.GoogleMapsGeocoder.prototype.handleInputFocus_ = function(
+    browserEvent) {
+
+  this.getCurrentPosition_();
 };
 
 
@@ -427,6 +480,11 @@ ol.control.GoogleMapsGeocoder.prototype.geocodeByAddress_ = function(
       function(results, status) {
         results = goog.isDefAndNotNull(results) ? results : [];
         results = optionalResults.concat(results);
+
+        if (me.enableCurrentPosition_ && !goog.isNull(me.currentPosition_)) {
+          results = [me.currentPosition_].concat(results);
+        }
+
         me.handleGeocode_(results, status, addToMap);
       }
   );
@@ -561,7 +619,7 @@ ol.control.GoogleMapsGeocoder.prototype.handleResultOptionPress_ = function(
 /**
  * @private
  */
-ol.control.GoogleMapsGeocoder.prototype.resetTimeout_ = function() {
+ol.control.GoogleMapsGeocoder.prototype.resetSearchingTimeout_ = function() {
   var me = this;
 
   if (this.searchingTimeout_) {
@@ -604,7 +662,7 @@ ol.control.GoogleMapsGeocoder.prototype.handleMapSingleClick_ = function(
 
 
 /**
- * @param {Object} location google.maps.LatLng
+ * @param {google.maps.LatLng} location
  * @private
  */
 ol.control.GoogleMapsGeocoder.prototype.displayLocation_ = function(location) {
@@ -698,13 +756,52 @@ ol.control.GoogleMapsGeocoder.prototype.clear_ = function(setLocation) {
     goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
     vectorSource.clear();
 
-    //var input = this.input_;
-    //input.value = '';
-
     if (setLocation) {
       this.setValues({'location': null});
     }
 
     this.clearGeocodeResults_();
+  }
+};
+
+
+/**
+ * @private
+ */
+ol.control.GoogleMapsGeocoder.prototype.getCurrentPosition_ = function() {
+  var me = this;
+
+  if (this.enableCurrentPosition_ && goog.isNull(this.currentPosition_)) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      me.cachePosition_.call(me, position);
+    });
+  }
+};
+
+
+/**
+ * @param {Object} position
+ * @private
+ */
+ol.control.GoogleMapsGeocoder.prototype.cachePosition_ = function(position) {
+  var me = this;
+  var lat = position.coords.latitude;
+  var lon = position.coords.longitude;
+
+  this.currentPosition_ = {
+    'formatted_address': this.currentPositionText,
+    'geometry': {
+      'location': new google.maps.LatLng(lat, lon)
+    }
+  };
+
+  if (this.currentPositionTimeout_) {
+    clearTimeout(this.currentPositionTimeout_);
+  }
+
+  if (!goog.isNull(this.currentPositionDelay)) {
+    this.currentPositionTimeout_ = setTimeout(function() {
+      me.currentPosition_ = null;
+    }, this.currentPositionDelay);
   }
 };
