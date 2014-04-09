@@ -880,10 +880,10 @@ ol.control.GoogleMapsDirectionsPanel.prototype.calculateRouteTotalDuration_ =
   goog.array.forEach(route.legs, function(leg) {
     totalDuration += leg.duration.value;
   }, this);
-
+  var remainingDuration = 0;
   if (totalDuration > 3600) {
     var hours = Math.floor(totalDuration / 3600);
-    var remainingDuration = totalDuration - hours * 3600;
+    remainingDuration = totalDuration - hours * 3600;
     totalDurationContent.push(hours);
 
     // todo - i18n
@@ -1009,5 +1009,14 @@ ol.control.GoogleMapsDirectionsPanel.prototype.handleSelectorElementPress_ =
   var element = browserEvent.currentTarget;
   var index = parseInt(element.getAttribute('data-selector-index'), 10);
 
+  // Set the selected style to the element, and remove it from siblings
+  var className = this.classPrefix_ + '-selector-item-selected';
+  var previouslySelectedEl = goog.dom.getElementsByClass(className);
+  if (previouslySelectedEl.length > 0) {
+    for (var i = 0; i < previouslySelectedEl.length; i++) {
+      goog.dom.classes.remove(previouslySelectedEl.item(i), className);
+    }
+  }
+  goog.dom.classes.add(element, this.classPrefix_ + '-selector-item-selected');
   this.select_(index);
 };
