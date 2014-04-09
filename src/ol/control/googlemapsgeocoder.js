@@ -164,7 +164,7 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
   /**
    * @type {Array}
    */
-   if (goog.isDefAndNotNull(options.additionnalAddresses) &&
+  if (goog.isDefAndNotNull(options.additionnalAddresses) &&
       goog.isArray(options.additionnalAddresses)) {
     this.additionnalAddresses = options.additionnalAddresses;
   } else {
@@ -420,7 +420,8 @@ ol.control.GoogleMapsGeocoder.prototype.handleInputInput_ = function(
   if (!goog.string.isEmptySafe(value)) {
     if (value.length >= this.characters_) {
       if (this.allowSearching_) {
-        var additionnalAddresses = this.filterAdresses_(this.additionnalAddresses);
+        var additionnalAddresses = this.filterAdresses_(
+            this.additionnalAddresses, null);
         this.geocodeByAddress_(value, false, additionnalAddresses);
         this.allowSearching_ = false;
       }
@@ -447,6 +448,7 @@ ol.control.GoogleMapsGeocoder.prototype.handleSearchButtonPress_ = function(
   var input = this.input_;
   var value = input.value;
   if (!goog.string.isEmptySafe(value)) {
+    this.clearGeocodeResults_();
     this.geocodeByAddress_(value, true, null);
   }
 };
@@ -597,6 +599,8 @@ ol.control.GoogleMapsGeocoder.prototype.clearGeocodeResults_ = function() {
     ], this.handleResultOptionPress_, false, this);
   }, this);
   goog.dom.removeChildren(this.resultsList_);
+
+  this.clickableResultElements_ = [];
 };
 
 
@@ -785,7 +789,7 @@ ol.control.GoogleMapsGeocoder.prototype.getCurrentPosition_ = function(
     callback, force) {
   var me = this;
   force = goog.isDefAndNotNull(force) && force == true;
-  console.log(force);
+
   if (this.enableCurrentPosition_ &&
       ((goog.isNull(this.currentPosition_) ||
       goog.isNull(this.currentPosition_.geometry)) ||
@@ -833,36 +837,39 @@ ol.control.GoogleMapsGeocoder.prototype.cacheCurrentPosition_ = function(
 
 
 /**
- * @param {Array} adresses
+ * @param {Array} addresses
+ * @param {String} value Filter value
+ * @return {Array} array of filtered adresses
  * @private
  */
 ol.control.GoogleMapsGeocoder.prototype.filterAdresses_ = function(
-  addresses, value) {
+    addresses, value) {
 
-    var me = this;
+  var me = this;
 
-    var results = [];  
-    addresses.forEach(function(address){
-      results.push(me.formatAdress_(address));   
-    });
+  var results = [];
+  addresses.forEach(function(address) {
+    results.push(me.formatAdress_(address));
+  });
 
   return results;
 };
 
 
 /**
- * @param {Array} adresses
+ * @param {Object} address
+ * @return {Object} formatted address that fit the geocoding
+ *  results format
  * @private
  */
 ol.control.GoogleMapsGeocoder.prototype.formatAdress_ = function(
-  address) {
-  
+    address) {
+
   return {
     'formatted_address': address.title,
     'geometry': {
-      'location': new google.maps.LatLng(address.coordinates[0], 
-        address.coordinates[1])
+      'location': new google.maps.LatLng(address.coordinates[0],
+          address.coordinates[1])
     }
-  }
-    
+  };
 };
