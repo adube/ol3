@@ -145,7 +145,7 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
 
 
   /**
-   * @type {number}
+   * @type {?number}
    * @private
    */
   this.selectedRouteIndex_ = null;
@@ -1007,7 +1007,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.handleSelectorElementPress_ =
 
   browserEvent.preventDefault();
   var element = browserEvent.currentTarget;
-  var index = parseInt(element.getAttribute('data-selector-index'));
+  var index = parseInt(element.getAttribute('data-selector-index'), 10);
 
   this.select_(index);
 };
