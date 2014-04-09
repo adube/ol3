@@ -880,10 +880,10 @@ ol.control.GoogleMapsDirectionsPanel.prototype.calculateRouteTotalDuration_ =
   goog.array.forEach(route.legs, function(leg) {
     totalDuration += leg.duration.value;
   }, this);
-
+  var remainingDuration = 0;
   if (totalDuration > 3600) {
     var hours = Math.floor(totalDuration / 3600);
-    var remainingDuration = totalDuration - hours * 3600;
+    remainingDuration = totalDuration - hours * 3600;
     totalDurationContent.push(hours);
 
     // todo - i18n
