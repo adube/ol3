@@ -496,7 +496,7 @@ ol.control.GoogleMapsDirections.prototype.createOrUpdateDetour_ = function(
   });
   feature.setStyle(this.detourIconStyle_);
 
-  if (this.createNewDetour_ == true) {
+  if (this.createNewDetour_ === true) {
     this.createNewDetour_ = false;
   } else {
     detourFeatures.removeAt(numDetourFeatures - 1);
@@ -987,7 +987,8 @@ ol.control.GoogleMapsDirections.prototype.route_ = function(start, end) {
     destination: end,
     waypoints: reqWaypoints,
     optimizeWaypoints: true,
-    travelMode: google.maps.TravelMode.DRIVING
+    travelMode: google.maps.TravelMode.DRIVING,
+    provideRouteAlternatives: true
   };
 
   service.route(request, function(response, status) {

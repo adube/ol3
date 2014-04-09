@@ -284,7 +284,7 @@ ol.control.GoogleMapsGeocoder.prototype.setMap = function(map) {
     if (!goog.isNull(myMap)) {
 
       // disable reverse geocoding, if needed
-      if (this.enableReverseGeocoding_ == true) {
+      if (this.enableReverseGeocoding_ === true) {
         goog.events.unlisten(myMap, [
           ol.MapBrowserEvent.EventType.SINGLECLICK
         ], this.handleMapSingleClick_, false, this);
@@ -299,7 +299,7 @@ ol.control.GoogleMapsGeocoder.prototype.setMap = function(map) {
   if (!goog.isNull(map)) {
 
     // enable reverse geocoding, if needed
-    if (this.enableReverseGeocoding_ == true) {
+    if (this.enableReverseGeocoding_ === true) {
       goog.events.listen(map, [
         ol.MapBrowserEvent.EventType.SINGLECLICK
       ], this.handleMapSingleClick_, false, this);
@@ -323,7 +323,7 @@ ol.control.GoogleMapsGeocoder.prototype.setMap = function(map) {
 ol.control.GoogleMapsGeocoder.prototype.disableReverseGeocoding = function() {
   var map;
 
-  if (this.enableReverseGeocoding_ == true) {
+  if (this.enableReverseGeocoding_ === true) {
     this.enableReverseGeocoding_ = false;
     map = this.getMap();
     goog.events.unlisten(map, [
@@ -339,7 +339,7 @@ ol.control.GoogleMapsGeocoder.prototype.disableReverseGeocoding = function() {
 ol.control.GoogleMapsGeocoder.prototype.enableReverseGeocoding = function() {
   var map;
 
-  if (this.enableReverseGeocoding_ == false) {
+  if (this.enableReverseGeocoding_ === false) {
     this.enableReverseGeocoding_ = true;
     map = this.getMap();
     goog.events.listen(map, [
