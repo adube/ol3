@@ -103,6 +103,14 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
 
 
   /**
+   * A collection of route selector elements
+   * @type {ol.Collection}
+   * @private
+   */
+  this.clickableSelectorElements_ = new ol.Collection();
+
+
+  /**
    * The container element for routes
    * @type {Element}
    * @private
@@ -126,6 +134,21 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
   var popupEl = goog.dom.createDom(goog.dom.TagName.DIV, {
     'class': classPrefix + '-popup ' + ol.css.CLASS_UNSELECTABLE
   });
+
+
+  /**
+   * @type {ol.Collection}
+   * @private
+   */
+  this.routes_ = new ol.Collection();
+
+
+  /**
+   * @type {number}
+   * @private
+   */
+  this.selectedRouteIndex_ = null;
+
 
   /**
    * @type {ol.Overlay}
@@ -190,7 +213,14 @@ ol.control.GoogleMapsDirectionsPanel.prototype.clearDirections = function() {
   }, this);
   this.clickableDirectionElements_.clear();
 
-  // todo - do the same for selector elements
+  // unlisten selector elements too
+  this.clickableSelectorElements_.forEach(function(element) {
+    goog.events.unlisten(element, [
+      goog.events.EventType.TOUCHEND,
+      goog.events.EventType.CLICK
+    ], this.handleSelectorElementPress_, false, this);
+  }, this);
+  this.clickableSelectorElements_.clear();
 
   // remove children
   goog.dom.removeChildren(this.routesEl_);
@@ -198,6 +228,10 @@ ol.control.GoogleMapsDirectionsPanel.prototype.clearDirections = function() {
 
   // destroy popup
   this.destroyPopup_();
+
+  // clear routes and selected route
+  this.routes_.clear();
+  this.selectedRouteIndex_ = null;
 };
 
 
@@ -212,19 +246,26 @@ ol.control.GoogleMapsDirectionsPanel.prototype.setDirections = function(
   var routeSelectorListEl = this.routeSelectorListEl_;
   var routeEl;
   var classPrefix = this.classPrefix_;
+  var routeObj;
 
   // first, clear any previous direction infos
   this.clearDirections();
 
   // add routes
-  goog.array.forEach(directionsResult.routes, function(route) {
-    routeEl = this.createRouteElement_(route);
+  goog.array.forEach(directionsResult.routes, function(route, index) {
+    routeObj = {};
+    routeObj.result = route;
+
+    routeEl = this.createRouteElement_(route, index);
     goog.dom.appendChild(routesEl, routeEl);
+    routeObj.directionEl = routeEl;
 
     goog.dom.appendChild(
         routeSelectorListEl,
-        this.createRouteSelectorItemElement_(route)
+        this.createRouteSelectorItemElement_(route, index)
     );
+
+    this.routes_.push(routeObj);
   }, this);
 
   // copyright
@@ -235,24 +276,46 @@ ol.control.GoogleMapsDirectionsPanel.prototype.setDirections = function(
   var copyrightText = goog.dom.createTextNode(this.copyrightText);
   goog.dom.appendChild(copyright, copyrightText);
 
+  // set first route as default selection
+  if (this.routes_.getLength()) {
+    this.select_(0);
+  }
+};
+
+
+/**
+ * Returns the selected route results.  Useful for 'save' purpose.
+ * @return {Object}
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.getSelectedRoute = function() {
+  var routeResults = false;
+
+  if (!goog.isNull(this.selectedRouteIndex_)) {
+    routeResults = this.routes_.getAt(this.selectedRouteIndex_).result;
+  }
+
+  return routeResults;
 };
 
 
 /**
  * Create all elements required for a route
  * @param {google.maps.DirectionsRoute} route
+ * @param {number} index
  * @return {Element}
  * @private
  */
 ol.control.GoogleMapsDirectionsPanel.prototype.createRouteElement_ =
-    function(route) {
+    function(route, index) {
 
   var legEl;
   var tailEl;
   var classPrefix = this.classPrefix_;
 
   var element = goog.dom.createDom(goog.dom.TagName.DIV, {
-    'class': classPrefix + '-route'
+    'class': classPrefix + '-route',
+    'style': 'display: none;',
+    'data-route-index': index
   });
 
   // total distance
@@ -284,16 +347,18 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createRouteElement_ =
 /**
  * Create all elements required for a route for the selector list.
  * @param {google.maps.DirectionsRoute} route
+ * @param {number} index
  * @return {Element}
  * @private
  */
 ol.control.GoogleMapsDirectionsPanel.prototype.createRouteSelectorItemElement_ =
-    function(route) {
+    function(route, index) {
 
   var classPrefix = this.classPrefix_;
 
   var element = goog.dom.createDom(goog.dom.TagName.LI, {
-    'class': classPrefix + '-selector-item'
+    'class': classPrefix + '-selector-item',
+    'data-selector-index': index
   });
 
   // info
@@ -324,6 +389,14 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createRouteSelectorItemElement_ =
     goog.dom.appendChild(element, summaryEl);
     goog.dom.appendChild(summaryEl, goog.dom.createTextNode(route.summary));
   }
+
+  // event listeners
+  goog.events.listen(element, [
+    goog.events.EventType.TOUCHEND,
+    goog.events.EventType.CLICK
+  ], this.handleSelectorElementPress_, false, this);
+
+  this.clickableSelectorElements_.push(element);
 
   return element;
 };
@@ -520,6 +593,49 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createStepElement_ =
   this.clickableDirectionElements_.push(element);
 
   return element;
+};
+
+
+/**
+ * Select a route, which displays its direction details.  Unselect any
+ * previously selected route too.
+ * @param {number} index Index of the route to select
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.select_ = function(index) {
+
+  var route;
+
+  // unselect first, if required
+  if (!goog.isNull(this.selectedRouteIndex_) &&
+      this.selectedRouteIndex_ != index) {
+    //console.log("unselect: " + this.selectedRouteIndex_);
+
+    // todo - set style to selector
+
+    route = this.routes_.getAt(this.selectedRouteIndex_);
+
+    // hide direction details
+    goog.style.setStyle(route.directionEl, 'display', 'none');
+
+
+    this.selectedRouteIndex_ = null;
+  }
+
+  // select, if not already selected
+  if (goog.isNull(this.selectedRouteIndex_) ||
+      this.selectedRouteIndex_ != index) {
+    //console.log("select: " + index);
+
+    route = this.routes_.getAt(index);
+
+    // todo - set style to selector
+
+    // show direction details
+    goog.style.setStyle(route.directionEl, 'display', '');
+
+    this.selectedRouteIndex_ = index;
+  }
 };
 
 
@@ -879,3 +995,19 @@ ol.control.GoogleMapsDirectionsPanel.prototype.handleMapSingleClick_ =
 
   this.destroyPopup_();
 };
+
+
+/**
+ * @param {goog.events.BrowserEvent} browserEvent Browser event.
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.handleSelectorElementPress_ =
+    function(browserEvent) {
+
+  browserEvent.preventDefault();
+  var element = browserEvent.currentTarget;
+  var index = parseInt(element.getAttribute('data-selector-index'));
+
+  this.select_(index);
+};
+
