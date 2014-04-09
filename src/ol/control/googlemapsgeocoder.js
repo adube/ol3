@@ -151,7 +151,7 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
 
   /**
    * @private
-   * @type {array}
+   * @type {Array}
    */
   this.clickableResultElements_ = [];
 
@@ -162,7 +162,7 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
   this.geocoder_ = new google.maps.Geocoder();
 
   /**
-   * @type {array}
+   * @type {Array}
    */
   this.optionalResults = [{
     'formatted_address': 'My Location',
@@ -173,7 +173,7 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
 
   /**
    * @private
-   * @type {array}
+   * @type {Array}
    */
   this.results_ = [];
 
@@ -190,14 +190,14 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
   this.characters_ = goog.isDef(options.characters) ? options.characters : 2;
 
   /**
-   * @type {integer}
+   * @type {number}
    */
   this.searchingDelay = goog.isDef(options.searchingDelay) ?
       options.searchingDelay : 300;
 
   /**
    * @private
-   * @type {timeout}
+   * @type {?number} timeout
    */
   this.searchingTimeout_ = null;
 
@@ -376,9 +376,7 @@ ol.control.GoogleMapsGeocoder.prototype.handleInputInput_ = function(
 
   if (!goog.string.isEmptySafe(value) && value.length >= this.characters_) {
     if (this.allowSearching_) {
-      this.geocodeByAddress_(value, {
-        'addToMap': false
-      });
+      this.geocodeByAddress_(value, false, this.optionalResults);
       this.allowSearching_ = false;
     }
 
@@ -401,20 +399,22 @@ ol.control.GoogleMapsGeocoder.prototype.handleSearchButtonPress_ = function(
   var input = this.input_;
   var value = input.value;
   if (!goog.string.isEmptySafe(value)) {
-    this.geocodeByAddress_(value, {
-      'addToMap': true
-    });
+    this.geocodeByAddress_(value, true, null);
   }
 };
 
 
 /**
  * @param {String} address The address to search
- * @param {object} options
+ * @param {boolean} addToMap Set to true if the first result be added to map
+ * @param {Array} optionalResults array of optional results
  * @private
  */
 ol.control.GoogleMapsGeocoder.prototype.geocodeByAddress_ = function(
-    address, options) {
+    address, addToMap, optionalResults) {
+
+  optionalResults = goog.isDefAndNotNull(optionalResults) ?
+      optionalResults : [];
 
   var me = this;
   var geocoder = this.geocoder_;
@@ -426,8 +426,8 @@ ol.control.GoogleMapsGeocoder.prototype.geocodeByAddress_ = function(
       },
       function(results, status) {
         results = goog.isDefAndNotNull(results) ? results : [];
-        results = me.optionalResults.concat(results);
-        me.handleGeocode_(results, status, options);
+        results = optionalResults.concat(results);
+        me.handleGeocode_(results, status, addToMap);
       }
   );
 };
@@ -436,11 +436,10 @@ ol.control.GoogleMapsGeocoder.prototype.geocodeByAddress_ = function(
 /**
  * @param {ol.Coordinate} coordinate ready for use with GoogleMaps Geocoder,
  *     i.e. in LatLng projection.
- * @param {object} options
  * @private
  */
 ol.control.GoogleMapsGeocoder.prototype.geocodeByCoordinate_ = function(
-    coordinate, options) {
+    coordinate) {
 
   var me = this;
   var geocoder = this.geocoder_;
@@ -453,7 +452,7 @@ ol.control.GoogleMapsGeocoder.prototype.geocodeByCoordinate_ = function(
         'latLng': latlng
       },
       function(results, status) {
-        me.handleGeocode_(results, status, options);
+        me.handleGeocode_(results, status, true);
       }
   );
 };
@@ -462,21 +461,20 @@ ol.control.GoogleMapsGeocoder.prototype.geocodeByCoordinate_ = function(
 /**
  * @param {Array} results
  * @param {number|string} status
- * @param {object} options
+ * @param {boolean} addToMap
  * @private
  */
 ol.control.GoogleMapsGeocoder.prototype.handleGeocode_ = function(
-    results, status, options) {
+    results, status, addToMap) {
 
-  var me = this;
-  var options = goog.isDef(options) ? options : {};
+  addToMap = goog.isDef(addToMap) ? addToMap : false;
 
   this.results_ = results;
   this.clearGeocodeResults_();
 
   // TODO: handle status but consider that there may still be some results
 
-  if (options['addToMap']) {
+  if (addToMap) {
     //If the first result should be added to the map right away
     var formatted_address, result, location;
     var input = this.input_;
@@ -497,23 +495,33 @@ ol.control.GoogleMapsGeocoder.prototype.handleGeocode_ = function(
     }
   } else {
     //If not, then display the results in a clickable list
-    goog.array.forEach(this.results_, function(result, index) {
-      var resultOption = goog.dom.createDom(goog.dom.TagName.LI, {
-        'data-result': index
-      },
-      result.formatted_address);
-      me.clickableResultElements_.push(resultOption);
-
-      goog.dom.appendChild(me.resultsList_, resultOption);
-
-      goog.events.listen(resultOption, [
-        goog.events.EventType.TOUCHEND,
-        goog.events.EventType.CLICK
-      ], me.handleResultOptionPress_, false, me);
-    });
-
-    goog.style.setStyle(this.resultsList_, 'display', '');
+    this.displayGeocodeResults_();
   }
+};
+
+
+/**
+ * @private
+ */
+ol.control.GoogleMapsGeocoder.prototype.displayGeocodeResults_ = function() {
+  var me = this;
+
+  goog.array.forEach(this.results_, function(result, index) {
+    var resultOption = goog.dom.createDom(goog.dom.TagName.LI, {
+      'data-result': index
+    },
+    result.formatted_address);
+    me.clickableResultElements_.push(resultOption);
+
+    goog.dom.appendChild(me.resultsList_, resultOption);
+
+    goog.events.listen(resultOption, [
+      goog.events.EventType.TOUCHEND,
+      goog.events.EventType.CLICK
+    ], me.handleResultOptionPress_, false, me);
+  });
+
+  goog.style.setStyle(this.resultsList_, 'display', '');
 };
 
 
@@ -564,9 +572,7 @@ ol.control.GoogleMapsGeocoder.prototype.resetTimeout_ = function() {
     me.allowSearching_ = true;
     var input = me.input_;
     var value = input.value;
-    me.geocodeByAddress_(value, {
-      'addToMap': false
-    });
+    me.geocodeByAddress_(value, false, me.optionalResults);
   }, this.searchingDelay);
 };
 
@@ -593,14 +599,12 @@ ol.control.GoogleMapsGeocoder.prototype.handleMapSingleClick_ = function(
       coordinate, projection.getCode(), 'EPSG:4326'
       );
 
-  this.geocodeByCoordinate_(transformedCoordinate, {
-    'addToMap': true
-  });
+  this.geocodeByCoordinate_(transformedCoordinate);
 };
 
 
 /**
- * @param {object} location google.maps.LatLng
+ * @param {Object} location google.maps.LatLng
  * @private
  */
 ol.control.GoogleMapsGeocoder.prototype.displayLocation_ = function(location) {
