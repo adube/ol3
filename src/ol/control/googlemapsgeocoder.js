@@ -420,8 +420,9 @@ ol.control.GoogleMapsGeocoder.prototype.handleInputInput_ = function(
   if (!goog.string.isEmptySafe(value)) {
     if (value.length >= this.characters_) {
       if (this.allowSearching_) {
-        var additionnalAddresses = this.filterAdresses_(
+        var additionnalAddresses = this.filterAddresses_(
             this.additionnalAddresses, null);
+
         this.geocodeByAddress_(value, false, additionnalAddresses);
         this.allowSearching_ = false;
       }
@@ -477,17 +478,6 @@ ol.control.GoogleMapsGeocoder.prototype.geocodeByAddress_ = function(
       function(results, status) {
         results = goog.isDefAndNotNull(results) ? results : [];
         results = additionnalAddresses.concat(results);
-
-        if (me.enableCurrentPosition_) {
-          if (goog.isNull(me.currentPosition_)) {
-            me.currentPosition_ = {
-              'formatted_address': me.currentPositionText,
-              'geometry': null
-            };
-          }
-          results = [me.currentPosition_].concat(results);
-        }
-
         me.handleGeocode_(results, status, addToMap);
       }
   );
@@ -645,7 +635,10 @@ ol.control.GoogleMapsGeocoder.prototype.resetSearchingTimeout_ = function() {
     me.allowSearching_ = true;
     var input = me.input_;
     var value = input.value;
-    me.geocodeByAddress_(value, false, me.additionnalAddresses);
+    var additionnalAddresses = me.filterAddresses_(
+        me.additionnalAddresses, null);
+
+    me.geocodeByAddress_(value, false, additionnalAddresses);
   }, this.searchingDelay);
 };
 
@@ -842,12 +835,22 @@ ol.control.GoogleMapsGeocoder.prototype.cacheCurrentPosition_ = function(
  * @return {Array} array of filtered adresses
  * @private
  */
-ol.control.GoogleMapsGeocoder.prototype.filterAdresses_ = function(
+ol.control.GoogleMapsGeocoder.prototype.filterAddresses_ = function(
     addresses, value) {
 
   var me = this;
-
   var results = [];
+
+  if (this.enableCurrentPosition_) {
+    if (goog.isNull(this.currentPosition_)) {
+      this.currentPosition_ = {
+        'formatted_address': this.currentPositionText,
+        'geometry': null
+      };
+    }
+    results.push(this.currentPosition_);
+  }
+
   addresses.forEach(function(address) {
     results.push(me.formatAdress_(address));
   });
