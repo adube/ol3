@@ -8,6 +8,7 @@ goog.require('goog.dom.classes');
 goog.require('goog.events');
 goog.require('goog.events.EventType');
 goog.require('goog.string');
+goog.require('goog.style');
 goog.require('ol.Collection');
 goog.require('ol.MapBrowserEvent.EventType');
 goog.require('ol.Overlay');
@@ -1010,4 +1011,3 @@ ol.control.GoogleMapsDirectionsPanel.prototype.handleSelectorElementPress_ =
 
   this.select_(index);
 };
-
