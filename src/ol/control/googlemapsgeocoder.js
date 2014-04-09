@@ -233,7 +233,7 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
       navigator.geolocation) {
 
     this.enableCurrentPosition_ = true;
-    this.getCurrentPosition_();
+    this.getCurrentPosition_(null, false);
   } else {
     this.enableCurrentPosition_ = false;
   }
@@ -422,21 +422,10 @@ ol.control.GoogleMapsGeocoder.prototype.handleInputInput_ = function(
       this.resetSearchingTimeout_();
     }
 
-    this.getCurrentPosition_();
+    this.getCurrentPosition_(null, false);
   } else {
     this.clearGeocodeResults_();
   }
-};
-
-
-/**
- * @param {goog.events.BrowserEvent} browserEvent Browser event.
- * @private
- */
-ol.control.GoogleMapsGeocoder.prototype.handleInputFocus_ = function(
-    browserEvent) {
-
-  this.getCurrentPosition_();
 };
 
 
@@ -481,7 +470,13 @@ ol.control.GoogleMapsGeocoder.prototype.geocodeByAddress_ = function(
         results = goog.isDefAndNotNull(results) ? results : [];
         results = optionalResults.concat(results);
 
-        if (me.enableCurrentPosition_ && !goog.isNull(me.currentPosition_)) {
+        if (me.enableCurrentPosition_) {
+          if (goog.isNull(me.currentPosition_)) {
+            me.currentPosition_ = {
+              'formatted_address': me.currentPositionText,
+              'geometry': null
+            };
+          }
           results = [me.currentPosition_].concat(results);
         }
 
@@ -610,9 +605,19 @@ ol.control.GoogleMapsGeocoder.prototype.handleResultOptionPress_ = function(
   var element = browserEvent.currentTarget;
   var index = element.getAttribute('data-result');
   var result = this.results_[index];
-
   this.input_.value = result.formatted_address;
-  this.displayLocation_(result.geometry.location);
+
+  if (this.enableCurrentPosition_ && (goog.isNull(this.currentPosition_) ||
+      goog.isNull(this.currentPosition_.geometry) ||
+      goog.isNull(result.geometry)) &&
+      index == 0) {
+
+    this.getCurrentPosition_(function(currentPosition) {
+      this.displayLocation_(currentPosition.geometry.location);
+    }, true);
+  } else {
+    this.displayLocation_(result.geometry.location);
+  }
 };
 
 
@@ -766,34 +771,48 @@ ol.control.GoogleMapsGeocoder.prototype.clear_ = function(setLocation) {
 
 
 /**
+ * @param {Function} callback
+ * @param {boolean} force
  * @private
  */
-ol.control.GoogleMapsGeocoder.prototype.getCurrentPosition_ = function() {
+ol.control.GoogleMapsGeocoder.prototype.getCurrentPosition_ = function(
+    callback, force) {
   var me = this;
+  force = goog.isDefAndNotNull(force);
 
-  if (this.enableCurrentPosition_ && goog.isNull(this.currentPosition_)) {
+  if (this.enableCurrentPosition_ &&
+      ((goog.isNull(this.currentPosition_) ||
+      goog.isNull(this.currentPosition_.geometry)) ||
+      force == true)) {
     navigator.geolocation.getCurrentPosition(function(position) {
-      me.cachePosition_.call(me, position);
+      var lat = position.coords.latitude;
+      var lon = position.coords.longitude;
+      var currentPosition = {
+        'formatted_address': me.currentPositionText,
+        'geometry': {
+          'location': new google.maps.LatLng(lat, lon)
+        }
+      };
+
+      me.cacheCurrentPosition_.call(me, currentPosition);
+
+      if (goog.isDefAndNotNull(callback)) {
+        callback.call(me, currentPosition);
+      }
     });
   }
 };
 
 
 /**
- * @param {Object} position
+ * @param {Object} currentPosition
  * @private
  */
-ol.control.GoogleMapsGeocoder.prototype.cachePosition_ = function(position) {
+ol.control.GoogleMapsGeocoder.prototype.cacheCurrentPosition_ = function(
+    currentPosition) {
   var me = this;
-  var lat = position.coords.latitude;
-  var lon = position.coords.longitude;
 
-  this.currentPosition_ = {
-    'formatted_address': this.currentPositionText,
-    'geometry': {
-      'location': new google.maps.LatLng(lat, lon)
-    }
-  };
+  this.currentPosition_ = currentPosition;
 
   if (this.currentPositionTimeout_) {
     clearTimeout(this.currentPositionTimeout_);
