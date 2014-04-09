@@ -86,8 +86,14 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
 
   var routeSelectorToggleEl = goog.dom.createDom(goog.dom.TagName.A, {
     'id': classPrefix + '-selector-toggle',
-    'style': 'display:none'
+    'style': 'display:none',
+    'class': classPrefix + '-selector-toggle-opened'
   });
+  goog.events.listen(
+      routeSelectorToggleEl,
+      ol.MapBrowserEvent.EventType.CLICK,
+      this.handleToggleElementPress_, false, this);
+
   // todo - i18n
   goog.dom.appendChild(routeSelectorToggleEl, goog.dom.createTextNode(
       'Suggested routes'));
@@ -1061,3 +1067,45 @@ ol.control.GoogleMapsDirectionsPanel.prototype.selectorVisible_ =
     element.style.display = 'none';
 };
 
+
+/**
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.handleToggleElementPress_ =
+    function() {
+  var element = document.getElementById(this.classPrefix_ + '-selector-toggle');
+  var open = true;
+  if (goog.dom.classes.has(element, this.classPrefix_ +
+      '-selector-toggle-opened')) {
+    goog.dom.classes.swap(element, this.classPrefix_ +
+        '-selector-toggle-opened',
+        this.classPrefix_ + '-selector-toggle-closed');
+    open = false;
+  }else {
+    goog.dom.classes.swap(element, this.classPrefix_ +
+        '-selector-toggle-closed',
+        this.classPrefix_ + '-selector-toggle-opened');
+  }
+  this.selectorOpened_(open);
+};
+
+
+/**
+ * @private
+ * @param {boolean} open parameter. Call to open or close the selector panel.
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.selectorOpened_ =
+    function(open) {
+  var display = 'none';
+  if (open) {
+    display = 'block';
+  }
+
+  var itemClass = this.classPrefix_ + '-selector-item';
+  var items = goog.dom.getElementsByClass(itemClass);
+  if (items.length > 0) {
+    for (var i = 0; i < items.length; i++) {
+      items.item(i).style.display = display;
+    }
+  }
+};

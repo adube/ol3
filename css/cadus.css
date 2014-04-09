@@ -52,6 +52,9 @@
 .ol-gmdp-selector-item.ol-gmdp-selector-item-selected{
   font-weight:bold;
 }
+#ol-gmdp-selector-toggle{
+  cursor:pointer;
+}
 /**
  * GoogleMapsDirectionsPanel
  */
@@ -88,4 +91,5 @@
   background-color: #5ec5d5;
   cursor: pointer;
 }
+
 
