@@ -162,7 +162,6 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
   this.geocoder_ = new google.maps.Geocoder();
 
   /**
-   * @private
    * @type {array}
    */
   this.optionalResults = [{
@@ -411,7 +410,6 @@ ol.control.GoogleMapsGeocoder.prototype.handleSearchButtonPress_ = function(
 
 /**
  * @param {String} address The address to search
- * @param {Function} callback The callback function for handlign results
  * @param {object} options
  * @private
  */
@@ -478,7 +476,7 @@ ol.control.GoogleMapsGeocoder.prototype.handleGeocode_ = function(
 
   // TODO: handle status but consider that there may still be some results
 
-  if(options['addToMap']){
+  if (options['addToMap']) {
     //If the first result should be added to the map right away
     var formatted_address, result, location;
     var input = this.input_;
@@ -514,8 +512,8 @@ ol.control.GoogleMapsGeocoder.prototype.handleGeocode_ = function(
       ], me.handleResultOptionPress_, false, me);
     });
 
-    goog.style.setStyle(this.resultsList_, 'display', '');  
-  }  
+    goog.style.setStyle(this.resultsList_, 'display', '');
+  }
 };
 
 
@@ -544,7 +542,7 @@ ol.control.GoogleMapsGeocoder.prototype.handleResultOptionPress_ = function(
 
   this.clearGeocodeResults_();
   var element = browserEvent.currentTarget;
-  var index = element.getAttribute('data-result')
+  var index = element.getAttribute('data-result');
   var result = this.results_[index];
 
   this.input_.value = result.formatted_address;
@@ -602,8 +600,7 @@ ol.control.GoogleMapsGeocoder.prototype.handleMapSingleClick_ = function(
 
 
 /**
- * @param {Array} results
- * @param {number|string} status
+ * @param {object} location google.maps.LatLng
  * @private
  */
 ol.control.GoogleMapsGeocoder.prototype.displayLocation_ = function(location) {
