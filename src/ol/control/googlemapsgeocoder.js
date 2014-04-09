@@ -1,5 +1,6 @@
 goog.provide('ol.control.GoogleMapsGeocoder');
 
+goog.require('goog.array');
 goog.require('goog.asserts');
 goog.require('goog.dom');
 goog.require('goog.dom.TagName');
@@ -79,6 +80,11 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
     'class': classPrefix + '-input-text'
   });
 
+  var resultsList = goog.dom.createDom(goog.dom.TagName.LI, {
+    'class': classPrefix + '-results',
+    'style': 'display: none;'
+  });
+
   var searchButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
     'class': classPrefix + '-search-button'
   });
@@ -98,6 +104,7 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
   goog.dom.appendChild(removeButton, removeButtonText);
 
   goog.dom.appendChild(element, input);
+  goog.dom.appendChild(element, resultsList);
   goog.dom.appendChild(element, searchButton);
   goog.dom.appendChild(element, clearButton);
   goog.dom.appendChild(element, removeButton);
@@ -121,6 +128,10 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
     goog.events.EventType.KEYPRESS
   ], this.handleInputKeypress_, false, this);
 
+  goog.events.listen(input, [
+    goog.events.EventType.INPUT
+  ], this.handleInputInput_, false, this);
+
   goog.base(this, {
     element: element,
     target: options.target
@@ -134,9 +145,59 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
 
   /**
    * @private
+   * @type {Element}
+   */
+  this.resultsList_ = resultsList;
+
+  /**
+   * @private
    * @type {google.maps.Geocoder}
    */
   this.geocoder_ = new google.maps.Geocoder();
+
+  /**
+   * @private
+   * @type {array}
+   */
+  this.optionalResults_ = [{
+    'formatted_address': 'My Location',
+    'geometry': {
+      'location': {
+        'lng': function() { return -72; },
+        'lat': function() { return 46; }
+      }
+    }
+  }];
+
+  /**
+   * @private
+   * @type {array}
+   */
+  this.results_ = [];
+
+  /**
+   * @private
+   * @type {boolean}
+   */
+  this.allowSearching_ = true;
+
+  /**
+   * @private
+   * @type {boolean}
+   */
+  this.characters_ = goog.isDef(options.characters) ? options.characters : 2;
+
+  /**
+   * @type {integer}
+   */
+  this.searchingDelay = goog.isDef(options.searchingDelay) ?
+      options.searchingDelay : 300;
+
+  /**
+   * @private
+   * @type {timeout}
+   */
+  this.searchingTimeout_ = null;
 
   /**
    * @private
@@ -305,6 +366,29 @@ ol.control.GoogleMapsGeocoder.prototype.handleInputKeypress_ = function(
  * @param {goog.events.BrowserEvent} browserEvent Browser event.
  * @private
  */
+ol.control.GoogleMapsGeocoder.prototype.handleInputInput_ = function(
+    browserEvent) {
+
+  var input = this.input_;
+  var value = input.value;
+
+  if (!goog.string.isEmptySafe(value) && value.length >= this.characters_) {
+    if (this.allowSearching_) {
+      this.geocodeByAddress_(value, this.displayGeocodeResults_);
+      this.allowSearching_ = false;
+    }
+
+    this.resetTimeout_();
+  } else {
+    this.clearGeocodeResults_();
+  }
+};
+
+
+/**
+ * @param {goog.events.BrowserEvent} browserEvent Browser event.
+ * @private
+ */
 ol.control.GoogleMapsGeocoder.prototype.handleSearchButtonPress_ = function(
     browserEvent) {
 
@@ -320,12 +404,15 @@ ol.control.GoogleMapsGeocoder.prototype.handleSearchButtonPress_ = function(
 
 /**
  * @param {String} address The address to search
+ * @param {Function} callback The callback function for handlign results
  * @private
  */
-ol.control.GoogleMapsGeocoder.prototype.geocodeByAddress_ = function(address) {
+ol.control.GoogleMapsGeocoder.prototype.geocodeByAddress_ = function(
+    address, callback) {
 
   var me = this;
   var geocoder = this.geocoder_;
+  var handleGeocodeFunction = callback ? callback : me.handleGeocode_;
 
   geocoder.geocode(
       {
@@ -333,9 +420,93 @@ ol.control.GoogleMapsGeocoder.prototype.geocodeByAddress_ = function(address) {
         'componentRestrictions': this.geocoderComponentRestrictions_
       },
       function(results, status) {
-        me.handleGeocode_(results, status);
+        handleGeocodeFunction.call(me, results, status);
+        //me.handleGeocode_(results, status);
       }
   );
+};
+
+
+/**
+ * @param {Array} results
+ * @param {number|string} status
+ * @private
+ */
+ol.control.GoogleMapsGeocoder.prototype.displayGeocodeResults_ = function(
+    results, status) {
+
+  var me = this;
+
+  if (!status == google.maps.GeocoderStatus.OK || !results) {
+    results = [];
+  }
+
+  this.results_ = this.optionalResults_.concat(results);
+  this.clearGeocodeResults_();
+
+  goog.array.forEach(this.results_, function(result, index) {
+    //I'd rather set the OL value instead of its id but I couldn't
+    //do it with closure...
+    var resultOption = goog.dom.createDom(goog.dom.TagName.OL, {
+      'id': 'result-' + index
+    },
+    result.formatted_address);
+
+    goog.dom.appendChild(me.resultsList_, resultOption);
+
+    goog.events.listen(resultOption, [
+      goog.events.EventType.TOUCHEND,
+      goog.events.EventType.CLICK
+    ], me.handleResultOptionPress_, false, me);
+  });
+
+  goog.style.setStyle(this.resultsList_, 'display', '');
+};
+
+
+/**
+ * @private
+ */
+ol.control.GoogleMapsGeocoder.prototype.clearGeocodeResults_ = function() {
+  goog.style.setStyle(this.resultsList_, 'display', 'none');
+  goog.dom.removeChildren(this.resultsList_);
+};
+
+
+/**
+ * @param {goog.events.BrowserEvent} browserEvent Browser event.
+ * @private
+ */
+ol.control.GoogleMapsGeocoder.prototype.handleResultOptionPress_ = function(
+    browserEvent) {
+
+  this.clearGeocodeResults_();
+
+  var index = browserEvent.target.id.split('-')[1];
+  var result = this.results_[index];
+
+  this.input_.value = result.formatted_address;
+  this.displayLocation_(result.geometry.location);
+  //this.handleGeocode_([result], google.maps.GeocoderStatus.OK);
+};
+
+
+/**
+ * @private
+ */
+ol.control.GoogleMapsGeocoder.prototype.resetTimeout_ = function() {
+  var me = this;
+
+  if (this.searchingTimeout_) {
+    clearTimeout(this.searchingTimeout_);
+  }
+
+  this.searchingTimeout_ = setTimeout(function() {
+    me.allowSearching_ = true;
+    var input = me.input_;
+    var value = input.value;
+    me.geocodeByAddress_(value, me.displayGeocodeResults_);
+  }, this.searchingDelay);
 };
 
 
@@ -525,11 +696,54 @@ ol.control.GoogleMapsGeocoder.prototype.clear_ = function(setLocation) {
     goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
     vectorSource.clear();
 
-    var input = this.input_;
-    input.value = '';
+    //var input = this.input_;
+    //input.value = '';
 
     if (setLocation) {
       this.setValues({'location': null});
     }
+
+    this.clearGeocodeResults_();
   }
+};
+
+
+/**
+ * @param {Array} results
+ * @param {number|string} status
+ * @private
+ */
+ol.control.GoogleMapsGeocoder.prototype.displayLocation_ = function(location) {
+
+  var lat, lng;
+  var map = this.getMap();
+
+  var view = map.getView();
+  goog.asserts.assert(goog.isDef(view));
+  var view2D = view.getView2D();
+  goog.asserts.assertInstanceof(view2D, ol.View2D);
+
+  var projection = view2D.getProjection();
+
+  lng = location.lng();
+  lat = location.lat();
+
+  // clear first
+  this.clear_(false);
+
+  // transform received coordinate (which is in lat, lng) into
+  // map projection
+  var transformedCoordinate = ol.proj.transform(
+      [lng, lat], 'EPSG:4326', projection.getCode());
+
+  var feature = new ol.Feature({
+    geometry: new ol.geom.Point(transformedCoordinate)
+  });
+  feature.setStyle(this.iconStyle_);
+
+  var vectorSource = this.vectorLayer_.getSource();
+  goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
+  vectorSource.addFeature(feature);
+
+  this.setValues({'location': location});
 };

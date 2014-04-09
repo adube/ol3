@@ -53,3 +53,31 @@
   width: 300px;
   max-width: 300px;
 }
+
+/**
+ * GoogleMapsGeocoder
+ */
+
+.ol-gmg-results {
+  position: absolute;
+  min-width: 206px;
+  max-height: 100px;
+  max-width: 300px;
+  margin-left: 3px;
+  border-radius: 4px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border: 1px solid #aaa;
+  background-color: white;
+}
+
+.ol-gmg-results ol{
+  margin: 0px;
+  padding: 5px;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+.ol-gmg-results ol:hover{
+  background-color: #5ec5d5;
+}
+
