@@ -644,11 +644,13 @@ ol.control.GoogleMapsDirections.prototype.getDetourFeatureAtPixel_ = function(
 
 
 /**
- * @param {goog.events.Event} event Event.
+ * @param {goog.events.Event} browserEvent Event.
  * @private
  */
 ol.control.GoogleMapsDirections.prototype.handleAddWPGeocoderButtonPress_ =
-    function(event) {
+    function(browserEvent) {
+
+  browserEvent.preventDefault();
   this.addWaypointGeocoder();
 };
 
