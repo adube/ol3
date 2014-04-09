@@ -49,6 +49,9 @@
   cursor: pointer;
 }
 
+.ol-gmdp-selector-item.ol-gmdp-selector-item-selected{
+  font-weight:bold;
+}
 /**
  * GoogleMapsDirectionsPanel
  */
