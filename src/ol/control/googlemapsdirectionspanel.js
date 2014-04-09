@@ -85,7 +85,8 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
   goog.dom.appendChild(element, this.routeSelectorEl_);
 
   var routeSelectorToggleEl = goog.dom.createDom(goog.dom.TagName.A, {
-    'class': classPrefix + '-selector-toggle'
+    'id': classPrefix + '-selector-toggle',
+    'style': 'display:none'
   });
   // todo - i18n
   goog.dom.appendChild(routeSelectorToggleEl, goog.dom.createTextNode(
@@ -233,6 +234,9 @@ ol.control.GoogleMapsDirectionsPanel.prototype.clearDirections = function() {
   // clear routes and selected route
   this.routes_.clear();
   this.selectedRouteIndex_ = null;
+
+  //Hide suggested routes link
+  this.selectorVisible_(false);
 };
 
 
@@ -281,6 +285,8 @@ ol.control.GoogleMapsDirectionsPanel.prototype.setDirections = function(
   if (this.routes_.getLength()) {
     this.select_(0);
   }
+  // Display the Suggested routes button
+  this.selectorVisible_(true);
 };
 
 
@@ -637,6 +643,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.select_ = function(index) {
 
     this.selectedRouteIndex_ = index;
   }
+  this.selectSelectorItem_(index);
 };
 
 
@@ -1009,14 +1016,48 @@ ol.control.GoogleMapsDirectionsPanel.prototype.handleSelectorElementPress_ =
   var element = browserEvent.currentTarget;
   var index = parseInt(element.getAttribute('data-selector-index'), 10);
 
-  // Set the selected style to the element, and remove it from siblings
-  var className = this.classPrefix_ + '-selector-item-selected';
-  var previouslySelectedEl = goog.dom.getElementsByClass(className);
-  if (previouslySelectedEl.length > 0) {
-    for (var i = 0; i < previouslySelectedEl.length; i++) {
-      goog.dom.classes.remove(previouslySelectedEl.item(i), className);
-    }
-  }
-  goog.dom.classes.add(element, this.classPrefix_ + '-selector-item-selected');
   this.select_(index);
 };
+
+
+/**
+ * Selects the selector item
+ * @param {number} index of the route
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.selectSelectorItem_ =
+    function(index) {
+  // Set the selected style to the element, and remove it from siblings
+  var itemClass = this.classPrefix_ + '-selector-item';
+  var selectedClass = this.classPrefix_ + '-selector-item-selected';
+  var items = goog.dom.getElementsByClass(itemClass);
+  if (items.length > 0) {
+    for (var i = 0; i < items.length; i++) {
+      goog.dom.classes.remove(items.item(i), selectedClass);
+      if (items.item(i).getAttribute('data-selector-index') == index)
+        goog.dom.classes.add(items.item(i), selectedClass);
+    }
+  }
+
+};
+
+
+/**
+ * Hide or display the suggested routes link.
+ * @param {boolean} visible parameter. Omit if you wish to toggle.
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.selectorVisible_ =
+    function(visible) {
+  var element = document.getElementById(this.classPrefix_ + '-selector-toggle');
+  if (typeof(visible) == 'undefined') {
+    if (element.style.display == 'block')
+      visible = false;
+    else visible = true;
+  }
+  if (visible)
+    element.style.display = 'block';
+  else
+    element.style.display = 'none';
+};
+
