@@ -164,7 +164,12 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
   /**
    * @type {Array}
    */
-  this.optionalResults = [];
+   if (goog.isDefAndNotNull(options.additionnalAddresses) &&
+      goog.isArray(options.additionnalAddresses)) {
+    this.additionnalAddresses = options.additionnalAddresses;
+  } else {
+    this.additionnalAddresses = [];
+  }
 
   /**
    * @private
@@ -415,7 +420,8 @@ ol.control.GoogleMapsGeocoder.prototype.handleInputInput_ = function(
   if (!goog.string.isEmptySafe(value)) {
     if (value.length >= this.characters_) {
       if (this.allowSearching_) {
-        this.geocodeByAddress_(value, false, this.optionalResults);
+        var additionnalAddresses = this.filterAdresses_(this.additionnalAddresses);
+        this.geocodeByAddress_(value, false, additionnalAddresses);
         this.allowSearching_ = false;
       }
 
@@ -449,14 +455,14 @@ ol.control.GoogleMapsGeocoder.prototype.handleSearchButtonPress_ = function(
 /**
  * @param {String} address The address to search
  * @param {boolean} addToMap Set to true if the first result be added to map
- * @param {Array} optionalResults array of optional results
+ * @param {Array} additionnalAddresses array of optional results
  * @private
  */
 ol.control.GoogleMapsGeocoder.prototype.geocodeByAddress_ = function(
-    address, addToMap, optionalResults) {
+    address, addToMap, additionnalAddresses) {
 
-  optionalResults = goog.isDefAndNotNull(optionalResults) ?
-      optionalResults : [];
+  additionnalAddresses = goog.isDefAndNotNull(additionnalAddresses) ?
+      additionnalAddresses : [];
 
   var me = this;
   var geocoder = this.geocoder_;
@@ -468,7 +474,7 @@ ol.control.GoogleMapsGeocoder.prototype.geocodeByAddress_ = function(
       },
       function(results, status) {
         results = goog.isDefAndNotNull(results) ? results : [];
-        results = optionalResults.concat(results);
+        results = additionnalAddresses.concat(results);
 
         if (me.enableCurrentPosition_) {
           if (goog.isNull(me.currentPosition_)) {
@@ -635,7 +641,7 @@ ol.control.GoogleMapsGeocoder.prototype.resetSearchingTimeout_ = function() {
     me.allowSearching_ = true;
     var input = me.input_;
     var value = input.value;
-    me.geocodeByAddress_(value, false, me.optionalResults);
+    me.geocodeByAddress_(value, false, me.additionnalAddresses);
   }, this.searchingDelay);
 };
 
@@ -778,8 +784,8 @@ ol.control.GoogleMapsGeocoder.prototype.clear_ = function(setLocation) {
 ol.control.GoogleMapsGeocoder.prototype.getCurrentPosition_ = function(
     callback, force) {
   var me = this;
-  force = goog.isDefAndNotNull(force);
-
+  force = goog.isDefAndNotNull(force) && force == true;
+  console.log(force);
   if (this.enableCurrentPosition_ &&
       ((goog.isNull(this.currentPosition_) ||
       goog.isNull(this.currentPosition_.geometry)) ||
@@ -823,4 +829,40 @@ ol.control.GoogleMapsGeocoder.prototype.cacheCurrentPosition_ = function(
       me.currentPosition_ = null;
     }, this.currentPositionDelay);
   }
+};
+
+
+/**
+ * @param {Array} adresses
+ * @private
+ */
+ol.control.GoogleMapsGeocoder.prototype.filterAdresses_ = function(
+  addresses, value) {
+
+    var me = this;
+
+    var results = [];  
+    addresses.forEach(function(address){
+      results.push(me.formatAdress_(address));   
+    });
+
+  return results;
+};
+
+
+/**
+ * @param {Array} adresses
+ * @private
+ */
+ol.control.GoogleMapsGeocoder.prototype.formatAdress_ = function(
+  address) {
+  
+  return {
+    'formatted_address': address.title,
+    'geometry': {
+      'location': new google.maps.LatLng(address.coordinates[0], 
+        address.coordinates[1])
+    }
+  }
+    
 };
