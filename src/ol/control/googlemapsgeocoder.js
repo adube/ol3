@@ -80,7 +80,7 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
     'class': classPrefix + '-input-text'
   });
 
-  var resultsList = goog.dom.createDom(goog.dom.TagName.LI, {
+  var resultsList = goog.dom.createDom(goog.dom.TagName.OL, {
     'class': classPrefix + '-results',
     'style': 'display: none;'
   });
@@ -151,6 +151,12 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
 
   /**
    * @private
+   * @type {array}
+   */
+  this.clickableResultElements_ = [];
+
+  /**
+   * @private
    * @type {google.maps.Geocoder}
    */
   this.geocoder_ = new google.maps.Geocoder();
@@ -159,13 +165,10 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
    * @private
    * @type {array}
    */
-  this.optionalResults_ = [{
+  this.optionalResults = [{
     'formatted_address': 'My Location',
     'geometry': {
-      'location': {
-        'lng': function() { return -72; },
-        'lat': function() { return 46; }
-      }
+      'location': new google.maps.LatLng(46, -72)
     }
   }];
 
@@ -374,7 +377,9 @@ ol.control.GoogleMapsGeocoder.prototype.handleInputInput_ = function(
 
   if (!goog.string.isEmptySafe(value) && value.length >= this.characters_) {
     if (this.allowSearching_) {
-      this.geocodeByAddress_(value, this.displayGeocodeResults_);
+      this.geocodeByAddress_(value, {
+        'addToMap': false
+      });
       this.allowSearching_ = false;
     }
 
@@ -397,7 +402,9 @@ ol.control.GoogleMapsGeocoder.prototype.handleSearchButtonPress_ = function(
   var input = this.input_;
   var value = input.value;
   if (!goog.string.isEmptySafe(value)) {
-    this.geocodeByAddress_(value);
+    this.geocodeByAddress_(value, {
+      'addToMap': true
+    });
   }
 };
 
@@ -405,14 +412,14 @@ ol.control.GoogleMapsGeocoder.prototype.handleSearchButtonPress_ = function(
 /**
  * @param {String} address The address to search
  * @param {Function} callback The callback function for handlign results
+ * @param {object} options
  * @private
  */
 ol.control.GoogleMapsGeocoder.prototype.geocodeByAddress_ = function(
-    address, callback) {
+    address, options) {
 
   var me = this;
   var geocoder = this.geocoder_;
-  var handleGeocodeFunction = callback ? callback : me.handleGeocode_;
 
   geocoder.geocode(
       {
@@ -420,8 +427,35 @@ ol.control.GoogleMapsGeocoder.prototype.geocodeByAddress_ = function(
         'componentRestrictions': this.geocoderComponentRestrictions_
       },
       function(results, status) {
-        handleGeocodeFunction.call(me, results, status);
-        //me.handleGeocode_(results, status);
+        results = goog.isDefAndNotNull(results) ? results : [];
+        results = me.optionalResults.concat(results);
+        me.handleGeocode_(results, status, options);
+      }
+  );
+};
+
+
+/**
+ * @param {ol.Coordinate} coordinate ready for use with GoogleMaps Geocoder,
+ *     i.e. in LatLng projection.
+ * @param {object} options
+ * @private
+ */
+ol.control.GoogleMapsGeocoder.prototype.geocodeByCoordinate_ = function(
+    coordinate, options) {
+
+  var me = this;
+  var geocoder = this.geocoder_;
+  var lat = coordinate[1];
+  var lng = coordinate[0];
+  var latlng = new google.maps.LatLng(lat, lng);
+
+  geocoder.geocode(
+      {
+        'latLng': latlng
+      },
+      function(results, status) {
+        me.handleGeocode_(results, status, options);
       }
   );
 };
@@ -430,37 +464,58 @@ ol.control.GoogleMapsGeocoder.prototype.geocodeByAddress_ = function(
 /**
  * @param {Array} results
  * @param {number|string} status
+ * @param {object} options
  * @private
  */
-ol.control.GoogleMapsGeocoder.prototype.displayGeocodeResults_ = function(
-    results, status) {
+ol.control.GoogleMapsGeocoder.prototype.handleGeocode_ = function(
+    results, status, options) {
 
   var me = this;
+  var options = goog.isDef(options) ? options : {};
 
-  if (!status == google.maps.GeocoderStatus.OK || !results) {
-    results = [];
-  }
-
-  this.results_ = this.optionalResults_.concat(results);
+  this.results_ = results;
   this.clearGeocodeResults_();
 
-  goog.array.forEach(this.results_, function(result, index) {
-    //I'd rather set the OL value instead of its id but I couldn't
-    //do it with closure...
-    var resultOption = goog.dom.createDom(goog.dom.TagName.OL, {
-      'id': 'result-' + index
-    },
-    result.formatted_address);
+  // TODO: handle status but consider that there may still be some results
 
-    goog.dom.appendChild(me.resultsList_, resultOption);
+  if(options['addToMap']){
+    //If the first result should be added to the map right away
+    var formatted_address, result, location;
+    var input = this.input_;
 
-    goog.events.listen(resultOption, [
-      goog.events.EventType.TOUCHEND,
-      goog.events.EventType.CLICK
-    ], me.handleResultOptionPress_, false, me);
-  });
+    if (results.length) {
+      // TODO: support multiple results
+      result = results[0];
 
-  goog.style.setStyle(this.resultsList_, 'display', '');
+      formatted_address = result.formatted_address;
+      // set returned value
+      input.value = formatted_address;
+
+      location = result.geometry.location;
+      this.displayLocation_(location);
+    } else {
+      // TODO: manage no results
+      alert('No results found');
+    }
+  } else {
+    //If not, then display the results in a clickable list
+    goog.array.forEach(this.results_, function(result, index) {
+      var resultOption = goog.dom.createDom(goog.dom.TagName.LI, {
+        'data-result': index
+      },
+      result.formatted_address);
+      me.clickableResultElements_.push(resultOption);
+
+      goog.dom.appendChild(me.resultsList_, resultOption);
+
+      goog.events.listen(resultOption, [
+        goog.events.EventType.TOUCHEND,
+        goog.events.EventType.CLICK
+      ], me.handleResultOptionPress_, false, me);
+    });
+
+    goog.style.setStyle(this.resultsList_, 'display', '');  
+  }  
 };
 
 
@@ -469,6 +524,13 @@ ol.control.GoogleMapsGeocoder.prototype.displayGeocodeResults_ = function(
  */
 ol.control.GoogleMapsGeocoder.prototype.clearGeocodeResults_ = function() {
   goog.style.setStyle(this.resultsList_, 'display', 'none');
+  //Unlisten to the results click event
+  this.clickableResultElements_.forEach(function(element) {
+    goog.events.unlisten(element, [
+      goog.events.EventType.TOUCHEND,
+      goog.events.EventType.CLICK
+    ], this.handleResultOptionPress_, false, this);
+  }, this);
   goog.dom.removeChildren(this.resultsList_);
 };
 
@@ -481,13 +543,12 @@ ol.control.GoogleMapsGeocoder.prototype.handleResultOptionPress_ = function(
     browserEvent) {
 
   this.clearGeocodeResults_();
-
-  var index = browserEvent.target.id.split('-')[1];
+  var element = browserEvent.currentTarget;
+  var index = element.getAttribute('data-result')
   var result = this.results_[index];
 
   this.input_.value = result.formatted_address;
   this.displayLocation_(result.geometry.location);
-  //this.handleGeocode_([result], google.maps.GeocoderStatus.OK);
 };
 
 
@@ -505,7 +566,9 @@ ol.control.GoogleMapsGeocoder.prototype.resetTimeout_ = function() {
     me.allowSearching_ = true;
     var input = me.input_;
     var value = input.value;
-    me.geocodeByAddress_(value, me.displayGeocodeResults_);
+    me.geocodeByAddress_(value, {
+      'addToMap': false
+    });
   }, this.searchingDelay);
 };
 
@@ -532,32 +595,9 @@ ol.control.GoogleMapsGeocoder.prototype.handleMapSingleClick_ = function(
       coordinate, projection.getCode(), 'EPSG:4326'
       );
 
-  this.geocodeByCoordinate_(transformedCoordinate);
-};
-
-
-/**
- * @param {ol.Coordinate} coordinate ready for use with GoogleMaps Geocoder,
- *     i.e. in LatLng projection.
- * @private
- */
-ol.control.GoogleMapsGeocoder.prototype.geocodeByCoordinate_ = function(
-    coordinate) {
-
-  var me = this;
-  var geocoder = this.geocoder_;
-  var lat = coordinate[1];
-  var lng = coordinate[0];
-  var latlng = new google.maps.LatLng(lat, lng);
-
-  geocoder.geocode(
-      {
-        'latLng': latlng
-      },
-      function(results, status) {
-        me.handleGeocode_(results, status);
-      }
-  );
+  this.geocodeByCoordinate_(transformedCoordinate, {
+    'addToMap': true
+  });
 };
 
 
@@ -566,15 +606,9 @@ ol.control.GoogleMapsGeocoder.prototype.geocodeByCoordinate_ = function(
  * @param {number|string} status
  * @private
  */
-ol.control.GoogleMapsGeocoder.prototype.handleGeocode_ = function(
-    results, status) {
-
-  var formatted_address, lat, lng;
-  var result;
-  var tmpOutput = [];
-  var input = this.input_;
+ol.control.GoogleMapsGeocoder.prototype.displayLocation_ = function(location) {
+  var lat, lng;
   var map = this.getMap();
-  var location;
 
   var view = map.getView();
   goog.asserts.assert(goog.isDef(view));
@@ -583,60 +617,27 @@ ol.control.GoogleMapsGeocoder.prototype.handleGeocode_ = function(
 
   var projection = view2D.getProjection();
 
-  if (status == google.maps.GeocoderStatus.OK) {
-    if (results.length) {
-      // TODO: support multiple results
-      result = results[0];
+  lng = location.lng();
+  lat = location.lat();
 
-      formatted_address = result.formatted_address;
-      location = result.geometry.location;
-      lng = location.lng();
-      lat = location.lat();
+  // clear first
+  this.clear_(false);
 
-      tmpOutput.push(formatted_address);
-      tmpOutput.push('\n');
-      tmpOutput.push('(');
-      tmpOutput.push(lng);
-      tmpOutput.push(', ');
-      tmpOutput.push(lat);
-      tmpOutput.push(')');
+  // transform received coordinate (which is in lat, lng) into
+  // map projection
+  var transformedCoordinate = ol.proj.transform(
+      [lng, lat], 'EPSG:4326', projection.getCode());
 
-      //alert(tmpOutput.join(''));
+  var feature = new ol.Feature({
+    geometry: new ol.geom.Point(transformedCoordinate)
+  });
+  feature.setStyle(this.iconStyle_);
 
-      // clear first
-      this.clear_(false);
+  var vectorSource = this.vectorLayer_.getSource();
+  goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
+  vectorSource.addFeature(feature);
 
-      // set returned value
-      input.value = formatted_address;
-
-      // transform received coordinate (which is in lat, lng) into
-      // map projection
-      var transformedCoordinate = ol.proj.transform(
-          [lng, lat], 'EPSG:4326', projection.getCode());
-
-      var feature = new ol.Feature({
-        geometry: new ol.geom.Point(transformedCoordinate)
-      });
-      feature.setStyle(this.iconStyle_);
-
-      var vectorSource = this.vectorLayer_.getSource();
-      goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
-      vectorSource.addFeature(feature);
-
-      this.setValues({'location': location});
-
-
-    } else {
-      // TODO: manage no results
-      alert('No results found');
-    }
-  } else {
-    // TODO: manage error message
-    alert(
-        'Geocode was not successful for the following reason: ' +
-        status
-    );
-  }
+  this.setValues({'location': location});
 };
 
 
@@ -705,45 +706,4 @@ ol.control.GoogleMapsGeocoder.prototype.clear_ = function(setLocation) {
 
     this.clearGeocodeResults_();
   }
-};
-
-
-/**
- * @param {Array} results
- * @param {number|string} status
- * @private
- */
-ol.control.GoogleMapsGeocoder.prototype.displayLocation_ = function(location) {
-
-  var lat, lng;
-  var map = this.getMap();
-
-  var view = map.getView();
-  goog.asserts.assert(goog.isDef(view));
-  var view2D = view.getView2D();
-  goog.asserts.assertInstanceof(view2D, ol.View2D);
-
-  var projection = view2D.getProjection();
-
-  lng = location.lng();
-  lat = location.lat();
-
-  // clear first
-  this.clear_(false);
-
-  // transform received coordinate (which is in lat, lng) into
-  // map projection
-  var transformedCoordinate = ol.proj.transform(
-      [lng, lat], 'EPSG:4326', projection.getCode());
-
-  var feature = new ol.Feature({
-    geometry: new ol.geom.Point(transformedCoordinate)
-  });
-  feature.setStyle(this.iconStyle_);
-
-  var vectorSource = this.vectorLayer_.getSource();
-  goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
-  vectorSource.addFeature(feature);
-
-  this.setValues({'location': location});
 };

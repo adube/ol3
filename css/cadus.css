@@ -75,13 +75,13 @@
   background-color: white;
 }
 
-.ol-gmg-results ol{
+.ol-gmg-results li{
   margin: 0px;
   padding: 5px;
   font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 
-.ol-gmg-results ol:hover{
+.ol-gmg-results li:hover{
   background-color: #5ec5d5;
 }
 
