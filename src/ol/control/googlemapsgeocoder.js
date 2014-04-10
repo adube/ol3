@@ -68,34 +68,6 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
    */
   this.vectorLayer_ = null;
 
-  /**
-   * i18n - currentPosition
-   * @type {string}
-   */
-  this.currentPositionText = goog.isDefAndNotNull(options.currentPositionText) ?
-      options.currentPositionText : 'My position';
-
-  /**
-   * i18n - searchButton
-   * @type {string}
-   */
-  this.searchButtonText = goog.isDefAndNotNull(options.searchButtonText) ?
-      options.searchButtonText : 'Search';
-
-  /**
-   * i18n - clearButton
-   * @type {string}
-   */
-  this.clearButtonText = goog.isDefAndNotNull(options.clearButtonText) ?
-      options.clearButtonText : 'Clear';
-
-  /**
-   * i18n - removeButton
-   * @type {string}
-   */
-  this.removeButtonText = goog.isDefAndNotNull(options.removeButtonText) ?
-      options.removeButtonText : 'Remove';
-
 
   // === UI COMPONENTS ===
   var classPrefix = 'ol-gmg';
@@ -116,19 +88,19 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
   var searchButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
     'class': classPrefix + '-search-button'
   });
-  var searchButtonText = goog.dom.createTextNode(this.searchButtonText);
+  var searchButtonText = goog.dom.createTextNode('Search');
   goog.dom.appendChild(searchButton, searchButtonText);
 
   var clearButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
     'class': classPrefix + '-clear-button'
   });
-  var clearButtonText = goog.dom.createTextNode(this.clearButtonText);
+  var clearButtonText = goog.dom.createTextNode('Clear');
   goog.dom.appendChild(clearButton, clearButtonText);
 
   var removeButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
     'class': classPrefix + '-remove-button'
   });
-  var removeButtonText = goog.dom.createTextNode(this.removeButtonText);
+  var removeButtonText = goog.dom.createTextNode('Remove');
   goog.dom.appendChild(removeButton, removeButtonText);
 
   goog.dom.appendChild(element, input);
@@ -249,6 +221,13 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
    * @type {Object} timeout
    */
   this.currentPosition_ = null;
+
+
+  /**
+   * @type {String}
+   */
+  this.currentPositionText = goog.isDef(options.currentPositionText) ?
+      options.currentPositionText : 'My position';
 
 
   /**

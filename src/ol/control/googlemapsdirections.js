@@ -67,76 +67,6 @@ ol.control.GOOGLEMAPSDIRECTIONS_DETOUR_LABEL_PROPERTY = 'label';
 ol.control.GoogleMapsDirections = function(opt_options) {
   var options = goog.isDef(opt_options) ? opt_options : {};
 
-  /**
-   * i18n - waypointButton
-   * @type {string}
-   */
-  this.addWaypointButtonText =
-      goog.isDefAndNotNull(options.addWaypointButtonText) ?
-          options.addWaypointButtonText : 'Add Waypoint';
-
-  /**
-   * i18n - currentPosition
-   * @type {string}
-   */
-  this.currentPositionText = goog.isDefAndNotNull(options.currentPositionText) ?
-      options.currentPositionText : null;
-
-  /**
-   * i18n - searchButton
-   * @type {string}
-   */
-  this.searchButtonText = goog.isDefAndNotNull(options.searchButtonText) ?
-      options.searchButtonText : null;
-
-  /**
-   * i18n - clearButton
-   * @type {string}
-   */
-  this.clearButtonText = goog.isDefAndNotNull(options.clearButtonText) ?
-      options.clearButtonText : null;
-
-  /**
-   * i18n - removeButton
-   * @type {string}
-   */
-  this.removeButtonText = goog.isDefAndNotNull(options.removeButtonText) ?
-      options.removeButtonText : null;
-
-
-  /**
-   * i18n - suggestedRoutes
-   * @type {string}
-   */
-  this.suggestedRoutesText =
-      goog.isDefAndNotNull(options.suggestedRoutesText) ?
-          options.suggestedRoutesText : null;
-
-  /**
-   * i18n - around
-   * @type {string}
-   */
-  this.aroundText =
-      goog.isDefAndNotNull(options.aroundText) ?
-          options.aroundText : null;
-
-  /**
-   * i18n - copyright
-   * @type {string}
-   */
-  this.copyrightText =
-      goog.isDefAndNotNull(options.copyrightText) ?
-          options.copyrightText : null;
-
-  /**
-   * i18n - totalDistance
-   * @type {string}
-   */
-  this.totalDistanceText =
-      goog.isDefAndNotNull(options.totalDistanceText) ?
-          options.totalDistanceText : null;
-
-
   var classPrefix = 'ol-gmds';
 
   var element = goog.dom.createDom(goog.dom.TagName.DIV, {
@@ -146,8 +76,7 @@ ol.control.GoogleMapsDirections = function(opt_options) {
   var addWaypointGeocoderButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
     'class': classPrefix + '-add-waypoint-button'
   });
-  var addWaypointGeocoderButtonText =
-      goog.dom.createTextNode(this.addWaypointButtonText);
+  var addWaypointGeocoderButtonText = goog.dom.createTextNode('Add waypoint');
   goog.dom.appendChild(
       addWaypointGeocoderButton, addWaypointGeocoderButtonText);
   goog.dom.appendChild(element, addWaypointGeocoderButton);
@@ -341,10 +270,6 @@ ol.control.GoogleMapsDirections = function(opt_options) {
   this.directionsPanel_ = new ol.control.GoogleMapsDirectionsPanel({
     target: options.panel,
     pixelBuffer: this.pixelBuffer_,
-    suggestedRoutesText: this.suggestedRoutesText,
-    aroundText: this.aroundText,
-    copyrightText: this.copyrightText,
-    totalDistanceText: this.totalDistanceText,
     cornerPixelSize: goog.isDef(options.cornerPixelSize) ?
         (options.cornerPixelSize) : undefined
   });
@@ -392,10 +317,6 @@ ol.control.GoogleMapsDirections = function(opt_options) {
   this.startGeocoder_ = new ol.control.GoogleMapsGeocoder({
     'enableReverseGeocoding': true,
     'target': startGeocoderElement,
-    'currentPositionText': this.currentPositionText,
-    'searchButtonText': this.searchButtonText,
-    'clearButtonText': this.clearButtonText,
-    'removeButtonText': this.removeButtonText,
     'geocoderComponentRestrictions': this.geocoderComponentRestrictions_,
     'iconStyle': this.startIconStyle_
   });
@@ -408,10 +329,6 @@ ol.control.GoogleMapsDirections = function(opt_options) {
   this.endGeocoder_ = new ol.control.GoogleMapsGeocoder({
     'enableReverseGeocoding': false,
     'target': endGeocoderElement,
-    'currentPositionText': this.currentPositionText,
-    'searchButtonText': this.searchButtonText,
-    'clearButtonText': this.clearButtonText,
-    'removeButtonText': this.removeButtonText,
     'geocoderComponentRestrictions': this.geocoderComponentRestrictions_,
     'iconStyle': this.endIconStyle_
   });
@@ -449,10 +366,6 @@ ol.control.GoogleMapsDirections.prototype.addWaypointGeocoder = function() {
   var geocoder = new ol.control.GoogleMapsGeocoder({
     'enableReverseGeocoding': false,
     'target': container,
-    'currentPositionText': this.currentPositionText,
-    'searchButtonText': this.searchButtonText,
-    'clearButtonText': this.clearButtonText,
-    'removeButtonText': this.removeButtonText,
     'geocoderComponentRestrictions': this.geocoderComponentRestrictions_,
     'iconStyle': this.startIconStyle_,
     'removable': true

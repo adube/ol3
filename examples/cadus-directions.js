@@ -108,15 +108,6 @@ var directions = new ol.control.GoogleMapsDirections({
   'gmap': gmap,
   'target': 'gmaps-directions',
   'geocoderComponentRestrictions': {'country': 'CA'},
-  'addWaypointButtonText': 'Ajouter un point',
-  'currentPositionText': 'Ma position',
-  'searchButtonText': 'Rechercher',
-  'clearButtonText': 'Effacer',
-  'removeButtonText': 'Supprimer',
-  'suggestedRoutesText': 'Routes suggérées',
-  'aroundText': 'environ',
-  'copyrightText': 'Données cartographiques ©2014 Google',
-  'totalDistanceText': 'Distance Totale',
   'lineStyle': new ol.style.Style({
     stroke: new ol.style.Stroke({
       color: [80, 140, 255, 0.6],
