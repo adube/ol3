@@ -44,6 +44,38 @@ ol.control.GOOGLEMAPSDIRECTIONSPANEL_PIXEL_BUFFER = 30;
 ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
   var options = goog.isDef(opt_options) ? opt_options : {};
 
+  /**
+   * i18n - suggestedRoutes
+   * @type {string}
+   */
+  this.suggestedRoutesText =
+      goog.isDefAndNotNull(options.suggestedRoutesText) ?
+          options.suggestedRoutesText : 'Suggested Routes';
+
+  /**
+   * i18n - around
+   * @type {string}
+   */
+  this.aroundText =
+      goog.isDefAndNotNull(options.aroundText) ?
+          options.aroundText : 'about';
+
+  /**
+   * i18n - copyright
+   * @type {string}
+   */
+  this.copyrightText =
+      goog.isDefAndNotNull(options.copyrightText) ?
+          options.copyrightText : '©2014 Google';
+
+  /**
+   * i18n - totalDistance
+   * @type {string}
+   */
+  this.totalDistanceText =
+      goog.isDefAndNotNull(options.totalDistanceText) ?
+          options.totalDistanceText : 'Total distance';
+
   var classPrefix = 'ol-gmdp';
 
   /**
@@ -94,9 +126,8 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
       ol.MapBrowserEvent.EventType.CLICK,
       this.handleToggleElementPress_, false, this);
 
-  // todo - i18n
   goog.dom.appendChild(routeSelectorToggleEl, goog.dom.createTextNode(
-      'Suggested routes'));
+      this.suggestedRoutesText));
   goog.dom.appendChild(this.routeSelectorEl_, routeSelectorToggleEl);
 
   /**
@@ -181,29 +212,6 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
 
 };
 goog.inherits(ol.control.GoogleMapsDirectionsPanel, ol.control.Control);
-
-
-/**
- * i18n - around
- * @type {string}
- */
-ol.control.GoogleMapsDirectionsPanel.prototype.aroundText = 'environ';
-
-
-/**
- * i18n - copyright
- * @type {string}
- */
-ol.control.GoogleMapsDirectionsPanel.prototype.copyrightText =
-    'Données cartographiques ©2014 Google';
-
-
-/**
- * i18n - copyright
- * @type {string}
- */
-ol.control.GoogleMapsDirectionsPanel.prototype.totalDistanceText =
-    'Distance Totale';
 
 
 /**
