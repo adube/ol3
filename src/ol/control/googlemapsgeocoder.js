@@ -166,6 +166,7 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
    */
   if (goog.isDefAndNotNull(options.additionnalAddresses) &&
       goog.isArray(options.additionnalAddresses)) {
+
     this.additionnalAddresses = options.additionnalAddresses;
   } else {
     this.additionnalAddresses = [];
@@ -421,7 +422,7 @@ ol.control.GoogleMapsGeocoder.prototype.handleInputInput_ = function(
     if (value.length >= this.characters_) {
       if (this.allowSearching_) {
         var additionnalAddresses = this.filterAddresses_(
-            this.additionnalAddresses, null);
+            this.additionnalAddresses, value);
 
         this.geocodeByAddress_(value, false, additionnalAddresses);
         this.allowSearching_ = false;
@@ -636,7 +637,7 @@ ol.control.GoogleMapsGeocoder.prototype.resetSearchingTimeout_ = function() {
     var input = me.input_;
     var value = input.value;
     var additionnalAddresses = me.filterAddresses_(
-        me.additionnalAddresses, null);
+        me.additionnalAddresses, value);
 
     me.geocodeByAddress_(value, false, additionnalAddresses);
   }, this.searchingDelay);
@@ -831,7 +832,7 @@ ol.control.GoogleMapsGeocoder.prototype.cacheCurrentPosition_ = function(
 
 /**
  * @param {Array} addresses
- * @param {String} value Filter value
+ * @param {?string} value Filter value
  * @return {Array} array of filtered adresses
  * @private
  */
@@ -840,6 +841,7 @@ ol.control.GoogleMapsGeocoder.prototype.filterAddresses_ = function(
 
   var me = this;
   var results = [];
+  var title, add;
 
   if (this.enableCurrentPosition_) {
     if (goog.isNull(this.currentPosition_)) {
@@ -851,9 +853,23 @@ ol.control.GoogleMapsGeocoder.prototype.filterAddresses_ = function(
     results.push(this.currentPosition_);
   }
 
-  addresses.forEach(function(address) {
-    results.push(me.formatAdress_(address));
-  });
+  if (goog.isDefAndNotNull(value)) {
+    value = value.toLowerCase();
+
+    addresses.forEach(function(address) {
+      title = address.title.toLowerCase();
+      add = address.address.toLowerCase();
+
+      if (title.indexOf(value) >= 0 || add.indexOf(value) >= 0) {
+        results.push(me.formatAdress_(address));
+      }
+    });
+  } else {
+    addresses.forEach(function(address) {
+      results.push(me.formatAdress_(address));
+    });
+
+  }
 
   return results;
 };
@@ -871,8 +887,8 @@ ol.control.GoogleMapsGeocoder.prototype.formatAdress_ = function(
   return {
     'formatted_address': address.title,
     'geometry': {
-      'location': new google.maps.LatLng(address.coordinates[0],
-          address.coordinates[1])
+      'location': new google.maps.LatLng(address.coordinates[1],
+          address.coordinates[0])
     }
   };
 };

@@ -79,6 +79,11 @@ var olGeocoder = new ol.control.GoogleMapsGeocoder({
   'target': 'gmaps-geocoder',
   'enableCurrentPosition': true,
   'currentPositionText': 'Ma position',
+  'additionnalAddresses': [{
+    'title': 'Une maison',
+    'address': '9999 rue Des Maisons, Maisonville',
+    'coordinates': [-72, 48]
+  }],
   'geocoderComponentRestrictions': {'country': 'CA'},
   'iconStyle': new ol.style.Style({
     image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
