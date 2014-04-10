@@ -400,10 +400,14 @@ ol.control.GoogleMapsDirections.prototype.addWaypointGeocoder = function() {
  * @param {Object} source
  */
 ol.control.GoogleMapsDirections.prototype.load = function(source) {
-  var format = this.format_;
 
+  this.clear_();
+
+  var format = this.format_;
   var object = format.read(source);
-  window.console.log(object);
+  this.handleDirectionsResult_(object, google.maps.DirectionsStatus.OK);
+
+  //window.console.log(object);
 };
 
 
@@ -679,7 +683,7 @@ ol.control.GoogleMapsDirections.prototype.handleAddWPGeocoderButtonPress_ =
 
 
 /**
- * @param {google.maps.DirectionsResult} response
+ * @param {google.maps.DirectionsResult|Object} response
  * @param {google.maps.DirectionsStatus} status
  * @private
  */
@@ -701,21 +705,27 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
   var lat, location, lng, transformedCoordinate;
   var feature;
   var coordinates;
+  var geometry;
 
   var routeFeatures = this.routeFeatures_;
   var selectedRouteFeatures = this.selectedRouteFeatures_;
 
   if (status == google.maps.DirectionsStatus.OK) {
     goog.array.forEach(response.routes, function(route) {
-      coordinates = [];
-      goog.array.forEach(route.overview_path, function(location) {
-        lng = location.lng();
-        lat = location.lat();
-        transformedCoordinate = ol.proj.transform(
-            [lng, lat], 'EPSG:4326', projection.getCode());
-        coordinates.push(transformedCoordinate);
-      }, this);
-      feature = new ol.Feature(new ol.geom.LineString(coordinates));
+      if (goog.isDefAndNotNull(route.overview_path)) {
+        coordinates = [];
+        goog.array.forEach(route.overview_path, function(location) {
+          lng = location.lng();
+          lat = location.lat();
+          transformedCoordinate = ol.proj.transform(
+              [lng, lat], 'EPSG:4326', projection.getCode());
+          coordinates.push(transformedCoordinate);
+        }, this);
+        geometry = new ol.geom.LineString(coordinates);
+      } else {
+        geometry = route.geometry;
+      }
+      feature = new ol.Feature(geometry);
       feature.setStyle(this.lineStyle_);
       routeFeatures.push(feature);
     }, this);

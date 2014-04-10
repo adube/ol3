@@ -25,6 +25,12 @@ ol.control.MTJSON_ROUTE_LEGS = 'l';
 
 
 /**
+ * @define {string} the key for a route summary in mtjson
+ */
+ol.control.MTJSON_ROUTE_SUMMARY = 's';
+
+
+/**
  * @define {string} the key for a leg distance object in mtjson
  */
 ol.control.MTJSON_ROUTE_LEG_DISTANCE = 'd';
@@ -253,6 +259,11 @@ ol.format.MTJSON.prototype.readRoutes_ = function(sourceRoutes) {
  */
 ol.format.MTJSON.prototype.readRoute_ = function(sourceRoute) {
   var route = {};
+
+  var summary = sourceRoute[ol.control.MTJSON_ROUTE_SUMMARY];
+  if (goog.isDefAndNotNull(summary)) {
+    route.summary = summary;
+  }
 
   var coordinates = sourceRoute[ol.control.MTJSON_ROUTE_COORDINATES];
   if (goog.isDefAndNotNull(coordinates) &&
