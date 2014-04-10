@@ -279,6 +279,16 @@ ol.control.GoogleMapsDirections = function(opt_options) {
       ol.control.GoogleMapsDirectionsPanel.EventType.SELECT,
       this.handleSelectionChanged_, false, this);
 
+  goog.events.listen(
+      this.directionsPanel_,
+      ol.control.GoogleMapsDirectionsPanel.EventType.HOVER,
+      this.handleHover_, false, this);
+
+  goog.events.listen(
+      this.directionsPanel_,
+      ol.control.GoogleMapsDirectionsPanel.EventType.UNHOVER,
+      this.handleHoverStopped_, false, this);
+
 
   /**
    * @type {ol.format.MTJSON}
@@ -864,6 +874,31 @@ ol.control.GoogleMapsDirections.prototype.handleSelectionChanged_ = function(
   if (!goog.isNull(index)) {
     this.selectRoute_(index);
   }
+};
+
+
+/**
+ * @param {goog.events.Event} event Event.
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.handleHover_ = function(
+    event) {
+
+  var index = this.directionsPanel_.getSelectedRouteIndex();
+  if (!goog.isNull(index)) {
+    //this.hoverRoute_(index);
+  }
+};
+
+
+/**
+ * @param {goog.events.Event} event Event.
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.handleHoverStopped_ = function(
+    event) {
+
+  //this.unhoverRoutes_();
 };
 
 
