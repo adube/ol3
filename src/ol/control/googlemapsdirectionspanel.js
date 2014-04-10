@@ -184,6 +184,14 @@ goog.inherits(ol.control.GoogleMapsDirectionsPanel, ol.control.Control);
 
 
 /**
+ * @enum {string}
+ */
+ol.control.GoogleMapsDirectionsPanel.EventType = {
+  SELECT: goog.events.getUniqueId('SELECT')
+};
+
+
+/**
  * i18n - around
  * @type {string}
  */
@@ -308,6 +316,16 @@ ol.control.GoogleMapsDirectionsPanel.prototype.getSelectedRoute = function() {
   }
 
   return routeResults;
+};
+
+
+/**
+ * Returns the selected route index
+ * @return {?number}
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.getSelectedRouteIndex =
+    function() {
+  return this.selectedRouteIndex_;
 };
 
 
@@ -648,6 +666,9 @@ ol.control.GoogleMapsDirectionsPanel.prototype.select_ = function(index) {
     goog.style.setStyle(route.directionEl, 'display', '');
 
     this.selectedRouteIndex_ = index;
+
+    goog.events.dispatchEvent(this,
+        ol.control.GoogleMapsDirectionsPanel.EventType.SELECT);
   }
   this.selectSelectorItem_(index);
 };

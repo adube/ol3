@@ -181,6 +181,13 @@ ol.control.GoogleMapsDirections = function(opt_options) {
 
 
   /**
+   * @type {ol.Collection}
+   * @private
+   */
+  this.selectedRouteFeatures_ = new ol.Collection();
+
+
+  /**
    * @type {?number}
    * @private
    */
@@ -218,7 +225,7 @@ ol.control.GoogleMapsDirections = function(opt_options) {
    * @private
    */
   this.dryModify_ = new ol.interaction.DryModify({
-    features: this.routeFeatures_,
+    features: this.selectedRouteFeatures_,
     pixelTolerance: goog.isDef(options.modifyPixelTolerance) ?
         options.modifyPixelTolerance : 8,
     style: [
@@ -266,6 +273,11 @@ ol.control.GoogleMapsDirections = function(opt_options) {
     cornerPixelSize: goog.isDef(options.cornerPixelSize) ?
         (options.cornerPixelSize) : undefined
   });
+
+  goog.events.listen(
+      this.directionsPanel_,
+      ol.control.GoogleMapsDirectionsPanel.EventType.SELECT,
+      this.handleSelectionChanged_, false, this);
 
 
   /**
@@ -465,8 +477,8 @@ ol.control.GoogleMapsDirections.prototype.canAddAnOtherWaypoint_ = function() {
  */
 ol.control.GoogleMapsDirections.prototype.clear_ = function() {
 
-  var routeFeatures = this.routeFeatures_;
-  routeFeatures.clear();
+  this.routeFeatures_.clear();
+  this.selectedRouteFeatures_.clear();
 
   var vectorSource = this.vectorLayer_.getSource();
   goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
@@ -532,6 +544,7 @@ ol.control.GoogleMapsDirections.prototype.disableGeocoderReverseGeocodings_ =
 
 
 /**
+ * Draw the selected route and all detour features.
  * @private
  */
 ol.control.GoogleMapsDirections.prototype.drawRoute_ = function() {
@@ -541,11 +554,11 @@ ol.control.GoogleMapsDirections.prototype.drawRoute_ = function() {
 
   var features = [];
 
-  var routeFeatures = this.routeFeatures_;
+  var selectedRouteFeatures = this.selectedRouteFeatures_;
   var detourFeatures = this.detourFeatures_;
 
-  // add route features
-  routeFeatures.forEach(function(feature) {
+  // add selected route features.  There can be one or zero.
+  selectedRouteFeatures.forEach(function(feature) {
     features.push(feature);
   }, this);
 
@@ -680,6 +693,7 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
   var coordinates;
 
   var routeFeatures = this.routeFeatures_;
+  var selectedRouteFeatures = this.selectedRouteFeatures_;
 
   if (status == google.maps.DirectionsStatus.OK) {
     goog.array.forEach(response.routes, function(route) {
@@ -696,14 +710,19 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
       routeFeatures.push(feature);
     }, this);
 
-    // draw
-    this.drawRoute_();
+    if (routeFeatures.getLength()) {
+      // set first route as selected route
+      selectedRouteFeatures.push(routeFeatures.getAt(0));
 
-    // fit extent
-    this.fitViewExtentToRoute_();
+      // draw
+      this.drawRoute_();
 
-    // set directions in panel
-    this.directionsPanel_.setDirections(response);
+      // fit extent
+      this.fitViewExtentToRoute_();
+
+      // set directions in panel
+      this.directionsPanel_.setDirections(response);
+    }
   }
 
 };
@@ -831,6 +850,20 @@ ol.control.GoogleMapsDirections.prototype.handleMapSingleClick_ = function(
     event) {
 
   this.removeDetourFeature_(event.pixel);
+};
+
+
+/**
+ * @param {goog.events.Event} event Event.
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.handleSelectionChanged_ = function(
+    event) {
+
+  var index = this.directionsPanel_.getSelectedRouteIndex();
+  if (!goog.isNull(index)) {
+    this.selectRoute_(index);
+  }
 };
 
 
@@ -996,6 +1029,38 @@ ol.control.GoogleMapsDirections.prototype.route_ = function(start, end) {
   service.route(request, function(response, status) {
     me.handleDirectionsResult_(response, status);
   });
+};
+
+
+/**
+ * Select the route at the specified location in the collection.  Here,
+ * the selection is merely a matter of clearing the selected route features
+ * collection, then get the route feature at the specific index, then draw
+ * the routes.
+ * @param {number} index
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.selectRoute_ = function(index) {
+  var routeFeatures = this.routeFeatures_;
+  var selectedRouteFeatures = this.selectedRouteFeatures_;
+  var routeFeature = routeFeatures.getAt(index);
+
+  if (goog.isNull(routeFeature)) {
+    // todo - manage error
+    return;
+  }
+
+  // clear previously selected route, add new one
+  selectedRouteFeatures.clear();
+  selectedRouteFeatures.push(routeFeature);
+
+  // clear vector layer before re-drawing
+  var vectorSource = this.vectorLayer_.getSource();
+  goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
+  vectorSource.clear();
+
+  // draw
+  this.drawRoute_();
 };
 
 
