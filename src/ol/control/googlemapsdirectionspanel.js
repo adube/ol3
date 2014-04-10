@@ -1157,7 +1157,9 @@ ol.control.GoogleMapsDirectionsPanel.prototype.handleToggleElementPress_ =
         this.classPrefix_ + '-selector-toggle-opened');
   }
   this.selectorOpened_(open);
-}
+};
+
+
 /**
  * @private
  * @param {boolean} open parameter. Call to open or close the selector panel.
@@ -1176,4 +1178,4 @@ ol.control.GoogleMapsDirectionsPanel.prototype.selectorOpened_ =
       items.item(i).style.display = display;
     }
   }
-};;
+};
