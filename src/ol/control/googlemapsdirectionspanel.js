@@ -256,7 +256,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.clearDirections = function() {
 
 /**
  * Build the direction panel content using the passed direction results.
- * @param {google.maps.DirectionsResult} directionsResult
+ * @param {google.maps.DirectionsResult|Object} directionsResult
  */
 ol.control.GoogleMapsDirectionsPanel.prototype.setDirections = function(
     directionsResult) {
@@ -497,15 +497,20 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createLegHeaderElement_ =
 
   var projection = view2D.getProjection();
 
-  var lat = (start) ? leg.start_location.lat() : leg.end_location.lat();
-  var lng = (start) ? leg.start_location.lng() : leg.end_location.lng();
-  var transformedCoordinate = ol.proj.transform(
-      [lng, lat], 'EPSG:4326', projection.getCode());
+  var coordinate;
+  if (goog.isDefAndNotNull(leg.start_location)) {
+    var lat = (start) ? leg.start_location.lat() : leg.end_location.lat();
+    var lng = (start) ? leg.start_location.lng() : leg.end_location.lng();
+    coordinate = ol.proj.transform(
+        [lng, lat], 'EPSG:4326', projection.getCode());
+  } else {
+    coordinate = (start) ? leg.start_coordinate : leg.end_coordinate;
+  }
 
   var element = goog.dom.createDom(goog.dom.TagName.DIV, {
     'class': classPrefix + '-leg-header',
-    'data-x': transformedCoordinate[0],
-    'data-y': transformedCoordinate[1],
+    'data-x': coordinate[0],
+    'data-y': coordinate[1],
     'data-instructions': (start) ? leg.start_address : leg.end_address
   });
 
@@ -572,15 +577,20 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createStepElement_ =
 
   var projection = view2D.getProjection();
 
-  var lat = step.start_location.lat();
-  var lng = step.start_location.lng();
-  var transformedCoordinate = ol.proj.transform(
-      [lng, lat], 'EPSG:4326', projection.getCode());
+  var coordinate;
+  if (goog.isDefAndNotNull(step.start_location)) {
+    var lat = step.start_location.lat();
+    var lng = step.start_location.lng();
+    coordinate = ol.proj.transform(
+        [lng, lat], 'EPSG:4326', projection.getCode());
+  } else if (goog.isDefAndNotNull(step.start_coordinate)) {
+    coordinate = step.start_coordinate;
+  }
 
   var element = goog.dom.createDom(goog.dom.TagName.TR, {
     'class': classPrefix + '-step',
-    'data-x': transformedCoordinate[0],
-    'data-y': transformedCoordinate[1],
+    'data-x': coordinate[0],
+    'data-y': coordinate[1],
     'data-instructions': step.instructions
   });
 
