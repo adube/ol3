@@ -139,33 +139,9 @@ ol.control.MTJSON_START = 's';
 
 
 /**
- * @define {string} the key for the start name in mtjson
- */
-ol.control.MTJSON_START_NAME = 'n';
-
-
-/**
- * @define {string} the key for the start coordinate in mtjson
- */
-ol.control.MTJSON_START_COORDINATE = 'v';
-
-
-/**
  * @define {string} the key for the end object in mtjson
  */
-ol.control.MTJSON_END = 's';
-
-
-/**
- * @define {string} the key for the end name in mtjson
- */
-ol.control.MTJSON_END_NAME = 'n';
-
-
-/**
- * @define {string} the key for the end coordinate in mtjson
- */
-ol.control.MTJSON_END_COORDINATE = 'v';
+ol.control.MTJSON_END = 'e';
 
 
 /**
@@ -175,15 +151,17 @@ ol.control.MTJSON_WAYPOINTS = 'w';
 
 
 /**
- * @define {string} the key for a waypoint name in mtjson
+ * @define {string} the key for a location (start, end or waypoint) name in
+ * mtjson
  */
-ol.control.MTJSON_WAYPOINT_NAME = 'n';
+ol.control.MTJSON_LOCATION_NAME = 'n';
 
 
 /**
- * @define {string} the key for a waypoint coordinate in mtjson
+ * @define {string} the key for a location (start, end or waypoint) coordinate
+ * in mtjson
  */
-ol.control.MTJSON_WAYPOINT_COORDINATE = 'v';
+ol.control.MTJSON_LOCATION_COORDINATE = 'c';
 
 
 /**
@@ -216,9 +194,34 @@ ol.format.MTJSON.prototype.read = function(source) {
     sourceObj = source;
   }
 
+  // routes
   var routes = sourceObj[ol.control.MTJSON_ROUTES];
   if (goog.isDefAndNotNull(routes) && goog.asserts.assertArray(routes)) {
     object.routes = this.readRoutes_(routes);
+  }
+
+  // start
+  var start = sourceObj[ol.control.MTJSON_START];
+  if (goog.isDefAndNotNull(start) && goog.asserts.assertObject(start)) {
+    object.start = this.readLocation_(start);
+  }
+
+  // end
+  var end = sourceObj[ol.control.MTJSON_END];
+  if (goog.isDefAndNotNull(end) && goog.asserts.assertObject(end)) {
+    object.end = this.readLocation_(end);
+  }
+
+  // waypoints
+  var waypoints = sourceObj[ol.control.MTJSON_WAYPOINTS];
+  if (goog.isDefAndNotNull(waypoints) && goog.asserts.assertArray(waypoints)) {
+    object.waypoints = this.readWaypoints_(waypoints);
+  }
+
+  // detours
+  var detours = sourceObj[ol.control.MTJSON_DETOURS];
+  if (goog.isDefAndNotNull(detours) && goog.asserts.assertArray(detours)) {
+    object.detours = this.readDetours_(detours);
   }
 
   return object;
@@ -414,4 +417,57 @@ ol.format.MTJSON.prototype.readStep_ = function(sourceStep) {
   }
 
   return step;
+};
+
+
+/**
+ * @param {Object} sourceLocation
+ * @return {Object}
+ * @private
+ */
+ol.format.MTJSON.prototype.readLocation_ = function(sourceLocation) {
+  var location = {};
+
+  // name
+  var name = sourceLocation[ol.control.MTJSON_LOCATION_NAME];
+  if (goog.isDefAndNotNull(name)) {
+    location.formatted_address = name;
+  }
+
+  // coordinate
+  var coordinate = sourceLocation[ol.control.MTJSON_LOCATION_COORDINATE];
+  if (goog.isDefAndNotNull(coordinate) &&
+      goog.asserts.assertArray(coordinate)) {
+    location.geometry = {'coordinate': coordinate};
+  }
+
+  return location;
+};
+
+
+/**
+ * @param {Array.<Object>} sourceWaypoints
+ * @return {Array.<Object>}
+ * @private
+ */
+ol.format.MTJSON.prototype.readWaypoints_ = function(sourceWaypoints) {
+  var waypoints = [];
+  goog.array.forEach(sourceWaypoints, function(sourceWaypoint) {
+    waypoints.push(this.readLocation_(sourceWaypoint));
+  }, this);
+  return waypoints;
+};
+
+
+/**
+ * @param {Array.<Object>} sourceDetours
+ * @return {Array.<Object>}
+ * @private
+ */
+ol.format.MTJSON.prototype.readDetours_ = function(sourceDetours) {
+  var detours = [];
+  goog.array.forEach(sourceDetours, function(sourceDetour) {
+    detours.push(sourceDetour);
+  }, this);
+  return detours;
 };

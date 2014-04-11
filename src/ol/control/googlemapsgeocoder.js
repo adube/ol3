@@ -417,6 +417,16 @@ ol.control.GoogleMapsGeocoder.prototype.enableReverseGeocoding = function() {
 
 
 /**
+ * Method used to manually load a response object, i.e. this is the public
+ * equivalent of the handleGeocode_ method.
+ * @param {Array} results
+ */
+ol.control.GoogleMapsGeocoder.prototype.load = function(results) {
+  this.handleGeocode_(results, null, true);
+};
+
+
+/**
  * @param {goog.events.BrowserEvent} browserEvent Browser event.
  * @private
  */
@@ -533,7 +543,7 @@ ol.control.GoogleMapsGeocoder.prototype.geocodeByCoordinate_ = function(
 
 /**
  * @param {Array} results
- * @param {number|string} status
+ * @param {number|string|null} status
  * @param {boolean} addToMap
  * @private
  */
@@ -560,7 +570,25 @@ ol.control.GoogleMapsGeocoder.prototype.handleGeocode_ = function(
       // set returned value
       input.value = formatted_address;
 
-      location = result.geometry.location;
+      if (goog.isDefAndNotNull(result.geometry.location)) {
+        location = result.geometry.location;
+      } else if (goog.isDefAndNotNull(result.geometry.coordinate)) {
+
+        var map = this.getMap();
+
+        var view = map.getView();
+        goog.asserts.assert(goog.isDef(view));
+        var view2D = view.getView2D();
+        goog.asserts.assertInstanceof(view2D, ol.View2D);
+
+        var projection = view2D.getProjection();
+
+        var transformedCoordinate = ol.proj.transform(
+            result.geometry.coordinate, projection.getCode(), 'EPSG:4326');
+
+        location = new google.maps.LatLng(
+            transformedCoordinate[1], transformedCoordinate[0]);
+      }
       this.displayLocation_(location);
     } else {
       // TODO: manage no results

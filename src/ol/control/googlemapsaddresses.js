@@ -6,7 +6,7 @@ goog.require('goog.dom');
 goog.require('goog.dom.TagName');
 goog.require('goog.events');
 goog.require('goog.events.EventType');
-goog.require('goog.events.KeyCodes');
+/*goog.require('goog.events.KeyCodes');*/
 goog.require('goog.json');
 goog.require('goog.net.XhrIo');
 /*
@@ -14,6 +14,7 @@ goog.require('goog.string');
 goog.require('goog.style');
 */
 goog.require('ol.Feature');
+goog.require('ol.Object');
 /*
 goog.require('ol.MapBrowserEvent.EventType');
 */

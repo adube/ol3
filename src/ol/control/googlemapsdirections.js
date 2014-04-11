@@ -372,6 +372,14 @@ ol.control.GoogleMapsDirections = function(opt_options) {
   this.format_ = new ol.format.MTJSON();
 
 
+  /**
+   * Is set to 'true' while loading, which prevents some events to apply.
+   * @type {boolean}
+   * @private
+   */
+  this.loading_ = false;
+
+
   goog.base(this, {
     element: element,
     target: options.target
@@ -488,13 +496,50 @@ ol.control.GoogleMapsDirections.prototype.addWaypointGeocoder = function() {
  */
 ol.control.GoogleMapsDirections.prototype.load = function(source) {
 
+  this.loading_ = true;
+  this.disableGeocoderReverseGeocodings_();
   this.clear_();
 
+  // read
   var format = this.format_;
   var object = format.read(source);
+
+  // begin with detours, as they are drawn at the same time the route is
+  // generated
+  this.detourFeatures_.clear();
+  if (goog.isDefAndNotNull(object.detours)) {
+    goog.array.forEach(object.detours, function(detour) {
+      this.createOrUpdateDetour_(detour, false);
+    }, this);
+  }
+
+  // routes
   this.handleDirectionsResult_(object, google.maps.DirectionsStatus.OK);
 
-  //window.console.log(object);
+  // start
+  if (goog.isDefAndNotNull(object.start)) {
+    this.startGeocoder_.load([object.start]);
+  }
+
+  // end
+  if (goog.isDefAndNotNull(object.end)) {
+    this.endGeocoder_.load([object.end]);
+  }
+
+  // waypoints
+  var index;
+  var waypointGeocoder;
+  if (goog.isDefAndNotNull(object.waypoints)) {
+    goog.array.forEach(object.waypoints, function(waypoint) {
+      this.addWaypointGeocoder();
+      index = this.waypointGeocoders_.getLength() - 1;
+      waypointGeocoder = this.waypointGeocoders_.getAt(index);
+      waypointGeocoder.load([waypoint]);
+    }, this);
+  }
+
+  this.loading_ = false;
+  this.manageNumWaypoints_();
 };
 
 
@@ -591,10 +636,13 @@ ol.control.GoogleMapsDirections.prototype.clear_ = function() {
 
 /**
  * @param {ol.Coordinate} coordinate
+ * @param {boolean} shouldRoute Whether the creation or update of the detour
+ * should trigger a new route update or not (not being when a detour is
+ * manually added, on loading)
  * @private
  */
 ol.control.GoogleMapsDirections.prototype.createOrUpdateDetour_ = function(
-    coordinate) {
+    coordinate, shouldRoute) {
 
   var detourFeatures = this.detourFeatures_;
   var numDetourFeatures = detourFeatures.getLength();
@@ -617,8 +665,10 @@ ol.control.GoogleMapsDirections.prototype.createOrUpdateDetour_ = function(
 
   detourFeatures.push(feature);
 
-  this.clear_();
-  this.route_(null, null);
+  if (shouldRoute === true) {
+    this.clear_();
+    this.route_(null, null);
+  }
 
   this.manageNumWaypoints_();
 };
@@ -850,7 +900,7 @@ ol.control.GoogleMapsDirections.prototype.handleDryModifyDrag_ = function(evt) {
   }
 
   this.newDetourTimerId_ = window.setTimeout(function() {
-    me.createOrUpdateDetour_(coordinate);
+    me.createOrUpdateDetour_(coordinate, true);
   }, this.routeDelayOnWaypointDrag_);
 
 };
@@ -909,6 +959,11 @@ ol.control.GoogleMapsDirections.prototype.handleGeocoderRemove_ = function(
  */
 ol.control.GoogleMapsDirections.prototype.handleLocationChanged_ =
     function(event) {
+
+  // ignore this callback while loading
+  if (this.loading_ === true) {
+    return;
+  }
 
   var currentGeocoder = event.target;
   var currentLocation = currentGeocoder.getLocation();
