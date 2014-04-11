@@ -316,7 +316,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.setDirections = function(
 
 /**
  * Returns the selected route results.  Useful for 'save' purpose.
- * @return {Object}
+ * @return {Object|boolean}
  */
 ol.control.GoogleMapsDirectionsPanel.prototype.getSelectedRoute = function() {
   var routeResults = false;

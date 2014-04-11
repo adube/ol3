@@ -197,6 +197,6 @@ var read = function() {
   directions.load(config);
 };
 
-var write = function() {
+var save = function() {
   directions.save();
 };

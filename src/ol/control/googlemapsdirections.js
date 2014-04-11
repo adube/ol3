@@ -552,7 +552,20 @@ ol.control.GoogleMapsDirections.prototype.save = function() {
 
   var source = {};
 
+  var selectedRoute = this.directionsPanel_.getSelectedRoute();
+  if (selectedRoute === false) {
+    // todo - throw/manage error
+    return;
+  }
+
+  source.routes = [selectedRoute];
+
+  // todo - remove this
+  window.console.log(source);
+
   var object = format.write(source);
+
+  // todo - remove this
   window.console.log(object);
 };
 
