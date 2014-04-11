@@ -529,6 +529,7 @@ ol.control.GoogleMapsDirections.prototype.load = function(source) {
   // waypoints
   var index;
   var waypointGeocoder;
+  this.removeAllWaypointGeocoders_();
   if (goog.isDefAndNotNull(object.waypoints)) {
     goog.array.forEach(object.waypoints, function(waypoint) {
       this.addWaypointGeocoder();
