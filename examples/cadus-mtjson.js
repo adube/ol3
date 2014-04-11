@@ -198,5 +198,8 @@ var read = function() {
 };
 
 var save = function() {
-  directions.save();
+  var serializedJSON = directions.save();
+  if (goog.isDefAndNotNull(serializedJSON)) {
+    window.console.log(serializedJSON);
+  }
 };

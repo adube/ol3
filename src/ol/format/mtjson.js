@@ -231,9 +231,10 @@ ol.format.MTJSON.prototype.read = function(source) {
 /**
  * Todo
  * @param {Object} sourceObj Source json string or object
- * @return {Object}
+ * @param {boolean} serialize Whether to serialize the returned object or not
+ * @return {Object|string}
  */
-ol.format.MTJSON.prototype.write = function(sourceObj) {
+ol.format.MTJSON.prototype.write = function(sourceObj, serialize) {
   var object = {};
 
   // routes
@@ -242,7 +243,35 @@ ol.format.MTJSON.prototype.write = function(sourceObj) {
     object[ol.control.MTJSON_ROUTES] = this.writeRoutes_(routes);
   }
 
-  return object;
+  // start
+  var start = sourceObj.start_location;
+  if (goog.isDefAndNotNull(start) && goog.asserts.assertObject(start)) {
+    object[ol.control.MTJSON_START] = this.writeLocation_(start);
+  }
+
+  // end
+  var end = sourceObj.end_location;
+  if (goog.isDefAndNotNull(end) && goog.asserts.assertObject(end)) {
+    object[ol.control.MTJSON_END] = this.writeLocation_(end);
+  }
+
+  // waypoints
+  var waypoints = sourceObj.waypoints;
+  if (goog.isDefAndNotNull(waypoints) && goog.asserts.assertObject(waypoints)) {
+    object[ol.control.MTJSON_WAYPOINTS] = this.writeWaypoints_(waypoints);
+  }
+
+  // detours
+  var detours = sourceObj.detours;
+  if (goog.isDefAndNotNull(detours) && goog.asserts.assertArray(detours)) {
+    object[ol.control.MTJSON_DETOURS] = this.writeDetours_(detours);
+  }
+
+  if (serialize === true) {
+    return goog.json.serialize(object);
+  } else {
+    return object;
+  }
 };
 
 
@@ -668,4 +697,60 @@ ol.format.MTJSON.prototype.writeStep_ = function(sourceStep) {
   }
 
   return step;
+};
+
+
+/**
+ * @param {Object} sourceLocation
+ * @return {Object}
+ * @private
+ */
+ol.format.MTJSON.prototype.writeLocation_ = function(sourceLocation) {
+  var location = {};
+
+  // name
+  var name = sourceLocation.formatted_address;
+  if (goog.isDefAndNotNull(name)) {
+    location[ol.control.MTJSON_LOCATION_NAME] = name;
+  }
+
+  // coordinate
+  var geometry = sourceLocation.geometry;
+  if (goog.isDefAndNotNull(geometry)) {
+    var coordinate = geometry.coordinate;
+    if (goog.isDefAndNotNull(coordinate) &&
+        goog.asserts.assertArray(coordinate)) {
+      location[ol.control.MTJSON_LOCATION_COORDINATE] = coordinate;
+    }
+  }
+
+  return location;
+};
+
+
+/**
+ * @param {Array.<Object>} sourceWaypoints
+ * @return {Array.<Object>}
+ * @private
+ */
+ol.format.MTJSON.prototype.writeWaypoints_ = function(sourceWaypoints) {
+  var waypoints = [];
+  goog.array.forEach(sourceWaypoints, function(sourceWaypoint) {
+    waypoints.push(this.writeLocation_(sourceWaypoint));
+  }, this);
+  return waypoints;
+};
+
+
+/**
+ * @param {Array.<Object>} sourceDetours
+ * @return {Array.<Object>}
+ * @private
+ */
+ol.format.MTJSON.prototype.writeDetours_ = function(sourceDetours) {
+  var detours = [];
+  goog.array.forEach(sourceDetours, function(sourceDetour) {
+    detours.push(sourceDetour);
+  }, this);
+  return detours;
 };

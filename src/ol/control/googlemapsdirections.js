@@ -546,27 +546,74 @@ ol.control.GoogleMapsDirections.prototype.load = function(source) {
 
 /**
  * Collect the elements to save, write them as MTJSON then save.
+ * @return {string} serialized json ready for save
  */
 ol.control.GoogleMapsDirections.prototype.save = function() {
   var format = this.format_;
 
   var source = {};
 
+  // routes
   var selectedRoute = this.directionsPanel_.getSelectedRoute();
   if (selectedRoute === false) {
     // todo - throw/manage error
-    return;
+    return '';
   }
-
   source.routes = [selectedRoute];
 
-  // todo - remove this
-  window.console.log(source);
 
-  var object = format.write(source);
+  // start
+  var startCoordinate = this.startGeocoder_.getCoordinate();
+  var startAddress = this.startGeocoder_.getInputValue();
+  if (goog.isNull(startCoordinate) || goog.isNull(startAddress)) {
+    // todo - throw/manage error
+    return '';
+  }
+  source.start_location = {
+    'formatted_address': startAddress,
+    'geometry': {'coordinate': startCoordinate}
+  };
 
-  // todo - remove this
-  window.console.log(object);
+
+  // end
+  var endCoordinate = this.endGeocoder_.getCoordinate();
+  var endAddress = this.endGeocoder_.getInputValue();
+  if (goog.isNull(endCoordinate) || goog.isNull(endAddress)) {
+    // todo - throw/manage error
+    return '';
+  }
+  source.end_location = {
+    'formatted_address': endAddress,
+    'geometry': {'coordinate': endCoordinate}
+  };
+
+
+  // waypoints
+  source.waypoints = [];
+  var waypointCoordinate;
+  var waypointAddress;
+  var waypointGeocoders = this.waypointGeocoders_;
+  waypointGeocoders.forEach(function(waypointGeocoder) {
+    waypointCoordinate = waypointGeocoder.getCoordinate();
+    waypointAddress = waypointGeocoder.getInputValue();
+    if (!goog.isNull(waypointCoordinate) && !goog.isNull(waypointAddress)) {
+      source.waypoints.push({
+        'formatted_address': waypointAddress,
+        'geometry': {'coordinate': waypointCoordinate}
+      });
+    }
+  }, this);
+
+  // detours
+  source.detours = [];
+  this.detourFeatures_.forEach(function(detourFeature) {
+    source.detours.push(detourFeature.getGeometry().getCoordinates());
+  }, this);
+
+  var result = format.write(source, true);
+  goog.asserts.assertString(result);
+
+  return result;
 };
 
 
