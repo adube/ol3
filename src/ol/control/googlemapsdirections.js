@@ -442,6 +442,15 @@ goog.inherits(ol.control.GoogleMapsDirections, ol.control.Control);
 
 
 /**
+ * @enum {string}
+ */
+ol.control.GoogleMapsDirections.EventType = {
+  CLEAR: goog.events.getUniqueId('clear'),
+  ROUTEEND: goog.events.getUniqueId('routeend')
+};
+
+
+/**
  * Add a new waypoint geocoder to the UI.
  */
 ol.control.GoogleMapsDirections.prototype.addWaypointGeocoder = function() {
@@ -541,6 +550,9 @@ ol.control.GoogleMapsDirections.prototype.load = function(source) {
 
   this.loading_ = false;
   this.manageNumWaypoints_();
+
+  goog.events.dispatchEvent(this,
+      ol.control.GoogleMapsDirections.EventType.ROUTEEND);
 };
 
 
@@ -697,6 +709,9 @@ ol.control.GoogleMapsDirections.prototype.clear_ = function() {
   vectorSource.clear();
 
   this.directionsPanel_.clearDirections();
+
+  goog.events.dispatchEvent(this,
+      ol.control.GoogleMapsDirections.EventType.CLEAR);
 };
 
 
@@ -946,6 +961,11 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
       // set directions in panel
       this.directionsPanel_.setDirections(response);
     }
+  }
+
+  if (this.loading_ === false) {
+    goog.events.dispatchEvent(this,
+        ol.control.GoogleMapsDirections.EventType.ROUTEEND);
   }
 
 };

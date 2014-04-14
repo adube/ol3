@@ -139,6 +139,20 @@ var directions = new ol.control.GoogleMapsDirections({
 });
 map.addControl(directions);
 
+var directionEl = document.getElementById('directions-json');
+directions.on(
+    ol.control.GoogleMapsDirections.EventType.CLEAR,
+    function(evt) {
+      directionEl.value = '';
+    }
+);
+directions.on(
+    ol.control.GoogleMapsDirections.EventType.ROUTEEND,
+    function(evt) {
+      directionEl.value = directions.save();
+    }
+);
+
 var read = function() {
   var config = {
     'r': [
