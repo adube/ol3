@@ -660,7 +660,7 @@ ol.control.GoogleMapsGeocoder.prototype.handleResultOptionPress_ = function(
   if (this.enableCurrentPosition_ && (goog.isNull(this.currentPosition_) ||
       goog.isNull(this.currentPosition_.geometry) ||
       goog.isNull(result.geometry)) &&
-      index == 0) {
+      index === 0) {
 
     this.getCurrentPosition_(function(currentPosition) {
       this.displayLocation_(currentPosition.geometry.location);
@@ -831,12 +831,12 @@ ol.control.GoogleMapsGeocoder.prototype.clear_ = function(setLocation) {
 ol.control.GoogleMapsGeocoder.prototype.getCurrentPosition_ = function(
     callback, force) {
   var me = this;
-  force = goog.isDefAndNotNull(force) && force == true;
+  force = goog.isDefAndNotNull(force) && force === true;
 
   if (this.enableCurrentPosition_ &&
       ((goog.isNull(this.currentPosition_) ||
       goog.isNull(this.currentPosition_.geometry)) ||
-      force == true)) {
+      force === true)) {
     navigator.geolocation.getCurrentPosition(function(position) {
       var lat = position.coords.latitude;
       var lon = position.coords.longitude;
