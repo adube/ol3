@@ -196,33 +196,28 @@ ol.format.MTJSON.prototype.read = function(source) {
 
   // routes
   var routes = sourceObj[ol.control.MTJSON_ROUTES];
-  if (goog.isDefAndNotNull(routes) && goog.asserts.assertArray(routes)) {
-    object.routes = this.readRoutes_(routes);
-  }
+  goog.asserts.assertArray(routes);
+  object.routes = this.readRoutes_(routes);
 
   // start
   var start = sourceObj[ol.control.MTJSON_START];
-  if (goog.isDefAndNotNull(start) && goog.asserts.assertObject(start)) {
-    object.start = this.readLocation_(start);
-  }
+  goog.asserts.assertObject(start);
+  object.start = this.readLocation_(start);
 
   // end
   var end = sourceObj[ol.control.MTJSON_END];
-  if (goog.isDefAndNotNull(end) && goog.asserts.assertObject(end)) {
-    object.end = this.readLocation_(end);
-  }
+  goog.asserts.assertObject(end);
+  object.end = this.readLocation_(end);
 
   // waypoints
   var waypoints = sourceObj[ol.control.MTJSON_WAYPOINTS];
-  if (goog.isDefAndNotNull(waypoints) && goog.asserts.assertArray(waypoints)) {
-    object.waypoints = this.readWaypoints_(waypoints);
-  }
+  goog.asserts.assertArray(waypoints);
+  object.waypoints = this.readWaypoints_(waypoints);
 
   // detours
   var detours = sourceObj[ol.control.MTJSON_DETOURS];
-  if (goog.isDefAndNotNull(detours) && goog.asserts.assertArray(detours)) {
-    object.detours = this.readDetours_(detours);
-  }
+  goog.asserts.assertArray(detours);
+  object.detours = this.readDetours_(detours);
 
   return object;
 };
@@ -239,33 +234,28 @@ ol.format.MTJSON.prototype.write = function(sourceObj, serialize) {
 
   // routes
   var routes = sourceObj.routes;
-  if (goog.isDefAndNotNull(routes) && goog.asserts.assertArray(routes)) {
-    object[ol.control.MTJSON_ROUTES] = this.writeRoutes_(routes);
-  }
+  goog.asserts.assertArray(routes);
+  object[ol.control.MTJSON_ROUTES] = this.writeRoutes_(routes);
 
   // start
   var start = sourceObj.start_location;
-  if (goog.isDefAndNotNull(start) && goog.asserts.assertObject(start)) {
-    object[ol.control.MTJSON_START] = this.writeLocation_(start);
-  }
+  goog.asserts.assertObject(start);
+  object[ol.control.MTJSON_START] = this.writeLocation_(start);
 
   // end
   var end = sourceObj.end_location;
-  if (goog.isDefAndNotNull(end) && goog.asserts.assertObject(end)) {
-    object[ol.control.MTJSON_END] = this.writeLocation_(end);
-  }
+  goog.asserts.assertObject(end);
+  object[ol.control.MTJSON_END] = this.writeLocation_(end);
 
   // waypoints
   var waypoints = sourceObj.waypoints;
-  if (goog.isDefAndNotNull(waypoints) && goog.asserts.assertObject(waypoints)) {
-    object[ol.control.MTJSON_WAYPOINTS] = this.writeWaypoints_(waypoints);
-  }
+  goog.asserts.assertObject(waypoints);
+  object[ol.control.MTJSON_WAYPOINTS] = this.writeWaypoints_(waypoints);
 
   // detours
   var detours = sourceObj.detours;
-  if (goog.isDefAndNotNull(detours) && goog.asserts.assertArray(detours)) {
-    object[ol.control.MTJSON_DETOURS] = this.writeDetours_(detours);
-  }
+  goog.asserts.assertArray(detours);
+  object[ol.control.MTJSON_DETOURS] = this.writeDetours_(detours);
 
   if (serialize === true) {
     return goog.json.serialize(object);
@@ -303,16 +293,12 @@ ol.format.MTJSON.prototype.readRoute_ = function(sourceRoute) {
   }
 
   var coordinates = sourceRoute[ol.control.MTJSON_ROUTE_COORDINATES];
-  if (goog.isDefAndNotNull(coordinates) &&
-      goog.asserts.assertArray(coordinates)) {
-    route.geometry = new ol.geom.LineString(coordinates);
-  }
+  goog.asserts.assertArray(coordinates);
+  route.geometry = new ol.geom.LineString(coordinates);
 
   var legs = sourceRoute[ol.control.MTJSON_ROUTE_LEGS];
-  if (goog.isDefAndNotNull(legs) &&
-      goog.asserts.assertArray(legs)) {
-    route.legs = this.readLegs_(legs);
-  }
+  goog.asserts.assertArray(legs);
+  route.legs = this.readLegs_(legs);
 
   return route;
 };
@@ -343,56 +329,47 @@ ol.format.MTJSON.prototype.readLeg_ = function(sourceLeg) {
   // distance
   var distance, distanceText, distanceValue;
   distance = sourceLeg[ol.control.MTJSON_ROUTE_LEG_DISTANCE];
-  if (goog.isDefAndNotNull(distance) && goog.asserts.assertObject(distance)) {
-    distanceText = distance[ol.control.MTJSON_ROUTE_LEG_DISTANCE_TEXT];
-    distanceValue = distance[ol.control.MTJSON_ROUTE_LEG_DISTANCE_VALUE];
-
-    if (goog.isNumber(distanceValue) && goog.isString(distanceText)) {
-      leg.distance = {'value': distanceValue, 'text': distanceText};
-    }
-  }
+  goog.asserts.assertObject(distance);
+  distanceText = distance[ol.control.MTJSON_ROUTE_LEG_DISTANCE_TEXT];
+  distanceValue = distance[ol.control.MTJSON_ROUTE_LEG_DISTANCE_VALUE];
+  goog.asserts.assertNumber(distanceValue);
+  goog.asserts.assertString(distanceText);
+  leg.distance = {'value': distanceValue, 'text': distanceText};
 
   // duration
   var duration, durationText, durationValue;
   duration = sourceLeg[ol.control.MTJSON_ROUTE_LEG_DURATION];
-  if (goog.isDefAndNotNull(duration) && goog.asserts.assertObject(duration)) {
-    durationText = duration[ol.control.MTJSON_ROUTE_LEG_DURATION_TEXT];
-    durationValue = duration[ol.control.MTJSON_ROUTE_LEG_DURATION_VALUE];
-
-    if (goog.isNumber(durationValue) && goog.isString(durationText)) {
-      leg.duration = {'value': durationValue, 'text': durationText};
-    }
-  }
+  goog.asserts.assertObject(duration);
+  durationText = duration[ol.control.MTJSON_ROUTE_LEG_DURATION_TEXT];
+  durationValue = duration[ol.control.MTJSON_ROUTE_LEG_DURATION_VALUE];
+  goog.asserts.assertNumber(durationValue);
+  goog.asserts.assertString(durationText);
+  leg.duration = {'value': durationValue, 'text': durationText};
 
   // start coordinate
   var start = sourceLeg[ol.control.MTJSON_ROUTE_LEG_START_COORDINATE];
-  if (goog.isDefAndNotNull(start) && goog.asserts.assertArray(start)) {
-    leg.start_coordinate = start;
-  }
+  goog.asserts.assertArray(start);
+  leg.start_coordinate = start;
 
   // end coordinate
   var end = sourceLeg[ol.control.MTJSON_ROUTE_LEG_END_COORDINATE];
-  if (goog.isDefAndNotNull(end) && goog.asserts.assertArray(end)) {
-    leg.end_coordinate = end;
-  }
+  goog.asserts.assertArray(end);
+  leg.end_coordinate = end;
 
   // start address
   var startAddress = sourceLeg[ol.control.MTJSON_ROUTE_LEG_START_ADDRESS];
-  if (goog.isDefAndNotNull(startAddress) && goog.isString(startAddress)) {
-    leg.start_address = startAddress;
-  }
+  goog.asserts.assertString(startAddress);
+  leg.start_address = startAddress;
 
   // end address
   var endAddress = sourceLeg[ol.control.MTJSON_ROUTE_LEG_END_ADDRESS];
-  if (goog.isDefAndNotNull(endAddress) && goog.isString(endAddress)) {
-    leg.end_address = endAddress;
-  }
+  goog.asserts.assertString(endAddress);
+  leg.end_address = endAddress;
 
   // steps
   var steps = sourceLeg[ol.control.MTJSON_ROUTE_LEG_STEPS];
-  if (goog.isDefAndNotNull(steps) && goog.asserts.assertArray(steps)) {
-    leg.steps = this.readSteps_(steps);
-  }
+  goog.asserts.assertArray(steps);
+  leg.steps = this.readSteps_(steps);
 
   return leg;
 };
@@ -422,33 +399,28 @@ ol.format.MTJSON.prototype.readStep_ = function(sourceStep) {
 
   // start coordinate
   var start = sourceStep[ol.control.MTJSON_ROUTE_LEG_STEP_START_COORDINATE];
-  if (goog.isDefAndNotNull(start) && goog.asserts.assertArray(start)) {
-    step.start_coordinate = start;
-  }
+  goog.asserts.assertArray(start);
+  step.start_coordinate = start;
 
   // instructions
   var instructions = sourceStep[ol.control.MTJSON_ROUTE_LEG_STEP_INSTRUCTIONS];
-  if (goog.isDefAndNotNull(instructions) && goog.isString(instructions)) {
-    step.instructions = instructions;
-  }
+  goog.asserts.assertString(instructions);
+  step.instructions = instructions;
 
   // maneuver
   var maneuver = sourceStep[ol.control.MTJSON_ROUTE_LEG_STEP_MANEUVER];
-  if (goog.isDefAndNotNull(maneuver) && goog.isString(maneuver)) {
-    step.maneuver = maneuver;
-  }
+  goog.asserts.assertString(maneuver);
+  step.maneuver = maneuver;
 
   // distance
   var distance, distanceText, distanceValue;
   distance = sourceStep[ol.control.MTJSON_ROUTE_LEG_STEP_DISTANCE];
-  if (goog.isDefAndNotNull(distance) && goog.asserts.assertObject(distance)) {
-    distanceText = distance[ol.control.MTJSON_ROUTE_LEG_STEP_DISTANCE_TEXT];
-    distanceValue = distance[ol.control.MTJSON_ROUTE_LEG_STEP_DISTANCE_VALUE];
-
-    if (goog.isNumber(distanceValue) && goog.isString(distanceText)) {
-      step.distance = {'value': distanceValue, 'text': distanceText};
-    }
-  }
+  goog.asserts.assertObject(distance);
+  distanceText = distance[ol.control.MTJSON_ROUTE_LEG_STEP_DISTANCE_TEXT];
+  distanceValue = distance[ol.control.MTJSON_ROUTE_LEG_STEP_DISTANCE_VALUE];
+  goog.asserts.assertNumber(distanceValue);
+  goog.asserts.assertString(distanceText);
+  step.distance = {'value': distanceValue, 'text': distanceText};
 
   return step;
 };
@@ -470,10 +442,8 @@ ol.format.MTJSON.prototype.readLocation_ = function(sourceLocation) {
 
   // coordinate
   var coordinate = sourceLocation[ol.control.MTJSON_LOCATION_COORDINATE];
-  if (goog.isDefAndNotNull(coordinate) &&
-      goog.asserts.assertArray(coordinate)) {
-    location.geometry = {'coordinate': coordinate};
-  }
+  goog.asserts.assertArray(coordinate);
+  location.geometry = {'coordinate': coordinate};
 
   return location;
 };
@@ -535,16 +505,12 @@ ol.format.MTJSON.prototype.writeRoute_ = function(sourceRoute) {
   }
 
   var geometry = sourceRoute.geometry;
-  if (goog.isDefAndNotNull(geometry) &&
-      goog.asserts.assertInstanceof(geometry, ol.geom.LineString)) {
-    route[ol.control.MTJSON_ROUTE_COORDINATES] = geometry.getCoordinates();
-  }
+  goog.asserts.assertInstanceof(geometry, ol.geom.LineString);
+  route[ol.control.MTJSON_ROUTE_COORDINATES] = geometry.getCoordinates();
 
   var legs = sourceRoute.legs;
-  if (goog.isDefAndNotNull(legs) &&
-      goog.asserts.assertArray(legs)) {
-    route[ol.control.MTJSON_ROUTE_LEGS] = this.writeLegs_(legs);
-  }
+  goog.asserts.assertArray(legs);
+  route[ol.control.MTJSON_ROUTE_LEGS] = this.writeLegs_(legs);
 
   return route;
 };
@@ -576,62 +542,53 @@ ol.format.MTJSON.prototype.writeLeg_ = function(sourceLeg) {
   // distance
   var distance, distanceText, distanceValue;
   distance = sourceLeg.distance;
-  if (goog.isDefAndNotNull(distance) && goog.asserts.assertObject(distance)) {
-    distanceText = distance.text;
-    distanceValue = distance.value;
-
-    if (goog.isNumber(distanceValue) && goog.isString(distanceText)) {
-      key = ol.control.MTJSON_ROUTE_LEG_DISTANCE;
-      leg[key] = {};
-      leg[key][ol.control.MTJSON_ROUTE_LEG_DISTANCE_VALUE] = distanceValue;
-      leg[key][ol.control.MTJSON_ROUTE_LEG_DISTANCE_TEXT] = distanceText;
-    }
-  }
+  goog.asserts.assertObject(distance);
+  distanceText = distance.text;
+  distanceValue = distance.value;
+  goog.asserts.assertNumber(distanceValue);
+  goog.asserts.assertString(distanceText);
+  key = ol.control.MTJSON_ROUTE_LEG_DISTANCE;
+  leg[key] = {};
+  leg[key][ol.control.MTJSON_ROUTE_LEG_DISTANCE_VALUE] = distanceValue;
+  leg[key][ol.control.MTJSON_ROUTE_LEG_DISTANCE_TEXT] = distanceText;
 
   // duration
   var duration, durationText, durationValue;
   duration = sourceLeg.duration;
-  if (goog.isDefAndNotNull(duration) && goog.asserts.assertObject(duration)) {
-    durationText = duration.text;
-    durationValue = duration.value;
-
-    if (goog.isNumber(durationValue) && goog.isString(durationText)) {
-      key = [ol.control.MTJSON_ROUTE_LEG_DURATION];
-      leg[key] = {};
-      leg[key][ol.control.MTJSON_ROUTE_LEG_DURATION_VALUE] = durationValue;
-      leg[key][ol.control.MTJSON_ROUTE_LEG_DURATION_TEXT] = durationText;
-    }
-  }
+  goog.asserts.assertObject(duration);
+  durationText = duration.text;
+  durationValue = duration.value;
+  goog.asserts.assertNumber(durationValue);
+  goog.asserts.assertString(durationText);
+  key = [ol.control.MTJSON_ROUTE_LEG_DURATION];
+  leg[key] = {};
+  leg[key][ol.control.MTJSON_ROUTE_LEG_DURATION_VALUE] = durationValue;
+  leg[key][ol.control.MTJSON_ROUTE_LEG_DURATION_TEXT] = durationText;
 
   // start coordinate
   var start = sourceLeg.start_coordinate;
-  if (goog.isDefAndNotNull(start) && goog.asserts.assertArray(start)) {
-    leg[ol.control.MTJSON_ROUTE_LEG_START_COORDINATE] = start;
-  }
+  goog.asserts.assertArray(start);
+  leg[ol.control.MTJSON_ROUTE_LEG_START_COORDINATE] = start;
 
   // end coordinate
   var end = sourceLeg.end_coordinate;
-  if (goog.isDefAndNotNull(end) && goog.asserts.assertArray(end)) {
-    leg[ol.control.MTJSON_ROUTE_LEG_END_COORDINATE] = end;
-  }
+  goog.asserts.assertArray(end);
+  leg[ol.control.MTJSON_ROUTE_LEG_END_COORDINATE] = end;
 
   // start address
   var startAddress = sourceLeg.start_address;
-  if (goog.isDefAndNotNull(startAddress) && goog.isString(startAddress)) {
-    leg[ol.control.MTJSON_ROUTE_LEG_START_ADDRESS] = startAddress;
-  }
+  goog.asserts.assertString(startAddress);
+  leg[ol.control.MTJSON_ROUTE_LEG_START_ADDRESS] = startAddress;
 
   // end address
   var endAddress = sourceLeg.end_address;
-  if (goog.isDefAndNotNull(endAddress) && goog.isString(endAddress)) {
-    leg[ol.control.MTJSON_ROUTE_LEG_END_ADDRESS] = endAddress;
-  }
+  goog.asserts.assertString(endAddress);
+  leg[ol.control.MTJSON_ROUTE_LEG_END_ADDRESS] = endAddress;
 
   // steps
   var steps = sourceLeg.steps;
-  if (goog.isDefAndNotNull(steps) && goog.asserts.assertArray(steps)) {
-    leg[ol.control.MTJSON_ROUTE_LEG_STEPS] = this.writeSteps_(steps);
-  }
+  goog.asserts.assertArray(steps);
+  leg[ol.control.MTJSON_ROUTE_LEG_STEPS] = this.writeSteps_(steps);
 
   return leg;
 };
@@ -661,40 +618,33 @@ ol.format.MTJSON.prototype.writeStep_ = function(sourceStep) {
 
   // start coordinate
   var start = sourceStep.start_coordinate;
-  if (goog.isDefAndNotNull(start) && goog.asserts.assertArray(start)) {
-    step[ol.control.MTJSON_ROUTE_LEG_STEP_START_COORDINATE] = start;
-  }
+  goog.asserts.assertArray(start);
+  step[ol.control.MTJSON_ROUTE_LEG_STEP_START_COORDINATE] = start;
 
   // instructions
   var instructions = sourceStep.instructions;
-  if (goog.isDefAndNotNull(instructions) && goog.isString(instructions)) {
-    step[ol.control.MTJSON_ROUTE_LEG_STEP_INSTRUCTIONS] = instructions;
-  }
+  goog.asserts.assertString(instructions);
+  step[ol.control.MTJSON_ROUTE_LEG_STEP_INSTRUCTIONS] = instructions;
 
   // maneuver
   var maneuver = sourceStep.maneuver;
-  if (goog.isDefAndNotNull(maneuver) && goog.isString(maneuver)) {
-    step[ol.control.MTJSON_ROUTE_LEG_STEP_MANEUVER] = maneuver;
-  }
+  goog.asserts.assertString(maneuver);
+  step[ol.control.MTJSON_ROUTE_LEG_STEP_MANEUVER] = maneuver;
 
   // distance
   var distance, distanceText, distanceValue;
   var key;
   distance = sourceStep.distance;
-  if (goog.isDefAndNotNull(distance) && goog.asserts.assertObject(distance)) {
-    distanceText = distance.text;
-    distanceValue = distance.value;
-
-    if (goog.isNumber(distanceValue) && goog.isString(distanceText)) {
-      key = [ol.control.MTJSON_ROUTE_LEG_STEP_DISTANCE];
-      step[key] = {};
-      step[key][ol.control.MTJSON_ROUTE_LEG_STEP_DISTANCE_VALUE] =
-          distanceValue;
-      step[key][ol.control.MTJSON_ROUTE_LEG_STEP_DISTANCE_TEXT] =
-          distanceText;
-      step.distance = {'value': distanceValue, 'text': distanceText};
-    }
-  }
+  goog.asserts.assertObject(distance);
+  distanceText = distance.text;
+  distanceValue = distance.value;
+  goog.asserts.assertNumber(distanceValue);
+  goog.asserts.assertString(distanceText);
+  key = [ol.control.MTJSON_ROUTE_LEG_STEP_DISTANCE];
+  step[key] = {};
+  step[key][ol.control.MTJSON_ROUTE_LEG_STEP_DISTANCE_VALUE] = distanceValue;
+  step[key][ol.control.MTJSON_ROUTE_LEG_STEP_DISTANCE_TEXT] = distanceText;
+  step.distance = {'value': distanceValue, 'text': distanceText};
 
   return step;
 };
@@ -716,13 +666,10 @@ ol.format.MTJSON.prototype.writeLocation_ = function(sourceLocation) {
 
   // coordinate
   var geometry = sourceLocation.geometry;
-  if (goog.isDefAndNotNull(geometry)) {
-    var coordinate = geometry.coordinate;
-    if (goog.isDefAndNotNull(coordinate) &&
-        goog.asserts.assertArray(coordinate)) {
-      location[ol.control.MTJSON_LOCATION_COORDINATE] = coordinate;
-    }
-  }
+  goog.asserts.assertObject(geometry);
+  var coordinate = geometry.coordinate;
+  goog.asserts.assertArray(coordinate);
+  location[ol.control.MTJSON_LOCATION_COORDINATE] = coordinate;
 
   return location;
 };

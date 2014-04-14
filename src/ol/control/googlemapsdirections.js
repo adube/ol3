@@ -559,6 +559,11 @@ ol.control.GoogleMapsDirections.prototype.save = function() {
     // todo - throw/manage error
     return '';
   }
+
+  if (!goog.isDefAndNotNull(selectedRoute.geometry)) {
+    selectedRoute.geometry = this.selectedRouteFeatures_.getAt(0).getGeometry();
+  }
+
   source.routes = [selectedRoute];
 
 

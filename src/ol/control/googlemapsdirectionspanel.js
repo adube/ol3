@@ -519,15 +519,22 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createLegHeaderElement_ =
 
   var projection = view2D.getProjection();
 
-  var coordinate;
+  // create start and end coordinates from start and end locations if
+  // not existant to be able to use them later for save purpose
   if (goog.isDefAndNotNull(leg.start_location)) {
-    var lat = (start) ? leg.start_location.lat() : leg.end_location.lat();
-    var lng = (start) ? leg.start_location.lng() : leg.end_location.lng();
-    coordinate = ol.proj.transform(
-        [lng, lat], 'EPSG:4326', projection.getCode());
-  } else {
-    coordinate = (start) ? leg.start_coordinate : leg.end_coordinate;
+    // start
+    var startLat = leg.start_location.lat();
+    var startLng = leg.start_location.lng();
+    leg.start_coordinate = ol.proj.transform(
+        [startLng, startLat], 'EPSG:4326', projection.getCode());
+
+    // end
+    var endLat = leg.end_location.lat();
+    var endLng = leg.end_location.lng();
+    leg.end_coordinate = ol.proj.transform(
+        [endLng, endLat], 'EPSG:4326', projection.getCode());
   }
+  var coordinate = (start) ? leg.start_coordinate : leg.end_coordinate;
 
   var element = goog.dom.createDom(goog.dom.TagName.DIV, {
     'class': classPrefix + '-leg-header',
@@ -605,6 +612,8 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createStepElement_ =
     var lng = step.start_location.lng();
     coordinate = ol.proj.transform(
         [lng, lat], 'EPSG:4326', projection.getCode());
+    // keep transformed coordinate for further saving purpose
+    step.start_coordinate = coordinate;
   } else if (goog.isDefAndNotNull(step.start_coordinate)) {
     coordinate = step.start_coordinate;
   }

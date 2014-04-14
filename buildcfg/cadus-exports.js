@@ -100,6 +100,16 @@ goog.exportSymbol(
     'ol.control.GoogleMapsDirections',
     ol.control.GoogleMapsDirections);
 
+goog.exportProperty(
+    ol.control.GoogleMapsDirections.prototype,
+    'load',
+    ol.control.GoogleMapsDirections.prototype.load);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirections.prototype,
+    'save',
+    ol.control.GoogleMapsDirections.prototype.save);
+
 goog.exportSymbol(
     'ol.style.Icon',
     ol.style.Icon);
