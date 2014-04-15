@@ -102,13 +102,38 @@ goog.exportSymbol(
 
 goog.exportProperty(
     ol.control.GoogleMapsDirections.prototype,
+    'getGeocoderInfo',
+    ol.control.GoogleMapsDirections.prototype.getGeocoderInfo);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirections.prototype,
     'load',
     ol.control.GoogleMapsDirections.prototype.load);
 
 goog.exportProperty(
     ol.control.GoogleMapsDirections.prototype,
+    'on',
+    ol.control.GoogleMapsDirections.prototype.on);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirections.prototype,
     'save',
     ol.control.GoogleMapsDirections.prototype.save);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirections,
+    'EventType',
+    ol.control.GoogleMapsDirections.EventType);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirections.EventType,
+    'ROUTECOMPLETE',
+    ol.control.GoogleMapsDirections.EventType.ROUTECOMPLETE);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirections.EventType,
+    'CLEAR',
+    ol.control.GoogleMapsDirections.EventType.CLEAR);
 
 goog.exportSymbol(
     'ol.style.Icon',
