@@ -446,7 +446,7 @@ goog.inherits(ol.control.GoogleMapsDirections, ol.control.Control);
  */
 ol.control.GoogleMapsDirections.EventType = {
   CLEAR: goog.events.getUniqueId('clear'),
-  ROUTEEND: goog.events.getUniqueId('routeend')
+  ROUTECOMPLETE: goog.events.getUniqueId('routecomplete')
 };
 
 
@@ -552,7 +552,7 @@ ol.control.GoogleMapsDirections.prototype.load = function(source) {
   this.manageNumWaypoints_();
 
   goog.events.dispatchEvent(this,
-      ol.control.GoogleMapsDirections.EventType.ROUTEEND);
+      ol.control.GoogleMapsDirections.EventType.ROUTECOMPLETE);
 };
 
 
@@ -965,7 +965,7 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
 
   if (this.loading_ === false) {
     goog.events.dispatchEvent(this,
-        ol.control.GoogleMapsDirections.EventType.ROUTEEND);
+        ol.control.GoogleMapsDirections.EventType.ROUTECOMPLETE);
   }
 
 };

@@ -147,7 +147,7 @@ directions.on(
     }
 );
 directions.on(
-    ol.control.GoogleMapsDirections.EventType.ROUTEEND,
+    ol.control.GoogleMapsDirections.EventType.ROUTECOMPLETE,
     function(evt) {
       directionEl.value = directions.save();
     }
