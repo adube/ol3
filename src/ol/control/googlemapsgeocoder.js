@@ -317,6 +317,11 @@ goog.exportProperty(
  */
 ol.control.GoogleMapsGeocoder.prototype.getCoordinate = function() {
   var location = this.getLocation();
+
+  if (!goog.isDefAndNotNull(location)) {
+    return null;
+  }
+
   var lat = location.lat();
   var lng = location.lng();
 
