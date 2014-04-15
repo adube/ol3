@@ -82,8 +82,8 @@ var olAdresses = new ol.control.GoogleMapsAddresses({
   'searchButtonText': 'Rechercher',
   'clearButtonText': 'Effacer',
   'addButtonText': 'Ajouter une addresse',
-  'getURL': 'http://localhost:8000/usager/adresses/obtenir',
-  'saveURL': 'http://localhost:8000/usager/adresse/sauvegarde',
+  'getURL': '/usager/adresses/obtenir',
+  'saveURL': '/usager/adresse/sauvegarde',
   'geocoderComponentRestrictions': {'country': 'CA'},
   'iconStyle': new ol.style.Style({
     image: new ol.style.Icon(({

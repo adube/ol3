@@ -303,7 +303,9 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
     }
   };
 
-  this.getAddresses_();
+  if (goog.isDefAndNotNull(this.getURL_)) {
+    this.getAddresses_();
+  }
 
 };
 goog.inherits(ol.control.GoogleMapsAddresses, ol.control.Control);

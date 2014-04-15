@@ -108,6 +108,7 @@ var directions = new ol.control.GoogleMapsDirections({
   'gmap': gmap,
   'target': 'gmaps-directions',
   'geocoderComponentRestrictions': {'country': 'CA'},
+  'getURL': '/usager/adresses/obtenir',
   'addWaypointButtonText': 'Ajouter un point',
   'currentPositionText': 'Ma position',
   'searchButtonText': 'Rechercher',

@@ -394,12 +394,21 @@ ol.control.GoogleMapsDirections = function(opt_options) {
 
 
   /**
+   * @private
+   * @type {string}
+   */
+  this.getURL_ = goog.isDefAndNotNull(options.getURL) ?
+      options.getURL : null;
+
+
+  /**
    * @type {ol.control.GoogleMapsGeocoder}
    * @private
    */
   this.startGeocoder_ = new ol.control.GoogleMapsGeocoder({
     'enableReverseGeocoding': true,
     'target': startGeocoderElement,
+    'getURL': this.getURL_,
     'currentPositionText': this.currentPositionText,
     'searchButtonText': this.searchButtonText,
     'clearButtonText': this.clearButtonText,
@@ -416,6 +425,7 @@ ol.control.GoogleMapsDirections = function(opt_options) {
   this.endGeocoder_ = new ol.control.GoogleMapsGeocoder({
     'enableReverseGeocoding': false,
     'target': endGeocoderElement,
+    'getURL': this.getURL_,
     'currentPositionText': this.currentPositionText,
     'searchButtonText': this.searchButtonText,
     'clearButtonText': this.clearButtonText,
@@ -466,6 +476,7 @@ ol.control.GoogleMapsDirections.prototype.addWaypointGeocoder = function() {
   var geocoder = new ol.control.GoogleMapsGeocoder({
     'enableReverseGeocoding': false,
     'target': container,
+    'additionnalAddresses': this.startGeocoder_.additionnalAddresses,
     'currentPositionText': this.currentPositionText,
     'searchButtonText': this.searchButtonText,
     'clearButtonText': this.clearButtonText,

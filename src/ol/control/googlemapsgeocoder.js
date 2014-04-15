@@ -7,6 +7,7 @@ goog.require('goog.dom.TagName');
 goog.require('goog.events');
 goog.require('goog.events.EventType');
 goog.require('goog.events.KeyCodes');
+goog.require('goog.net.XhrIo');
 goog.require('goog.string');
 goog.require('goog.style');
 goog.require('ol.Feature');
@@ -279,6 +280,60 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
     this.hideRemoveButton();
   }
 
+  /**
+   * @private
+   * @type {string}
+   */
+  this.getURL_ = goog.isDefAndNotNull(options.getURL) ?
+      options.getURL : null;
+
+
+  /**
+   * @this {ol.control.GoogleMapsGeocoder}
+   * @private
+   */
+  this.getAddresses_ = function() {
+    var me = this;
+    var url = this.getURL_;
+    var request = new goog.net.XhrIo();
+    var response;
+
+    goog.events.listen(request, 'complete', function() {
+      if (request.isSuccess()) {
+        response = request.getResponseJson();
+        goog.asserts.assert(goog.isDef(response));
+        me.handleGetAddressesSuccess_(response);
+      } else {
+        // TODO: handle errors
+      }
+    });
+
+    request.send(url, 'GET');
+  };
+
+
+  /**
+   * @this {ol.control.GoogleMapsAddresses}
+   * @param {Object} response response received the request
+   * @private
+   */
+  this.handleGetAddressesSuccess_ = function(response) {
+    var me = this;
+
+    if (response.status == 1) {
+      goog.array.forEach(response.addresses, function(address) {
+        me.addAddress(address);
+      });
+    } else {
+      // TODO: handle get addresses fail
+      //this.handleGetAddressesFail_(response);
+    }
+  };
+
+  if (goog.isDefAndNotNull(this.getURL_)) {
+    this.getAddresses_();
+  }
+
 };
 goog.inherits(ol.control.GoogleMapsGeocoder, ol.control.Control);
 
@@ -296,6 +351,14 @@ ol.control.GoogleMapsGeocoder.EventType = {
  */
 ol.control.GoogleMapsGeocoder.Property = {
   LOCATION: 'location'
+};
+
+
+/**
+ * @param {Object} address address
+ */
+ol.control.GoogleMapsGeocoder.prototype.addAddress = function(address) {
+  this.additionnalAddresses.push(address);
 };
 
 
@@ -896,7 +959,7 @@ ol.control.GoogleMapsGeocoder.prototype.filterAddresses_ = function(
 
   var me = this;
   var results = [];
-  var title, add;
+  var description, add;
 
   if (this.enableCurrentPosition_) {
     if (goog.isNull(this.currentPosition_)) {
@@ -912,10 +975,10 @@ ol.control.GoogleMapsGeocoder.prototype.filterAddresses_ = function(
     value = value.toLowerCase();
 
     addresses.forEach(function(address) {
-      title = address.title.toLowerCase();
-      add = address.address.toLowerCase();
+      description = address.description.toLowerCase();
+      add = address.text.toLowerCase();
 
-      if (title.indexOf(value) >= 0 || add.indexOf(value) >= 0) {
+      if (description.indexOf(value) >= 0 || add.indexOf(value) >= 0) {
         results.push(me.formatAdress_(address));
       }
     });
@@ -940,10 +1003,10 @@ ol.control.GoogleMapsGeocoder.prototype.formatAdress_ = function(
     address) {
 
   return {
-    'formatted_address': address.title,
+    'formatted_address': address.description,
     'geometry': {
-      'location': new google.maps.LatLng(address.coordinates[1],
-          address.coordinates[0])
+      'location': new google.maps.LatLng(address.lat,
+          address.lon)
     }
   };
 };
