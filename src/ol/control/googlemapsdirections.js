@@ -456,7 +456,8 @@ goog.inherits(ol.control.GoogleMapsDirections, ol.control.Control);
  */
 ol.control.GoogleMapsDirections.EventType = {
   CLEAR: goog.events.getUniqueId('clear'),
-  ROUTECOMPLETE: goog.events.getUniqueId('routecomplete')
+  ROUTECOMPLETE: goog.events.getUniqueId('routecomplete'),
+  SELECT: goog.events.getUniqueId('select')
 };
 
 
@@ -1404,6 +1405,10 @@ ol.control.GoogleMapsDirections.prototype.selectRoute_ = function(index) {
 
   // draw
   this.drawRoute_();
+
+  // dispatch event
+  goog.events.dispatchEvent(this,
+      ol.control.GoogleMapsDirections.EventType.SELECT);
 };
 
 
