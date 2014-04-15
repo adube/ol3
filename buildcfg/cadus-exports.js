@@ -145,5 +145,5 @@ goog.exportProperty(
     ol.Map.prototype.addControl);
 
 goog.exportSymbol(
-    'ol.control.GoogleMapsAdresses',
-    ol.control.GoogleMapsAdresses);
+    'ol.control.GoogleMapsAddresses',
+    ol.control.GoogleMapsAddresses);
