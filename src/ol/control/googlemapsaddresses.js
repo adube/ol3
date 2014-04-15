@@ -31,7 +31,6 @@ goog.require('ol.style.Style');
 
 
 /**
- * Todo
  * @constructor
  * @extends {ol.control.Control}
  * @param {olx.control.GoogleMapsAddressesOptions=} opt_options Options.
@@ -92,7 +91,6 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
   });
 
   // === UI COMPONENTS ===
-  //TODO: i18
   var addButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
     'class': classPrefix + '-add-button'
   });
@@ -166,6 +164,13 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
    */
   this.saveURL_ = goog.isDefAndNotNull(options.saveURL) ?
       options.saveURL : null;
+
+  /**
+   * @private
+   * @type {Object}
+   */
+  this.saveHeaders_ = goog.isDefAndNotNull(options.saveHeaders) ?
+      options.saveHeaders : {'content-type': 'application/json'};
 
   /**
    * @private
@@ -259,9 +264,8 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
         me.handleGetAddressesSuccess_(response);
       } else {
         // TODO: handle errors
-        alert('error');
         // TODO: remove these lines since they are used only for testing
-        response = {
+        /*response = {
           'status': 1,
           'addresses': [{
             'id': 2,
@@ -272,6 +276,7 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
           }]
         };
         me.handleGetAddressesSuccess_(response);
+        */
       }
     });
 
@@ -414,18 +419,20 @@ ol.control.GoogleMapsAddresses.prototype.saveAddress_ =
       me.handleSaveAddressSuccess_(response, data);
     } else {
       // TODO: handle errors
-      alert('error');
       // TODO: remove these lines since they are used only for testing
-      response = {
+      /*response = {
         'status': 1,
         'id': 1
       };
       me.handleSaveAddressSuccess_(response, data);
+      */
     }
   });
 
+  var headers = this.saveHeaders_;
+
   request.send(url, 'POST', goog.json.serialize(data),
-      {'content-type': 'application/json'});
+      headers);
 };
 
 
