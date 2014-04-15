@@ -1,5 +1,6 @@
 goog.require('ol.Map');
 goog.require('ol.View2D');
+goog.require('ol.control.GoogleMapsAddresses');
 goog.require('ol.control.GoogleMapsDirections');
 goog.require('ol.interaction');
 goog.require('ol.interaction.DragPan');
