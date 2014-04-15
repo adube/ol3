@@ -79,7 +79,8 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
   var classPrefix = 'ol-gmads';
 
   var input = goog.dom.createDom(goog.dom.TagName.INPUT, {
-    'class': classPrefix + '-input-text'
+    'class': classPrefix + '-input-text',
+    'type': 'text'
   });
 
   var element = goog.dom.createDom(goog.dom.TagName.DIV, {

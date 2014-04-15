@@ -105,7 +105,8 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
   });
 
   var input = goog.dom.createDom(goog.dom.TagName.INPUT, {
-    'class': classPrefix + '-input-text'
+    'class': classPrefix + '-input-text',
+    'type': 'text'
   });
 
   var resultsList = goog.dom.createDom(goog.dom.TagName.OL, {
