@@ -108,3 +108,7 @@ goog.exportProperty(
     ol.Map.prototype,
     'addControl',
     ol.Map.prototype.addControl);
+
+goog.exportSymbol(
+    'ol.control.GoogleMapsAdresses',
+    ol.control.GoogleMapsAdresses);
