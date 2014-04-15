@@ -70,28 +70,28 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
 
   /**
    * i18n - currentPosition
-   * @type {string}
+   * @type {?string|undefined}
    */
   this.currentPositionText = goog.isDefAndNotNull(options.currentPositionText) ?
       options.currentPositionText : 'My position';
 
   /**
    * i18n - searchButton
-   * @type {string}
+   * @type {?string|undefined}
    */
   this.searchButtonText = goog.isDefAndNotNull(options.searchButtonText) ?
       options.searchButtonText : 'Search';
 
   /**
    * i18n - clearButton
-   * @type {string}
+   * @type {?string|undefined}
    */
   this.clearButtonText = goog.isDefAndNotNull(options.clearButtonText) ?
       options.clearButtonText : 'Clear';
 
   /**
    * i18n - removeButton
-   * @type {string}
+   * @type {?string|undefined}
    */
   this.removeButtonText = goog.isDefAndNotNull(options.removeButtonText) ?
       options.removeButtonText : 'Remove';
@@ -317,6 +317,11 @@ goog.exportProperty(
  */
 ol.control.GoogleMapsGeocoder.prototype.getCoordinate = function() {
   var location = this.getLocation();
+
+  if (!goog.isDefAndNotNull(location)) {
+    return null;
+  }
+
   var lat = location.lat();
   var lng = location.lng();
 
@@ -413,6 +418,16 @@ ol.control.GoogleMapsGeocoder.prototype.enableReverseGeocoding = function() {
       ol.MapBrowserEvent.EventType.SINGLECLICK
     ], this.handleMapSingleClick_, false, this);
   }
+};
+
+
+/**
+ * Method used to manually load a response object, i.e. this is the public
+ * equivalent of the handleGeocode_ method.
+ * @param {Array} results
+ */
+ol.control.GoogleMapsGeocoder.prototype.load = function(results) {
+  this.handleGeocode_(results, null, true);
 };
 
 
@@ -533,7 +548,7 @@ ol.control.GoogleMapsGeocoder.prototype.geocodeByCoordinate_ = function(
 
 /**
  * @param {Array} results
- * @param {number|string} status
+ * @param {number|string|null} status
  * @param {boolean} addToMap
  * @private
  */
@@ -560,7 +575,25 @@ ol.control.GoogleMapsGeocoder.prototype.handleGeocode_ = function(
       // set returned value
       input.value = formatted_address;
 
-      location = result.geometry.location;
+      if (goog.isDefAndNotNull(result.geometry.location)) {
+        location = result.geometry.location;
+      } else if (goog.isDefAndNotNull(result.geometry.coordinate)) {
+
+        var map = this.getMap();
+
+        var view = map.getView();
+        goog.asserts.assert(goog.isDef(view));
+        var view2D = view.getView2D();
+        goog.asserts.assertInstanceof(view2D, ol.View2D);
+
+        var projection = view2D.getProjection();
+
+        var transformedCoordinate = ol.proj.transform(
+            result.geometry.coordinate, projection.getCode(), 'EPSG:4326');
+
+        location = new google.maps.LatLng(
+            transformedCoordinate[1], transformedCoordinate[0]);
+      }
       this.displayLocation_(location);
     } else {
       // TODO: manage no results
@@ -632,7 +665,7 @@ ol.control.GoogleMapsGeocoder.prototype.handleResultOptionPress_ = function(
   if (this.enableCurrentPosition_ && (goog.isNull(this.currentPosition_) ||
       goog.isNull(this.currentPosition_.geometry) ||
       goog.isNull(result.geometry)) &&
-      index == 0) {
+      index === 0) {
 
     this.getCurrentPosition_(function(currentPosition) {
       this.displayLocation_(currentPosition.geometry.location);
@@ -803,12 +836,12 @@ ol.control.GoogleMapsGeocoder.prototype.clear_ = function(setLocation) {
 ol.control.GoogleMapsGeocoder.prototype.getCurrentPosition_ = function(
     callback, force) {
   var me = this;
-  force = goog.isDefAndNotNull(force) && force == true;
+  force = goog.isDefAndNotNull(force) && force === true;
 
   if (this.enableCurrentPosition_ &&
       ((goog.isNull(this.currentPosition_) ||
       goog.isNull(this.currentPosition_.geometry)) ||
-      force == true)) {
+      force === true)) {
     navigator.geolocation.getCurrentPosition(function(position) {
       var lat = position.coords.latitude;
       var lon = position.coords.longitude;

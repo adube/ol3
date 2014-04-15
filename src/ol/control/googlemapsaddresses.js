@@ -6,7 +6,7 @@ goog.require('goog.dom');
 goog.require('goog.dom.TagName');
 goog.require('goog.events');
 goog.require('goog.events.EventType');
-goog.require('goog.events.KeyCodes');
+/*goog.require('goog.events.KeyCodes');*/
 goog.require('goog.json');
 goog.require('goog.net.XhrIo');
 /*
@@ -14,6 +14,7 @@ goog.require('goog.string');
 goog.require('goog.style');
 */
 goog.require('ol.Feature');
+goog.require('ol.Object');
 /*
 goog.require('ol.MapBrowserEvent.EventType');
 */
@@ -249,10 +250,11 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
     var me = this;
     var url = this.getURL_;
     var request = new goog.net.XhrIo();
+    var response;
 
     goog.events.listen(request, 'complete', function() {
       if (request.isSuccess()) {
-        var response = request.getResponseJson();
+        response = request.getResponseJson();
         goog.asserts.assert(goog.isDef(response));
         me.handleGetAddressesSuccess_(response);
       } else {
@@ -398,6 +400,7 @@ ol.control.GoogleMapsAddresses.prototype.saveAddress_ =
   var me = this;
   var url = this.saveURL_;
   var request = new goog.net.XhrIo();
+  var response;
 
   var data = {
     'address': address,
@@ -406,7 +409,7 @@ ol.control.GoogleMapsAddresses.prototype.saveAddress_ =
 
   goog.events.listen(request, 'complete', function() {
     if (request.isSuccess()) {
-      var response = request.getResponseJson();
+      response = request.getResponseJson();
       goog.asserts.assert(goog.isDefAndNotNull(response));
       me.handleSaveAddressSuccess_(response, data);
     } else {
@@ -439,7 +442,7 @@ ol.control.GoogleMapsAddresses.prototype.handleSaveAddressSuccess_ =
     var action = data.action;
 
     if (response.id) {
-      address['id'] = response.id;
+      address.id = response.id;
     }
 
     if (action == 'insert') {

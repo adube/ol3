@@ -69,7 +69,7 @@ ol.control.GoogleMapsDirections = function(opt_options) {
 
   /**
    * i18n - waypointButton
-   * @type {string}
+   * @type {?string|undefined}
    */
   this.addWaypointButtonText =
       goog.isDefAndNotNull(options.addWaypointButtonText) ?
@@ -77,64 +77,64 @@ ol.control.GoogleMapsDirections = function(opt_options) {
 
   /**
    * i18n - currentPosition
-   * @type {string}
+   * @type {?string|undefined}
    */
   this.currentPositionText = goog.isDefAndNotNull(options.currentPositionText) ?
-      options.currentPositionText : null;
+      options.currentPositionText : undefined;
 
   /**
    * i18n - searchButton
-   * @type {string}
+   * @type {?string|undefined}
    */
   this.searchButtonText = goog.isDefAndNotNull(options.searchButtonText) ?
-      options.searchButtonText : null;
+      options.searchButtonText : undefined;
 
   /**
    * i18n - clearButton
-   * @type {string}
+   * @type {?string|undefined}
    */
   this.clearButtonText = goog.isDefAndNotNull(options.clearButtonText) ?
-      options.clearButtonText : null;
+      options.clearButtonText : undefined;
 
   /**
    * i18n - removeButton
-   * @type {string}
+   * @type {?string|undefined}
    */
   this.removeButtonText = goog.isDefAndNotNull(options.removeButtonText) ?
-      options.removeButtonText : null;
+      options.removeButtonText : undefined;
 
 
   /**
    * i18n - suggestedRoutes
-   * @type {string}
+   * @type {?string|undefined}
    */
   this.suggestedRoutesText =
       goog.isDefAndNotNull(options.suggestedRoutesText) ?
-          options.suggestedRoutesText : null;
+          options.suggestedRoutesText : undefined;
 
   /**
    * i18n - around
-   * @type {string}
+   * @type {?string|undefined}
    */
   this.aroundText =
       goog.isDefAndNotNull(options.aroundText) ?
-          options.aroundText : null;
+          options.aroundText : undefined;
 
   /**
    * i18n - copyright
-   * @type {string}
+   * @type {?string|undefined}
    */
   this.copyrightText =
       goog.isDefAndNotNull(options.copyrightText) ?
-          options.copyrightText : null;
+          options.copyrightText : undefined;
 
   /**
    * i18n - totalDistance
-   * @type {string}
+   * @type {?string|undefined}
    */
   this.totalDistanceText =
       goog.isDefAndNotNull(options.totalDistanceText) ?
-          options.totalDistanceText : null;
+          options.totalDistanceText : undefined;
 
 
   var classPrefix = 'ol-gmds';
@@ -372,6 +372,14 @@ ol.control.GoogleMapsDirections = function(opt_options) {
   this.format_ = new ol.format.MTJSON();
 
 
+  /**
+   * Is set to 'true' while loading, which prevents some events to apply.
+   * @type {boolean}
+   * @private
+   */
+  this.loading_ = false;
+
+
   goog.base(this, {
     element: element,
     target: options.target
@@ -434,6 +442,15 @@ goog.inherits(ol.control.GoogleMapsDirections, ol.control.Control);
 
 
 /**
+ * @enum {string}
+ */
+ol.control.GoogleMapsDirections.EventType = {
+  CLEAR: goog.events.getUniqueId('clear'),
+  ROUTECOMPLETE: goog.events.getUniqueId('routecomplete')
+};
+
+
+/**
  * Add a new waypoint geocoder to the UI.
  */
 ol.control.GoogleMapsDirections.prototype.addWaypointGeocoder = function() {
@@ -482,32 +499,197 @@ ol.control.GoogleMapsDirections.prototype.addWaypointGeocoder = function() {
 
 
 /**
+ * Returns an array of objects containing information about the geocoders
+ * that currently have locations.
+ * @return {Array}
+ */
+ol.control.GoogleMapsDirections.prototype.getGeocoderInfo = function() {
+  var info = [];
+
+  // start
+  var startCoordinate = this.startGeocoder_.getCoordinate();
+  var startAddress = this.startGeocoder_.getInputValue();
+  if (!goog.isNull(startCoordinate) && !goog.isNull(startAddress)) {
+    info.push({
+      'address': startAddress,
+      'coordinates': startCoordinate,
+      'type': 'start'
+    });
+  }
+
+  // end
+  var endCoordinate = this.endGeocoder_.getCoordinate();
+  var endAddress = this.endGeocoder_.getInputValue();
+  if (!goog.isNull(endCoordinate) && !goog.isNull(endAddress)) {
+    info.push({
+      'address': endAddress,
+      'coordinates': endCoordinate,
+      'type': 'end'
+    });
+  }
+
+  // waypoints
+  var waypointCoordinate;
+  var waypointAddress;
+  var waypointGeocoders = this.waypointGeocoders_;
+  waypointGeocoders.forEach(function(waypointGeocoder) {
+    waypointCoordinate = waypointGeocoder.getCoordinate();
+    waypointAddress = waypointGeocoder.getInputValue();
+    if (!goog.isNull(waypointCoordinate) && !goog.isNull(waypointAddress)) {
+      info.push({
+        'address': waypointAddress,
+        'coordinates': waypointCoordinate,
+        'type': 'waypoint'
+      });
+    }
+  }, this);
+
+  // detours
+  this.detourFeatures_.forEach(function(detourFeature) {
+    info.push({
+      'address': '',
+      'coordinates': detourFeature.getGeometry().getCoordinates(),
+      'type': 'detour'
+    });
+  }, this);
+
+  return info;
+};
+
+
+/**
  * todo - change this method to fetch the source from a remote server, then
  *        read its response
  * @param {Object} source
  */
 ol.control.GoogleMapsDirections.prototype.load = function(source) {
 
+  this.loading_ = true;
+  this.disableGeocoderReverseGeocodings_();
   this.clear_();
 
+  // read
   var format = this.format_;
   var object = format.read(source);
+
+  // begin with detours, as they are drawn at the same time the route is
+  // generated
+  this.detourFeatures_.clear();
+  if (goog.isDefAndNotNull(object.detours)) {
+    goog.array.forEach(object.detours, function(detour) {
+      this.createOrUpdateDetour_(detour, false);
+    }, this);
+  }
+
+  // routes
   this.handleDirectionsResult_(object, google.maps.DirectionsStatus.OK);
 
-  //window.console.log(object);
+  // start
+  if (goog.isDefAndNotNull(object.start)) {
+    this.startGeocoder_.load([object.start]);
+  }
+
+  // end
+  if (goog.isDefAndNotNull(object.end)) {
+    this.endGeocoder_.load([object.end]);
+  }
+
+  // waypoints
+  var index;
+  var waypointGeocoder;
+  this.removeAllWaypointGeocoders_();
+  if (goog.isDefAndNotNull(object.waypoints)) {
+    goog.array.forEach(object.waypoints, function(waypoint) {
+      this.addWaypointGeocoder();
+      index = this.waypointGeocoders_.getLength() - 1;
+      waypointGeocoder = this.waypointGeocoders_.getAt(index);
+      waypointGeocoder.load([waypoint]);
+    }, this);
+  }
+
+  this.loading_ = false;
+  this.manageNumWaypoints_();
+
+  goog.events.dispatchEvent(this,
+      ol.control.GoogleMapsDirections.EventType.ROUTECOMPLETE);
 };
 
 
 /**
  * Collect the elements to save, write them as MTJSON then save.
+ * @return {string} serialized json ready for save
  */
 ol.control.GoogleMapsDirections.prototype.save = function() {
   var format = this.format_;
 
   var source = {};
 
-  var object = format.write(source);
-  window.console.log(object);
+  // routes
+  var selectedRoute = this.directionsPanel_.getSelectedRoute();
+  if (selectedRoute === false) {
+    // todo - throw/manage error
+    return '';
+  }
+
+  if (!goog.isDefAndNotNull(selectedRoute.geometry)) {
+    selectedRoute.geometry = this.selectedRouteFeatures_.getAt(0).getGeometry();
+  }
+
+  source.routes = [selectedRoute];
+
+
+  // start
+  var startCoordinate = this.startGeocoder_.getCoordinate();
+  var startAddress = this.startGeocoder_.getInputValue();
+  if (goog.isNull(startCoordinate) || goog.isNull(startAddress)) {
+    // todo - throw/manage error
+    return '';
+  }
+  source.start_location = {
+    'formatted_address': startAddress,
+    'geometry': {'coordinate': startCoordinate}
+  };
+
+
+  // end
+  var endCoordinate = this.endGeocoder_.getCoordinate();
+  var endAddress = this.endGeocoder_.getInputValue();
+  if (goog.isNull(endCoordinate) || goog.isNull(endAddress)) {
+    // todo - throw/manage error
+    return '';
+  }
+  source.end_location = {
+    'formatted_address': endAddress,
+    'geometry': {'coordinate': endCoordinate}
+  };
+
+
+  // waypoints
+  source.waypoints = [];
+  var waypointCoordinate;
+  var waypointAddress;
+  var waypointGeocoders = this.waypointGeocoders_;
+  waypointGeocoders.forEach(function(waypointGeocoder) {
+    waypointCoordinate = waypointGeocoder.getCoordinate();
+    waypointAddress = waypointGeocoder.getInputValue();
+    if (!goog.isNull(waypointCoordinate) && !goog.isNull(waypointAddress)) {
+      source.waypoints.push({
+        'formatted_address': waypointAddress,
+        'geometry': {'coordinate': waypointCoordinate}
+      });
+    }
+  }, this);
+
+  // detours
+  source.detours = [];
+  this.detourFeatures_.forEach(function(detourFeature) {
+    source.detours.push(detourFeature.getGeometry().getCoordinates());
+  }, this);
+
+  var result = format.write(source, true);
+  goog.asserts.assertString(result);
+
+  return result;
 };
 
 
@@ -586,15 +768,21 @@ ol.control.GoogleMapsDirections.prototype.clear_ = function() {
   vectorSource.clear();
 
   this.directionsPanel_.clearDirections();
+
+  goog.events.dispatchEvent(this,
+      ol.control.GoogleMapsDirections.EventType.CLEAR);
 };
 
 
 /**
  * @param {ol.Coordinate} coordinate
+ * @param {boolean} shouldRoute Whether the creation or update of the detour
+ * should trigger a new route update or not (not being when a detour is
+ * manually added, on loading)
  * @private
  */
 ol.control.GoogleMapsDirections.prototype.createOrUpdateDetour_ = function(
-    coordinate) {
+    coordinate, shouldRoute) {
 
   var detourFeatures = this.detourFeatures_;
   var numDetourFeatures = detourFeatures.getLength();
@@ -617,8 +805,10 @@ ol.control.GoogleMapsDirections.prototype.createOrUpdateDetour_ = function(
 
   detourFeatures.push(feature);
 
-  this.clear_();
-  this.route_(null, null);
+  if (shouldRoute === true) {
+    this.clear_();
+    this.route_(null, null);
+  }
 
   this.manageNumWaypoints_();
 };
@@ -832,6 +1022,11 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
     }
   }
 
+  if (this.loading_ === false) {
+    goog.events.dispatchEvent(this,
+        ol.control.GoogleMapsDirections.EventType.ROUTECOMPLETE);
+  }
+
 };
 
 
@@ -850,7 +1045,7 @@ ol.control.GoogleMapsDirections.prototype.handleDryModifyDrag_ = function(evt) {
   }
 
   this.newDetourTimerId_ = window.setTimeout(function() {
-    me.createOrUpdateDetour_(coordinate);
+    me.createOrUpdateDetour_(coordinate, true);
   }, this.routeDelayOnWaypointDrag_);
 
 };
@@ -909,6 +1104,11 @@ ol.control.GoogleMapsDirections.prototype.handleGeocoderRemove_ = function(
  */
 ol.control.GoogleMapsDirections.prototype.handleLocationChanged_ =
     function(event) {
+
+  // ignore this callback while loading
+  if (this.loading_ === true) {
+    return;
+  }
 
   var currentGeocoder = event.target;
   var currentLocation = currentGeocoder.getLocation();
