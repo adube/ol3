@@ -194,12 +194,12 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
   /**
    * @type {Array}
    */
-  if (goog.isDefAndNotNull(options.additionnalAddresses) &&
-      goog.isArray(options.additionnalAddresses)) {
+  if (goog.isDefAndNotNull(options.additionalAddresses) &&
+      goog.isArray(options.additionalAddresses)) {
 
-    this.additionnalAddresses = options.additionnalAddresses;
+    this.additionalAddresses = options.additionalAddresses;
   } else {
-    this.additionnalAddresses = [];
+    this.additionalAddresses = [];
   }
 
   /**
@@ -358,7 +358,7 @@ ol.control.GoogleMapsGeocoder.Property = {
  * @param {Object} address address
  */
 ol.control.GoogleMapsGeocoder.prototype.addAddress = function(address) {
-  this.additionnalAddresses.push(address);
+  this.additionalAddresses.push(address);
 };
 
 
@@ -521,10 +521,10 @@ ol.control.GoogleMapsGeocoder.prototype.handleInputInput_ = function(
   if (!goog.string.isEmptySafe(value)) {
     if (value.length >= this.characters_) {
       if (this.allowSearching_) {
-        var additionnalAddresses = this.filterAddresses_(
-            this.additionnalAddresses, value);
+        var additionalAddresses = this.filterAddresses_(
+            this.additionalAddresses, value);
 
-        this.geocodeByAddress_(value, false, additionnalAddresses);
+        this.geocodeByAddress_(value, false, additionalAddresses);
         this.allowSearching_ = false;
       }
 
@@ -559,14 +559,14 @@ ol.control.GoogleMapsGeocoder.prototype.handleSearchButtonPress_ = function(
 /**
  * @param {String} address The address to search
  * @param {boolean} addToMap Set to true if the first result be added to map
- * @param {Array} additionnalAddresses array of optional results
+ * @param {Array} additionalAddresses array of optional results
  * @private
  */
 ol.control.GoogleMapsGeocoder.prototype.geocodeByAddress_ = function(
-    address, addToMap, additionnalAddresses) {
+    address, addToMap, additionalAddresses) {
 
-  additionnalAddresses = goog.isDefAndNotNull(additionnalAddresses) ?
-      additionnalAddresses : [];
+  additionalAddresses = goog.isDefAndNotNull(additionalAddresses) ?
+      additionalAddresses : [];
 
   var me = this;
   var geocoder = this.geocoder_;
@@ -578,7 +578,7 @@ ol.control.GoogleMapsGeocoder.prototype.geocodeByAddress_ = function(
       },
       function(results, status) {
         results = goog.isDefAndNotNull(results) ? results : [];
-        results = additionnalAddresses.concat(results);
+        results = additionalAddresses.concat(results);
         me.handleGeocode_(results, status, addToMap);
       }
   );
@@ -754,10 +754,10 @@ ol.control.GoogleMapsGeocoder.prototype.resetSearchingTimeout_ = function() {
     me.allowSearching_ = true;
     var input = me.input_;
     var value = input.value;
-    var additionnalAddresses = me.filterAddresses_(
-        me.additionnalAddresses, value);
+    var additionalAddresses = me.filterAddresses_(
+        me.additionalAddresses, value);
 
-    me.geocodeByAddress_(value, false, additionnalAddresses);
+    me.geocodeByAddress_(value, false, additionalAddresses);
   }, this.searchingDelay);
 };
 

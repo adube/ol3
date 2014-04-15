@@ -477,7 +477,7 @@ ol.control.GoogleMapsDirections.prototype.addWaypointGeocoder = function() {
   var geocoder = new ol.control.GoogleMapsGeocoder({
     'enableReverseGeocoding': false,
     'target': container,
-    'additionnalAddresses': this.startGeocoder_.additionnalAddresses,
+    'additionalAddresses': this.startGeocoder_.additionalAddresses,
     'currentPositionText': this.currentPositionText,
     'searchButtonText': this.searchButtonText,
     'clearButtonText': this.clearButtonText,

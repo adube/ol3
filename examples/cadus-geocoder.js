@@ -83,7 +83,7 @@ var olGeocoder = new ol.control.GoogleMapsGeocoder({
   'clearButtonText': 'Effacer',
   'removeButtonText': 'Supprimer',
   'getURL': '/usager/adresses/obtenir',
-  'additionnalAddresses': [{
+  'additionalAddresses': [{
     'description': 'Une maison',
     'text': '9999 rue Des Maisons, Maisonville',
     'lat': 48,
