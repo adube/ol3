@@ -152,6 +152,12 @@ directions.on(
       directionEl.value = directions.save();
     }
 );
+directions.on(
+    ol.control.GoogleMapsDirections.EventType.SELECT,
+    function(evt) {
+      directionEl.value = directions.save();
+    }
+);
 
 var read = function() {
   var config = {

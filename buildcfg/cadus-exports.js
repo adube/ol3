@@ -136,6 +136,11 @@ goog.exportProperty(
     'CLEAR',
     ol.control.GoogleMapsDirections.EventType.CLEAR);
 
+goog.exportProperty(
+    ol.control.GoogleMapsDirections.EventType,
+    'SELECT',
+    ol.control.GoogleMapsDirections.EventType.SELECT);
+
 goog.exportSymbol(
     'ol.style.Icon',
     ol.style.Icon);
