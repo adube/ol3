@@ -499,6 +499,65 @@ ol.control.GoogleMapsDirections.prototype.addWaypointGeocoder = function() {
 
 
 /**
+ * Returns an array of objects containing information about the geocoders
+ * that currently have locations.
+ * @return {Array}
+ */
+ol.control.GoogleMapsDirections.prototype.getGeocoderInfo = function() {
+  var info = [];
+
+  // start
+  var startCoordinate = this.startGeocoder_.getCoordinate();
+  var startAddress = this.startGeocoder_.getInputValue();
+  if (!goog.isNull(startCoordinate) && !goog.isNull(startAddress)) {
+    info.push({
+      'address': startAddress,
+      'coordinates': startCoordinate,
+      'type': 'start'
+    });
+  }
+
+  // end
+  var endCoordinate = this.endGeocoder_.getCoordinate();
+  var endAddress = this.endGeocoder_.getInputValue();
+  if (!goog.isNull(endCoordinate) && !goog.isNull(endAddress)) {
+    info.push({
+      'address': endAddress,
+      'coordinates': endCoordinate,
+      'type': 'end'
+    });
+  }
+
+  // waypoints
+  var waypointCoordinate;
+  var waypointAddress;
+  var waypointGeocoders = this.waypointGeocoders_;
+  waypointGeocoders.forEach(function(waypointGeocoder) {
+    waypointCoordinate = waypointGeocoder.getCoordinate();
+    waypointAddress = waypointGeocoder.getInputValue();
+    if (!goog.isNull(waypointCoordinate) && !goog.isNull(waypointAddress)) {
+      info.push({
+        'address': waypointAddress,
+        'coordinates': waypointCoordinate,
+        'type': 'waypoint'
+      });
+    }
+  }, this);
+
+  // detours
+  this.detourFeatures_.forEach(function(detourFeature) {
+    info.push({
+      'address': '',
+      'coordinates': detourFeature.getGeometry().getCoordinates(),
+      'type': 'detour'
+    });
+  }, this);
+
+  return info;
+};
+
+
+/**
  * todo - change this method to fetch the source from a remote server, then
  *        read its response
  * @param {Object} source
