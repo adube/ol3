@@ -181,6 +181,17 @@ ol.control.GoogleMapsDirections = function(opt_options) {
   this.iconStyles_ = options.iconStyles;
 
   /**
+   * @type {Array}
+   * @private
+   */
+  this.iconImages_ = new Array();
+
+  for (var i = 0; i < this.iconStyles_.length; i++)
+  {
+    this.iconImages_.push(this.iconStyles_[i].getImage().getSrc());
+  }
+
+  /**
    * User provided style for lines.
    * @type {Array.<(null|ol.style.Style)>|null|ol.feature.FeatureStyleFunction|ol.style.Style}
    * @private
@@ -1041,7 +1052,7 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
       this.fitViewExtentToRoute_();
 
       // set directions in panel
-      this.directionsPanel_.setDirections(response);
+      this.directionsPanel_.setDirections(response, this.iconImages_);
     }
   }
 

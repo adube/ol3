@@ -267,9 +267,10 @@ ol.control.GoogleMapsDirectionsPanel.prototype.clearDirections = function() {
 /**
  * Build the direction panel content using the passed direction results.
  * @param {google.maps.DirectionsResult|Object} directionsResult
+ * @param {Array.<string>} imageSrc
  */
 ol.control.GoogleMapsDirectionsPanel.prototype.setDirections = function(
-    directionsResult) {
+    directionsResult, imageSrc) {
 
   var routesEl = this.routesEl_;
   var routeSelectorListEl = this.routeSelectorListEl_;
@@ -285,7 +286,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.setDirections = function(
     routeObj = {};
     routeObj.result = route;
 
-    routeEl = this.createRouteElement_(route, index);
+    routeEl = this.createRouteElement_(route, index, imageSrc);
     goog.dom.appendChild(routesEl, routeEl);
     routeObj.directionEl = routeEl;
 
@@ -345,11 +346,12 @@ ol.control.GoogleMapsDirectionsPanel.prototype.getSelectedRouteIndex =
  * Create all elements required for a route
  * @param {google.maps.DirectionsRoute} route
  * @param {number} index
+ * @param {Array.<string>} imgSrc
  * @return {Element}
  * @private
  */
 ol.control.GoogleMapsDirectionsPanel.prototype.createRouteElement_ =
-    function(route, index) {
+    function(route, index, imgSrc) {
 
   var legEl;
   var tailEl;
@@ -371,16 +373,19 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createRouteElement_ =
   goog.dom.appendChild(
       totalDistanceEl, goog.dom.createTextNode(totalDistanceText));
 
+  var legCounter = 0;
+
   // legs
   goog.array.forEach(route.legs, function(leg) {
-    legEl = this.createLegElement_(leg);
+    legEl = this.createLegElement_(leg, imgSrc[legCounter]);
     goog.dom.appendChild(element, legEl);
+    legCounter++;
   }, this);
 
   // tail
   var lastLeg = goog.array.peek(route.legs);
   goog.asserts.assertObject(lastLeg);
-  tailEl = this.createTailElement_(lastLeg);
+  tailEl = this.createTailElement_(lastLeg, imgSrc[legCounter]);
   goog.dom.appendChild(element, tailEl);
 
   return element;
@@ -458,11 +463,12 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createRouteSelectorItemElement_ =
 /**
  * Create all elements required for a leg
  * @param {Object} leg
+ * @param {string} imgSrc
  * @return {Element}
  * @private
  */
 ol.control.GoogleMapsDirectionsPanel.prototype.createLegElement_ =
-    function(leg) {
+    function(leg, imgSrc) {
 
   var stepEl;
   var classPrefix = this.classPrefix_;
@@ -472,7 +478,8 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createLegElement_ =
   });
 
   // header
-  goog.dom.appendChild(element, this.createLegHeaderElement_(leg, true));
+  goog.dom.appendChild(element,
+      this.createLegHeaderElement_(leg, true, imgSrc));
 
   // summary
   var summaryEl = goog.dom.createDom(goog.dom.TagName.DIV, {
@@ -502,11 +509,12 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createLegElement_ =
  * Create the header for a leg
  * @param {Object} leg
  * @param {boolean} start Whether to use the start address or not (use end)
+ * @param {string} imgSrc
  * @return {Element}
  * @private
  */
 ol.control.GoogleMapsDirectionsPanel.prototype.createLegHeaderElement_ =
-    function(leg, start) {
+    function(leg, start, imgSrc) {
 
   var classPrefix = this.classPrefix_;
 
@@ -543,11 +551,16 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createLegHeaderElement_ =
     'data-instructions': (start) ? leg.start_address : leg.end_address
   });
 
-  // icon - todo
-
   // text
   var textEl = goog.dom.createDom(goog.dom.TagName.DIV, {});
   goog.dom.appendChild(element, textEl);
+
+  var iconEl = goog.dom.createDom(goog.dom.TagName.IMG, {
+    'src': imgSrc,
+    'class': classPrefix + '-leg-icon'
+  });
+  goog.dom.appendChild(textEl, iconEl);
+
   var text = (start) ? leg.start_address : leg.end_address;
   goog.dom.appendChild(textEl, goog.dom.createTextNode(text));
 
@@ -566,11 +579,12 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createLegHeaderElement_ =
 /**
  * Create all elements required for a tail, which is the last leg of a route
  * @param {Object} leg
+ * @param {string} imgSrc
  * @return {Element}
  * @private
  */
 ol.control.GoogleMapsDirectionsPanel.prototype.createTailElement_ =
-    function(leg) {
+    function(leg, imgSrc) {
 
   var classPrefix = this.classPrefix_;
 
@@ -579,7 +593,8 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createTailElement_ =
   });
 
   // header
-  goog.dom.appendChild(element, this.createLegHeaderElement_(leg, false));
+  goog.dom.appendChild(element,
+      this.createLegHeaderElement_(leg, false, imgSrc));
 
   return element;
 };
