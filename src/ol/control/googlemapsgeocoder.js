@@ -519,7 +519,7 @@ ol.control.GoogleMapsGeocoder.prototype.handleInputInput_ = function(
 
     this.currentPositionControl_.setCurrentPosition(null, false);
   } else {
-    this.clear_();
+    this.clear();
   }
 };
 
@@ -852,7 +852,7 @@ ol.control.GoogleMapsGeocoder.prototype.handleClearButtonPress_ = function(
     browserEvent) {
 
   browserEvent.preventDefault();
-  this.clear_();
+  this.clear();
 };
 
 
@@ -889,9 +889,9 @@ ol.control.GoogleMapsGeocoder.prototype.hideRemoveButton = function() {
 
 
 /**
- * @private
+ * Clear layer and inputs
  */
-ol.control.GoogleMapsGeocoder.prototype.clear_ = function() {
+ol.control.GoogleMapsGeocoder.prototype.clear = function() {
   this.clearVector_();
   this.setValues({'location': null});
   this.clearGeocodeResults_();

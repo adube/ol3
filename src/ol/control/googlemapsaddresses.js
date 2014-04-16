@@ -415,6 +415,15 @@ ol.control.GoogleMapsAddresses.prototype.generateAddress_ =
 
 
 /**
+ * @private
+ */
+ol.control.GoogleMapsAddresses.prototype.emptyInputs_ = function() {
+  this.input_.value = '';
+  this.geocoder_.clear();
+};
+
+
+/**
  * @param {Object} address
  * @param {string} action any of the following values:
  *  insert, update, delete
@@ -479,6 +488,7 @@ ol.control.GoogleMapsAddresses.prototype.handleSaveAddressSuccess_ =
 
     if (action == 'insert') {
       this.addAddress(address);
+      this.emptyInputs_();
     } else if (action == 'update') {
       //this.updateAddress(address);
     } else {
