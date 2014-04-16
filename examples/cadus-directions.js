@@ -124,24 +124,98 @@ var directions = new ol.control.GoogleMapsDirections({
       width: 6
     })
   }),
-  'startIconStyle': new ol.style.Style({
-    image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
-      anchor: [0.5, 46],
-      anchorXUnits: 'fraction',
-      anchorYUnits: 'pixels',
-      opacity: 0.75,
-      src: 'data/icon.png'
-    }))
-  }),
-  'endIconStyle': new ol.style.Style({
-    image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
-      anchor: [0.5, 46],
-      anchorXUnits: 'fraction',
-      anchorYUnits: 'pixels',
-      opacity: 0.75,
-      src: 'data/iconRed.png'
-    }))
-  }),
+  'iconStyles': new Array(
+      new ol.style.Style({
+        image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+          anchor: [0.5, 46],
+          anchorXUnits: 'fraction',
+          anchorYUnits: 'pixels',
+          opacity: 0.75,
+          src: 'data/icon1.png'
+        }))
+      }),
+      new ol.style.Style({
+        image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+          anchor: [0.5, 46],
+          anchorXUnits: 'fraction',
+          anchorYUnits: 'pixels',
+          opacity: 0.75,
+          src: 'data/icon2.png'
+        }))
+      }),
+      new ol.style.Style({
+        image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+          anchor: [0.5, 46],
+          anchorXUnits: 'fraction',
+          anchorYUnits: 'pixels',
+          opacity: 0.75,
+          src: 'data/icon3.png'
+        }))
+      }),
+      new ol.style.Style({
+        image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+          anchor: [0.5, 46],
+          anchorXUnits: 'fraction',
+          anchorYUnits: 'pixels',
+          opacity: 0.75,
+          src: 'data/icon4.png'
+        }))
+      }),
+      new ol.style.Style({
+        image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+          anchor: [0.5, 46],
+          anchorXUnits: 'fraction',
+          anchorYUnits: 'pixels',
+          opacity: 0.75,
+          src: 'data/icon5.png'
+        }))
+      }),
+      new ol.style.Style({
+        image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+          anchor: [0.5, 46],
+          anchorXUnits: 'fraction',
+          anchorYUnits: 'pixels',
+          opacity: 0.75,
+          src: 'data/icon6.png'
+        }))
+      }),
+      new ol.style.Style({
+        image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+          anchor: [0.5, 46],
+          anchorXUnits: 'fraction',
+          anchorYUnits: 'pixels',
+          opacity: 0.75,
+          src: 'data/icon7.png'
+        }))
+      }),
+      new ol.style.Style({
+        image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+          anchor: [0.5, 46],
+          anchorXUnits: 'fraction',
+          anchorYUnits: 'pixels',
+          opacity: 0.75,
+          src: 'data/icon8.png'
+        }))
+      }),
+      new ol.style.Style({
+        image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+          anchor: [0.5, 46],
+          anchorXUnits: 'fraction',
+          anchorYUnits: 'pixels',
+          opacity: 0.75,
+          src: 'data/icon9.png'
+        }))
+      }),
+      new ol.style.Style({
+        image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+          anchor: [0.5, 46],
+          anchorXUnits: 'fraction',
+          anchorYUnits: 'pixels',
+          opacity: 0.75,
+          src: 'data/icon10.png'
+        }))
+      })
+  ),
   'detourLabelProperty': 'myLabel',
   'detourIconStyle': createDetourIconStyle(),
   'panel': 'gmaps-directions-panel',

@@ -182,18 +182,10 @@ ol.control.GoogleMapsDirections = function(opt_options) {
 
 
   /**
-   * @type {ol.style.Style}
+   * @type {Array}
    * @private
    */
-  this.startIconStyle_ = options.startIconStyle;
-
-
-  /**
-   * @type {ol.style.Style}
-   * @private
-   */
-  this.endIconStyle_ = options.endIconStyle;
-
+  this.iconStyles_ = options.iconStyles;
 
   /**
    * User provided style for lines.
@@ -414,7 +406,7 @@ ol.control.GoogleMapsDirections = function(opt_options) {
     'clearButtonText': this.clearButtonText,
     'removeButtonText': this.removeButtonText,
     'geocoderComponentRestrictions': this.geocoderComponentRestrictions_,
-    'iconStyle': this.startIconStyle_
+    'iconStyle': this.iconStyles_[0]
   });
 
 
@@ -431,7 +423,7 @@ ol.control.GoogleMapsDirections = function(opt_options) {
     'clearButtonText': this.clearButtonText,
     'removeButtonText': this.removeButtonText,
     'geocoderComponentRestrictions': this.geocoderComponentRestrictions_,
-    'iconStyle': this.endIconStyle_
+    'iconStyle': this.iconStyles_[1]
   });
 
   goog.events.listen(
@@ -483,7 +475,7 @@ ol.control.GoogleMapsDirections.prototype.addWaypointGeocoder = function() {
     'clearButtonText': this.clearButtonText,
     'removeButtonText': this.removeButtonText,
     'geocoderComponentRestrictions': this.geocoderComponentRestrictions_,
-    'iconStyle': this.startIconStyle_,
+    'iconStyle': this.iconStyles_[0],
     'removable': true
   });
 
@@ -1023,6 +1015,9 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
       // set first route as selected route
       selectedRouteFeatures.push(routeFeatures.getAt(0));
 
+      //Put the right waypoint icon
+      this.updateGeocoders_(response.routes[0].waypoint_order);
+
       // draw
       this.drawRoute_();
 
@@ -1137,8 +1132,11 @@ ol.control.GoogleMapsDirections.prototype.handleLocationChanged_ =
   if (goog.isDefAndNotNull(startLocation) &&
       goog.isDefAndNotNull(endLocation)) {
     this.route_(startLocation, endLocation);
-  } else if (goog.isDefAndNotNull(currentLocation)) {
-    this.fitViewExtentToCoordinate_(currentGeocoder.getCoordinate());
+  } else {
+    if (goog.isDefAndNotNull(currentLocation)) {
+      this.fitViewExtentToCoordinate_(currentGeocoder.getCoordinate());
+    }
+    this.updateGeocoders_([]);
   }
 
 };
@@ -1506,4 +1504,52 @@ ol.control.GoogleMapsDirections.prototype.toggleGeocoderReverseGeocodings_ =
     }, this);
   }
 
+};
+
+/**
+ * Fetch all the created geocoder and set their style according
+ * to their position on the desired route
+ * @param {Array|undefined} orders
+ * @private
+ */
+
+ol.control.GoogleMapsDirections.prototype.updateGeocoders_ =
+    function(orders) {
+  var geocoder;
+  var i;
+  var iconCounter = 0;
+
+  if (this.startGeocoder_.getLocation())
+  {
+    this.startGeocoder_.setIconStyle(this.iconStyles_[iconCounter]);
+    iconCounter++;
+  }
+
+  if (orders.length)
+  {
+    for (i = 0; i < orders.length; i++)
+    {
+      geocoder = this.waypointGeocoders_.getArray()[orders[i]];
+      geocoder.setIconStyle(this.iconStyles_[iconCounter]);
+      iconCounter++;
+    }
+  }
+  else
+  {
+    for (i = 0; i < this.waypointGeocoders_.getArray().length; i++)
+    {
+      geocoder = this.waypointGeocoders_.getArray()[i];
+
+      if (geocoder.getLocation())
+      {
+        geocoder.setIconStyle(this.iconStyles_[iconCounter]);
+        iconCounter++;
+      }
+    }
+  }
+
+  if (this.endGeocoder_.getLocation())
+  {
+    this.endGeocoder_.setIconStyle(this.iconStyles_[iconCounter]);
+  }
 };

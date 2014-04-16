@@ -1058,3 +1058,20 @@ ol.control.GoogleMapsGeocoder.prototype.getInputValue = function() {
   return !goog.string.isEmptySafe(this.input_.value) ?
       this.input_.value : null;
 };
+
+
+/**
+ * @param {ol.style.Style} styleObject
+ */
+ol.control.GoogleMapsGeocoder.prototype.setIconStyle = function(styleObject) {
+  this.iconStyle_ = styleObject;
+
+  var vectorSource = this.vectorLayer_.getSource();
+  goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
+
+  var sourceFeatures = vectorSource.getFeatures();
+
+  for (var i = 0; i < sourceFeatures.length; i++)
+    sourceFeatures[i].setStyle(this.iconStyle_);
+
+};
