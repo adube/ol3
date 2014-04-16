@@ -641,14 +641,16 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createStepElement_ =
   });
 
   // maneuver
-  var maneuverEl = goog.dom.createDom(goog.dom.TagName.TD, {
+  var maneuverTDEl = goog.dom.createDom(goog.dom.TagName.TD);
+  goog.dom.appendChild(element, maneuverTDEl);
+  var maneuverEl = goog.dom.createDom(goog.dom.TagName.DIV, {
     'class': classPrefix + '-step-maneuver'
   });
   if (goog.isDefAndNotNull(step.maneuver) && step.maneuver !== '') {
     goog.dom.classes.add(maneuverEl,
         classPrefix + '-step-maneuver-' + step.maneuver);
   }
-  goog.dom.appendChild(element, maneuverEl);
+  goog.dom.appendChild(maneuverTDEl, maneuverEl);
 
   // num
   var numEl = goog.dom.createDom(goog.dom.TagName.TD, {
