@@ -438,7 +438,7 @@ ol.control.GoogleMapsAddresses.prototype.saveAddress_ =
         me.successCallback(me, response);
     } else {
       if (me.failCallback !== null)
-        me.failCallback(me, response);
+        me.failCallback(response, data);
       // TODO: handle errors
       // TODO: remove these lines since they are used only for testing
       /*response = {
@@ -481,6 +481,8 @@ ol.control.GoogleMapsAddresses.prototype.handleSaveAddressSuccess_ =
       this.removeAddress(address);
     }
   } else {
+    if (this.failCallback !== null)
+      this.failCallback(response, data);
     // TODO: handle save address fail
     //this.handleSaveAddressFail_(response, data);
   }
