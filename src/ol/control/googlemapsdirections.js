@@ -640,6 +640,7 @@ ol.control.GoogleMapsDirections.prototype.load = function(source) {
 
   this.loading_ = false;
   this.manageNumWaypoints_();
+  this.updateGeocoders_(object.routes[0].waypoint_order);
 
   goog.events.dispatchEvent(this,
       ol.control.GoogleMapsDirections.EventType.ROUTECOMPLETE);
@@ -1043,7 +1044,9 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
       selectedRouteFeatures.push(routeFeatures.getAt(0));
 
       //Put the right waypoint icon
-      this.updateGeocoders_(response.routes[0].waypoint_order);
+      if (this.loading_ === false) {
+        this.updateGeocoders_(response.routes[0].waypoint_order);
+      }
 
       // draw
       this.drawRoute_();

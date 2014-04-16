@@ -272,12 +272,20 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
     var request = new goog.net.XhrIo();
     var response;
 
+    window.console.log('this.getAddresses_');
+
     goog.events.listen(request, 'complete', function() {
       if (request.isSuccess()) {
+
+        window.console.log('this.getAddresses_ success');
+
         response = request.getResponseJson();
         goog.asserts.assert(goog.isDef(response));
         me.handleGetAddressesSuccess_(response);
       } else {
+
+        window.console.log('this.getAddresses_ else');
+
         // TODO: handle errors
         // TODO: remove these lines since they are used only for testing
         /*response = {

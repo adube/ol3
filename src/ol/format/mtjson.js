@@ -31,6 +31,12 @@ ol.control.MTJSON_ROUTE_SUMMARY = 's';
 
 
 /**
+ * @define {string} the key for a route waypoint orders array in mtjson
+ */
+ol.control.MTJSON_ROUTE_WAYPOINT_ORDER = 'o';
+
+
+/**
  * @define {string} the key for a leg distance object in mtjson
  */
 ol.control.MTJSON_ROUTE_LEG_DISTANCE = 'd';
@@ -296,6 +302,10 @@ ol.format.MTJSON.prototype.readRoute_ = function(sourceRoute) {
   goog.asserts.assertArray(coordinates);
   route.geometry = new ol.geom.LineString(coordinates);
 
+  var waypoint_order = sourceRoute[ol.control.MTJSON_ROUTE_WAYPOINT_ORDER];
+  goog.asserts.assertArray(waypoint_order);
+  route.waypoint_order = waypoint_order;
+
   var legs = sourceRoute[ol.control.MTJSON_ROUTE_LEGS];
   goog.asserts.assertArray(legs);
   route.legs = this.readLegs_(legs);
@@ -507,6 +517,10 @@ ol.format.MTJSON.prototype.writeRoute_ = function(sourceRoute) {
   var geometry = sourceRoute.geometry;
   goog.asserts.assertInstanceof(geometry, ol.geom.LineString);
   route[ol.control.MTJSON_ROUTE_COORDINATES] = geometry.getCoordinates();
+
+  var waypoint_order = sourceRoute.waypoint_order;
+  goog.asserts.assertArray(waypoint_order);
+  route[ol.control.MTJSON_ROUTE_WAYPOINT_ORDER] = waypoint_order;
 
   var legs = sourceRoute.legs;
   goog.asserts.assertArray(legs);
