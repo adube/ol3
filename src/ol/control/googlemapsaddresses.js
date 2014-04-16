@@ -711,4 +711,12 @@ ol.control.GoogleMapsAddresses.prototype.displayLocation_ = function(location) {
   var vectorSource = this.vectorLayer_.getSource();
   goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
   vectorSource.addFeature(feature);
+
+  var size = map.getSize();
+  goog.asserts.assertArray(size);
+
+  var extent = feature.getGeometry().getExtent();
+  extent = ol.extent.buffer(extent, 2000);
+
+  view2D.fitExtent(extent, size);
 };
