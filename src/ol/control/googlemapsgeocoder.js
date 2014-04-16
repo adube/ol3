@@ -677,10 +677,17 @@ ol.control.GoogleMapsGeocoder.prototype.displayGeocodeResults_ = function() {
   var me = this;
 
   goog.array.forEach(this.results_, function(result, index) {
+    var text;
+    if (goog.isDefAndNotNull(result['text'])) {
+      text = result.text;
+    } else {
+      text = result.formatted_address;
+    }
+
     var resultOption = goog.dom.createDom(goog.dom.TagName.LI, {
       'data-result': index
     },
-    result.formatted_address);
+    text);
     me.clickableResultElements_.push(resultOption);
 
     goog.dom.appendChild(me.resultsList_, resultOption);
@@ -909,18 +916,32 @@ ol.control.GoogleMapsGeocoder.prototype.getCurrentPosition_ = function(
     navigator.geolocation.getCurrentPosition(function(position) {
       var lat = position.coords.latitude;
       var lon = position.coords.longitude;
-      var currentPosition = {
-        'formatted_address': me.currentPositionText,
-        'geometry': {
-          'location': new google.maps.LatLng(lat, lon)
-        }
-      };
 
-      me.cacheCurrentPosition_.call(me, currentPosition);
+      var geocoder = me.geocoder_;
+      var latlng = new google.maps.LatLng(lat, lon);
 
-      if (goog.isDefAndNotNull(callback)) {
-        callback.call(me, currentPosition);
-      }
+      geocoder.geocode(
+          {
+            'latLng': latlng
+          },
+          function(results, status) {
+            if (status == 'OK') {
+              var currentPosition = {
+                'formatted_address': results[0].formatted_address,
+                'text': me.currentPositionText,
+                'geometry': {
+                  'location': new google.maps.LatLng(lat, lon)
+                }
+              };
+
+              me.cacheCurrentPosition_.call(me, currentPosition);
+
+              if (goog.isDefAndNotNull(callback)) {
+                callback.call(me, currentPosition);
+              }
+            }
+          }
+      );
     });
   }
 };
