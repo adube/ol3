@@ -162,6 +162,11 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
     goog.events.EventType.INPUT
   ], this.handleInputInput_, false, this);
 
+  var win = goog.dom.getWindow();
+  goog.events.listen(win, [
+    goog.events.EventType.CLICK
+  ], this.handleWindowClick_, false, this);
+
   goog.base(this, {
     element: element,
     target: options.target
@@ -724,10 +729,21 @@ ol.control.GoogleMapsGeocoder.prototype.clearGeocodeResults_ = function() {
  * @param {goog.events.BrowserEvent} browserEvent Browser event.
  * @private
  */
+ol.control.GoogleMapsGeocoder.prototype.handleWindowClick_ = function(
+    browserEvent) {
+  this.clearGeocodeResults_();
+};
+
+
+/**
+ * @param {goog.events.BrowserEvent} browserEvent Browser event.
+ * @private
+ */
 ol.control.GoogleMapsGeocoder.prototype.handleResultOptionPress_ = function(
     browserEvent) {
 
   this.clearGeocodeResults_();
+  browserEvent.stopPropagation();
   var element = browserEvent.currentTarget;
   var index = element.getAttribute('data-result');
   var result = this.results_[index];
@@ -735,7 +751,7 @@ ol.control.GoogleMapsGeocoder.prototype.handleResultOptionPress_ = function(
 
   if (this.enableCurrentPosition_ && (goog.isNull(this.currentPosition_) ||
       goog.isNull(this.currentPosition_.geometry) ||
-      goog.isNull(result.geometry)) &&
+      goog.isNull(result) || goog.isNull(result.geometry)) &&
       index === 0) {
 
     this.getCurrentPosition_(function(currentPosition) {
@@ -913,6 +929,7 @@ ol.control.GoogleMapsGeocoder.prototype.getCurrentPosition_ = function(
       ((goog.isNull(this.currentPosition_) ||
       goog.isNull(this.currentPosition_.geometry)) ||
       force === true)) {
+
     navigator.geolocation.getCurrentPosition(function(position) {
       var lat = position.coords.latitude;
       var lon = position.coords.longitude;
