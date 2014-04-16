@@ -538,7 +538,7 @@ ol.control.GoogleMapsGeocoder.prototype.handleInputInput_ = function(
 
     this.getCurrentPosition_(null, false);
   } else {
-    this.clear_(true);
+    this.clear_();
   }
 };
 
@@ -829,8 +829,8 @@ ol.control.GoogleMapsGeocoder.prototype.displayLocation_ = function(location) {
   lng = location.lng();
   lat = location.lat();
 
-  // clear first
-  this.clear_(false);
+  // clear vector feature
+  this.clearVector_();
 
   // transform received coordinate (which is in lat, lng) into
   // map projection
@@ -858,7 +858,7 @@ ol.control.GoogleMapsGeocoder.prototype.handleClearButtonPress_ = function(
     browserEvent) {
 
   browserEvent.preventDefault();
-  this.clear_(true);
+  this.clear_();
 };
 
 
@@ -895,22 +895,27 @@ ol.control.GoogleMapsGeocoder.prototype.hideRemoveButton = function() {
 
 
 /**
- * @param {boolean} setLocation Whether to set the location value to null or not
  * @private
  */
-ol.control.GoogleMapsGeocoder.prototype.clear_ = function(setLocation) {
+ol.control.GoogleMapsGeocoder.prototype.clear_ = function() {
+  this.clearVector_();
+  this.setValues({'location': null});
+  this.clearGeocodeResults_();
+  this.input_.value = '';
+};
+
+
+/**
+ * Clears the vector layer of any feature it may have.
+ * @private
+ */
+ol.control.GoogleMapsGeocoder.prototype.clearVector_ = function() {
   var location = this.getLocation();
 
   if (goog.isDefAndNotNull(location)) {
     var vectorSource = this.vectorLayer_.getSource();
     goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
     vectorSource.clear();
-
-    if (setLocation) {
-      this.setValues({'location': null});
-    }
-
-    this.clearGeocodeResults_();
   }
 };
 
