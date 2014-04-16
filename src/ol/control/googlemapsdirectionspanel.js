@@ -629,7 +629,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createStepElement_ =
   var maneuverEl = goog.dom.createDom(goog.dom.TagName.TD, {
     'class': classPrefix + '-step-maneuver'
   });
-  if (goog.isDefAndNotNull(step.maneuver)) {
+  if (goog.isDefAndNotNull(step.maneuver) && step.maneuver !== '') {
     goog.dom.classes.add(maneuverEl,
         classPrefix + '-step-maneuver-' + step.maneuver);
   }
