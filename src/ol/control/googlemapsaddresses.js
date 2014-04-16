@@ -274,10 +274,14 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
 
     goog.events.listen(request, 'complete', function() {
       if (request.isSuccess()) {
+
         response = request.getResponseJson();
         goog.asserts.assert(goog.isDef(response));
         me.handleGetAddressesSuccess_(response);
       } else {
+
+        window.console.log('this.getAddresses_ else');
+
         // TODO: handle errors
         // TODO: remove these lines since they are used only for testing
         /*response = {

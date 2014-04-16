@@ -181,6 +181,17 @@ ol.control.GoogleMapsDirections = function(opt_options) {
   this.iconStyles_ = options.iconStyles;
 
   /**
+   * @type {Array}
+   * @private
+   */
+  this.iconImages_ = new Array();
+
+  for (var i = 0; i < this.iconStyles_.length; i++)
+  {
+    this.iconImages_.push(this.iconStyles_[i].getImage().getSrc());
+  }
+
+  /**
    * User provided style for lines.
    * @type {Array.<(null|ol.style.Style)>|null|ol.feature.FeatureStyleFunction|ol.style.Style}
    * @private
@@ -629,6 +640,13 @@ ol.control.GoogleMapsDirections.prototype.load = function(source) {
 
   this.loading_ = false;
   this.manageNumWaypoints_();
+  if (goog.isDefAndNotNull(object.routes) &&
+      goog.isDefAndNotNull(object.routes[0]) &&
+      goog.isDefAndNotNull(object.routes[0].waypoint_order)) {
+    this.updateGeocoders_(object.routes[0].waypoint_order);
+  } else {
+    this.updateGeocoders_([]);
+  }
 
   goog.events.dispatchEvent(this,
       ol.control.GoogleMapsDirections.EventType.ROUTECOMPLETE);
@@ -1032,7 +1050,9 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
       selectedRouteFeatures.push(routeFeatures.getAt(0));
 
       //Put the right waypoint icon
-      this.updateGeocoders_(response.routes[0].waypoint_order);
+      if (this.loading_ === false) {
+        this.updateGeocoders_(response.routes[0].waypoint_order);
+      }
 
       // draw
       this.drawRoute_();
@@ -1041,7 +1061,7 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
       this.fitViewExtentToRoute_();
 
       // set directions in panel
-      this.directionsPanel_.setDirections(response);
+      this.directionsPanel_.setDirections(response, this.iconImages_);
     }
   }
 
