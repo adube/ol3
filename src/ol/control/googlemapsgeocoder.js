@@ -664,24 +664,28 @@ ol.control.GoogleMapsGeocoder.prototype.displayGeocodeResults_ = function() {
 
   goog.array.forEach(this.results_, function(result, index) {
     var text;
-    if (goog.isDefAndNotNull(result['text'])) {
-      text = result.text;
-    } else {
-      text = result.formatted_address;
+
+    if (goog.isDefAndNotNull(result)) {
+      if (goog.isDefAndNotNull(result['text'])) {
+        text = result.text;
+      } else {
+        text = result.formatted_address;
+      }
+
+
+      var resultOption = goog.dom.createDom(goog.dom.TagName.LI, {
+        'data-result': index
+      },
+      text);
+      me.clickableResultElements_.push(resultOption);
+
+      goog.dom.appendChild(me.resultsList_, resultOption);
+
+      goog.events.listen(resultOption, [
+        goog.events.EventType.TOUCHEND,
+        goog.events.EventType.CLICK
+      ], me.handleResultOptionPress_, false, me);
     }
-
-    var resultOption = goog.dom.createDom(goog.dom.TagName.LI, {
-      'data-result': index
-    },
-    text);
-    me.clickableResultElements_.push(resultOption);
-
-    goog.dom.appendChild(me.resultsList_, resultOption);
-
-    goog.events.listen(resultOption, [
-      goog.events.EventType.TOUCHEND,
-      goog.events.EventType.CLICK
-    ], me.handleResultOptionPress_, false, me);
   });
 
   goog.style.setStyle(this.resultsList_, 'display', '');
@@ -730,7 +734,9 @@ ol.control.GoogleMapsGeocoder.prototype.handleResultOptionPress_ = function(
   var element = browserEvent.currentTarget;
   var index = element.getAttribute('data-result');
   var result = this.results_[index];
-  this.input_.value = result.formatted_address;
+  if (goog.isDefAndNotNull(result)) {
+    this.input_.value = result.formatted_address;
+  }
 
   var currentPosition = this.currentPositionControl_.getCurrentPosition();
 
