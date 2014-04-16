@@ -640,7 +640,13 @@ ol.control.GoogleMapsDirections.prototype.load = function(source) {
 
   this.loading_ = false;
   this.manageNumWaypoints_();
-  this.updateGeocoders_(object.routes[0].waypoint_order);
+  if (goog.isDefAndNotNull(object.routes) &&
+      goog.isDefAndNotNull(object.routes[0]) &&
+      goog.isDefAndNotNull(object.routes[0].waypoint_order)) {
+    this.updateGeocoders_(object.routes[0].waypoint_order);
+  } else {
+    this.updateGeocoders_([]);
+  }
 
   goog.events.dispatchEvent(this,
       ol.control.GoogleMapsDirections.EventType.ROUTECOMPLETE);
