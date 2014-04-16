@@ -1,6 +1,7 @@
 goog.require('ol.Map');
 goog.require('ol.View2D');
 goog.require('ol.control.GoogleMapsAddresses');
+goog.require('ol.control.GoogleMapsCurrentPosition');
 goog.require('ol.control.GoogleMapsDirections');
 goog.require('ol.interaction');
 goog.require('ol.interaction.DragPan');
@@ -153,3 +154,17 @@ goog.exportProperty(
 goog.exportSymbol(
     'ol.control.GoogleMapsAddresses',
     ol.control.GoogleMapsAddresses);
+
+goog.exportSymbol(
+    'ol.control.GoogleMapsCurrentPosition',
+    ol.control.GoogleMapsCurrentPosition);
+
+goog.exportProperty(
+    ol.control.GoogleMapsCurrentPosition.prototype,
+    'getCurrentPosition',
+    ol.control.GoogleMapsCurrentPosition.prototype.getCurrentPosition);
+
+goog.exportProperty(
+    ol.control.GoogleMapsCurrentPosition,
+    'currentPosition',
+    ol.control.GoogleMapsCurrentPosition.currentPosition);
