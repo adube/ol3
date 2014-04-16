@@ -277,11 +277,7 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
         response = request.getResponseJson();
         goog.asserts.assert(goog.isDef(response));
         me.handleGetAddressesSuccess_(response);
-        if (me.successCallback !== null)
-          me.successCallback(me, response);
       } else {
-        if (me.failCallback !== null)
-          me.failCallback(me, response);
         // TODO: handle errors
         // TODO: remove these lines since they are used only for testing
         /*response = {
@@ -438,7 +434,11 @@ ol.control.GoogleMapsAddresses.prototype.saveAddress_ =
       response = request.getResponseJson();
       goog.asserts.assert(goog.isDefAndNotNull(response));
       me.handleSaveAddressSuccess_(response, data);
+      if (me.successCallback !== null)
+        me.successCallback(me, response);
     } else {
+      if (me.failCallback !== null)
+        me.failCallback(me, response);
       // TODO: handle errors
       // TODO: remove these lines since they are used only for testing
       /*response = {
