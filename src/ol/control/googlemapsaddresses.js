@@ -66,6 +66,19 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
   this.addButtonText = goog.isDefAndNotNull(options.addButtonText) ?
       options.addButtonText : 'Add address';
 
+  /**
+   * Function to call when save is a success
+   * @type {Function}
+   */
+  this.successCallback = goog.isDefAndNotNull(options.successCallback) ?
+      options.successCallback : null;
+
+  /**
+   * Function to call when save has failed
+   * @type {Function}
+   */
+  this.failCallback = goog.isDefAndNotNull(options.failCallback) ?
+      options.failCallback : null;
 
   var className = 'ol-google-maps-addresses';
 
@@ -264,7 +277,11 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
         response = request.getResponseJson();
         goog.asserts.assert(goog.isDef(response));
         me.handleGetAddressesSuccess_(response);
+        if (me.successCallback !== null)
+          me.successCallback(me, response);
       } else {
+        if (me.failCallback !== null)
+          me.failCallback(me, response);
         // TODO: handle errors
         // TODO: remove these lines since they are used only for testing
         /*response = {
