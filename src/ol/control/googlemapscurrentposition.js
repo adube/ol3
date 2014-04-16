@@ -14,10 +14,12 @@ ol.control.GoogleMapsCurrentPosition = function(opt_options) {
   var options = goog.isDef(opt_options) ? opt_options : {};
 
   /**
+   * @private
    * i18n - currentPosition
    * @type {?string|undefined}
    */
-  this.currentPositionText = goog.isDefAndNotNull(options.currentPositionText) ?
+  this.currentPositionText_ = goog.isDefAndNotNull(
+      options.currentPositionText) ?
       options.currentPositionText : 'My position';
 
   /**
@@ -34,9 +36,10 @@ ol.control.GoogleMapsCurrentPosition = function(opt_options) {
 
 
   /**
+   * @private
    * @type {Object}
    */
-  this.currentPosition = null;
+  this.currentPosition_ = null;
 
   /**
    * @private
@@ -51,13 +54,13 @@ goog.inherits(ol.control.GoogleMapsCurrentPosition, ol.control.Control);
  * @param {Function} callback
  * @param {boolean} force
  */
-ol.control.GoogleMapsCurrentPosition.prototype.getCurrentPosition = function(
+ol.control.GoogleMapsCurrentPosition.prototype.setCurrentPosition = function(
     callback, force) {
   var me = this;
   force = goog.isDefAndNotNull(force) && force === true;
 
-  if ((goog.isNull(this.currentPosition) ||
-      goog.isNull(this.currentPosition.geometry)) ||
+  if ((goog.isNull(this.currentPosition_) ||
+      goog.isNull(this.currentPosition_.geometry)) ||
       force === true) {
 
     navigator.geolocation.getCurrentPosition(function(position) {
@@ -75,7 +78,7 @@ ol.control.GoogleMapsCurrentPosition.prototype.getCurrentPosition = function(
             if (status == 'OK') {
               var currentPosition = {
                 'formatted_address': results[0].formatted_address,
-                'text': me.currentPositionText,
+                'text': me.currentPositionText_,
                 'geometry': {
                   'location': new google.maps.LatLng(lat, lon)
                 }
@@ -95,6 +98,14 @@ ol.control.GoogleMapsCurrentPosition.prototype.getCurrentPosition = function(
 
 
 /**
+ * @return {Object} position
+ */
+ol.control.GoogleMapsCurrentPosition.prototype.getCurrentPosition = function() {
+  return this.currentPosition_;
+};
+
+
+/**
  * @param {Object} currentPosition
  * @private
  */
@@ -102,7 +113,7 @@ ol.control.GoogleMapsCurrentPosition.prototype.cacheCurrentPosition_ = function(
     currentPosition) {
   var me = this;
 
-  this.currentPosition = currentPosition;
+  this.currentPosition_ = currentPosition;
 
   if (this.currentPositionTimeout_) {
     clearTimeout(this.currentPositionTimeout_);
@@ -110,8 +121,8 @@ ol.control.GoogleMapsCurrentPosition.prototype.cacheCurrentPosition_ = function(
 
   if (!goog.isNull(this.currentPositionDelay)) {
     this.currentPositionTimeout_ = setTimeout(function() {
-      me.currentPosition = {
-        'formatted_address': this.currentPositionText,
+      me.currentPosition_ = {
+        'formatted_address': me.currentPositionText_,
         'geometry': null
       };
     }, this.currentPositionDelay);

@@ -165,6 +165,6 @@ goog.exportProperty(
     ol.control.GoogleMapsCurrentPosition.prototype.getCurrentPosition);
 
 goog.exportProperty(
-    ol.control.GoogleMapsCurrentPosition,
-    'currentPosition',
-    ol.control.GoogleMapsCurrentPosition.currentPosition);
+    ol.control.GoogleMapsCurrentPosition.prototype,
+    'setCurrentPosition',
+    ol.control.GoogleMapsCurrentPosition.prototype.setCurrentPosition);

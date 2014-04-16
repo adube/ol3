@@ -248,7 +248,7 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
       goog.isDefAndNotNull(this.currentPositionControl_)) {
 
     this.enableCurrentPosition_ = true;
-    this.currentPositionControl_.getCurrentPosition(null, false);
+    this.currentPositionControl_.setCurrentPosition(null, false);
   } else {
     this.enableCurrentPosition_ = false;
   }
@@ -517,7 +517,7 @@ ol.control.GoogleMapsGeocoder.prototype.handleInputInput_ = function(
       this.resetSearchingTimeout_();
     }
 
-    this.currentPositionControl_.getCurrentPosition(null, false);
+    this.currentPositionControl_.setCurrentPosition(null, false);
   } else {
     this.clear_();
   }
@@ -732,16 +732,18 @@ ol.control.GoogleMapsGeocoder.prototype.handleResultOptionPress_ = function(
   var result = this.results_[index];
   this.input_.value = result.formatted_address;
 
+  var currentPosition = this.currentPositionControl_.getCurrentPosition();
+
   if (this.enableCurrentPosition_ &&
-      (goog.isNull(this.currentPositionControl_.currentPosition) ||
-      goog.isNull(this.currentPositionControl_.currentPosition.geometry) ||
+      (goog.isNull(currentPosition) ||
+      goog.isNull(currentPosition.geometry) ||
       goog.isNull(result) || goog.isNull(result.geometry)) &&
       index == 0) {
 
-    this.currentPositionControl_.getCurrentPosition(
-        function(currentPosition) {
+    this.currentPositionControl_.setCurrentPosition(
+        function(position) {
 
-          me.displayLocation_(currentPosition.geometry.location);
+          me.displayLocation_(position.geometry.location);
         }, true);
   } else {
     this.displayLocation_(result.geometry.location);
@@ -920,7 +922,8 @@ ol.control.GoogleMapsGeocoder.prototype.filterAddresses_ = function(
   var description, add;
 
   if (this.enableCurrentPosition_) {
-    results.push(this.currentPositionControl_.currentPosition);
+    var currentPosition = this.currentPositionControl_.getCurrentPosition();
+    results.push(currentPosition);
   }
 
   if (goog.isDefAndNotNull(value)) {
