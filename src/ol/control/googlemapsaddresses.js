@@ -22,6 +22,7 @@ goog.require('ol.View2D');
 goog.require('ol.control.Control');
 goog.require('ol.control.GoogleMapsGeocoder');
 goog.require('ol.css');
+goog.require('ol.extent');
 goog.require('ol.geom.Point');
 goog.require('ol.layer.Vector');
 goog.require('ol.proj');
