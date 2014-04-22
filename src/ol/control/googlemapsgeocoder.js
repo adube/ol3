@@ -666,7 +666,7 @@ ol.control.GoogleMapsGeocoder.prototype.displayGeocodeResults_ = function() {
     var text;
 
     if (goog.isDefAndNotNull(result)) {
-      if (goog.isDefAndNotNull(result['text'])) {
+      if (goog.isDefAndNotNull(result.text)) {
         text = result.text;
       } else {
         text = result.formatted_address;
@@ -744,7 +744,7 @@ ol.control.GoogleMapsGeocoder.prototype.handleResultOptionPress_ = function(
       (goog.isNull(currentPosition) ||
       goog.isNull(currentPosition.geometry) ||
       goog.isNull(result) || goog.isNull(result.geometry)) &&
-      index == 0) {
+      index === 0) {
 
     this.currentPositionControl_.setCurrentPosition(
         function(position) {
