@@ -255,6 +255,15 @@ ol.control.GoogleMapsDirections = function(opt_options) {
 
 
   /**
+   * Whether to enable detours or not.
+   * @type {boolean}
+   * @private
+   */
+  this.enableDetours_ = goog.isDef(options.enableDetours) ?
+      options.enableDetours : false;
+
+
+  /**
    * @type {?number}
    * @private
    */
@@ -288,23 +297,26 @@ ol.control.GoogleMapsDirections = function(opt_options) {
 
 
   /**
-   * @type {ol.interaction.DryModify}
+   * @type {?ol.interaction.DryModify}
    * @private
    */
-  this.dryModify_ = new ol.interaction.DryModify({
-    features: this.selectedRouteFeatures_,
-    pixelTolerance: goog.isDef(options.modifyPixelTolerance) ?
-        options.modifyPixelTolerance : 8,
-    style: [
-      new ol.style.Style({
-        image: new ol.style.Circle({
-          radius: 5,
-          fill: new ol.style.Fill({color: 'white'}),
-          stroke: new ol.style.Stroke({color: 'black', width: 2})
+  this.dryModify_ = null;
+  if (this.enableDetours_ === true) {
+    this.dryModify_ = new ol.interaction.DryModify({
+      features: this.selectedRouteFeatures_,
+      pixelTolerance: goog.isDef(options.modifyPixelTolerance) ?
+          options.modifyPixelTolerance : 8,
+      style: [
+        new ol.style.Style({
+          image: new ol.style.Circle({
+            radius: 5,
+            fill: new ol.style.Fill({color: 'white'}),
+            stroke: new ol.style.Stroke({color: 'black', width: 2})
+          })
         })
-      })
-    ]
-  });
+      ]
+    });
+  }
 
 
   /**
@@ -1251,6 +1263,10 @@ ol.control.GoogleMapsDirections.prototype.handleHoverStopped_ = function(
 ol.control.GoogleMapsDirections.prototype.manageNumWaypoints_ = function() {
   var map = this.getMap();
   var dryModify = this.dryModify_;
+
+  if (goog.isNull(dryModify)) {
+    return;
+  }
 
   if (this.canAddAnOtherWaypoint_()) {
     goog.events.listen(

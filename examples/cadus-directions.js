@@ -114,6 +114,7 @@ var directions = new ol.control.GoogleMapsDirections({
   'gmap': gmap,
   'target': 'gmaps-directions',
   'enableCurrentPosition': true,
+  'enableDetours': true,
   'currentPositionControl': olCurrentPosition,
   'geocoderComponentRestrictions': {'country': 'CA'},
   'getURL': '/usager/adresses/obtenir',

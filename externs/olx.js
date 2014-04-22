@@ -1020,6 +1020,7 @@ olx.control.GoogleMapsCurrentPositionOptions.prototype.currentPositionText;
  * @typedef {{cornerPixelSize: (number|undefined),
  *     detourIconStyle: (Array.<(null|ol.style.Style)>|null|ol.feature.FeatureStyleFunction|ol.style.Style),
  *     detourLabelProperty: (string|undefined),
+ *     enableDetours: (boolean|undefined),
  *     geocoderComponentRestrictions: (Object|undefined),
  *     iconStyles: (Array.<ol.style.Style>),
  *     lineStyle: (Array.<(null|ol.style.Style)>|null|ol.feature.FeatureStyleFunction|ol.style.Style),
@@ -1064,6 +1065,13 @@ olx.control.GoogleMapsDirectionsOptions.prototype.detourIconStyle;
  * @type {string|undefined}
  */
 olx.control.GoogleMapsDirectionsOptions.prototype.detourLabelProperty;
+
+
+/**
+ * Whether to enable detours or not.
+ * @type {boolean|undefined}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.enableDetours;
 
 
 /**
