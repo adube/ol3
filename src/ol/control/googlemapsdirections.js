@@ -184,7 +184,7 @@ ol.control.GoogleMapsDirections = function(opt_options) {
    * @type {Array}
    * @private
    */
-  this.iconImages_ = new Array();
+  this.iconImages_ = [];
 
   for (var i = 0; i < this.iconStyles_.length; i++)
   {
