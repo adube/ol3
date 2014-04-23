@@ -273,49 +273,6 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
   this.getURL_ = goog.isDefAndNotNull(options.getURL) ?
       options.getURL : null;
 
-
-  /**
-   * @this {ol.control.GoogleMapsGeocoder}
-   * @private
-   */
-  this.getAddresses_ = function() {
-    var me = this;
-    var url = this.getURL_;
-    var request = new goog.net.XhrIo();
-    var response;
-
-    goog.events.listen(request, 'complete', function() {
-      if (request.isSuccess()) {
-        response = request.getResponseJson();
-        goog.asserts.assert(goog.isDef(response));
-        me.handleGetAddressesSuccess_(response);
-      } else {
-        // TODO: handle errors
-      }
-    });
-
-    request.send(url, 'GET');
-  };
-
-
-  /**
-   * @this {ol.control.GoogleMapsAddresses}
-   * @param {Object} response response received the request
-   * @private
-   */
-  this.handleGetAddressesSuccess_ = function(response) {
-    var me = this;
-
-    if (response.status == 1) {
-      goog.array.forEach(response.addresses, function(address) {
-        me.addAddress(address);
-      });
-    } else {
-      // TODO: handle get addresses fail
-      //this.handleGetAddressesFail_(response);
-    }
-  };
-
   if (goog.isDefAndNotNull(this.getURL_)) {
     this.getAddresses_();
   }
@@ -343,7 +300,8 @@ ol.control.GoogleMapsGeocoder.Property = {
 /**
  * @param {Object} address address
  */
-ol.control.GoogleMapsGeocoder.prototype.addAddress = function(address) {
+ol.control.GoogleMapsGeocoder.prototype.addAdditionalAddress =
+    function(address) {
   this.additionalAddresses.push(address);
 };
 
@@ -998,3 +956,48 @@ ol.control.GoogleMapsGeocoder.prototype.setIconStyle = function(styleObject) {
     sourceFeatures[i].setStyle(this.iconStyle_);
 
 };
+
+
+/**
+ * @this {ol.control.GoogleMapsGeocoder}
+ * @private
+ */
+ol.control.GoogleMapsGeocoder.prototype.getAddresses_ = function() {
+  var me = this;
+  var url = this.getURL_;
+  var request = new goog.net.XhrIo();
+  var response;
+
+  goog.events.listen(request, 'complete', function() {
+    if (request.isSuccess()) {
+      response = request.getResponseJson();
+      goog.asserts.assert(goog.isDef(response));
+      me.handleGetAddressesSuccess_(response);
+    } else {
+      // TODO: handle errors
+    }
+  });
+
+  request.send(url, 'GET');
+};
+
+
+/**
+ * @this {ol.control.GoogleMapsGeocoder}
+ * @param {Object} response response received the request
+ * @private
+ */
+ol.control.GoogleMapsGeocoder.prototype.handleGetAddressesSuccess_ = function(response) {
+  var me = this;
+
+  if (response.status == 1) {
+    goog.array.forEach(response.addresses, function(address) {
+      me.addAdditionalAddress(address);
+    });
+  } else {
+    // TODO: handle get addresses fail
+    //this.handleGetAddressesFail_(response);
+  }
+};
+
+
