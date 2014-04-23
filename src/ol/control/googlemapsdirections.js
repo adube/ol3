@@ -6,6 +6,8 @@ goog.require('goog.dom');
 goog.require('goog.dom.TagName');
 goog.require('goog.events');
 goog.require('goog.events.EventType');
+goog.require('goog.net.EventType');
+goog.require('goog.net.XhrIo');
 goog.require('ol.Collection');
 goog.require('ol.Feature');
 goog.require('ol.MapBrowserEvent.EventType');
@@ -1264,6 +1266,8 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
 
   if (status == google.maps.DirectionsStatus.OK) {
     goog.array.forEach(response.routes, function(route) {
+      geometry = null;
+
       if (goog.isDefAndNotNull(route.overview_path)) {
         coordinates = [];
         goog.array.forEach(route.overview_path, function(location) {
@@ -1274,9 +1278,17 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
           coordinates.push(transformedCoordinate);
         }, this);
         geometry = new ol.geom.LineString(coordinates);
-      } else {
+      } else if (goog.isDef(route.geometry)) {
         geometry = route.geometry;
+      } else if (goog.isDef(route.coordinates)) {
+        geometry = new ol.geom.LineString(route.coordinates);
       }
+
+      if (goog.isNull(geometry)) {
+        // todo - manage error
+        return;
+      }
+
       feature = new ol.Feature(geometry);
       feature.setStyle(this.lineStyle_);
       routeFeatures.push(feature);
@@ -1613,8 +1625,66 @@ ol.control.GoogleMapsDirections.prototype.route_ = function(start, end) {
 ol.control.GoogleMapsDirections.prototype.routeMultimodal_ = function(
     start, end) {
 
-  window.console.log('routeMultimodal');
+  var request = new goog.net.XhrIo();
+  var url = this.multimodalUrl_;
 
+  var map = this.getMap();
+
+  var view = map.getView();
+  goog.asserts.assert(goog.isDef(view));
+  var view2D = view.getView2D();
+  goog.asserts.assertInstanceof(view2D, ol.View2D);
+
+  var projection = view2D.getProjection();
+
+  // fetch travel modes
+  var travelModes = this.getCheckedTravelModes_();
+  if (!travelModes.length) {
+    // todo - should throw/display an error
+    // "You must select at least one travel mode"
+    return;
+  }
+
+  // transform start and end as coordinates
+  var startCoordinate = ol.proj.transform(
+      [start.lng(), start.lat()], 'EPSG:4326', projection.getCode());
+  var endCoordinate = ol.proj.transform(
+      [end.lng(), end.lat()], 'EPSG:4326', projection.getCode());
+
+  // fetch waypoints
+  var waypointGeocoders = this.waypointGeocoders_;
+  var waypointCoordinate;
+  var reqWaypoints = [];
+  waypointGeocoders.forEach(function(waypointGeocoder) {
+    waypointCoordinate = waypointGeocoder.getCoordinate();
+    if (goog.isDefAndNotNull(waypointCoordinate)) {
+      reqWaypoints.push(waypointCoordinate);
+    }
+  }, this);
+
+  // params
+  var params = {
+    start_coordinate: startCoordinate,
+    end_coordinate: endCoordinate,
+    waypoints: reqWaypoints,
+    travelModes: travelModes
+  };
+
+  // listen once to 'complete' event
+  goog.events.listenOnce(request, goog.net.EventType.COMPLETE, function(event) {
+    var request = event.currentTarget;
+    if (request.isSuccess()) {
+      var response = request.getResponseJson();
+      this.handleDirectionsResult_(response, google.maps.DirectionsStatus.OK);
+    } else {
+      // todo - manage error
+    }
+  }, undefined, this);
+
+  // FIXME - set url as POST and use params
+  //request.send(url, 'POST');
+  request.send(url, 'GET');
+  window.console.log(params);
 };
 
 
