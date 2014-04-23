@@ -30,7 +30,7 @@
               },
               "instructions" : "<strong>Prendre la direction</strong> \u003cb\u003enord-ouest\u003c/b\u003e sur \u003cb\u003eRue Louis Fréchette\u003c/b\u003e vers \u003cb\u003eRue Pouliot\u003c/b\u003e",
               "start_coordinate" : [-7913421, 6176034],
-              "maneuver": 'turn-left',
+              "maneuver": "turn-left",
               "travel_mode" : "DRIVING"
             }
           ]
