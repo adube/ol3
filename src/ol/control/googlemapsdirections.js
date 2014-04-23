@@ -938,6 +938,50 @@ ol.control.GoogleMapsDirections.prototype.canAddAnOtherWaypoint_ = function() {
 
 
 /**
+ * Returns whether we can or can't use the multimodal routing service, i.e.
+ * using the user-custom multimodal url
+ * @return {boolean}
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.canUseMultimodalRoute_ = function() {
+  return !goog.isNull(this.multimodalUrl_);
+};
+
+
+/**
+ * Returns whether we can or can't use the unimodal routing service, i.e.
+ * the GoogleMaps Routing service.
+ * @return {boolean}
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.canUseUnimodalRoute_ = function() {
+  var can = true;
+  var checkedTravelModes;
+
+  if (this.canUseMultimodalRoute_()) {
+    checkedTravelModes = this.getCheckedTravelModes_();
+
+    if (checkedTravelModes.length === 0) {
+      // FIXME: we should validate this first elsewhere !
+      can = false;
+    } else if (checkedTravelModes.length === 1) {
+      var checkedTravelMode = checkedTravelModes[0];
+      var travelMode = ol.control.GoogleMapsDirections.TravelMode;
+      if (checkedTravelMode !== travelMode.BICYCLING &&
+          checkedTravelMode !== travelMode.DRIVING &&
+          checkedTravelMode !== travelMode.WALKING) {
+        can = false;
+      }
+    } else {
+      can = false;
+    }
+  }
+
+  return can;
+};
+
+
+/**
  * @private
  */
 ol.control.GoogleMapsDirections.prototype.clear_ = function() {
@@ -1124,6 +1168,36 @@ ol.control.GoogleMapsDirections.prototype.getCheckedTravelModes_ =
   }, this);
 
   return elements;
+};
+
+
+/**
+ * Returns the according google maps travel mode property using a given
+ * inner travel mode.
+ * @param {string} innerTravelMode
+ * @return {google.maps.TravelMode.<(number|string)>|string}
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.getGoogleMapsTravelMode_ = function(
+    innerTravelMode) {
+  var googleMapsTravelMode = '';
+
+  switch (innerTravelMode) {
+    case ol.control.GoogleMapsDirections.TravelMode.BICYCLING:
+      googleMapsTravelMode = google.maps.TravelMode.BICYCLING;
+      break;
+    case ol.control.GoogleMapsDirections.TravelMode.DRIVING:
+      googleMapsTravelMode = google.maps.TravelMode.DRIVING;
+      break;
+    case ol.control.GoogleMapsDirections.TravelMode.TRANSIT:
+      googleMapsTravelMode = google.maps.TravelMode.TRANSIT;
+      break;
+    case ol.control.GoogleMapsDirections.TravelMode.WALKING:
+      googleMapsTravelMode = google.maps.TravelMode.WALKING;
+      break;
+  }
+
+  return googleMapsTravelMode;
 };
 
 
@@ -1513,13 +1587,6 @@ ol.control.GoogleMapsDirections.prototype.removeWaypointGeocoder_ = function(
  * @private
  */
 ol.control.GoogleMapsDirections.prototype.route_ = function(start, end) {
-
-  var me = this;
-  var service = this.directionsService_;
-
-  // todo - fixme
-  window.console.log(this.getCheckedTravelModes_());
-
   start = (goog.isDefAndNotNull(start)) ?
       start : this.startGeocoder_.getLocation();
   end = (goog.isDefAndNotNull(end)) ?
@@ -1528,6 +1595,62 @@ ol.control.GoogleMapsDirections.prototype.route_ = function(start, end) {
   if (!goog.isDefAndNotNull(start) || !goog.isDefAndNotNull(end)) {
     // todo: throw error
     return;
+  }
+
+  if (this.canUseUnimodalRoute_()) {
+    this.routeUnimodal_(start, end);
+  } else {
+    this.routeMultimodal_(start, end);
+  }
+};
+
+
+/**
+ * @param {google.maps.LatLng} start Location
+ * @param {google.maps.LatLng} end Location
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.routeMultimodal_ = function(
+    start, end) {
+
+  window.console.log('routeMultimodal');
+
+};
+
+
+/**
+ * @param {google.maps.LatLng} start Location
+ * @param {google.maps.LatLng} end Location
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.routeUnimodal_ = function(
+    start, end) {
+
+  var me = this;
+  var service = this.directionsService_;
+  var canUseMultimodal = this.canUseUnimodalRoute_();
+  var travelMode;
+
+  // when doing an unimodal routing, if you could do a multimodal one, that
+  // means the 'travel mode checkboxes' are available and can be used
+  // to dertermine the travel mode...
+  if (canUseMultimodal) {
+    var checkedTravelModes = this.getCheckedTravelModes_();
+
+    if (!checkedTravelModes.length) {
+      // todo - should throw/display an error
+      // "You must select at least one travel mode"
+      return;
+    }
+
+    travelMode = this.getGoogleMapsTravelMode_(checkedTravelModes[0]);
+
+    if (travelMode === '') {
+      // todo - manage this error
+      return;
+    }
+  } else {
+    travelMode = google.maps.TravelMode.DRIVING;
   }
 
   var map = this.getMap();
@@ -1570,7 +1693,7 @@ ol.control.GoogleMapsDirections.prototype.route_ = function(start, end) {
     destination: end,
     waypoints: reqWaypoints,
     optimizeWaypoints: true,
-    travelMode: google.maps.TravelMode.DRIVING,
+    travelMode: travelMode,
     provideRouteAlternatives: true
   };
 
