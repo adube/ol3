@@ -1628,7 +1628,7 @@ ol.control.GoogleMapsDirections.prototype.routeUnimodal_ = function(
 
   var me = this;
   var service = this.directionsService_;
-  var canUseMultimodal = this.canUseUnimodalRoute_();
+  var canUseMultimodal = this.canUseMultimodalRoute_();
   var travelMode;
 
   // when doing an unimodal routing, if you could do a multimodal one, that
