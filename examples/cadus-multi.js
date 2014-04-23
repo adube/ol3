@@ -130,6 +130,7 @@ var directions = new ol.control.GoogleMapsDirections({
   'currentPositionControl': olCurrentPosition,
   'geocoderComponentRestrictions': {'country': 'CA'},
   'getURL': '/usager/adresses/obtenir',
+  'multimodalUrl': 'data/cadus/multimodal.json',
   'addWaypointButtonText': 'Ajouter un point',
   'currentPositionText': 'Ma position',
   'searchButtonText': 'Rechercher',
