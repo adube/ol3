@@ -142,6 +142,37 @@ goog.exportProperty(
     'SELECT',
     ol.control.GoogleMapsDirections.EventType.SELECT);
 
+goog.exportProperty(
+    ol.control.GoogleMapsDirections,
+    'TravelMode',
+    ol.control.GoogleMapsDirections.TravelMode);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirections.TravelMode,
+    'BICYCLING',
+    ol.control.GoogleMapsDirections.TravelMode.BICYCLING);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirections.TravelMode,
+    'CARPOOLING',
+    ol.control.GoogleMapsDirections.TravelMode.CARPOOLING);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirections.TravelMode,
+    'DRIVING',
+    ol.control.GoogleMapsDirections.TravelMode.DRIVING);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirections.TravelMode,
+    'TRANSIT',
+    ol.control.GoogleMapsDirections.TravelMode.TRANSIT);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirections.TravelMode,
+    'WALKING',
+    ol.control.GoogleMapsDirections.TravelMode.WALKING);
+
+
 goog.exportSymbol(
     'ol.style.Icon',
     ol.style.Icon);

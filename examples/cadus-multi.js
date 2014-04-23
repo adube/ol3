@@ -128,6 +128,11 @@ var directions = new ol.control.GoogleMapsDirections({
   'target': 'gmaps-directions',
   'enableCurrentPosition': true,
   'currentPositionControl': olCurrentPosition,
+  'defaultTravelModes': [
+    ol.control.GoogleMapsDirections.TravelMode.CARPOOLING,
+    ol.control.GoogleMapsDirections.TravelMode.TRANSIT,
+    ol.control.GoogleMapsDirections.TravelMode.WALKING
+  ],
   'geocoderComponentRestrictions': {'country': 'CA'},
   'getURL': '/usager/adresses/obtenir',
   'multimodalUrl': 'data/cadus/multimodal.json',
@@ -140,6 +145,11 @@ var directions = new ol.control.GoogleMapsDirections({
   'aroundText': 'environ',
   'copyrightText': 'Données cartographiques ©2014 Google',
   'totalDistanceText': 'Distance Totale',
+  'bicyclingText': 'Bicyclette',
+  'carpoolingText': 'Covoiturage',
+  'drivingText': 'Auto-Solo',
+  'transitText': 'Autobus',
+  'walkingText': 'Marche',
   'lineStyle': new ol.style.Style({
     stroke: new ol.style.Stroke({
       color: [80, 140, 255, 0.6],

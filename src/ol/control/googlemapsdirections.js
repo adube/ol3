@@ -129,12 +129,132 @@ ol.control.GoogleMapsDirections = function(opt_options) {
       goog.isDefAndNotNull(options.totalDistanceText) ?
           options.totalDistanceText : undefined;
 
+  /**
+   * i18n - bicycling
+   * @type {string}
+   */
+  this.bicyclingText = goog.isDef(options.bicyclingText) ?
+      options.bicyclingText : 'Bicycling';
+
+  /**
+   * i18n - carpooling
+   * @type {string}
+   */
+  this.carpoolingText = goog.isDef(options.carpoolingText) ?
+      options.carpoolingText : 'Carpooling';
+
+  /**
+   * i18n - driving
+   * @type {string}
+   */
+  this.drivingText = goog.isDef(options.drivingText) ?
+      options.drivingText : 'Driving';
+
+  /**
+   * i18n - transit
+   * @type {string}
+   */
+  this.transitText = goog.isDef(options.transitText) ?
+      options.transitText : 'Transit';
+
+  /**
+   * i18n - walking
+   * @type {string}
+   */
+  this.walkingText = goog.isDef(options.walkingText) ?
+      options.walkingText : 'Walking';
+
+
+  /**
+   * Travel modes that should be checked by default.  Values can be:
+   * 'bicycling', 'carpooling', 'driving', 'transit', 'walking'.
+   * @type {Array.<string>}
+   * @private
+   */
+  this.defaultTravelModes_ = goog.isDef(options.defaultTravelModes) ?
+      options.defaultTravelModes :
+      [ol.control.GoogleMapsDirections.TravelMode.DRIVING];
+
+
+  /**
+   * Collection of travel mode input elements
+   * @type {ol.Collection}
+   * @private
+   */
+  this.travelModeInputElements_ = new ol.Collection();
+
 
   var classPrefix = 'ol-gmds';
 
   var element = goog.dom.createDom(goog.dom.TagName.DIV, {
     'class': classPrefix + ' ' + ol.css.CLASS_UNSELECTABLE
   });
+
+
+  /**
+   * @type {?string}
+   * @private
+   */
+  this.multimodalUrl_ = goog.isDef(options.multimodalUrl) ?
+      options.multimodalUrl : null;
+
+
+  // multimodal elements, if set
+  if (!goog.isNull(this.multimodalUrl_)) {
+    var fieldsetEl = goog.dom.createDom(goog.dom.TagName.FIELDSET, {
+    });
+    goog.dom.appendChild(element, fieldsetEl);
+
+    // we may want to set this as an option to control the order
+    var travelModes = [
+      ol.control.GoogleMapsDirections.TravelMode.BICYCLING,
+      ol.control.GoogleMapsDirections.TravelMode.CARPOOLING,
+      ol.control.GoogleMapsDirections.TravelMode.DRIVING,
+      ol.control.GoogleMapsDirections.TravelMode.TRANSIT,
+      ol.control.GoogleMapsDirections.TravelMode.WALKING
+    ];
+
+    goog.array.forEach(travelModes, function(travelMode) {
+      var labelText = '';
+      switch (travelMode) {
+        case ol.control.GoogleMapsDirections.TravelMode.BICYCLING:
+          labelText = this.bicyclingText;
+          break;
+        case ol.control.GoogleMapsDirections.TravelMode.CARPOOLING:
+          labelText = this.carpoolingText;
+          break;
+        case ol.control.GoogleMapsDirections.TravelMode.DRIVING:
+          labelText = this.drivingText;
+          break;
+        case ol.control.GoogleMapsDirections.TravelMode.TRANSIT:
+          labelText = this.transitText;
+          break;
+        case ol.control.GoogleMapsDirections.TravelMode.WALKING:
+          labelText = this.walkingText;
+          break;
+      }
+
+      var inputOptions = {
+        'type': 'checkbox',
+        'name': travelMode
+      };
+
+      if (goog.array.indexOf(this.defaultTravelModes_, travelMode) != -1) {
+        inputOptions.checked = 'checked';
+      }
+
+      var inputEl = goog.dom.createDom(goog.dom.TagName.INPUT, inputOptions);
+      goog.dom.appendChild(fieldsetEl, inputEl);
+
+      this.travelModeInputElements_.push(inputEl);
+
+      var labelEl = goog.dom.createDom(goog.dom.TagName.LABEL, {
+      });
+      goog.dom.appendChild(fieldsetEl, labelEl);
+      goog.dom.appendChild(labelEl, goog.dom.createTextNode(labelText));
+    }, this);
+  }
+
 
   var addWaypointGeocoderButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
     'class': classPrefix + '-add-waypoint-button'
@@ -488,6 +608,18 @@ ol.control.GoogleMapsDirections.EventType = {
   CLEAR: goog.events.getUniqueId('clear'),
   ROUTECOMPLETE: goog.events.getUniqueId('routecomplete'),
   SELECT: goog.events.getUniqueId('select')
+};
+
+
+/**
+ * @enum {string}
+ */
+ol.control.GoogleMapsDirections.TravelMode = {
+  BICYCLING: 'bicycling',
+  CARPOOLING: 'carpooling',
+  DRIVING: 'driving',
+  TRANSIT: 'transit',
+  WALKING: 'walking'
 };
 
 
@@ -977,6 +1109,25 @@ ol.control.GoogleMapsDirections.prototype.fitViewExtentToRoute_ = function() {
 
 
 /**
+ * Returns the list of currently checked travel mode ids
+ * @return {Array.<string>}
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.getCheckedTravelModes_ =
+    function() {
+  var elements = [];
+
+  this.travelModeInputElements_.forEach(function(inputEl) {
+    if (inputEl.checked === true) {
+      elements.push(inputEl.name);
+    }
+  }, this);
+
+  return elements;
+};
+
+
+/**
  * @param {ol.Pixel} pixel Pixel.
  * @return {?ol.Feature}
  * @private
@@ -1365,6 +1516,9 @@ ol.control.GoogleMapsDirections.prototype.route_ = function(start, end) {
 
   var me = this;
   var service = this.directionsService_;
+
+  // todo - fixme
+  window.console.log(this.getCheckedTravelModes_());
 
   start = (goog.isDefAndNotNull(start)) ?
       start : this.startGeocoder_.getLocation();
