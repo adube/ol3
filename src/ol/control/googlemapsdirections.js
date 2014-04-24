@@ -1,13 +1,16 @@
 goog.provide('ol.control.GoogleMapsDirections');
 
+goog.require('goog.Uri.QueryData');
 goog.require('goog.array');
 goog.require('goog.asserts');
 goog.require('goog.dom');
 goog.require('goog.dom.TagName');
 goog.require('goog.events');
 goog.require('goog.events.EventType');
+goog.require('goog.json');
 goog.require('goog.net.EventType');
 goog.require('goog.net.XhrIo');
+goog.require('goog.structs.Map');
 goog.require('ol.Collection');
 goog.require('ol.Feature');
 goog.require('ol.MapBrowserEvent.EventType');
@@ -1662,13 +1665,13 @@ ol.control.GoogleMapsDirections.prototype.routeMultimodal_ = function(
     }
   }, this);
 
-  // params
-  var params = {
-    start_coordinate: startCoordinate,
-    end_coordinate: endCoordinate,
-    waypoints: reqWaypoints,
-    travelModes: travelModes
-  };
+  var data = goog.Uri.QueryData.createFromMap(
+      new goog.structs.Map({
+        start_coordinate: goog.json.serialize(startCoordinate),
+        end_coordinate: goog.json.serialize(endCoordinate),
+        waypoints: goog.json.serialize(reqWaypoints),
+        travelModes: goog.json.serialize(travelModes)
+      }));
 
   // listen once to 'complete' event
   goog.events.listenOnce(request, goog.net.EventType.COMPLETE, function(event) {
@@ -1681,10 +1684,7 @@ ol.control.GoogleMapsDirections.prototype.routeMultimodal_ = function(
     }
   }, undefined, this);
 
-  // FIXME - set url as POST and use params
-  //request.send(url, 'POST');
-  request.send(url, 'GET');
-  window.console.log(params);
+  request.send(url, 'POST', data.toString());
 };
 
 
