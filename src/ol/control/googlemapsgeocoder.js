@@ -192,10 +192,10 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
   /**
    * @type {Array}
    */
-  if (goog.isDefAndNotNull(options.additionalAddresses) &&
-      goog.isArray(options.additionalAddresses)) {
+  if (goog.isDefAndNotNull(options['additionalAddresses']) &&
+      goog.isArray(options['additionalAddresses'])) {
 
-    this.additionalAddresses = options.additionalAddresses;
+    this.additionalAddresses = options['additionalAddresses'];
   } else {
     this.additionalAddresses = [];
   }
@@ -920,13 +920,17 @@ ol.control.GoogleMapsGeocoder.prototype.filterAddresses_ = function(
  */
 ol.control.GoogleMapsGeocoder.prototype.formatAdress_ = function(
     address) {
-
+  /*jshint -W069 */
+  /*Disable Warning Justification:
+    Using bracket notation so Google Closure Compiler
+    ADVANCED_OPTIMIZATIONS will keep the original property names. */
   return {
-    'formatted_address': address.description,
+    'formatted_address': address['description'],
     'geometry': {
-      'location': new google.maps.LatLng(address.lat,
-          address.lon)
+      'location': new google.maps.LatLng(address['lat'],
+          address['lon'])
     }
+    /*jshint +W069 */
   };
 };
 
@@ -987,7 +991,8 @@ ol.control.GoogleMapsGeocoder.prototype.getAddresses_ = function() {
  * @param {Object} response response received the request
  * @private
  */
-ol.control.GoogleMapsGeocoder.prototype.handleGetAddressesSuccess_ = function(response) {
+ol.control.GoogleMapsGeocoder.prototype.handleGetAddressesSuccess_ =
+    function(response) {
   var me = this;
 
   if (response.status == 1) {
@@ -999,5 +1004,3 @@ ol.control.GoogleMapsGeocoder.prototype.handleGetAddressesSuccess_ = function(re
     //this.handleGetAddressesFail_(response);
   }
 };
-
-
