@@ -1684,7 +1684,8 @@ ol.control.GoogleMapsDirections.prototype.routeMultimodal_ = function(
     }
   }, undefined, this);
 
-  request.send(url, 'POST', data.toString());
+  //request.send(url, 'POST', data.toString());
+  request.send(url, 'GET', data.toString());
 };
 
 
