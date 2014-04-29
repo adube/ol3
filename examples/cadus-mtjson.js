@@ -286,7 +286,8 @@ var read = function() {
     ],
     'd': [
       [-7911233, 6178604]
-    ]
+    ],
+    'm': ['driving', 'carpooling', 'walking']
   };
 
   directions.load(config);

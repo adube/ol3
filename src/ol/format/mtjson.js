@@ -176,6 +176,12 @@ ol.control.MTJSON_LOCATION_COORDINATE = 'c';
 ol.control.MTJSON_DETOURS = 'd';
 
 
+/**
+ * @define {string} the key for the travel modes array in mtjson
+ */
+ol.control.MTJSON_TRAVEL_MODES = 'm';
+
+
 
 /**
  * Todo
@@ -225,6 +231,11 @@ ol.format.MTJSON.prototype.read = function(source) {
   goog.asserts.assertArray(detours);
   object.detours = this.readDetours_(detours);
 
+  // travel modes
+  var travelModes = sourceObj[ol.control.MTJSON_TRAVEL_MODES];
+  goog.asserts.assertArray(travelModes);
+  object.travel_modes = travelModes;
+
   return object;
 };
 
@@ -262,6 +273,11 @@ ol.format.MTJSON.prototype.write = function(sourceObj, serialize) {
   var detours = sourceObj.detours;
   goog.asserts.assertArray(detours);
   object[ol.control.MTJSON_DETOURS] = this.writeDetours_(detours);
+
+  // travel modes
+  var travelModes = sourceObj.travel_modes;
+  goog.asserts.assertArray(travelModes);
+  object[ol.control.MTJSON_TRAVEL_MODES] = travelModes;
 
   if (serialize === true) {
     return goog.json.serialize(object);

@@ -799,6 +799,9 @@ ol.control.GoogleMapsDirections.prototype.load = function(source) {
     }, this);
   }
 
+  // travel modes
+  this.toggleTravelModes_(object.travel_modes);
+
   // routes
   this.handleDirectionsResult_(object, google.maps.DirectionsStatus.OK);
 
@@ -848,6 +851,9 @@ ol.control.GoogleMapsDirections.prototype.save = function() {
   var format = this.format_;
 
   var source = {};
+
+  // travel modes
+  source.travel_modes = this.getCheckedTravelModes_(true);
 
   // routes
   var selectedRoute = this.directionsPanel_.getSelectedRoute();
@@ -1168,17 +1174,20 @@ ol.control.GoogleMapsDirections.prototype.fitViewExtentToRoute_ = function() {
  *
  * 'transit' - has to be temporarly ignored when checked because it is not
  *     yet available in Google Maps.
+ * @param {boolean} includeIgnored Whether to include the ignored checked
+ *     elements or not
  * @return {Array.<string>}
  * @private
  */
 ol.control.GoogleMapsDirections.prototype.getCheckedTravelModes_ =
-    function() {
+    function(includeIgnored) {
   var elements = [];
 
   this.travelModeInputElements_.forEach(function(inputEl) {
     if (inputEl.checked === true) {
       // todo - ENABLE_TRANSIT - remove this when transit become available
-      if (inputEl.name != ol.control.GoogleMapsDirections.TravelMode.TRANSIT) {
+      if (includeIgnored ||
+          inputEl.name != ol.control.GoogleMapsDirections.TravelMode.TRANSIT) {
         elements.push(inputEl.name);
       }
     }
@@ -1674,7 +1683,7 @@ ol.control.GoogleMapsDirections.prototype.route_ = function(start, end) {
   }
 
   // fetch travel modes
-  var travelModes = this.getCheckedTravelModes_();
+  var travelModes = this.getCheckedTravelModes_(false);
   if (!travelModes.length) {
     // force 'driving' travel mode if none was selected
     travelModes.push(ol.control.GoogleMapsDirections.TravelMode.DRIVING);
@@ -1961,13 +1970,32 @@ ol.control.GoogleMapsDirections.prototype.toggleGeocoderReverseGeocodings_ =
 
 };
 
+
+/**
+ * Browse each travel mode input element.  Check or uncheck accordingly.
+ * @param {Array.<string>} travelModesToCheck Travel modes to check
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.toggleTravelModes_ =
+    function(travelModesToCheck) {
+
+  this.travelModeInputElements_.forEach(function(inputEl) {
+    if (goog.array.indexOf(travelModesToCheck, inputEl.name) != -1) {
+      inputEl.checked = true;
+    } else {
+      inputEl.checked = false;
+    }
+  }, this);
+
+};
+
+
 /**
  * Fetch all the created geocoder and set their style according
  * to their position on the desired route
  * @param {Array|undefined} orders
  * @private
  */
-
 ol.control.GoogleMapsDirections.prototype.updateGeocoders_ =
     function(orders) {
   var geocoder;
