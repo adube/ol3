@@ -114,6 +114,11 @@ goog.exportProperty(
 
 goog.exportProperty(
     ol.control.GoogleMapsDirections.prototype,
+    'loadQueryParams',
+    ol.control.GoogleMapsDirections.prototype.loadQueryParams);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirections.prototype,
     'on',
     ol.control.GoogleMapsDirections.prototype.on);
 
@@ -121,6 +126,11 @@ goog.exportProperty(
     ol.control.GoogleMapsDirections.prototype,
     'save',
     ol.control.GoogleMapsDirections.prototype.save);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirections.prototype,
+    'saveQueryParams',
+    ol.control.GoogleMapsDirections.prototype.saveQueryParams);
 
 goog.exportProperty(
     ol.control.GoogleMapsDirections,
