@@ -144,6 +144,21 @@ goog.exportProperty(
 
 goog.exportProperty(
     ol.control.GoogleMapsDirections,
+    'Mode',
+    ol.control.GoogleMapsDirections.Mode);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirections.Mode,
+    'SINGLE',
+    ol.control.GoogleMapsDirections.Mode.SINGLE);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirections.Mode,
+    'MULTIPLE',
+    ol.control.GoogleMapsDirections.Mode.MULTIPLE);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirections,
     'TravelMode',
     ol.control.GoogleMapsDirections.TravelMode);
 

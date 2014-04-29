@@ -1026,7 +1026,9 @@ olx.control.GoogleMapsCurrentPositionOptions.prototype.currentPositionText;
  *     iconStyles: (Array.<ol.style.Style>),
  *     lineStyle: (Array.<(null|ol.style.Style)>|null|ol.feature.FeatureStyleFunction|ol.style.Style),
  *     maxWaypoints: (number|undefined),
+ *     mode: (string|undefined),
  *     modifyPixelTolerance: (number|undefined),
+ *     multimodalUrl: (string|undefined),
  *     panel: (Element),
  *     pixelBuffer: (number|undefined),
  *     routeDelayOnWaypointDrag: (number|undefined),
@@ -1117,11 +1119,32 @@ olx.control.GoogleMapsDirectionsOptions.prototype.maxWaypoints;
 
 
 /**
+ * How this widget should behave when more than one travel mode is selected.
+ * Possible values are:
+ *  - 'single': only one travel mode will be used in the request. The one with
+ *              the highest priority will be used
+ *  - 'multiple': all travel modes will be used in the request.  Requires a
+ *                multimodalUrl to be set to work properly.
+ * @type {string|undefined}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.mode;
+
+
+/**
  * Pixel tolerance for considering the pointer close enough to a vertex for
  * editing. Default is 8 pixels.
  * @type {number|undefined}
  */
 olx.control.GoogleMapsDirectionsOptions.prototype.modifyPixelTolerance;
+
+
+/**
+ * The alternate url to use in case of a request not supported by GoogleMaps,
+ * for example a request using TRANSIT as travel mode in Saguenay, or a
+ * multimodal request.
+ * @type {string|undefined}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.multimodalUrl;
 
 
 /**

@@ -197,6 +197,35 @@ ol.control.GoogleMapsDirections = function(opt_options) {
 
 
   /**
+   * How this widget should behave when more than one travel mode is selected.
+   * Possible values are:
+   *  - 'single': only one travel mode will be used in the request. The one with
+   *              the highest priority will be used
+   *  - 'multiple': all travel modes will be used in the request.  Requires a
+   *                multimodalUrl to be set to work properly.
+   * @type {string}
+   * @private
+   */
+  this.mode_ = goog.isDef(options.mode) ?
+      options.mode : ol.control.GoogleMapsDirections.Mode.SINGLE;
+
+
+  /**
+   * Collection of travel modes ordered (added) by the highest priority to use
+   * in a request in 'single'
+   * @type {Array.<string>}
+   * @private
+   */
+  this.travelModesByPriority_ = [
+    ol.control.GoogleMapsDirections.TravelMode.DRIVING,
+    ol.control.GoogleMapsDirections.TravelMode.TRANSIT,
+    ol.control.GoogleMapsDirections.TravelMode.BICYCLING,
+    ol.control.GoogleMapsDirections.TravelMode.WALKING
+  ];
+
+
+  /**
+   *
    * @type {?string}
    * @private
    */
@@ -204,63 +233,59 @@ ol.control.GoogleMapsDirections = function(opt_options) {
       options.multimodalUrl : null;
 
 
-  // multimodal elements, if set
-  if (!goog.isNull(this.multimodalUrl_)) {
-    var fieldsetEl = goog.dom.createDom(goog.dom.TagName.FIELDSET, {
+  // DOM components - travel modes
+  var travelModes = [
+    ol.control.GoogleMapsDirections.TravelMode.BICYCLING,
+    ol.control.GoogleMapsDirections.TravelMode.CARPOOLING,
+    ol.control.GoogleMapsDirections.TravelMode.DRIVING,
+    ol.control.GoogleMapsDirections.TravelMode.TRANSIT,
+    ol.control.GoogleMapsDirections.TravelMode.WALKING
+  ];
+
+  var fieldsetEl = goog.dom.createDom(goog.dom.TagName.FIELDSET, {});
+  goog.dom.appendChild(element, fieldsetEl);
+
+  goog.array.forEach(travelModes, function(travelMode) {
+    var labelText = '';
+    switch (travelMode) {
+      case ol.control.GoogleMapsDirections.TravelMode.BICYCLING:
+        labelText = this.bicyclingText;
+        break;
+      case ol.control.GoogleMapsDirections.TravelMode.CARPOOLING:
+        labelText = this.carpoolingText;
+        break;
+      case ol.control.GoogleMapsDirections.TravelMode.DRIVING:
+        labelText = this.drivingText;
+        break;
+      case ol.control.GoogleMapsDirections.TravelMode.TRANSIT:
+        labelText = this.transitText;
+        break;
+      case ol.control.GoogleMapsDirections.TravelMode.WALKING:
+        labelText = this.walkingText;
+        break;
+    }
+
+    var inputOptions = {
+      'type': 'checkbox',
+      'name': travelMode
+    };
+
+    if (goog.array.indexOf(this.defaultTravelModes_, travelMode) != -1) {
+      inputOptions.checked = 'checked';
+    }
+
+    var inputEl = goog.dom.createDom(goog.dom.TagName.INPUT, inputOptions);
+    goog.dom.appendChild(fieldsetEl, inputEl);
+
+    this.travelModeInputElements_.push(inputEl);
+
+    var labelEl = goog.dom.createDom(goog.dom.TagName.LABEL, {
     });
-    goog.dom.appendChild(element, fieldsetEl);
+    goog.dom.appendChild(fieldsetEl, labelEl);
+    goog.dom.appendChild(labelEl, goog.dom.createTextNode(labelText));
+  }, this);
 
-    // we may want to set this as an option to control the order
-    var travelModes = [
-      ol.control.GoogleMapsDirections.TravelMode.BICYCLING,
-      ol.control.GoogleMapsDirections.TravelMode.CARPOOLING,
-      ol.control.GoogleMapsDirections.TravelMode.DRIVING,
-      ol.control.GoogleMapsDirections.TravelMode.TRANSIT,
-      ol.control.GoogleMapsDirections.TravelMode.WALKING
-    ];
-
-    goog.array.forEach(travelModes, function(travelMode) {
-      var labelText = '';
-      switch (travelMode) {
-        case ol.control.GoogleMapsDirections.TravelMode.BICYCLING:
-          labelText = this.bicyclingText;
-          break;
-        case ol.control.GoogleMapsDirections.TravelMode.CARPOOLING:
-          labelText = this.carpoolingText;
-          break;
-        case ol.control.GoogleMapsDirections.TravelMode.DRIVING:
-          labelText = this.drivingText;
-          break;
-        case ol.control.GoogleMapsDirections.TravelMode.TRANSIT:
-          labelText = this.transitText;
-          break;
-        case ol.control.GoogleMapsDirections.TravelMode.WALKING:
-          labelText = this.walkingText;
-          break;
-      }
-
-      var inputOptions = {
-        'type': 'checkbox',
-        'name': travelMode
-      };
-
-      if (goog.array.indexOf(this.defaultTravelModes_, travelMode) != -1) {
-        inputOptions.checked = 'checked';
-      }
-
-      var inputEl = goog.dom.createDom(goog.dom.TagName.INPUT, inputOptions);
-      goog.dom.appendChild(fieldsetEl, inputEl);
-
-      this.travelModeInputElements_.push(inputEl);
-
-      var labelEl = goog.dom.createDom(goog.dom.TagName.LABEL, {
-      });
-      goog.dom.appendChild(fieldsetEl, labelEl);
-      goog.dom.appendChild(labelEl, goog.dom.createTextNode(labelText));
-    }, this);
-  }
-
-
+  // DOM components - add waypoint
   var addWaypointGeocoderButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
     'class': classPrefix + '-add-waypoint-button'
   });
@@ -274,16 +299,19 @@ ol.control.GoogleMapsDirections = function(opt_options) {
     goog.events.EventType.CLICK
   ], this.handleAddWPGeocoderButtonPress_, false, this);
 
+  // DOM components - startGeocoder
   var startGeocoderElement = goog.dom.createDom(goog.dom.TagName.DIV, {
     'class': classPrefix + '-geocoder-start'
   });
   goog.dom.appendChild(element, startGeocoderElement);
 
+  // DOM components - waypoint geocoders
   var waypointGeocodersContainer = goog.dom.createDom(goog.dom.TagName.DIV, {
     'class': classPrefix + '-geocoder-waypoints'
   });
   goog.dom.appendChild(element, waypointGeocodersContainer);
 
+  // DOM components - endGeocoder
   var endGeocoderElement = goog.dom.createDom(goog.dom.TagName.DIV, {
     'class': classPrefix + '-geocoder-end'
   });
@@ -613,6 +641,16 @@ ol.control.GoogleMapsDirections.EventType = {
   CLEAR: goog.events.getUniqueId('clear'),
   ROUTECOMPLETE: goog.events.getUniqueId('routecomplete'),
   SELECT: goog.events.getUniqueId('select')
+};
+
+
+/**
+ * Determines how this widget should behave with the travel modes selected.
+ * @enum {string}
+ */
+ol.control.GoogleMapsDirections.Mode = {
+  MULTIPLE: 'multiple',
+  SINGLE: 'single'
 };
 
 
@@ -948,41 +986,9 @@ ol.control.GoogleMapsDirections.prototype.canAddAnOtherWaypoint_ = function() {
  * @return {boolean}
  * @private
  */
-ol.control.GoogleMapsDirections.prototype.canUseMultimodalRoute_ = function() {
+ol.control.GoogleMapsDirections.prototype.canUseMultimodalService_ =
+    function() {
   return !goog.isNull(this.multimodalUrl_);
-};
-
-
-/**
- * Returns whether we can or can't use the unimodal routing service, i.e.
- * the GoogleMaps Routing service.
- * @return {boolean}
- * @private
- */
-ol.control.GoogleMapsDirections.prototype.canUseUnimodalRoute_ = function() {
-  var can = true;
-  var checkedTravelModes;
-
-  if (this.canUseMultimodalRoute_()) {
-    checkedTravelModes = this.getCheckedTravelModes_();
-
-    if (checkedTravelModes.length === 0) {
-      // FIXME: we should validate this first elsewhere !
-      can = false;
-    } else if (checkedTravelModes.length === 1) {
-      var checkedTravelMode = checkedTravelModes[0];
-      var travelMode = ol.control.GoogleMapsDirections.TravelMode;
-      if (checkedTravelMode !== travelMode.BICYCLING &&
-          checkedTravelMode !== travelMode.DRIVING &&
-          checkedTravelMode !== travelMode.WALKING) {
-        can = false;
-      }
-    } else {
-      can = false;
-    }
-  }
-
-  return can;
 };
 
 
@@ -1158,7 +1164,10 @@ ol.control.GoogleMapsDirections.prototype.fitViewExtentToRoute_ = function() {
 
 
 /**
- * Returns the list of currently checked travel mode ids
+ * Returns the list of currently checked travel mode ids.
+ *
+ * 'transit' - has to be temporarly ignored when checked because it is not
+ *     yet available in Google Maps.
  * @return {Array.<string>}
  * @private
  */
@@ -1168,7 +1177,10 @@ ol.control.GoogleMapsDirections.prototype.getCheckedTravelModes_ =
 
   this.travelModeInputElements_.forEach(function(inputEl) {
     if (inputEl.checked === true) {
-      elements.push(inputEl.name);
+      // todo - ENABLE_TRANSIT - remove this when transit become available
+      if (inputEl.name != ol.control.GoogleMapsDirections.TravelMode.TRANSIT) {
+        elements.push(inputEl.name);
+      }
     }
   }, this);
 
@@ -1224,6 +1236,36 @@ ol.control.GoogleMapsDirections.prototype.getDetourFeatureAtPixel_ = function(
       });
 
   return feature;
+};
+
+
+/**
+ * @param {Array.<string>} travelModes Travel modes in which to find the one
+ *     with the highest priority.
+ * @return {string}
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.getHighestPriorityTravelMode_ =
+    function(travelModes) {
+
+  var highestPriorityTravelMode = '';
+  var index;
+
+  goog.array.some(this.travelModesByPriority_, function(travelMode) {
+    index = goog.array.indexOf(travelModes, travelMode);
+    if (index != -1) {
+      highestPriorityTravelMode = travelModes[index];
+      return true;
+    }
+  }, this);
+
+  // highest priority is 'driving' by default
+  if (highestPriorityTravelMode === '') {
+    highestPriorityTravelMode =
+        ol.control.GoogleMapsDirections.TravelMode.DRIVING;
+  }
+
+  return highestPriorityTravelMode;
 };
 
 
@@ -1498,6 +1540,25 @@ ol.control.GoogleMapsDirections.prototype.handleHoverStopped_ = function(
 
 
 /**
+ * Check whether the travel mode is supported by GoogleMaps Directions API
+ * or not.
+ * @param {string} travelMode
+ * @return {boolean}
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.isTravelModeSupportedByGoogleMaps_ =
+    function(travelMode) {
+
+  var tm = ol.control.GoogleMapsDirections.TravelMode;
+
+  // todo - ENABLE_TRANSIT - add TRANSIT here when available
+
+  return travelMode === tm.BICYCLING || travelMode === tm.DRIVING ||
+      travelMode === tm.WALKING;
+};
+
+
+/**
  * @private
  */
 ol.control.GoogleMapsDirections.prototype.manageNumWaypoints_ = function() {
@@ -1612,10 +1673,31 @@ ol.control.GoogleMapsDirections.prototype.route_ = function(start, end) {
     return;
   }
 
-  if (this.canUseUnimodalRoute_()) {
-    this.routeUnimodal_(start, end);
+  // fetch travel modes
+  var travelModes = this.getCheckedTravelModes_();
+  if (!travelModes.length) {
+    // force 'driving' travel mode if none was selected
+    travelModes.push(ol.control.GoogleMapsDirections.TravelMode.DRIVING);
+  }
+
+  if (this.mode_ === ol.control.GoogleMapsDirections.Mode.MULTIPLE) {
+    if (travelModes.length === 1 &&
+        this.isTravelModeSupportedByGoogleMaps_(travelModes[0])) {
+      this.routeWithGoogleMapsService_(start, end, travelModes[0]);
+    } else {
+      if (this.canUseMultimodalService_()) {
+        this.routeWithMultimodalService_(start, end, travelModes);
+      } else {
+        // todo - throw an error
+        window.console.log(
+            'Error: No multimodal service set.  Mode: ' +
+            this.mode_
+        );
+      }
+    }
   } else {
-    this.routeMultimodal_(start, end);
+    var travelMode = this.getHighestPriorityTravelMode_(travelModes);
+    this.routeWithGoogleMapsService_(start, end, travelMode);
   }
 };
 
@@ -1623,10 +1705,11 @@ ol.control.GoogleMapsDirections.prototype.route_ = function(start, end) {
 /**
  * @param {google.maps.LatLng} start Location
  * @param {google.maps.LatLng} end Location
+ * @param {Array.<string>} travelModes Travel modes
  * @private
  */
-ol.control.GoogleMapsDirections.prototype.routeMultimodal_ = function(
-    start, end) {
+ol.control.GoogleMapsDirections.prototype.routeWithMultimodalService_ =
+    function(start, end, travelModes) {
 
   var request = new goog.net.XhrIo();
   var url = this.multimodalUrl_;
@@ -1639,14 +1722,6 @@ ol.control.GoogleMapsDirections.prototype.routeMultimodal_ = function(
   goog.asserts.assertInstanceof(view2D, ol.View2D);
 
   var projection = view2D.getProjection();
-
-  // fetch travel modes
-  var travelModes = this.getCheckedTravelModes_();
-  if (!travelModes.length) {
-    // todo - should throw/display an error
-    // "You must select at least one travel mode"
-    return;
-  }
 
   // transform start and end as coordinates
   var startCoordinate = ol.proj.transform(
@@ -1690,39 +1765,19 @@ ol.control.GoogleMapsDirections.prototype.routeMultimodal_ = function(
 
 
 /**
+ * Use the GoogleMaps Directions service to launch a route request. Only
+ * support unimodal requests.
  * @param {google.maps.LatLng} start Location
  * @param {google.maps.LatLng} end Location
+ * @param {string} travelMode Inner travel mode, i.e. not a GoogleMaps one
  * @private
  */
-ol.control.GoogleMapsDirections.prototype.routeUnimodal_ = function(
-    start, end) {
+ol.control.GoogleMapsDirections.prototype.routeWithGoogleMapsService_ =
+    function(start, end, travelMode) {
 
   var me = this;
   var service = this.directionsService_;
-  var canUseMultimodal = this.canUseMultimodalRoute_();
-  var travelMode;
-
-  // when doing an unimodal routing, if you could do a multimodal one, that
-  // means the 'travel mode checkboxes' are available and can be used
-  // to dertermine the travel mode...
-  if (canUseMultimodal) {
-    var checkedTravelModes = this.getCheckedTravelModes_();
-
-    if (!checkedTravelModes.length) {
-      // todo - should throw/display an error
-      // "You must select at least one travel mode"
-      return;
-    }
-
-    travelMode = this.getGoogleMapsTravelMode_(checkedTravelModes[0]);
-
-    if (travelMode === '') {
-      // todo - manage this error
-      return;
-    }
-  } else {
-    travelMode = google.maps.TravelMode.DRIVING;
-  }
+  var googleMapsTravelMode = this.getGoogleMapsTravelMode_(travelMode);
 
   var map = this.getMap();
 
@@ -1764,7 +1819,7 @@ ol.control.GoogleMapsDirections.prototype.routeUnimodal_ = function(
     destination: end,
     waypoints: reqWaypoints,
     optimizeWaypoints: true,
-    travelMode: travelMode,
+    travelMode: googleMapsTravelMode,
     provideRouteAlternatives: true
   };
 
