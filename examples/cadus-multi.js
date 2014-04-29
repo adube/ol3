@@ -126,6 +126,7 @@ for (var i = 1, len = 8; i <= len; i++) {
 var directions = new ol.control.GoogleMapsDirections({
   'gmap': gmap,
   'target': 'gmaps-directions',
+  'enableAutoRouting': false,
   'enableCurrentPosition': true,
   'currentPositionControl': olCurrentPosition,
   'defaultTravelModes': [
@@ -174,3 +175,7 @@ directions.startGeocoder_.input_.value =
 /** @type {string} */
 directions.endGeocoder_.input_.value =
     '930 Rue Jacques-Cartier Est, Chicoutimi, QC G7H 7K9, Canada';
+
+var triggerRouteRequest = function() {
+  directions.triggerRouteRequest();
+};
