@@ -233,7 +233,7 @@ directions.on(
     }
 );
 
-var read = function() {
+var load = function() {
   var config = {
     'r': [
       {
@@ -295,6 +295,43 @@ var read = function() {
 
 var save = function() {
   var serializedJSON = directions.save();
+  if (goog.isDefAndNotNull(serializedJSON)) {
+    window.console.log(serializedJSON);
+  }
+};
+
+var loadQueryParams = function() {
+  var config = {
+    'r': [],
+    's': {
+      'n': 'Mon point de départ',
+      'c': [-7913421, 6176034]
+    },
+    'e': {
+      'n': 'Mon point d\'arrivée',
+      'c': [-7907554, 6177486]
+    },
+    'w': [
+      {
+        'n': 'Un waypoint',
+        'c': [-7911921, 6175661]
+      },
+      {
+        'n': 'Un second waypoint',
+        'c': [-7911185, 6177906]
+      }
+    ],
+    'd': [
+      [-7911233, 6178604]
+    ],
+    'm': ['driving', 'carpooling', 'walking']
+  };
+
+  directions.loadQueryParams(config);
+};
+
+var saveQueryParams = function() {
+  var serializedJSON = directions.saveQueryParams();
   if (goog.isDefAndNotNull(serializedJSON)) {
     window.console.log(serializedJSON);
   }
