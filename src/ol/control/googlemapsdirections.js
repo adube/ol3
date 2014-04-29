@@ -776,151 +776,39 @@ ol.control.GoogleMapsDirections.prototype.getGeocoderInfo = function() {
 
 
 /**
- * todo - change this method to fetch the source from a remote server, then
- *        read its response
+ * Read the given source object then load its element as query parameters
+ * and results (routes)
  * @param {Object} source
  */
 ol.control.GoogleMapsDirections.prototype.load = function(source) {
-
-  this.loading_ = true;
-  this.disableGeocoderReverseGeocodings_();
-  this.clear_();
-
-  // read
-  var format = this.format_;
-  var object = format.read(source);
-
-  // begin with detours, as they are drawn at the same time the route is
-  // generated
-  this.detourFeatures_.clear();
-  if (goog.isDefAndNotNull(object.detours)) {
-    goog.array.forEach(object.detours, function(detour) {
-      this.createOrUpdateDetour_(detour, false);
-    }, this);
-  }
-
-  // travel modes
-  this.toggleTravelModes_(object.travel_modes);
-
-  // routes
-  this.handleDirectionsResult_(object, google.maps.DirectionsStatus.OK);
-
-  // start
-  if (goog.isDefAndNotNull(object.start)) {
-    this.startGeocoder_.load([object.start]);
-  }
-
-  // end
-  if (goog.isDefAndNotNull(object.end)) {
-    this.endGeocoder_.load([object.end]);
-  }
-
-  // waypoints
-  var index;
-  var waypointGeocoder;
-  this.removeAllWaypointGeocoders_();
-  if (goog.isDefAndNotNull(object.waypoints)) {
-    goog.array.forEach(object.waypoints, function(waypoint) {
-      this.addWaypointGeocoder();
-      index = this.waypointGeocoders_.getLength() - 1;
-      waypointGeocoder = this.waypointGeocoders_.getAt(index);
-      waypointGeocoder.load([waypoint]);
-    }, this);
-  }
-
-  this.loading_ = false;
-  this.manageNumWaypoints_();
-  if (goog.isDefAndNotNull(object.routes) &&
-      goog.isDefAndNotNull(object.routes[0]) &&
-      goog.isDefAndNotNull(object.routes[0].waypoint_order)) {
-    this.updateGeocoders_(object.routes[0].waypoint_order);
-  } else {
-    this.updateGeocoders_([]);
-  }
-
-  goog.events.dispatchEvent(this,
-      ol.control.GoogleMapsDirections.EventType.ROUTECOMPLETE);
+  this.loadAll_(source, true);
 };
 
 
 /**
- * Collect the elements to save, write them as MTJSON then save.
+ * Read the given source object then load its query parameters elements only
+ * @param {Object} source
+ */
+ol.control.GoogleMapsDirections.prototype.loadQueryParams = function(source) {
+  this.loadAll_(source, false);
+};
+
+
+/**
+ * Collect and return the query parameters AND result (routes) as MTJSON
  * @return {string} serialized json ready for save
  */
 ol.control.GoogleMapsDirections.prototype.save = function() {
-  var format = this.format_;
-
-  var source = {};
-
-  // travel modes
-  source.travel_modes = this.getCheckedTravelModes_(true);
-
-  // routes
-  var selectedRoute = this.directionsPanel_.getSelectedRoute();
-  if (selectedRoute === false) {
-    // todo - throw/manage error
-    return '';
-  }
-
-  if (!goog.isDefAndNotNull(selectedRoute.geometry)) {
-    selectedRoute.geometry = this.selectedRouteFeatures_.getAt(0).getGeometry();
-  }
-
-  source.routes = [selectedRoute];
+  return this.saveAll_(true);
+};
 
 
-  // start
-  var startCoordinate = this.startGeocoder_.getCoordinate();
-  var startAddress = this.startGeocoder_.getInputValue();
-  if (goog.isNull(startCoordinate) || goog.isNull(startAddress)) {
-    // todo - throw/manage error
-    return '';
-  }
-  source.start_location = {
-    'formatted_address': startAddress,
-    'geometry': {'coordinate': startCoordinate}
-  };
-
-
-  // end
-  var endCoordinate = this.endGeocoder_.getCoordinate();
-  var endAddress = this.endGeocoder_.getInputValue();
-  if (goog.isNull(endCoordinate) || goog.isNull(endAddress)) {
-    // todo - throw/manage error
-    return '';
-  }
-  source.end_location = {
-    'formatted_address': endAddress,
-    'geometry': {'coordinate': endCoordinate}
-  };
-
-
-  // waypoints
-  source.waypoints = [];
-  var waypointCoordinate;
-  var waypointAddress;
-  var waypointGeocoders = this.waypointGeocoders_;
-  waypointGeocoders.forEach(function(waypointGeocoder) {
-    waypointCoordinate = waypointGeocoder.getCoordinate();
-    waypointAddress = waypointGeocoder.getInputValue();
-    if (!goog.isNull(waypointCoordinate) && !goog.isNull(waypointAddress)) {
-      source.waypoints.push({
-        'formatted_address': waypointAddress,
-        'geometry': {'coordinate': waypointCoordinate}
-      });
-    }
-  }, this);
-
-  // detours
-  source.detours = [];
-  this.detourFeatures_.forEach(function(detourFeature) {
-    source.detours.push(detourFeature.getGeometry().getCoordinates());
-  }, this);
-
-  var result = format.write(source, true);
-  goog.asserts.assertString(result);
-
-  return result;
+/**
+ * Collect and return the query parameters only as MTJSON
+ * @return {string} serialized json ready for save
+ */
+ol.control.GoogleMapsDirections.prototype.saveQueryParams = function() {
+  return this.saveAll_(false);
 };
 
 
@@ -1568,6 +1456,82 @@ ol.control.GoogleMapsDirections.prototype.isTravelModeSupportedByGoogleMaps_ =
 
 
 /**
+ * Read the given source object then load its element as query parameters
+ * and results (routes)
+ * @param {Object} source
+ * @param {boolean} includeRoutes Whether to load the included routes (results)
+ *     or not.
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.loadAll_ = function(
+    source, includeRoutes) {
+
+  this.loading_ = true;
+  this.disableGeocoderReverseGeocodings_();
+  this.clear_();
+
+  // read
+  var format = this.format_;
+  var object = format.read(source);
+
+  // begin with detours, as they are drawn at the same time the route is
+  // generated
+  this.detourFeatures_.clear();
+  if (goog.isDefAndNotNull(object.detours)) {
+    goog.array.forEach(object.detours, function(detour) {
+      this.createOrUpdateDetour_(detour, false);
+    }, this);
+  }
+
+  // travel modes
+  this.toggleTravelModes_(object.travel_modes);
+
+  // routes
+  if (includeRoutes === true) {
+    this.handleDirectionsResult_(object, google.maps.DirectionsStatus.OK);
+  }
+
+  // start
+  if (goog.isDefAndNotNull(object.start)) {
+    this.startGeocoder_.load([object.start]);
+  }
+
+  // end
+  if (goog.isDefAndNotNull(object.end)) {
+    this.endGeocoder_.load([object.end]);
+  }
+
+  // waypoints
+  var index;
+  var waypointGeocoder;
+  this.removeAllWaypointGeocoders_();
+  if (goog.isDefAndNotNull(object.waypoints)) {
+    goog.array.forEach(object.waypoints, function(waypoint) {
+      this.addWaypointGeocoder();
+      index = this.waypointGeocoders_.getLength() - 1;
+      waypointGeocoder = this.waypointGeocoders_.getAt(index);
+      waypointGeocoder.load([waypoint]);
+    }, this);
+  }
+
+  this.loading_ = false;
+  this.manageNumWaypoints_();
+  if (goog.isDefAndNotNull(object.routes) &&
+      goog.isDefAndNotNull(object.routes[0]) &&
+      goog.isDefAndNotNull(object.routes[0].waypoint_order)) {
+    this.updateGeocoders_(object.routes[0].waypoint_order);
+  } else {
+    this.updateGeocoders_([]);
+  }
+
+  if (includeRoutes === true) {
+    goog.events.dispatchEvent(this,
+        ol.control.GoogleMapsDirections.EventType.ROUTECOMPLETE);
+  }
+};
+
+
+/**
  * @private
  */
 ol.control.GoogleMapsDirections.prototype.manageNumWaypoints_ = function() {
@@ -1835,6 +1799,93 @@ ol.control.GoogleMapsDirections.prototype.routeWithGoogleMapsService_ =
   service.route(request, function(response, status) {
     me.handleDirectionsResult_(response, status);
   });
+};
+
+
+/**
+ * Collect the elements to save, write them as MTJSON then save.
+ * @param {boolean} includeRoutes Whether to include the results (routes) or not
+ * @return {string} serialized json ready for save
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.saveAll_ = function(includeRoutes) {
+  var format = this.format_;
+
+  var source = {};
+
+  // travel modes
+  source.travel_modes = this.getCheckedTravelModes_(true);
+
+  // routes, if included
+  if (includeRoutes === true) {
+    var selectedRoute = this.directionsPanel_.getSelectedRoute();
+    if (selectedRoute === false) {
+      // todo - throw/manage error
+      return '';
+    }
+
+    if (!goog.isDefAndNotNull(selectedRoute.geometry)) {
+      selectedRoute.geometry =
+          this.selectedRouteFeatures_.getAt(0).getGeometry();
+    }
+
+    source.routes = [selectedRoute];
+  } else {
+    source.routes = [];
+  }
+
+  // start
+  var startCoordinate = this.startGeocoder_.getCoordinate();
+  var startAddress = this.startGeocoder_.getInputValue();
+  if (goog.isNull(startCoordinate) || goog.isNull(startAddress)) {
+    // todo - throw/manage error
+    return '';
+  }
+  source.start_location = {
+    'formatted_address': startAddress,
+    'geometry': {'coordinate': startCoordinate}
+  };
+
+
+  // end
+  var endCoordinate = this.endGeocoder_.getCoordinate();
+  var endAddress = this.endGeocoder_.getInputValue();
+  if (goog.isNull(endCoordinate) || goog.isNull(endAddress)) {
+    // todo - throw/manage error
+    return '';
+  }
+  source.end_location = {
+    'formatted_address': endAddress,
+    'geometry': {'coordinate': endCoordinate}
+  };
+
+
+  // waypoints
+  source.waypoints = [];
+  var waypointCoordinate;
+  var waypointAddress;
+  var waypointGeocoders = this.waypointGeocoders_;
+  waypointGeocoders.forEach(function(waypointGeocoder) {
+    waypointCoordinate = waypointGeocoder.getCoordinate();
+    waypointAddress = waypointGeocoder.getInputValue();
+    if (!goog.isNull(waypointCoordinate) && !goog.isNull(waypointAddress)) {
+      source.waypoints.push({
+        'formatted_address': waypointAddress,
+        'geometry': {'coordinate': waypointCoordinate}
+      });
+    }
+  }, this);
+
+  // detours
+  source.detours = [];
+  this.detourFeatures_.forEach(function(detourFeature) {
+    source.detours.push(detourFeature.getGeometry().getCoordinates());
+  }, this);
+
+  var result = format.write(source, true);
+  goog.asserts.assertString(result);
+
+  return result;
 };
 
 
