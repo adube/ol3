@@ -408,7 +408,17 @@ ol.control.GoogleMapsDirections = function(opt_options) {
 
 
   /**
-   * Whether to enable detours or not.
+   * Whether to automatically send routing request when the minimum
+   * query parameters are set or not. Defaults to true.
+   * @type {boolean}
+   * @private
+   */
+  this.enableAutoRouting_ = goog.isDef(options.enableAutoRouting) ?
+      options.enableAutoRouting : true;
+
+
+  /**
+   * Whether to enable detours or not. Defaults to false.
    * @type {boolean}
    * @private
    */
@@ -856,6 +866,15 @@ ol.control.GoogleMapsDirections.prototype.setMap = function(map) {
         ol.MapBrowserEvent.EventType.SINGLECLICK,
         this.handleMapSingleClick_, false, this);
   }
+};
+
+
+/**
+ * Public method used to manually trigger a route request.
+ */
+ol.control.GoogleMapsDirections.prototype.triggerRouteRequest = function() {
+  this.clear_();
+  this.route_(null, null);
 };
 
 
@@ -1327,7 +1346,9 @@ ol.control.GoogleMapsDirections.prototype.handleGeocoderRemove_ = function(
 
     this.clear_();
 
-    this.route_(startLocation, endLocation);
+    if (this.enableAutoRouting_ === true) {
+      this.route_(startLocation, endLocation);
+    }
   }
 };
 
@@ -1357,7 +1378,8 @@ ol.control.GoogleMapsDirections.prototype.handleLocationChanged_ =
   this.toggleGeocoderReverseGeocodings_();
 
   if (goog.isDefAndNotNull(startLocation) &&
-      goog.isDefAndNotNull(endLocation)) {
+      goog.isDefAndNotNull(endLocation) &&
+      this.enableAutoRouting_ === true) {
     this.route_(startLocation, endLocation);
   } else {
     if (goog.isDefAndNotNull(currentLocation)) {

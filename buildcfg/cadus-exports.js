@@ -133,6 +133,11 @@ goog.exportProperty(
     ol.control.GoogleMapsDirections.prototype.saveQueryParams);
 
 goog.exportProperty(
+    ol.control.GoogleMapsDirections.prototype,
+    'triggerRouteRequest',
+    ol.control.GoogleMapsDirections.prototype.triggerRouteRequest);
+
+goog.exportProperty(
     ol.control.GoogleMapsDirections,
     'EventType',
     ol.control.GoogleMapsDirections.EventType);

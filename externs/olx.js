@@ -1021,6 +1021,7 @@ olx.control.GoogleMapsCurrentPositionOptions.prototype.currentPositionText;
  *     defaultTravelModes: (Array.<string>|undefined),
  *     detourIconStyle: (Array.<(null|ol.style.Style)>|null|ol.feature.FeatureStyleFunction|ol.style.Style),
  *     detourLabelProperty: (string|undefined),
+ *     enableAutoRouting: (boolean|undefined),
  *     enableDetours: (boolean|undefined),
  *     geocoderComponentRestrictions: (Object|undefined),
  *     iconStyles: (Array.<ol.style.Style>),
@@ -1084,7 +1085,15 @@ olx.control.GoogleMapsDirectionsOptions.prototype.detourLabelProperty;
 
 
 /**
- * Whether to enable detours or not.
+ * Whether to automatically send routing request when the minimum
+ * query parameters are set or not. Defaults to true.
+ * @type {boolean|undefined}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.enableAutoRouting;
+
+
+/**
+ * Whether to enable detours or not. Defaults to false.
  * @type {boolean|undefined}
  */
 olx.control.GoogleMapsDirectionsOptions.prototype.enableDetours;
