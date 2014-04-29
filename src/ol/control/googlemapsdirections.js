@@ -1167,13 +1167,19 @@ ol.control.GoogleMapsDirections.prototype.getHighestPriorityTravelMode_ =
   var highestPriorityTravelMode = '';
   var index;
 
-  goog.array.some(this.travelModesByPriority_, function(travelMode) {
-    index = goog.array.indexOf(travelModes, travelMode);
-    if (index != -1) {
-      highestPriorityTravelMode = travelModes[index];
-      return true;
-    }
-  }, this);
+  goog.array.some(
+      this.travelModesByPriority_,
+      /** @return {boolean} */
+      function(travelMode) {
+        index = goog.array.indexOf(travelModes, travelMode);
+        if (index != -1) {
+          highestPriorityTravelMode = travelModes[index];
+          return true;
+        } else {
+          return false;
+        }
+      },
+      this);
 
   // highest priority is 'driving' by default
   if (highestPriorityTravelMode === '') {
