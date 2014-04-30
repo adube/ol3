@@ -3,6 +3,7 @@
 goog.require('ol.Map');
 goog.require('ol.View2D');
 goog.require('ol.control.GoogleMapsDirections');
+goog.require('ol.control.GoogleMapsDirectionsPanel');
 goog.require('ol.interaction');
 goog.require('ol.interaction.DragPan');
 goog.require('ol.interaction.DragStyleCursor');
@@ -103,6 +104,8 @@ var createDetourIconStyle = function() {
     return [style];
   };
 };
+
+var directionsPanel = new ol.control.GoogleMapsDirectionsPanel();
 
 var directions = new ol.control.GoogleMapsDirections({
   'gmap': gmap,
@@ -208,7 +211,7 @@ var directions = new ol.control.GoogleMapsDirections({
   ),
   'detourLabelProperty': 'myLabel',
   'detourIconStyle': createDetourIconStyle(),
-  'panel': 'gmaps-directions-panel',
+  'directionsPanel': directionsPanel,
   'popupPixelBuffer': 150
 });
 map.addControl(directions);

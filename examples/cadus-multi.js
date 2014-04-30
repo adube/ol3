@@ -4,6 +4,7 @@ goog.require('ol.Map');
 goog.require('ol.View2D');
 goog.require('ol.control.GoogleMapsCurrentPosition');
 goog.require('ol.control.GoogleMapsDirections');
+goog.require('ol.control.GoogleMapsDirectionsPanel');
 goog.require('ol.interaction');
 goog.require('ol.interaction.DragPan');
 goog.require('ol.interaction.DragStyleCursor');
@@ -123,6 +124,14 @@ for (var i = 1, len = 8; i <= len; i++) {
   }));
 }
 
+var directionsPanel = new ol.control.GoogleMapsDirectionsPanel({
+  'target': 'gmaps-directions-panel',
+  'arroundText': 'environ',
+  'copyrightText': 'Données cartographiques ©2014 Google',
+  'suggestedRoutesText': 'Routes suggérées',
+  'totalDistanceText': 'Distance Totale'
+});
+
 var directions = new ol.control.GoogleMapsDirections({
   'gmap': gmap,
   'target': 'gmaps-directions',
@@ -143,10 +152,6 @@ var directions = new ol.control.GoogleMapsDirections({
   'searchButtonText': 'Rechercher',
   'clearButtonText': 'Effacer',
   'removeButtonText': 'Supprimer',
-  'suggestedRoutesText': 'Routes suggérées',
-  'aroundText': 'environ',
-  'copyrightText': 'Données cartographiques ©2014 Google',
-  'totalDistanceText': 'Distance Totale',
   'bicyclingText': 'Bicyclette',
   'carpoolingText': 'Covoiturage',
   'drivingText': 'Auto-Solo',
@@ -161,7 +166,7 @@ var directions = new ol.control.GoogleMapsDirections({
   'iconStyles': iconStyles,
   'detourLabelProperty': 'myLabel',
   'detourIconStyle': createDetourIconStyle(),
-  'panel': 'gmaps-directions-panel',
+  'directionsPanel': directionsPanel,
   'popupPixelBuffer': 150
 });
 map.addControl(directions);

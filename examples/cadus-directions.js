@@ -4,6 +4,7 @@ goog.require('ol.Map');
 goog.require('ol.View2D');
 goog.require('ol.control.GoogleMapsCurrentPosition');
 goog.require('ol.control.GoogleMapsDirections');
+goog.require('ol.control.GoogleMapsDirectionsPanel');
 goog.require('ol.interaction');
 goog.require('ol.interaction.DragPan');
 goog.require('ol.interaction.DragStyleCursor');
@@ -110,6 +111,14 @@ var olCurrentPosition = new ol.control.GoogleMapsCurrentPosition({
   'currentPositionText': 'Ma position'
 });
 
+var directionsPanel = new ol.control.GoogleMapsDirectionsPanel({
+  'target': 'gmaps-directions-panel',
+  'arroundText': 'environ',
+  'suggestedRoutesText': 'Routes suggérées',
+  'totalDistanceText': 'Distance Totale',
+  'copyrightText': 'Données cartographiques ©2014 Google'
+});
+
 var directions = new ol.control.GoogleMapsDirections({
   'gmap': gmap,
   'target': 'gmaps-directions',
@@ -123,10 +132,6 @@ var directions = new ol.control.GoogleMapsDirections({
   'searchButtonText': 'Rechercher',
   'clearButtonText': 'Effacer',
   'removeButtonText': 'Supprimer',
-  'suggestedRoutesText': 'Routes suggérées',
-  'aroundText': 'environ',
-  'copyrightText': 'Données cartographiques ©2014 Google',
-  'totalDistanceText': 'Distance Totale',
   'lineStyle': new ol.style.Style({
     stroke: new ol.style.Stroke({
       color: [80, 140, 255, 0.6],
@@ -227,7 +232,7 @@ var directions = new ol.control.GoogleMapsDirections({
   ),
   'detourLabelProperty': 'myLabel',
   'detourIconStyle': createDetourIconStyle(),
-  'panel': 'gmaps-directions-panel',
+  'directionsPanel': directionsPanel,
   'popupPixelBuffer': 150
 });
 map.addControl(directions);

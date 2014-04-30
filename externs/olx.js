@@ -1030,22 +1030,18 @@ olx.control.GoogleMapsCurrentPositionOptions.prototype.currentPositionText;
  *     mode: (string|undefined),
  *     modifyPixelTolerance: (number|undefined),
  *     multimodalUrl: (string|undefined),
- *     panel: (Element),
+ *     directionsPanel: (ol.control.GoogleMapsDirectionsPanel),
  *     pixelBuffer: (number|undefined),
  *     routeDelayOnWaypointDrag: (number|undefined),
  *     target: (Element|undefined),
  *     addWaypointButtonText: (?string|undefined),
- *     aroundText: (?string|undefined),
  *     bicyclingText: (string|undefined),
  *     carpoolingText: (string|undefined),
  *     clearButtonText: (?string|undefined),
- *     copyrightText: (?string|undefined),
  *     currentPositionText: (?string|undefined),
  *     drivingText: (string|undefined),
  *     removeButtonText: (?string|undefined),
  *     searchButtonText: (?string|undefined),
- *     suggestedRoutesText: (?string|undefined),
- *     totalDistanceText: (?string|undefined),
  *     transitText: (string|undefined),
  *     walkingText: (string|undefined)}}
  * @todo stability experimental
@@ -1157,10 +1153,10 @@ olx.control.GoogleMapsDirectionsOptions.prototype.multimodalUrl;
 
 
 /**
- * Target for the directions panel.
- * @type {Element}
+ * Directions panel to be embded
+ * @type {ol.control.GoogleMapsDirectionsPanel}
  */
-olx.control.GoogleMapsDirectionsOptions.prototype.panel;
+olx.control.GoogleMapsDirectionsOptions.prototype.directionsPanel;
 
 
 /**
@@ -1193,14 +1189,6 @@ olx.control.GoogleMapsDirectionsOptions.prototype.target;
  */
 olx.control.GoogleMapsDirectionsOptions.prototype.addWaypointButtonText;
 
-
-/**
- * i18n
- * @type {?string|undefined}
- */
-olx.control.GoogleMapsDirectionsOptions.prototype.aroundText;
-
-
 /**
  * i18n
  * @type {?string|undefined}
@@ -1220,13 +1208,6 @@ olx.control.GoogleMapsDirectionsOptions.prototype.carpoolingText;
  * @type {?string|undefined}
  */
 olx.control.GoogleMapsDirectionsOptions.prototype.clearButtonText;
-
-
-/**
- * i18n
- * @type {?string|undefined}
- */
-olx.control.GoogleMapsDirectionsOptions.prototype.copyrightText;
 
 
 /**
@@ -1255,20 +1236,6 @@ olx.control.GoogleMapsDirectionsOptions.prototype.removeButtonText;
  * @type {?string|undefined}
  */
 olx.control.GoogleMapsDirectionsOptions.prototype.searchButtonText;
-
-
-/**
- * i18n
- * @type {?string|undefined}
- */
-olx.control.GoogleMapsDirectionsOptions.prototype.suggestedRoutesText;
-
-
-/**
- * i18n
- * @type {?string|undefined}
- */
-olx.control.GoogleMapsDirectionsOptions.prototype.totalDistanceText;
 
 
 /**

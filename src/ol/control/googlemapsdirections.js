@@ -509,16 +509,7 @@ ol.control.GoogleMapsDirections = function(opt_options) {
    * @type {ol.control.GoogleMapsDirectionsPanel}
    * @private
    */
-  this.directionsPanel_ = new ol.control.GoogleMapsDirectionsPanel({
-    target: options.panel,
-    pixelBuffer: this.pixelBuffer_,
-    suggestedRoutesText: this.suggestedRoutesText,
-    aroundText: this.aroundText,
-    copyrightText: this.copyrightText,
-    totalDistanceText: this.totalDistanceText,
-    cornerPixelSize: goog.isDef(options.cornerPixelSize) ?
-        (options.cornerPixelSize) : undefined
-  });
+  this.directionsPanel_ = options.directionsPanel;
 
   goog.events.listen(
       this.directionsPanel_,

@@ -99,6 +99,10 @@ goog.exportSymbol(
     ol.style.Fill);
 
 goog.exportSymbol(
+    'ol.control.GoogleMapsDirectionsPanel',
+    ol.control.GoogleMapsDirectionsPanel);
+
+goog.exportSymbol(
     'ol.control.GoogleMapsDirections',
     ol.control.GoogleMapsDirections);
 
