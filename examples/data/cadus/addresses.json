@@ -1,0 +1,13 @@
+{
+  "status": 1, 
+  "errors": [], 
+  "addresses": [
+    {
+      "lat": 46.740395,
+      "lon": -71.236336, 
+      "text": "Levis, QC, Canada", 
+      "id": 21, 
+      "description": "Ville de Lévis"
+    }
+  ]
+}

@@ -463,6 +463,9 @@ ol.control.GoogleMapsAddresses.prototype.saveAddress_ =
       }
     });
 
+    // for dev purpose only
+    //request.send(url, 'GET', goog.json.serialize(data), this.saveHeaders_);
+
     request.send(url, 'POST', goog.json.serialize(data), this.saveHeaders_);
   }
 };
