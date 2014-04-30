@@ -383,8 +383,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createRouteElement_ =
   }, this);
 
   // tail
-  var lastLeg = goog.array.peek(route.legs);
-  goog.asserts.assertObject(lastLeg);
+  var lastLeg = route.legs[route.legs.length - 1];
   tailEl = this.createTailElement_(lastLeg, imgSrc[legCounter]);
   goog.dom.appendChild(element, tailEl);
 
@@ -462,7 +461,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createRouteSelectorItemElement_ =
 
 /**
  * Create all elements required for a leg
- * @param {Object} leg
+ * @param {google.maps.DirectionsLeg} leg
  * @param {string} imgSrc
  * @return {Element}
  * @private
@@ -507,7 +506,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createLegElement_ =
 
 /**
  * Create the header for a leg
- * @param {Object} leg
+ * @param {google.maps.DirectionsLeg} leg
  * @param {boolean} start Whether to use the start address or not (use end)
  * @param {string} imgSrc
  * @return {Element}
@@ -578,7 +577,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createLegHeaderElement_ =
 
 /**
  * Create all elements required for a tail, which is the last leg of a route
- * @param {Object} leg
+ * @param {google.maps.DirectionsLeg} leg
  * @param {string} imgSrc
  * @return {Element}
  * @private

@@ -42,3 +42,21 @@ mtx.format.Address.prototype.lon;
  * @type {string}
  */
 mtx.format.Address.prototype.text;
+
+
+/**
+ * @type {Array.<number>}
+ */
+google.maps.DirectionsLeg.prototype.end_coordinate;
+
+
+/**
+ * @type {Array.<number>}
+ */
+google.maps.DirectionsLeg.prototype.start_coordinate;
+
+
+/**
+ * @type {string}
+ */
+google.maps.DirectionsStep.prototype.maneuver;

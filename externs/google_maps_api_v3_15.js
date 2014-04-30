@@ -615,11 +615,6 @@ google.maps.DirectionsStep.prototype.transit;
 google.maps.DirectionsStep.prototype.travel_mode;
 
 /**
- * @type {string}
- */
-google.maps.DirectionsStep.prototype.maneuver;
-
-/**
  * @interface
  */
 google.maps.DirectionsWaypoint = function() {};
