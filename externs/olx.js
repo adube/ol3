@@ -1029,6 +1029,8 @@ olx.control.GoogleMapsCurrentPositionOptions.prototype.currentPositionText;
  *     maxWaypoints: (number|undefined),
  *     mode: (string|undefined),
  *     modifyPixelTolerance: (number|undefined),
+ *     multimodalHeaders: (Object|undefined),
+ *     multimodalUsePostMethod: (boolean|undefined),
  *     multimodalUrl: (string|undefined),
  *     directionsPanel: (ol.control.GoogleMapsDirectionsPanel),
  *     pixelBuffer: (number|undefined),
@@ -1141,6 +1143,20 @@ olx.control.GoogleMapsDirectionsOptions.prototype.mode;
  * @type {number|undefined}
  */
 olx.control.GoogleMapsDirectionsOptions.prototype.modifyPixelTolerance;
+
+
+/**
+ * The headers to use with requests sent to the multimodal service
+ * @type {Object|undefined}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.multimodalHeaders;
+
+
+/**
+ * Whether to use 'POST' or not, i.e. 'GET'. Defaults to true.
+ * @type {boolean|undefined}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.multimodalUsePostMethod;
 
 
 /**

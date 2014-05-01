@@ -147,6 +147,7 @@ var directions = new ol.control.GoogleMapsDirections({
   'getURL': '/usager/adresses/obtenir',
   'mode': ol.control.GoogleMapsDirections.Mode.MULTIPLE,
   'multimodalUrl': 'data/cadus/multimodal.json',
+  'multimodalUsePostMethod': false,
   'addWaypointButtonText': 'Ajouter un point',
   'currentPositionText': 'Ma position',
   'searchButtonText': 'Rechercher',

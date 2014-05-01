@@ -192,12 +192,26 @@ ol.control.GoogleMapsDirections = function(opt_options) {
 
 
   /**
-   *
    * @type {?string}
    * @private
    */
   this.multimodalUrl_ = goog.isDef(options.multimodalUrl) ?
       options.multimodalUrl : null;
+
+  /**
+   * @type {Object}
+   * @private
+   */
+  this.multimodalHeaders_ = goog.isDef(options.multimodalHeaders) ?
+      options.multimodalHeaders : {};
+
+
+  /**
+   * @type {boolean}
+   * @private
+   */
+  this.multimodalUsePostMethod_ = goog.isDef(options.multimodalUsePostMethod) ?
+      options.multimodalUsePostMethod : true;
 
 
   // DOM components - travel modes
@@ -1672,6 +1686,8 @@ ol.control.GoogleMapsDirections.prototype.routeWithMultimodalService_ =
 
   var request = new goog.net.XhrIo();
   var url = this.multimodalUrl_;
+  var headers = this.multimodalHeaders_;
+  var method = (this.multimodalUsePostMethod_ === true) ? 'POST' : 'GET';
 
   var map = this.getMap();
 
@@ -1718,8 +1734,7 @@ ol.control.GoogleMapsDirections.prototype.routeWithMultimodalService_ =
     }
   }, undefined, this);
 
-  //request.send(url, 'POST', data.toString());
-  request.send(url, 'GET', data.toString());
+  request.send(url, method, data.toString(), headers);
 };
 
 
