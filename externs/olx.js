@@ -1258,7 +1258,8 @@ olx.control.GoogleMapsDirectionsOptions.prototype.walkingText;
  *     aroundText: (?string|undefined),
  *     copyrightText: (?string|undefined),
  *     suggestedRoutesText: (?string|undefined),
- *     totalDistanceText: (?string|undefined)}}
+ *     totalDistanceText: (?string|undefined),
+ *     mode: (string|undefined)}},
  * @todo stability experimental
  */
 olx.control.GoogleMapsDirectionsPanelOptions;
@@ -1305,6 +1306,12 @@ olx.control.GoogleMapsDirectionsPanelOptions.prototype.suggestedRoutesText;
  * @type {?string|undefined}
  */
 olx.control.GoogleMapsDirectionsPanelOptions.prototype.totalDistanceText;
+
+/**
+ * mode
+ * @type {string|undefined}
+ */
+olx.control.GoogleMapsDirectionsPanelOptions.prototype.mode;
 
 
 /**

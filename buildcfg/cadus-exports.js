@@ -102,6 +102,16 @@ goog.exportSymbol(
     'ol.control.GoogleMapsDirectionsPanel',
     ol.control.GoogleMapsDirectionsPanel);
 
+goog.exportProperty(
+    ol.control.GoogleMapsDirectionsPanel.Mode,
+    'SIMPLE',
+    ol.control.GoogleMapsDirectionsPanel.Mode.SIMPLE);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirectionsPanel.Mode,
+    'COMPLEX',
+    ol.control.GoogleMapsDirectionsPanel.Mode.COMPLEX);
+
 goog.exportSymbol(
     'ol.control.GoogleMapsDirections',
     ol.control.GoogleMapsDirections);
@@ -206,6 +216,15 @@ goog.exportProperty(
     'WALKING',
     ol.control.GoogleMapsDirections.TravelMode.WALKING);
 
+goog.exportProperty(
+    ol.control.GoogleMapsDirectionsPanel.Mode,
+    'SIMPLE',
+    ol.control.GoogleMapsDirectionsPanel.Mode.SIMPLE);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirectionsPanel.Mode,
+    'COMPLEX',
+    ol.control.GoogleMapsDirectionsPanel.Mode.COMPLEX);
 
 goog.exportSymbol(
     'ol.style.Icon',

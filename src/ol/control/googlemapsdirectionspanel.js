@@ -20,6 +20,13 @@ goog.require('ol.proj');
 
 
 /**
+ * temp for test compilation
+ * @type  {?Console}
+ */
+Window.prototype.console;
+
+
+/**
  * @define {number} Default xize in pixels of the top-left, top-right,
  * bottom-left and bottom-right corners where a popup position should never
  * be.  This should set around half the size of the popup.
@@ -188,6 +195,20 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
    */
   this.selectedRouteIndex_ = null;
 
+  /**
+   * How this widget behave when parsing the json response in setDirection
+   * Possible values are:
+   *  - 'simple': Directions panel will show basic route information
+   *              with road summary of the selected route. First route
+   *              is selected by default.
+   *  - 'complex': Directions panel will show avalaible offer with the
+   *               road summary if the more detail link is selected.
+   * @type {string}
+   * @private
+   */
+  this.mode_ = goog.isDef(options.mode) ?
+      options.mode : ol.control.GoogleMapsDirectionsPanel.Mode.SIMPLE;
+
 
   /**
    * @type {ol.Overlay}
@@ -221,6 +242,15 @@ ol.control.GoogleMapsDirectionsPanel.EventType = {
   HOVER: goog.events.getUniqueId('HOVER'),
   UNHOVER: goog.events.getUniqueId('UNHOVER'),
   SELECT: goog.events.getUniqueId('SELECT')
+};
+
+
+/**
+ * @enum {string}
+ */
+ol.control.GoogleMapsDirectionsPanel.Mode = {
+  SIMPLE: 'simple',
+  COMPLEX: 'complex'
 };
 
 
@@ -277,6 +307,9 @@ ol.control.GoogleMapsDirectionsPanel.prototype.setDirections = function(
   var routeEl;
   var classPrefix = this.classPrefix_;
   var routeObj;
+
+  //TEMP - use the mode_ attribute to quiet lint
+  window.console.log(this.mode_);
 
   // first, clear any previous direction infos
   this.clearDirections();
