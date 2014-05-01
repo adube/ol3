@@ -3,6 +3,7 @@ goog.require('ol.View2D');
 goog.require('ol.control.GoogleMapsAddresses');
 goog.require('ol.control.GoogleMapsCurrentPosition');
 goog.require('ol.control.GoogleMapsDirections');
+goog.require('ol.control.GoogleMapsDirectionsPanel');
 goog.require('ol.interaction');
 goog.require('ol.interaction.DragPan');
 goog.require('ol.interaction.DragStyleCursor');
@@ -101,6 +102,11 @@ goog.exportSymbol(
 goog.exportSymbol(
     'ol.control.GoogleMapsDirectionsPanel',
     ol.control.GoogleMapsDirectionsPanel);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirectionsPanel,
+    'Mode',
+    ol.control.GoogleMapsDirectionsPanel.Mode);
 
 goog.exportProperty(
     ol.control.GoogleMapsDirectionsPanel.Mode,
