@@ -101,39 +101,6 @@ ol.control.GoogleMapsDirections = function(opt_options) {
   this.removeButtonText = goog.isDefAndNotNull(options.removeButtonText) ?
       options.removeButtonText : undefined;
 
-
-  /**
-   * i18n - suggestedRoutes
-   * @type {?string|undefined}
-   */
-  this.suggestedRoutesText =
-      goog.isDefAndNotNull(options.suggestedRoutesText) ?
-          options.suggestedRoutesText : undefined;
-
-  /**
-   * i18n - around
-   * @type {?string|undefined}
-   */
-  this.aroundText =
-      goog.isDefAndNotNull(options.aroundText) ?
-          options.aroundText : undefined;
-
-  /**
-   * i18n - copyright
-   * @type {?string|undefined}
-   */
-  this.copyrightText =
-      goog.isDefAndNotNull(options.copyrightText) ?
-          options.copyrightText : undefined;
-
-  /**
-   * i18n - totalDistance
-   * @type {?string|undefined}
-   */
-  this.totalDistanceText =
-      goog.isDefAndNotNull(options.totalDistanceText) ?
-          options.totalDistanceText : undefined;
-
   /**
    * i18n - bicycling
    * @type {string}
