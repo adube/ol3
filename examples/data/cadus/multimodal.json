@@ -115,12 +115,7 @@
         }
       ],
       "summary" : "Rue Jacques-Cartier E et Chemin Saint Thomas",
-      "waypoint_order" : [
-        {
-          "address": "377 Rue B\u00e9gin, Chicoutimi, QC G7H, Canada",
-          "coordinate": [-7909892.869032605,6177854.083222482]
-        }  
-      ]
+      "waypoint_order" : [0]
     }
   ]
 }
