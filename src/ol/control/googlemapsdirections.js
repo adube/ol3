@@ -5,6 +5,7 @@ goog.require('goog.array');
 goog.require('goog.asserts');
 goog.require('goog.dom');
 goog.require('goog.dom.TagName');
+goog.require('goog.dom.classes');
 goog.require('goog.events');
 goog.require('goog.events.EventType');
 goog.require('goog.json');
@@ -156,12 +157,24 @@ ol.control.GoogleMapsDirections = function(opt_options) {
   this.travelModeInputElements_ = new ol.Collection();
 
 
-  var classPrefix = 'ol-gmds';
+  /**
+   * Collection of travel mode checkbox-like link elements
+   * @type {ol.Collection}
+   * @private
+   */
+  this.travelModeCheckboxLinkElements_ = new ol.Collection();
+
+  /**
+   * @type {string}
+   * @private
+   */
+  this.classPrefix_ = 'ol-gmds';
+  var classPrefix = this.classPrefix_;
+
 
   var element = goog.dom.createDom(goog.dom.TagName.DIV, {
     'class': classPrefix + ' ' + ol.css.CLASS_UNSELECTABLE
   });
-
 
   /**
    * How this widget should behave when more than one travel mode is selected.
@@ -223,8 +236,15 @@ ol.control.GoogleMapsDirections = function(opt_options) {
     ol.control.GoogleMapsDirections.TravelMode.WALKING
   ];
 
-  var fieldsetEl = goog.dom.createDom(goog.dom.TagName.FIELDSET, {});
+  var fieldsetEl = goog.dom.createDom(goog.dom.TagName.FIELDSET, {
+    'class': classPrefix + '-fieldset'
+  });
   goog.dom.appendChild(element, fieldsetEl);
+
+  var checkboxLinkContainerEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+    'class': classPrefix + '-checkbox-link-container'
+  });
+  goog.dom.appendChild(element, checkboxLinkContainerEl);
 
   goog.array.forEach(travelModes, function(travelMode) {
     var labelText = '';
@@ -246,6 +266,7 @@ ol.control.GoogleMapsDirections = function(opt_options) {
         break;
     }
 
+    // == input ==
     var inputOptions = {
       'type': 'checkbox',
       'name': travelMode
@@ -264,7 +285,38 @@ ol.control.GoogleMapsDirections = function(opt_options) {
     });
     goog.dom.appendChild(fieldsetEl, labelEl);
     goog.dom.appendChild(labelEl, goog.dom.createTextNode(labelText));
+
+    // == checkbox-like link ==
+    var checkboxLinkClass = [];
+    checkboxLinkClass.push(classPrefix + '-checkbox-link');
+    checkboxLinkClass.push(classPrefix + '-checkbox-link-' + travelMode);
+
+    if (goog.array.indexOf(this.defaultTravelModes_, travelMode) != -1) {
+      checkboxLinkClass.push(classPrefix + '-checkbox-link-checked');
+    }
+
+    var checkboxLinkOptions = {
+      'class': checkboxLinkClass.join(' '),
+      'data-travel-mode': travelMode
+    };
+
+    var checkboxLinkEl = goog.dom.createDom(goog.dom.TagName.A,
+        checkboxLinkOptions);
+
+    goog.dom.appendChild(checkboxLinkContainerEl, checkboxLinkEl);
+    this.travelModeCheckboxLinkElements_.push(checkboxLinkEl);
+
+    goog.events.listen(checkboxLinkEl, [
+      goog.events.EventType.TOUCHEND,
+      goog.events.EventType.CLICK
+    ], this.handleCheckboxLinkElPress_, false, this);
+
   }, this);
+
+  var separatorEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+    'class': classPrefix + '-checkbox-link-end-separator'
+  });
+  goog.dom.appendChild(checkboxLinkContainerEl, separatorEl);
 
   // DOM components - add waypoint
   var addWaypointGeocoderButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
@@ -1164,6 +1216,28 @@ ol.control.GoogleMapsDirections.prototype.getHighestPriorityTravelMode_ =
 
 
 /**
+ * @param {string} travelMode Travel mode
+ * @return {Element}
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.getInputElByTravelMode_ =
+    function(travelMode) {
+  var foundInputEl;
+
+  goog.array.some(this.travelModeInputElements_.getArray(), function(inputEl) {
+    if (inputEl.name === travelMode) {
+      foundInputEl = inputEl;
+      return true;
+    } else {
+      return false;
+    }
+  });
+
+  return foundInputEl;
+};
+
+
+/**
  * @param {goog.events.Event} browserEvent Event.
  * @private
  */
@@ -1172,6 +1246,25 @@ ol.control.GoogleMapsDirections.prototype.handleAddWPGeocoderButtonPress_ =
 
   browserEvent.preventDefault();
   this.addWaypointGeocoder();
+};
+
+
+/**
+ * @param {goog.events.Event} browserEvent Event.
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.handleCheckboxLinkElPress_ =
+    function(browserEvent) {
+
+  browserEvent.preventDefault();
+
+  var linkEl = browserEvent.target;
+  goog.asserts.assertInstanceof(linkEl, Node);
+
+  var travelMode = linkEl.getAttribute('data-travel-mode');
+  var inputEl = this.getInputElByTravelMode_(travelMode);
+
+  this.toggleTravelMode_(inputEl, linkEl, !inputEl.checked);
 };
 
 
@@ -2024,6 +2117,29 @@ ol.control.GoogleMapsDirections.prototype.toggleGeocoderReverseGeocodings_ =
 
 
 /**
+ * Toggle travel mode input checkbox element AND link element.
+ * @param {Node} inputEl Input
+ * @param {Node} linkEl Link
+ * @param {boolean} check
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.toggleTravelMode_ =
+    function(inputEl, linkEl, check) {
+
+  var classPrefix = this.classPrefix_;
+
+  if (check) {
+    inputEl.checked = true;
+    goog.dom.classes.add(linkEl, classPrefix + '-checkbox-link-checked');
+  } else {
+    inputEl.checked = false;
+    goog.dom.classes.remove(linkEl, classPrefix + '-checkbox-link-checked');
+  }
+
+};
+
+
+/**
  * Browse each travel mode input element.  Check or uncheck accordingly.
  * @param {Array.<string>} travelModesToCheck Travel modes to check
  * @private
@@ -2031,11 +2147,17 @@ ol.control.GoogleMapsDirections.prototype.toggleGeocoderReverseGeocodings_ =
 ol.control.GoogleMapsDirections.prototype.toggleTravelModes_ =
     function(travelModesToCheck) {
 
-  this.travelModeInputElements_.forEach(function(inputEl) {
+  var travelMode;
+  var inputEl;
+
+  this.travelModeCheckboxLinkElements_.forEach(function(linkEl) {
+    travelMode = linkEl.getAttribute('data-travel-mode');
+    inputEl = this.getInputElByTravelMode_(travelMode);
+
     if (goog.array.indexOf(travelModesToCheck, inputEl.name) != -1) {
-      inputEl.checked = true;
+      this.toggleTravelMode_(inputEl, linkEl, true);
     } else {
-      inputEl.checked = false;
+      this.toggleTravelMode_(inputEl, linkEl, false);
     }
   }, this);
 

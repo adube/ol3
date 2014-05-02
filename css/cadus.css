@@ -114,3 +114,56 @@
   margin-top: 10px;
   margin-right: 10px;
 }
+
+
+/**
+ * GoogleMapsDirections
+ */
+
+.ol-gmds-fieldset {
+  display: none;
+}
+
+.ol-gmds-checkbox-link-container {
+  margin: 5px 0;
+}
+
+.ol-gmds-checkbox-link {
+  background-color: #A2AEA9;
+  background-image: url('../img/travel-mode-sprites.png');
+  cursor: pointer;
+  float: left;
+  height: 45px;
+  margin: 5px 8px 0 0;
+  width: 45px;
+}
+
+.ol-gmds-checkbox-link-checked,
+.ol-gmds-checkbox-link:hover {
+  background-color: #39B9EB;
+}
+
+.ol-gmds-checkbox-link-bicycling {
+  background-position: 0 -90px;
+}
+
+.ol-gmds-checkbox-link-carpooling {
+  background-position: 0 0;
+}
+
+.ol-gmds-checkbox-link-driving {
+  background-position: 0 0;
+}
+
+.ol-gmds-checkbox-link-walking {
+  background-position: 0 -45px;
+}
+
+
+.ol-gmds-checkbox-link-transit {
+  background-position: 0 -135px;
+}
+
+.ol-gmds-checkbox-link-end-separator {
+  clear: left;
+}
