@@ -252,11 +252,11 @@ ol.control.GoogleMapsDirections = function(opt_options) {
 
   // DOM components - travel modes
   var travelModes = [
-    ol.control.GoogleMapsDirections.TravelMode.BICYCLING,
-    ol.control.GoogleMapsDirections.TravelMode.CARPOOLING,
     ol.control.GoogleMapsDirections.TravelMode.DRIVING,
+    ol.control.GoogleMapsDirections.TravelMode.WALKING,
+    ol.control.GoogleMapsDirections.TravelMode.BICYCLING,
     ol.control.GoogleMapsDirections.TravelMode.TRANSIT,
-    ol.control.GoogleMapsDirections.TravelMode.WALKING
+    ol.control.GoogleMapsDirections.TravelMode.CARPOOLING
   ];
 
   var fieldsetEl = goog.dom.createDom(goog.dom.TagName.FIELDSET, {
