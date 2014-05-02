@@ -129,7 +129,8 @@ var directionsPanel = new ol.control.GoogleMapsDirectionsPanel({
   'arroundText': 'environ',
   'copyrightText': 'Données cartographiques ©2014 Google',
   'suggestedRoutesText': 'Routes suggérées',
-  'totalDistanceText': 'Distance Totale'
+  'totalDistanceText': 'Distance Totale',
+  'mode': ol.control.GoogleMapsDirectionsPanel.Mode.COMPLEX
 });
 
 var directions = new ol.control.GoogleMapsDirections({

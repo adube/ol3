@@ -20,13 +20,6 @@ goog.require('ol.proj');
 
 
 /**
- * temp for test compilation
- * @type  {?Console}
- */
-Window.prototype.console;
-
-
-/**
  * @define {number} Default xize in pixels of the top-left, top-right,
  * bottom-left and bottom-right corners where a popup position should never
  * be.  This should set around half the size of the popup.
@@ -241,7 +234,8 @@ goog.inherits(ol.control.GoogleMapsDirectionsPanel, ol.control.Control);
 ol.control.GoogleMapsDirectionsPanel.EventType = {
   HOVER: goog.events.getUniqueId('HOVER'),
   UNHOVER: goog.events.getUniqueId('UNHOVER'),
-  SELECT: goog.events.getUniqueId('SELECT')
+  SELECT: goog.events.getUniqueId('SELECT'),
+  UNSELECT: goog.events.getUniqueId('UNSELECT')
 };
 
 
@@ -305,11 +299,10 @@ ol.control.GoogleMapsDirectionsPanel.prototype.setDirections = function(
   var routesEl = this.routesEl_;
   var routeSelectorListEl = this.routeSelectorListEl_;
   var routeEl;
+  var offerEl;
+  var containerEl;
   var classPrefix = this.classPrefix_;
   var routeObj;
-
-  //TEMP - use the mode_ attribute to quiet lint
-  window.console.log(this.mode_);
 
   // first, clear any previous direction infos
   this.clearDirections();
@@ -319,15 +312,31 @@ ol.control.GoogleMapsDirectionsPanel.prototype.setDirections = function(
     routeObj = {};
     routeObj.result = route;
 
-    routeEl = this.createRouteElement_(route, index, imageSrc);
-    goog.dom.appendChild(routesEl, routeEl);
-    routeObj.directionEl = routeEl;
+    if (this.mode_ == ol.control.GoogleMapsDirectionsPanel.Mode.SIMPLE) {
+      routeEl = this.createRouteElement_(route, index, imageSrc);
+      goog.dom.appendChild(routesEl, routeEl);
+      routeObj.directionEl = routeEl;
 
-    goog.dom.appendChild(
-        routeSelectorListEl,
-        this.createRouteSelectorItemElement_(route, index)
-    );
+      goog.dom.appendChild(
+          routeSelectorListEl,
+          this.createRouteSelectorItemElement_(route, index)
+      );
+    }
+    else {
+      containerEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+        'class': classPrefix + '-offer-result',
+        'data-route-index': index
+      });
 
+      offerEl = this.createOfferElement_(route, index);
+      goog.dom.appendChild(containerEl, offerEl);
+
+      routeEl = this.createRouteElement_(route, index, imageSrc);
+      goog.dom.appendChild(containerEl, routeEl);
+
+      goog.dom.appendChild(routesEl, containerEl);
+      routeObj.directionEl = routeEl;
+    }
     this.routes_.push(routeObj);
   }, this);
 
@@ -341,12 +350,14 @@ ol.control.GoogleMapsDirectionsPanel.prototype.setDirections = function(
     goog.dom.appendChild(copyright, copyrightText);
   }
 
-  // set first route as default selection
-  if (this.routes_.getLength()) {
-    this.select_(0);
+  if (this.mode_ == ol.control.GoogleMapsDirectionsPanel.Mode.SIMPLE) {
+    // set first route as default selection
+    if (this.routes_.getLength()) {
+      this.select_(0);
+    }
+    // Display the Suggested routes button
+    this.selectorVisible_(true);
   }
-  // Display the Suggested routes button
-  this.selectorVisible_(true);
 };
 
 
@@ -419,6 +430,114 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createRouteElement_ =
   var lastLeg = route.legs[route.legs.length - 1];
   tailEl = this.createTailElement_(lastLeg, imgSrc[legCounter]);
   goog.dom.appendChild(element, tailEl);
+
+  return element;
+};
+
+
+/**
+ * Create all element required for an offer
+ * @param {google.maps.DirectionsRoute} route
+ * @param {number} index
+ * @return {Element}
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
+    function(route, index) {
+
+  var userEl;
+  var offerEl;
+  var classPrefix = this.classPrefix_;
+
+  var element = goog.dom.createDom(goog.dom.TagName.DIV, {
+    'class': classPrefix + '-offer',
+    'data-route-index': index
+  });
+
+  userEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+    'class': classPrefix + '-offer-user',
+    'data-route-index': index
+  });
+
+  var userPic = goog.dom.createDom(goog.dom.TagName.IMG, {
+    'src': route.mt_usager.mt_photo,
+    'class': classPrefix + '-offer-user-pic'
+  });
+
+  goog.dom.appendChild(userEl, userPic);
+  goog.dom.appendChild(userEl, goog.dom.createDom(goog.dom.TagName.BR, {}));
+
+  goog.dom.appendChild(userEl,
+      goog.dom.createTextNode(
+          route.mt_usager.mt_first_name + ' ' + route.mt_usager.mt_last_name));
+  goog.dom.appendChild(userEl, goog.dom.createDom(goog.dom.TagName.BR, {}));
+
+  goog.dom.appendChild(userEl,
+      goog.dom.createTextNode('groupe: ' + route.mt_usager.mt_group_name));
+  goog.dom.appendChild(userEl, goog.dom.createDom(goog.dom.TagName.BR, {}));
+
+  goog.dom.appendChild(userEl,
+      goog.dom.createTextNode('note: ' + route.mt_usager.mt_evaluation));
+
+  goog.dom.appendChild(element, userEl);
+
+  offerEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+    'class': classPrefix + '-offer-detail',
+    'data-route-index': index
+  });
+
+  goog.dom.appendChild(offerEl,
+      goog.dom.createTextNode(
+          'horraire ponctuelle: ' + route.mt_offre.mt_horaire_ponctuelle));
+  goog.dom.appendChild(offerEl, goog.dom.createDom(goog.dom.TagName.BR, {}));
+
+  goog.dom.appendChild(offerEl,
+      goog.dom.createTextNode('date: ' + route.mt_offre.mt_date));
+  goog.dom.appendChild(offerEl, goog.dom.createDom(goog.dom.TagName.BR, {}));
+
+  goog.dom.appendChild(offerEl,
+      goog.dom.createTextNode('heure: ' + route.mt_offre.mt_heure));
+  goog.dom.appendChild(offerEl, goog.dom.createDom(goog.dom.TagName.BR, {}));
+
+  goog.dom.appendChild(offerEl,
+      goog.dom.createTextNode(
+          'conducteur: ' + route.mt_offre.mt_est_conducteur));
+  goog.dom.appendChild(offerEl, goog.dom.createDom(goog.dom.TagName.BR, {}));
+
+  goog.dom.appendChild(offerEl,
+      goog.dom.createTextNode('fumeur: ' + route.mt_offre.mt_fume));
+  goog.dom.appendChild(offerEl, goog.dom.createDom(goog.dom.TagName.BR, {}));
+
+  goog.dom.appendChild(offerEl,
+      goog.dom.createTextNode(
+          'places disponibles: ' + route.mt_offre.mt_places_dispo));
+  goog.dom.appendChild(offerEl, goog.dom.createDom(goog.dom.TagName.BR, {}));
+
+  goog.dom.appendChild(offerEl,
+      goog.dom.createTextNode('atmosphere: ' + route.mt_offre.mt_atmosphere));
+  goog.dom.appendChild(offerEl, goog.dom.createDom(goog.dom.TagName.BR, {}));
+
+  goog.dom.appendChild(offerEl,
+      goog.dom.createTextNode('prix: ' + route.mt_offre.mt_prix));
+  goog.dom.appendChild(offerEl, goog.dom.createDom(goog.dom.TagName.BR, {}));
+
+  goog.dom.appendChild(element, offerEl);
+
+  var detailLink = goog.dom.createDom(goog.dom.TagName.A, {
+    'href': '#',
+    'data-selector-index': index
+  });
+
+  goog.dom.appendChild(detailLink,
+      goog.dom.createTextNode('Détail du trajet'));
+
+  goog.dom.appendChild(element, detailLink);
+
+  // event listeners
+  goog.events.listen(detailLink, [
+    goog.events.EventType.TOUCHEND,
+    goog.events.EventType.CLICK
+  ], this.handleSelectorElementPress_, false, this);
 
   return element;
 };
@@ -739,6 +858,8 @@ ol.control.GoogleMapsDirectionsPanel.prototype.select_ = function(index) {
     // hide direction details
     goog.style.setStyle(route.directionEl, 'display', 'none');
 
+    goog.events.dispatchEvent(this,
+        ol.control.GoogleMapsDirectionsPanel.EventType.UNSELECT);
 
     this.selectedRouteIndex_ = null;
   }
@@ -760,7 +881,25 @@ ol.control.GoogleMapsDirectionsPanel.prototype.select_ = function(index) {
     goog.events.dispatchEvent(this,
         ol.control.GoogleMapsDirectionsPanel.EventType.SELECT);
   }
-  this.selectSelectorItem_(index);
+  else {
+    if (!goog.isNull(this.selectedRouteIndex_) &&
+        this.selectedRouteIndex_ == index &&
+        this.mode_ == ol.control.GoogleMapsDirectionsPanel.Mode.COMPLEX) {
+      route = this.routes_.getAt(index);
+
+      //toggle off the current direction detail
+      goog.style.setStyle(route.directionEl, 'display', 'none');
+
+      goog.events.dispatchEvent(this,
+          ol.control.GoogleMapsDirectionsPanel.EventType.UNSELECT);
+
+      //reset the selected route index
+      this.selectedRouteIndex_ = null;
+    }
+  }
+
+  if (this.mode_ == ol.control.GoogleMapsDirectionsPanel.Mode.SIMPLE)
+    this.selectSelectorItem_(index);
 };
 
 

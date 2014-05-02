@@ -59,6 +59,11 @@
 #ol-gmdp-selector-toggle{
   cursor:pointer;
 }
+
+.ol-gmdp-offer-user-pic{
+  width: 75px;
+  height: auto;
+}
 /**
  * GoogleMapsDirectionsPanel
  */

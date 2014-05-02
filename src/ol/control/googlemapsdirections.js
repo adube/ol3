@@ -590,6 +590,11 @@ ol.control.GoogleMapsDirections = function(opt_options) {
 
   goog.events.listen(
       this.directionsPanel_,
+      ol.control.GoogleMapsDirectionsPanel.EventType.UNSELECT,
+      this.handleSelectionCleared_, false, this);
+
+  goog.events.listen(
+      this.directionsPanel_,
       ol.control.GoogleMapsDirectionsPanel.EventType.HOVER,
       this.handleHover_, false, this);
 
@@ -1333,7 +1338,6 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
   var geometry;
 
   var routeFeatures = this.routeFeatures_;
-  var selectedRouteFeatures = this.selectedRouteFeatures_;
 
   if (status == google.maps.DirectionsStatus.OK) {
     goog.array.forEach(response.routes, function(route) {
@@ -1366,20 +1370,6 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
     }, this);
 
     if (routeFeatures.getLength()) {
-      // set first route as selected route
-      selectedRouteFeatures.push(routeFeatures.getAt(0));
-
-      //Put the right waypoint icon
-      if (this.loading_ === false) {
-        this.updateGeocoders_(response.routes[0].waypoint_order);
-      }
-
-      // draw
-      this.drawRoute_();
-
-      // fit extent
-      this.fitViewExtentToRoute_();
-
       // set directions in panel
       this.directionsPanel_.setDirections(response, this.iconImages_);
     }
@@ -1539,6 +1529,19 @@ ol.control.GoogleMapsDirections.prototype.handleSelectionChanged_ = function(
   var index = this.directionsPanel_.getSelectedRouteIndex();
   if (!goog.isNull(index)) {
     this.selectRoute_(index);
+  }
+};
+
+
+/**
+ * @param {goog.events.Event} event Event.
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.handleSelectionCleared_ = function(
+    event) {
+  var index = this.directionsPanel_.getSelectedRouteIndex();
+  if (!goog.isNull(index)) {
+    this.unselectRoute_(index);
   }
 };
 
@@ -2024,9 +2027,8 @@ ol.control.GoogleMapsDirections.prototype.saveAll_ = function(includeRoutes) {
 
 /**
  * Select the route at the specified location in the collection.  Here,
- * the selection is merely a matter of clearing the selected route features
- * collection, then get the route feature at the specific index, then draw
- * the routes.
+ * the selection is merely a matter of getting the route feature at the specific
+ * index and draw the routes.
  * @param {number} index
  * @private
  */
@@ -2034,27 +2036,48 @@ ol.control.GoogleMapsDirections.prototype.selectRoute_ = function(index) {
   var routeFeatures = this.routeFeatures_;
   var selectedRouteFeatures = this.selectedRouteFeatures_;
   var routeFeature = routeFeatures.getAt(index);
+  var selectedRoute = this.directionsPanel_.getSelectedRoute();
 
   if (goog.isNull(routeFeature)) {
     // todo - manage error
     return;
   }
 
-  // clear previously selected route, add new one
-  selectedRouteFeatures.clear();
+  // add the new route
   selectedRouteFeatures.push(routeFeature);
 
-  // clear vector layer before re-drawing
-  var vectorSource = this.vectorLayer_.getSource();
-  goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
-  vectorSource.clear();
+  //Put the right waypoint icon
+  if (this.loading_ === false) {
+    this.updateGeocoders_(selectedRoute.waypoint_order);
+  }
 
   // draw
   this.drawRoute_();
 
+  // fit extent
+  this.fitViewExtentToRoute_();
+
   // dispatch event
   goog.events.dispatchEvent(this,
       ol.control.GoogleMapsDirections.EventType.SELECT);
+};
+
+
+/**
+ * Clear the unselected route from the map.
+ * @param {number} index
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.unselectRoute_ = function(index) {
+  var selectedRouteFeatures = this.selectedRouteFeatures_;
+
+  // clear previously selected route
+  selectedRouteFeatures.clear();
+
+  // clear vector layer
+  var vectorSource = this.vectorLayer_.getSource();
+  goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
+  vectorSource.clear();
 };
 
 
