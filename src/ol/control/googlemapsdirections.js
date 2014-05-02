@@ -297,6 +297,7 @@ ol.control.GoogleMapsDirections = function(opt_options) {
 
     var checkboxLinkOptions = {
       'class': checkboxLinkClass.join(' '),
+      'title': labelText,
       'data-travel-mode': travelMode
     };
 
