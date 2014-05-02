@@ -890,7 +890,7 @@ olx.control.GoogleMapsAddressesOptions;
 
 
 /**
- * Adresses
+ * Addresses
  * @type {Object}
  */
 olx.control.GoogleMapsAddressesOptions.prototype.addresses;
@@ -1042,6 +1042,8 @@ olx.control.GoogleMapsCurrentPositionOptions.prototype.currentPositionText;
  *     clearButtonText: (?string|undefined),
  *     currentPositionText: (?string|undefined),
  *     drivingText: (string|undefined),
+ *     myAddressesText: (string|undefined),
+ *     myTravelModesText: (string|undefined),
  *     removeButtonText: (?string|undefined),
  *     searchButtonText: (?string|undefined),
  *     transitText: (string|undefined),
@@ -1238,6 +1240,20 @@ olx.control.GoogleMapsDirectionsOptions.prototype.currentPositionText;
  * @type {?string|undefined}
  */
 olx.control.GoogleMapsDirectionsOptions.prototype.drivingText;
+
+
+/**
+ * i18n
+ * @type {?string|undefined}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.myAddressesText;
+
+
+/**
+ * i18n
+ * @type {?string|undefined}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.myTravelModesText;
 
 
 /**

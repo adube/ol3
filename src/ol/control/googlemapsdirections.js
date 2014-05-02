@@ -103,6 +103,20 @@ ol.control.GoogleMapsDirections = function(opt_options) {
       options.removeButtonText : undefined;
 
   /**
+   * i18n - myAddresses
+   * @type {string}
+   */
+  this.myAddressesText = goog.isDefAndNotNull(options.myAddressesText) ?
+      options.myAddressesText : 'My addresses';
+
+  /**
+   * i18n - myTravelModes
+   * @type {string}
+   */
+  this.myTravelModesText = goog.isDefAndNotNull(options.myTravelModesText) ?
+      options.myTravelModesText : 'My travel modes';
+
+  /**
    * i18n - bicycling
    * @type {string}
    */
@@ -241,6 +255,14 @@ ol.control.GoogleMapsDirections = function(opt_options) {
   });
   goog.dom.appendChild(element, fieldsetEl);
 
+  var myTravelModesLabelEl = goog.dom.createDom(goog.dom.TagName.LABEL, {
+    'class': classPrefix + '-label'
+  });
+  goog.dom.appendChild(myTravelModesLabelEl,
+      goog.dom.createTextNode(this.myTravelModesText + ': '));
+  goog.dom.appendChild(element, myTravelModesLabelEl);
+
+
   var checkboxLinkContainerEl = goog.dom.createDom(goog.dom.TagName.DIV, {
     'class': classPrefix + '-checkbox-link-container'
   });
@@ -318,6 +340,13 @@ ol.control.GoogleMapsDirections = function(opt_options) {
     'class': classPrefix + '-checkbox-link-end-separator'
   });
   goog.dom.appendChild(checkboxLinkContainerEl, separatorEl);
+
+  var myAddressesLabelEl = goog.dom.createDom(goog.dom.TagName.LABEL, {
+    'class': classPrefix + '-label'
+  });
+  goog.dom.appendChild(
+      myAddressesLabelEl, goog.dom.createTextNode(this.myAddressesText + ': '));
+  goog.dom.appendChild(element, myAddressesLabelEl);
 
   // DOM components - add waypoint
   var addWaypointGeocoderButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
