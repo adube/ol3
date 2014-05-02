@@ -240,6 +240,15 @@ ol.control.GoogleMapsDirections = function(opt_options) {
   this.multimodalUsePostMethod_ = goog.isDef(options.multimodalUsePostMethod) ?
       options.multimodalUsePostMethod : true;
 
+  var firstContainer = goog.dom.createDom(goog.dom.TagName.DIV, {
+    'class': classPrefix + '-container ' + classPrefix + '-container-1'
+  });
+  goog.dom.appendChild(element, firstContainer);
+
+  var secondContainer = goog.dom.createDom(goog.dom.TagName.DIV, {
+    'class': classPrefix + '-container ' + classPrefix + '-container-2'
+  });
+  goog.dom.appendChild(element, secondContainer);
 
   // DOM components - travel modes
   var travelModes = [
@@ -253,20 +262,20 @@ ol.control.GoogleMapsDirections = function(opt_options) {
   var fieldsetEl = goog.dom.createDom(goog.dom.TagName.FIELDSET, {
     'class': classPrefix + '-fieldset'
   });
-  goog.dom.appendChild(element, fieldsetEl);
+  goog.dom.appendChild(firstContainer, fieldsetEl);
 
   var myTravelModesLabelEl = goog.dom.createDom(goog.dom.TagName.LABEL, {
     'class': classPrefix + '-label'
   });
   goog.dom.appendChild(myTravelModesLabelEl,
       goog.dom.createTextNode(this.myTravelModesText + ': '));
-  goog.dom.appendChild(element, myTravelModesLabelEl);
+  goog.dom.appendChild(firstContainer, myTravelModesLabelEl);
 
 
   var checkboxLinkContainerEl = goog.dom.createDom(goog.dom.TagName.DIV, {
     'class': classPrefix + '-checkbox-link-container'
   });
-  goog.dom.appendChild(element, checkboxLinkContainerEl);
+  goog.dom.appendChild(firstContainer, checkboxLinkContainerEl);
 
   goog.array.forEach(travelModes, function(travelMode) {
     var labelText = '';
@@ -346,7 +355,7 @@ ol.control.GoogleMapsDirections = function(opt_options) {
   });
   goog.dom.appendChild(
       myAddressesLabelEl, goog.dom.createTextNode(this.myAddressesText + ': '));
-  goog.dom.appendChild(element, myAddressesLabelEl);
+  goog.dom.appendChild(secondContainer, myAddressesLabelEl);
 
   // DOM components - add waypoint
   var addWaypointGeocoderButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
@@ -356,7 +365,7 @@ ol.control.GoogleMapsDirections = function(opt_options) {
       goog.dom.createTextNode(this.addWaypointButtonText);
   goog.dom.appendChild(
       addWaypointGeocoderButton, addWaypointGeocoderButtonText);
-  goog.dom.appendChild(element, addWaypointGeocoderButton);
+  goog.dom.appendChild(secondContainer, addWaypointGeocoderButton);
   goog.events.listen(addWaypointGeocoderButton, [
     goog.events.EventType.TOUCHEND,
     goog.events.EventType.CLICK
@@ -366,19 +375,19 @@ ol.control.GoogleMapsDirections = function(opt_options) {
   var startGeocoderElement = goog.dom.createDom(goog.dom.TagName.DIV, {
     'class': classPrefix + '-geocoder-start'
   });
-  goog.dom.appendChild(element, startGeocoderElement);
+  goog.dom.appendChild(secondContainer, startGeocoderElement);
 
   // DOM components - waypoint geocoders
   var waypointGeocodersContainer = goog.dom.createDom(goog.dom.TagName.DIV, {
     'class': classPrefix + '-geocoder-waypoints'
   });
-  goog.dom.appendChild(element, waypointGeocodersContainer);
+  goog.dom.appendChild(secondContainer, waypointGeocodersContainer);
 
   // DOM components - endGeocoder
   var endGeocoderElement = goog.dom.createDom(goog.dom.TagName.DIV, {
     'class': classPrefix + '-geocoder-end'
   });
-  goog.dom.appendChild(element, endGeocoderElement);
+  goog.dom.appendChild(secondContainer, endGeocoderElement);
 
 
   /**
