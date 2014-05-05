@@ -861,6 +861,8 @@ ol.control.GoogleMapsDirectionsPanel.prototype.select_ = function(index) {
     goog.events.dispatchEvent(this,
         ol.control.GoogleMapsDirectionsPanel.EventType.UNSELECT);
 
+    this.destroyPopup_();
+
     this.selectedRouteIndex_ = null;
   }
 
@@ -881,21 +883,21 @@ ol.control.GoogleMapsDirectionsPanel.prototype.select_ = function(index) {
     goog.events.dispatchEvent(this,
         ol.control.GoogleMapsDirectionsPanel.EventType.SELECT);
   }
-  else {
-    if (!goog.isNull(this.selectedRouteIndex_) &&
-        this.selectedRouteIndex_ == index &&
-        this.mode_ == ol.control.GoogleMapsDirectionsPanel.Mode.COMPLEX) {
-      route = this.routes_.getAt(index);
+  else if (!goog.isNull(this.selectedRouteIndex_) &&
+      this.selectedRouteIndex_ == index &&
+      this.mode_ == ol.control.GoogleMapsDirectionsPanel.Mode.COMPLEX) {
+    route = this.routes_.getAt(index);
 
-      //toggle off the current direction detail
-      goog.style.setStyle(route.directionEl, 'display', 'none');
+    //toggle off the current direction detail
+    goog.style.setStyle(route.directionEl, 'display', 'none');
 
-      goog.events.dispatchEvent(this,
-          ol.control.GoogleMapsDirectionsPanel.EventType.UNSELECT);
+    goog.events.dispatchEvent(this,
+        ol.control.GoogleMapsDirectionsPanel.EventType.UNSELECT);
 
-      //reset the selected route index
-      this.selectedRouteIndex_ = null;
-    }
+    this.destroyPopup_();
+
+    //reset the selected route index
+    this.selectedRouteIndex_ = null;
   }
 
   if (this.mode_ == ol.control.GoogleMapsDirectionsPanel.Mode.SIMPLE)
