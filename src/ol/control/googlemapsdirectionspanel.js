@@ -315,7 +315,6 @@ ol.control.GoogleMapsDirectionsPanel.prototype.setDirections = function(
     if (this.mode_ == ol.control.GoogleMapsDirectionsPanel.Mode.SIMPLE) {
       routeEl = this.createRouteElement_(route, index, imageSrc);
       goog.dom.appendChild(routesEl, routeEl);
-      routeObj.directionEl = routeEl;
 
       goog.dom.appendChild(
           routeSelectorListEl,
@@ -335,8 +334,10 @@ ol.control.GoogleMapsDirectionsPanel.prototype.setDirections = function(
       goog.dom.appendChild(containerEl, routeEl);
 
       goog.dom.appendChild(routesEl, containerEl);
-      routeObj.directionEl = routeEl;
     }
+
+    routeObj.directionEl = routeEl;
+
     this.routes_.push(routeObj);
   }, this);
 
