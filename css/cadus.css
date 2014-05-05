@@ -60,10 +60,66 @@
   cursor:pointer;
 }
 
-.ol-gmdp-offer-user-pic{
-  width: 75px;
-  height: auto;
+.ol-gmdp-offer {
+  border: 1px solid #b6b6b6;
 }
+
+.ol-gmdp-offer-even {
+  background-color: #ebebeb;
+}
+
+.ol-gmdp-offer-num {
+  background-color: #f28d00;
+  float: left;
+  padding: 2px 9px;
+  color: white;
+}
+
+.ol-gmdp-offer-left {
+  float: left;
+  padding: 8px 8px 8px 2px;
+  width: 215px;
+}
+
+.ol-gmdp-offer-right {
+  padding: 8px 18px 8px 8px;
+}
+
+.ol-gmdp-offer-user-pic {
+  width: 75px;
+  float: left;
+  height: auto;
+  margin: 0 5px 5px 0;
+}
+
+.ol-gmdp-clear-left {
+  clear: left;
+}
+
+.ol-gmdp-offer-header {
+  font-weight: bold;
+}
+
+.ol-gmdp-offer-pipe {
+  margin: 0 8px;
+}
+
+.ol-gmdp-offer-user-eval {
+  background-color: #6b6b6b;
+  float: left;
+  height: 20px;
+  /*margin: 0 3px 3px 0;*/
+  width: 80px;
+}
+
+.ol-gmdp-offer-icon {
+  background-color: #6b6b6b;
+  float: left;
+  height: 20px;
+  /*margin: 0 3px 3px 0;*/
+  width: 20px;
+}
+
 /**
  * GoogleMapsDirectionsPanel
  */

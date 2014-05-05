@@ -446,93 +446,184 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createRouteElement_ =
 ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
     function(route, index) {
 
-  var userEl;
-  var offerEl;
+  var leftCtnEl;
+  var rightCtnEl;
   var classPrefix = this.classPrefix_;
 
+  var elementClasses = [];
+  elementClasses.push(classPrefix + '-offer');
+  if (index % 2 === 0) {
+    elementClasses.push(classPrefix + '-offer-even');
+  } else {
+    elementClasses.push(classPrefix + '-offer-odd');
+  }
   var element = goog.dom.createDom(goog.dom.TagName.DIV, {
-    'class': classPrefix + '-offer',
-    'data-route-index': index
+    'class': elementClasses.join(' ')
   });
 
-  userEl = goog.dom.createDom(goog.dom.TagName.DIV, {
-    'class': classPrefix + '-offer-user',
-    'data-route-index': index
+  // numEl
+  var numEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+    'class': classPrefix + '-offer-num'
   });
+  goog.dom.appendChild(element, numEl);
+  goog.dom.appendChild(numEl, goog.dom.createTextNode(index + 1));
 
-  var userPic = goog.dom.createDom(goog.dom.TagName.IMG, {
-    'src': route.mt_usager.mt_photo,
-    'class': classPrefix + '-offer-user-pic'
-  });
+  // if route has any 'mt_*' property, that means the response comes
+  // from the multimodal service
+  if (goog.isDef(route.mt_usager)) {
 
-  goog.dom.appendChild(userEl, userPic);
-  goog.dom.appendChild(userEl, goog.dom.createDom(goog.dom.TagName.BR, {}));
+    // == LEFT START ==
+    leftCtnEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+      'class': classPrefix + '-offer-left'
+    });
+    goog.dom.appendChild(element, leftCtnEl);
 
-  goog.dom.appendChild(userEl,
-      goog.dom.createTextNode(
-          route.mt_usager.mt_first_name + ' ' + route.mt_usager.mt_last_name));
-  goog.dom.appendChild(userEl, goog.dom.createDom(goog.dom.TagName.BR, {}));
+    // -- user picture --
+    var userPic = goog.dom.createDom(goog.dom.TagName.IMG, {
+      'src': route.mt_usager.mt_photo,
+      'class': classPrefix + '-offer-user-pic'
+    });
+    goog.dom.appendChild(leftCtnEl, userPic);
 
-  goog.dom.appendChild(userEl,
-      goog.dom.createTextNode('groupe: ' + route.mt_usager.mt_group_name));
-  goog.dom.appendChild(userEl, goog.dom.createDom(goog.dom.TagName.BR, {}));
+    // -- user full name --
+    var userFullNameEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+      'class': classPrefix + '-offer-header'
+    });
+    goog.dom.appendChild(leftCtnEl, userFullNameEl);
+    var userFullNameText = route.mt_usager.mt_first_name + ' ' +
+        route.mt_usager.mt_last_name;
+    goog.dom.appendChild(userFullNameEl, goog.dom.createTextNode(
+        userFullNameText));
 
-  goog.dom.appendChild(userEl,
-      goog.dom.createTextNode('note: ' + route.mt_usager.mt_evaluation));
+    // -- user eval --
+    var userEvalClasses = [];
+    userEvalClasses.push(classPrefix + '-offer-user-eval');
+    userEvalClasses.push(classPrefix + '-offer-user-eval-' +
+        route.mt_usager.mt_evaluation);
+    var userEvalEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+      'class': userEvalClasses.join(' ')
+    });
+    goog.dom.appendChild(userEvalEl, goog.dom.createTextNode(' '));
+    goog.dom.appendChild(leftCtnEl, userEvalEl);
 
-  goog.dom.appendChild(element, userEl);
+    goog.dom.appendChild(leftCtnEl, goog.dom.createDom(goog.dom.TagName.BR));
 
-  offerEl = goog.dom.createDom(goog.dom.TagName.DIV, {
-    'class': classPrefix + '-offer-detail',
-    'data-route-index': index
-  });
+    // small icons
+    goog.dom.appendChild(leftCtnEl, this.createOfferIconElement_(
+        'driver', route.mt_offre.mt_est_conducteur));
+    goog.dom.appendChild(leftCtnEl, this.createOfferIconElement_(
+        'seats', route.mt_offre.mt_places_dispo));
+    goog.dom.appendChild(leftCtnEl, this.createOfferIconElement_(
+        'smoking', route.mt_offre.mt_fume));
+    var ambiance = route.mt_offre.mt_atmosphere;
+    // FIXME - hardcoded
+    var talkAmbiance = (ambiance === 'Conversation') ? '1' : '0';
+    goog.dom.appendChild(leftCtnEl, this.createOfferIconElement_(
+        'talk', talkAmbiance));
+    // FIXME - hardcoded
+    var musicAmbiance = (ambiance === 'Musique') ? '1' : '0';
+    goog.dom.appendChild(leftCtnEl, this.createOfferIconElement_(
+        'music', musicAmbiance));
 
-  goog.dom.appendChild(offerEl,
-      goog.dom.createTextNode(
-          'horraire ponctuelle: ' + route.mt_offre.mt_horaire_ponctuelle));
-  goog.dom.appendChild(offerEl, goog.dom.createDom(goog.dom.TagName.BR, {}));
+    // -- clear left --
+    var clearEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+      'class': classPrefix + '-clear-left'
+    });
+    goog.dom.appendChild(leftCtnEl, clearEl);
 
-  goog.dom.appendChild(offerEl,
-      goog.dom.createTextNode('date: ' + route.mt_offre.mt_date));
-  goog.dom.appendChild(offerEl, goog.dom.createDom(goog.dom.TagName.BR, {}));
+    // == LEFT END ==
 
-  goog.dom.appendChild(offerEl,
-      goog.dom.createTextNode('heure: ' + route.mt_offre.mt_heure));
-  goog.dom.appendChild(offerEl, goog.dom.createDom(goog.dom.TagName.BR, {}));
+    // == RIGHT START ==
+    rightCtnEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+      'class': classPrefix + '-offer-right'
+    });
+    goog.dom.appendChild(element, rightCtnEl);
 
-  goog.dom.appendChild(offerEl,
-      goog.dom.createTextNode(
-          'conducteur: ' + route.mt_offre.mt_est_conducteur));
-  goog.dom.appendChild(offerEl, goog.dom.createDom(goog.dom.TagName.BR, {}));
+    // -- line 1 --
+    var firstLineEl = goog.dom.createDom(goog.dom.TagName.DIV, {});
+    goog.dom.appendChild(rightCtnEl, firstLineEl);
 
-  goog.dom.appendChild(offerEl,
-      goog.dom.createTextNode('fumeur: ' + route.mt_offre.mt_fume));
-  goog.dom.appendChild(offerEl, goog.dom.createDom(goog.dom.TagName.BR, {}));
+    // FIXME - i18n
+    var offerTypeText = route.mt_offre.mt_horaire_ponctuelle;
+    var offerTypeEl = goog.dom.createDom(goog.dom.TagName.SPAN, {});
+    goog.dom.appendChild(firstLineEl, offerTypeEl);
+    goog.dom.appendChild(offerTypeEl, goog.dom.createTextNode(offerTypeText));
 
-  goog.dom.appendChild(offerEl,
-      goog.dom.createTextNode(
-          'places disponibles: ' + route.mt_offre.mt_places_dispo));
-  goog.dom.appendChild(offerEl, goog.dom.createDom(goog.dom.TagName.BR, {}));
+    goog.dom.appendChild(firstLineEl, this.createOfferPipeElement_());
 
-  goog.dom.appendChild(offerEl,
-      goog.dom.createTextNode('atmosphere: ' + route.mt_offre.mt_atmosphere));
-  goog.dom.appendChild(offerEl, goog.dom.createDom(goog.dom.TagName.BR, {}));
+    // FIXME - i18n
+    var dateText = route.mt_offre.mt_date;
+    var dateEl = goog.dom.createDom(goog.dom.TagName.SPAN, {
+      'class': classPrefix + '-offer-header'
+    });
+    goog.dom.appendChild(firstLineEl, dateEl);
+    goog.dom.appendChild(dateEl, goog.dom.createTextNode(dateText));
 
-  goog.dom.appendChild(offerEl,
-      goog.dom.createTextNode('prix: ' + route.mt_offre.mt_prix));
-  goog.dom.appendChild(offerEl, goog.dom.createDom(goog.dom.TagName.BR, {}));
+    goog.dom.appendChild(firstLineEl, this.createOfferPipeElement_());
 
-  goog.dom.appendChild(element, offerEl);
+    // FIXME - i18n
+    var hourText = route.mt_offre.mt_heure;
+    var hourEl = goog.dom.createDom(goog.dom.TagName.SPAN, {
+      'class': classPrefix + '-offer-header'
+    });
+    goog.dom.appendChild(firstLineEl, hourEl);
+    goog.dom.appendChild(hourEl, goog.dom.createTextNode(hourText));
+
+    // -- line 2 --
+    var secondLineEl = goog.dom.createDom(goog.dom.TagName.DIV, {});
+    goog.dom.appendChild(rightCtnEl, secondLineEl);
+
+
+    // -- price - FIXME: format price --
+    var priceText = route.mt_offre.mt_prix + ' $';
+    var priceEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+      'class': classPrefix + '-offer-header'
+    });
+    goog.dom.appendChild(rightCtnEl, priceEl);
+    goog.dom.appendChild(priceEl, goog.dom.createTextNode(priceText));
+
+    // -- group --
+    var groupText = route.mt_usager.mt_group_name;
+    var groupEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+      'class': classPrefix + '-offer-group'
+    });
+    goog.dom.appendChild(rightCtnEl, groupEl);
+    goog.dom.appendChild(groupEl, goog.dom.createTextNode(groupText));
+  }
+  // else, the response comes from Google Maps.  Style accordingly
+  else {
+    // only need the 'left' container, set class as 'single'
+    leftCtnEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+      'class': classPrefix + '-offer-single'
+    });
+    goog.dom.appendChild(element, leftCtnEl);
+
+    var summaryEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+      'class': classPrefix + '-offer-header'
+    });
+    goog.dom.appendChild(leftCtnEl, summaryEl);
+    goog.dom.appendChild(summaryEl,
+        goog.dom.createTextNode(route.summary));
+  }
 
   var detailLink = goog.dom.createDom(goog.dom.TagName.A, {
     'href': '#',
     'data-selector-index': index
   });
 
+  // FIXME - add 'contact'
+  if (goog.isDef(route.mt_usager)) {
+    // -- clear left --
+    var clearEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+      'class': classPrefix + '-clear-left'
+    });
+    goog.dom.appendChild(element, clearEl);
+  }
+
   goog.dom.appendChild(detailLink,
       goog.dom.createTextNode('Détail du trajet'));
 
-  goog.dom.appendChild(element, detailLink);
+  goog.dom.appendChild(leftCtnEl, detailLink);
 
   // event listeners
   goog.events.listen(detailLink, [
@@ -541,6 +632,49 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
   ], this.handleSelectorElementPress_, false, this);
 
   return element;
+};
+
+
+/**
+ * Create a simple pipe element for the offer
+ * @return {Element}
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.createOfferPipeElement_ =
+    function() {
+
+  var classPrefix = this.classPrefix_;
+
+  var pipeEl = goog.dom.createDom(goog.dom.TagName.SPAN, {
+    'class': classPrefix + '-offer-pipe'
+  });
+  goog.dom.appendChild(pipeEl, goog.dom.createTextNode('|'));
+
+  return pipeEl;
+};
+
+
+/**
+ * Create an offer icon element
+ * @param {string} name Name of the property
+ * @param {string} value Value
+ * @return {Element}
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.createOfferIconElement_ =
+    function(name, value) {
+
+  var classPrefix = this.classPrefix_;
+
+  var iconClasses = [];
+  iconClasses.push(classPrefix + '-offer-icon');
+  iconClasses.push(classPrefix + '-offer-icon-' + name + '-' + value);
+
+  var iconEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+    'class': iconClasses.join(' ')
+  });
+
+  return iconEl;
 };
 
 

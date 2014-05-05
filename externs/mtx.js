@@ -62,6 +62,12 @@ google.maps.DirectionsLeg.prototype.start_coordinate;
 google.maps.DirectionsStep.prototype.maneuver;
 
 /**
+ * @type {string}
+ */
+
+google.maps.DirectionsRoute.prototype.summary;
+
+/**
  * @type {Object}
  */
 
