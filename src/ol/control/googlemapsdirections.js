@@ -908,7 +908,8 @@ ol.control.GoogleMapsDirections.prototype.canAddAnOtherWaypoint_ = function() {
   var detourFeatures = this.detourFeatures_;
   var geocoders = this.geocoders_;
 
-  var total = detourFeatures.getLength() + geocoders.getLength();
+  // 2 -> to exclude the start and end geocoders
+  var total = detourFeatures.getLength() + geocoders.getLength() - 2;
 
   return (total < max);
 };
