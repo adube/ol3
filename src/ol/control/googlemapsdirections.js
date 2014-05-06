@@ -895,7 +895,7 @@ ol.control.GoogleMapsDirections.prototype.setMap = function(map) {
  */
 ol.control.GoogleMapsDirections.prototype.triggerRouteRequest = function() {
   this.clear_();
-  this.route_(null, null);
+  this.route_();
 };
 
 
@@ -1015,7 +1015,7 @@ ol.control.GoogleMapsDirections.prototype.createOrUpdateDetour_ = function(
 
   if (shouldRoute === true) {
     this.clear_();
-    this.route_(null, null);
+    this.route_();
   }
 
   this.manageNumWaypoints_();
@@ -1303,7 +1303,7 @@ ol.control.GoogleMapsDirections.prototype.handleCheckboxLinkElPress_ =
       ol.control.GoogleMapsDirections.EventType.QUERYPARAMSCHANGE);
 
   if (this.enableAutoRouting_ === true) {
-    this.route_(null, null);
+    this.route_();
   }
 };
 
@@ -1438,7 +1438,7 @@ ol.control.GoogleMapsDirections.prototype.handleGeocoderRemove_ = function(
         ol.control.GoogleMapsDirections.EventType.QUERYPARAMSCHANGE);
 
     if (this.enableAutoRouting_ === true) {
-      this.route_(null, null);
+      this.route_();
     }
   }
 };
@@ -1472,7 +1472,7 @@ ol.control.GoogleMapsDirections.prototype.handleLocationChanged_ =
   if (goog.isDefAndNotNull(startGeocoder) &&
       goog.isDefAndNotNull(endGeocoder) &&
       this.enableAutoRouting_ === true) {
-    this.route_(null, null);
+    this.route_();
   } else {
     if (goog.isDefAndNotNull(currentLocation)) {
       this.fitViewExtentToCoordinate_(currentGeocoder.getCoordinate());
@@ -1727,7 +1727,7 @@ ol.control.GoogleMapsDirections.prototype.removeDetourFeature_ =
     this.toggleGeocoderReverseGeocodings_();
     goog.events.dispatchEvent(this,
         ol.control.GoogleMapsDirections.EventType.QUERYPARAMSCHANGE);
-    this.route_(null, null);
+    this.route_();
   }
 
 };
@@ -1760,28 +1760,17 @@ ol.control.GoogleMapsDirections.prototype.removeGeocoder_ = function(geocoder) {
 
 
 /**
- * FIXME - start, end no longer used... Should be managed here.
- * @param {?google.maps.LatLng|undefined} start Location
- * @param {?google.maps.LatLng|undefined} end Location
  * @private
  */
-ol.control.GoogleMapsDirections.prototype.route_ = function(start, end) {
+ol.control.GoogleMapsDirections.prototype.route_ = function() {
 
   var geocoders = this.collectGeocoders_();
   var startGeocoder = geocoders.start;
   var endGeocoder = geocoders.end;
   var waypointGeocoders = geocoders.waypoints;
 
-  if (!goog.isDefAndNotNull(startGeocoder) ||
-      !goog.isDefAndNotNull(endGeocoder)) {
-    // todo: throw error
-    return;
-  }
-
-  start = startGeocoder.getLocation();
-  end = endGeocoder.getLocation();
-
-  if (!goog.isDefAndNotNull(start) || !goog.isDefAndNotNull(end)) {
+  if (goog.isNull(startGeocoder) ||
+      goog.isNull(endGeocoder)) {
     // todo: throw error
     return;
   }
@@ -1796,12 +1785,12 @@ ol.control.GoogleMapsDirections.prototype.route_ = function(start, end) {
   if (this.mode_ === ol.control.GoogleMapsDirections.Mode.MULTIPLE) {
     if (travelModes.length === 1 &&
         this.isTravelModeSupportedByGoogleMaps_(travelModes[0])) {
-      this.routeWithGoogleMapsService_(start, end, travelModes[0],
-          waypointGeocoders);
+      this.routeWithGoogleMapsService_(
+          startGeocoder, endGeocoder, travelModes[0], waypointGeocoders);
     } else {
       if (this.canUseMultimodalService_()) {
-        this.routeWithMultimodalService_(start, end, travelModes,
-            waypointGeocoders);
+        this.routeWithMultimodalService_(
+            startGeocoder, endGeocoder, travelModes, waypointGeocoders);
       } else {
         // todo - throw an error
         window.console.log(
@@ -1812,42 +1801,31 @@ ol.control.GoogleMapsDirections.prototype.route_ = function(start, end) {
     }
   } else {
     var travelMode = this.getHighestPriorityTravelMode_(travelModes);
-    this.routeWithGoogleMapsService_(start, end, travelMode, waypointGeocoders);
+    this.routeWithGoogleMapsService_(
+        startGeocoder, endGeocoder, travelMode, waypointGeocoders);
   }
 };
 
 
 /**
- * FIXME - use geocoders instead of locations
- * @param {google.maps.LatLng} start Location
- * @param {google.maps.LatLng} end Location
+ * @param {ol.control.GoogleMapsGeocoder} startGeocoder Start geocoder
+ * @param {ol.control.GoogleMapsGeocoder} endGeocoder End geocoder
  * @param {Array.<string>} travelModes Travel modes
  * @param {Array.<ol.control.GoogleMapsGeocoder>} waypointGeocoders Waypoint
  *     waypointGeocoders
  * @private
  */
 ol.control.GoogleMapsDirections.prototype.routeWithMultimodalService_ =
-    function(start, end, travelModes, waypointGeocoders) {
+    function(startGeocoder, endGeocoder, travelModes, waypointGeocoders) {
 
   var request = new goog.net.XhrIo();
   var url = this.multimodalUrl_;
   var headers = this.multimodalHeaders_;
   var method = (this.multimodalUsePostMethod_ === true) ? 'POST' : 'GET';
 
-  var map = this.getMap();
-
-  var view = map.getView();
-  goog.asserts.assert(goog.isDef(view));
-  var view2D = view.getView2D();
-  goog.asserts.assertInstanceof(view2D, ol.View2D);
-
-  var projection = view2D.getProjection();
-
-  // transform start and end as coordinates
-  var startCoordinate = ol.proj.transform(
-      [start.lng(), start.lat()], 'EPSG:4326', projection.getCode());
-  var endCoordinate = ol.proj.transform(
-      [end.lng(), end.lat()], 'EPSG:4326', projection.getCode());
+  // get start and end coordinates
+  var startCoordinate = startGeocoder.getCoordinate();
+  var endCoordinate = endGeocoder.getCoordinate();
 
   // fetch waypoints
   var waypointCoordinate;
@@ -1883,22 +1861,25 @@ ol.control.GoogleMapsDirections.prototype.routeWithMultimodalService_ =
 
 
 /**
- * FIXME - use geocoders instead of locations
  * Use the GoogleMaps Directions service to launch a route request. Only
  * support unimodal requests.
- * @param {google.maps.LatLng} start Location
- * @param {google.maps.LatLng} end Location
+ * @param {ol.control.GoogleMapsGeocoder} startGeocoder Start geocoder
+ * @param {ol.control.GoogleMapsGeocoder} endGeocoder End geocoder
  * @param {string} travelMode Inner travel mode, i.e. not a GoogleMaps one
  * @param {Array.<ol.control.GoogleMapsGeocoder>} waypointGeocoders Waypoint
  *     waypointGeocoders
  * @private
  */
 ol.control.GoogleMapsDirections.prototype.routeWithGoogleMapsService_ =
-    function(start, end, travelMode, waypointGeocoders) {
+    function(startGeocoder, endGeocoder, travelMode, waypointGeocoders) {
 
   var me = this;
   var service = this.directionsService_;
   var googleMapsTravelMode = this.getGoogleMapsTravelMode_(travelMode);
+
+  // get start and end locations
+  var startLocation = startGeocoder.getLocation();
+  var endLocation = endGeocoder.getLocation();
 
   var map = this.getMap();
 
@@ -1935,8 +1916,8 @@ ol.control.GoogleMapsDirections.prototype.routeWithGoogleMapsService_ =
   }, this);
 
   var request = {
-    origin: start,
-    destination: end,
+    origin: startLocation,
+    destination: endLocation,
     waypoints: reqWaypoints,
     optimizeWaypoints: true,
     travelMode: googleMapsTravelMode,
