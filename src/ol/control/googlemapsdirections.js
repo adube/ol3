@@ -851,6 +851,8 @@ ol.control.GoogleMapsDirections.prototype.triggerRouteRequest = function() {
 ol.control.GoogleMapsDirections.prototype.addGeocoder_ = function() {
 
   var geocoder = null;
+  var geocoders = this.geocoders_;
+  var iconStyles = this.iconStyles_;
 
   if (!this.canAddAnOtherWaypoint_()) {
     // todo - show 'too many waypoints' message
@@ -859,6 +861,14 @@ ol.control.GoogleMapsDirections.prototype.addGeocoder_ = function() {
 
   var map = this.getMap();
   var container = this.geocodersContainer_;
+
+  var numGeocoders = geocoders.getLength();
+  var iconStyle = iconStyles[numGeocoders];
+
+  if (!goog.isDefAndNotNull(iconStyle)) {
+    // todo - throw error: "Not enough icon styles set"
+    return geocoder;
+  }
 
   geocoder = new ol.control.GoogleMapsGeocoder({
     'enableReverseGeocoding': false,
@@ -872,8 +882,7 @@ ol.control.GoogleMapsDirections.prototype.addGeocoder_ = function() {
     'clearButtonText': this.clearButtonText,
     'removeButtonText': this.removeButtonText,
     'geocoderComponentRestrictions': this.geocoderComponentRestrictions_,
-    // FIXME - use last one available instead
-    'iconStyle': this.iconStyles_[0]
+    'iconStyle': iconStyle
   });
 
   map.addControl(geocoder);
@@ -890,7 +899,7 @@ ol.control.GoogleMapsDirections.prototype.addGeocoder_ = function() {
       ol.control.GoogleMapsGeocoder.EventType.REMOVE,
       this.handleGeocoderRemove_, false, this);
 
-  this.geocoders_.push(geocoder);
+  geocoders.push(geocoder);
 
   this.toggleGeocoderReverseGeocodings_();
 
@@ -1777,6 +1786,8 @@ ol.control.GoogleMapsDirections.prototype.removeGeocoder_ = function(geocoder) {
   this.geocoders_.remove(geocoder);
 
   this.manageNumGeocoders_();
+
+  this.setGeocoderIconStyles_();
 };
 
 
@@ -2071,6 +2082,32 @@ ol.control.GoogleMapsDirections.prototype.selectRoute_ = function(index) {
   // dispatch event
   goog.events.dispatchEvent(this,
       ol.control.GoogleMapsDirections.EventType.SELECT);
+};
+
+
+/**
+ * FIXME - should also set the DOM icons, next to the input text
+ * Loops in all current geocoders and set the appropriate icon style
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.setGeocoderIconStyles_ =
+    function() {
+
+  var geocoders = this.geocoders_;
+  var iconStyles = this.iconStyles_;
+
+  var geocoder;
+  var index;
+  var iconStyle;
+
+  geocoders.forEach(function(geocoder, index) {
+    iconStyle = iconStyles[index];
+    if (goog.isDefAndNotNull(iconStyle)) {
+      geocoder.setIconStyle(iconStyle);
+    } else {
+      // todo - throw error "Too few icon styles set"
+    }
+  }, this);
 };
 
 
