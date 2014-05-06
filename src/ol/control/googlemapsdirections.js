@@ -873,8 +873,7 @@ ol.control.GoogleMapsDirections.prototype.addGeocoder_ = function() {
     'removeButtonText': this.removeButtonText,
     'geocoderComponentRestrictions': this.geocoderComponentRestrictions_,
     // FIXME - use last one available instead
-    'iconStyle': this.iconStyles_[0],
-    'removable': true
+    'iconStyle': this.iconStyles_[0]
   });
 
   map.addControl(geocoder);
@@ -896,6 +895,8 @@ ol.control.GoogleMapsDirections.prototype.addGeocoder_ = function() {
   this.toggleGeocoderReverseGeocodings_();
 
   this.manageNumWaypoints_();
+
+  this.manageNumGeocoders_();
 
   return geocoder;
 };
@@ -1662,6 +1663,29 @@ ol.control.GoogleMapsDirections.prototype.loadAll_ = function(
 
 
 /**
+ * This method takes care of setting properties related to the number
+ * of geocoders currently
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.manageNumGeocoders_ = function() {
+  var geocoders = this.geocoders_;
+  var numGeocoders = geocoders.getLength();
+
+  if (numGeocoders > 2) {
+    geocoders.forEach(function(geocoder) {
+      geocoder.showRemoveButton();
+      // FIXME - hide 'reverse' button
+    }, this);
+  } else {
+    geocoders.forEach(function(geocoder) {
+      geocoder.hideRemoveButton();
+      // FIXME - show 'reverse' button
+    }, this);
+  }
+};
+
+
+/**
  * @private
  */
 ol.control.GoogleMapsDirections.prototype.manageNumWaypoints_ = function() {
@@ -1759,6 +1783,8 @@ ol.control.GoogleMapsDirections.prototype.removeGeocoder_ = function(geocoder) {
       this.handleGeocoderRemove_, false, this);
 
   this.geocoders_.remove(geocoder);
+
+  this.manageNumGeocoders_();
 };
 
 
