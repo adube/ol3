@@ -238,13 +238,3 @@ var directions = new ol.control.GoogleMapsDirections({
   'popupPixelBuffer': 150
 });
 map.addControl(directions);
-
-
-/** @type {string} */
-directions.startGeocoder_.input_.value =
-    '980 Rue Saint-Paul, Chicoutimi, QC G7J 3C2, Canada';
-
-
-/** @type {string} */
-directions.endGeocoder_.input_.value =
-    '930 Rue Jacques-Cartier Est, Chicoutimi, QC G7H 7K9, Canada';
