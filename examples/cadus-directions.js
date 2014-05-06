@@ -126,7 +126,7 @@ var directions = new ol.control.GoogleMapsDirections({
   'enableDetours': true,
   'currentPositionControl': olCurrentPosition,
   'geocoderComponentRestrictions': {'country': 'CA'},
-  'getURL': '/usager/adresses/obtenir',
+  'getURL': 'data/cadus/addresses.json',
   'addWaypointButtonText': 'Ajouter un point',
   'currentPositionText': 'Ma position',
   'searchButtonText': 'Rechercher',
