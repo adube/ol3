@@ -717,6 +717,7 @@ goog.inherits(ol.control.GoogleMapsDirections, ol.control.Control);
  */
 ol.control.GoogleMapsDirections.EventType = {
   CLEAR: goog.events.getUniqueId('clear'),
+  QUERYPARAMSCHANGE: goog.events.getUniqueId('queryparamchange'),
   ROUTECOMPLETE: goog.events.getUniqueId('routecomplete'),
   SELECT: goog.events.getUniqueId('select')
 };
@@ -1022,6 +1023,9 @@ ol.control.GoogleMapsDirections.prototype.createOrUpdateDetour_ = function(
   }
 
   detourFeatures.push(feature);
+
+  goog.events.dispatchEvent(this,
+      ol.control.GoogleMapsDirections.EventType.QUERYPARAMSCHANGE);
 
   if (shouldRoute === true) {
     this.clear_();
@@ -1446,6 +1450,9 @@ ol.control.GoogleMapsDirections.prototype.handleGeocoderRemove_ = function(
 
     this.clear_();
 
+    goog.events.dispatchEvent(this,
+        ol.control.GoogleMapsDirections.EventType.QUERYPARAMSCHANGE);
+
     if (this.enableAutoRouting_ === true) {
       this.route_(startLocation, endLocation);
     }
@@ -1476,6 +1483,9 @@ ol.control.GoogleMapsDirections.prototype.handleLocationChanged_ =
 
   this.clear_();
   this.toggleGeocoderReverseGeocodings_();
+
+  goog.events.dispatchEvent(this,
+      ol.control.GoogleMapsDirections.EventType.QUERYPARAMSCHANGE);
 
   if (goog.isDefAndNotNull(startLocation) &&
       goog.isDefAndNotNull(endLocation) &&
@@ -1732,6 +1742,8 @@ ol.control.GoogleMapsDirections.prototype.removeDetourFeature_ =
     this.lastDetourFeatureOverPointer_ = null;
     this.clear_();
     this.toggleGeocoderReverseGeocodings_();
+    goog.events.dispatchEvent(this,
+        ol.control.GoogleMapsDirections.EventType.QUERYPARAMSCHANGE);
     this.route_(null, null);
   }
 

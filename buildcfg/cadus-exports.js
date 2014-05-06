@@ -164,13 +164,18 @@ goog.exportProperty(
 
 goog.exportProperty(
     ol.control.GoogleMapsDirections.EventType,
-    'ROUTECOMPLETE',
-    ol.control.GoogleMapsDirections.EventType.ROUTECOMPLETE);
+    'CLEAR',
+    ol.control.GoogleMapsDirections.EventType.CLEAR);
 
 goog.exportProperty(
     ol.control.GoogleMapsDirections.EventType,
     'CLEAR',
-    ol.control.GoogleMapsDirections.EventType.CLEAR);
+    ol.control.GoogleMapsDirections.EventType.QUERYPARAMSCHANGE);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirections.EventType,
+    'ROUTECOMPLETE',
+    ol.control.GoogleMapsDirections.EventType.ROUTECOMPLETE);
 
 goog.exportProperty(
     ol.control.GoogleMapsDirections.EventType,

@@ -217,10 +217,12 @@ var directions = new ol.control.GoogleMapsDirections({
 map.addControl(directions);
 
 var directionEl = document.getElementById('directions-json');
+var queryParamsEl = document.getElementById('queryparams-json');
 directions.on(
     ol.control.GoogleMapsDirections.EventType.CLEAR,
     function(evt) {
       directionEl.value = '';
+      queryParamsEl.value = '';
     }
 );
 directions.on(
@@ -233,6 +235,12 @@ directions.on(
     ol.control.GoogleMapsDirections.EventType.SELECT,
     function(evt) {
       directionEl.value = directions.save();
+    }
+);
+directions.on(
+    ol.control.GoogleMapsDirections.EventType.QUERYPARAMSCHANGE,
+    function(evt) {
+      queryParamsEl.value = directions.saveQueryParams();
     }
 );
 
