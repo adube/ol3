@@ -1313,6 +1313,13 @@ ol.control.GoogleMapsDirections.prototype.handleCheckboxLinkElPress_ =
   var inputEl = this.getInputElByTravelMode_(travelMode);
 
   this.toggleTravelMode_(inputEl, linkEl, !inputEl.checked);
+
+  // dispatch the event only when the user clicked on a checkbox link
+  // instead of in the toggleTravelMode_ method since the latter can be
+  // used programmatically and we don't need the event triggerered when that
+  // happens
+  goog.events.dispatchEvent(this,
+      ol.control.GoogleMapsDirections.EventType.QUERYPARAMSCHANGE);
 };
 
 
