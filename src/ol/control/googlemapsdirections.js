@@ -1481,7 +1481,6 @@ ol.control.GoogleMapsDirections.prototype.handleLocationChanged_ =
     if (goog.isDefAndNotNull(currentLocation)) {
       this.fitViewExtentToCoordinate_(currentGeocoder.getCoordinate());
     }
-    this.updateGeocoders_([]);
   }
 
 };
@@ -1647,13 +1646,6 @@ ol.control.GoogleMapsDirections.prototype.loadAll_ = function(
 
   this.loading_ = false;
   this.manageNumWaypoints_();
-  if (goog.isDefAndNotNull(object.routes) &&
-      goog.isDefAndNotNull(object.routes[0]) &&
-      goog.isDefAndNotNull(object.routes[0].waypoint_order)) {
-    this.updateGeocoders_(object.routes[0].waypoint_order);
-  } else {
-    this.updateGeocoders_([]);
-  }
 
   if (includeRoutes === true) {
     goog.events.dispatchEvent(this,
@@ -1948,7 +1940,7 @@ ol.control.GoogleMapsDirections.prototype.routeWithGoogleMapsService_ =
     origin: startLocation,
     destination: endLocation,
     waypoints: reqWaypoints,
-    optimizeWaypoints: true,
+    optimizeWaypoints: false,
     travelMode: googleMapsTravelMode,
     provideRouteAlternatives: true
   };
@@ -2061,7 +2053,6 @@ ol.control.GoogleMapsDirections.prototype.selectRoute_ = function(index) {
   var routeFeatures = this.routeFeatures_;
   var selectedRouteFeatures = this.selectedRouteFeatures_;
   var routeFeature = routeFeatures.getAt(index);
-  var selectedRoute = this.directionsPanel_.getSelectedRoute();
 
   if (goog.isNull(routeFeature)) {
     // todo - manage error
@@ -2070,11 +2061,6 @@ ol.control.GoogleMapsDirections.prototype.selectRoute_ = function(index) {
 
   // add the new route
   selectedRouteFeatures.push(routeFeature);
-
-  //Put the right waypoint icon
-  if (this.loading_ === false) {
-    this.updateGeocoders_(selectedRoute.waypoint_order);
-  }
 
   // draw
   this.drawRoute_();
@@ -2208,58 +2194,4 @@ ol.control.GoogleMapsDirections.prototype.toggleTravelModes_ =
     }
   }, this);
 
-};
-
-
-/**
- * FIXME - the position is now fixed...
- * Fetch all the created geocoder and set their style according
- * to their position on the desired route
- * @param {Array|undefined} orders
- * @private
- */
-ol.control.GoogleMapsDirections.prototype.updateGeocoders_ =
-    function(orders) {
-
-  window.console.log('updateGeocoders_');
-
-  /*
-  var geocoder;
-  var i;
-  var iconCounter = 0;
-
-  if (this.startGeocoder_.getLocation())
-  {
-    this.startGeocoder_.setIconStyle(this.iconStyles_[iconCounter]);
-    iconCounter++;
-  }
-
-  if (orders.length)
-  {
-    for (i = 0; i < orders.length; i++)
-    {
-      geocoder = this.geocoders_.getArray()[orders[i]];
-      geocoder.setIconStyle(this.iconStyles_[iconCounter]);
-      iconCounter++;
-    }
-  }
-  else
-  {
-    for (i = 0; i < this.geocoders_.getArray().length; i++)
-    {
-      geocoder = this.geocoders_.getArray()[i];
-
-      if (geocoder.getLocation())
-      {
-        geocoder.setIconStyle(this.iconStyles_[iconCounter]);
-        iconCounter++;
-      }
-    }
-  }
-
-  if (this.endGeocoder_.getLocation())
-  {
-    this.endGeocoder_.setIconStyle(this.iconStyles_[iconCounter]);
-  }
-  */
 };
