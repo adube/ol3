@@ -689,63 +689,6 @@ ol.control.GoogleMapsDirections.TravelMode = {
 
 
 /**
- * Add a new waypoint geocoder to the UI.
- * @return {?ol.control.GoogleMapsGeocoder}
- */
-ol.control.GoogleMapsDirections.prototype.addGeocoder = function() {
-
-  var geocoder = null;
-
-  if (!this.canAddAnOtherWaypoint_()) {
-    // todo - show 'too many waypoints' message
-    return geocoder;
-  }
-
-  var map = this.getMap();
-  var container = this.geocodersContainer_;
-
-  geocoder = new ol.control.GoogleMapsGeocoder({
-    'enableReverseGeocoding': false,
-    'target': container,
-    'enableCurrentPosition': this.enableCurrentPosition_,
-    'currentPositionControl': this.currentPositionControl_,
-    // FIXME
-    'additionalAddresses': [],
-    //'additionalAddresses': this.startGeocoder_.additionalAddresses,
-    'searchButtonText': this.searchButtonText,
-    'clearButtonText': this.clearButtonText,
-    'removeButtonText': this.removeButtonText,
-    'geocoderComponentRestrictions': this.geocoderComponentRestrictions_,
-    // FIXME - use last one available instead
-    'iconStyle': this.iconStyles_[0],
-    'removable': true
-  });
-
-  map.addControl(geocoder);
-
-  goog.events.listen(
-      geocoder,
-      ol.Object.getChangeEventType(
-          ol.control.GoogleMapsGeocoder.Property.LOCATION
-      ),
-      this.handleLocationChanged_, false, this);
-
-  goog.events.listen(
-      geocoder,
-      ol.control.GoogleMapsGeocoder.EventType.REMOVE,
-      this.handleGeocoderRemove_, false, this);
-
-  this.geocoders_.push(geocoder);
-
-  this.toggleGeocoderReverseGeocodings_();
-
-  this.manageNumWaypoints_();
-
-  return geocoder;
-};
-
-
-/**
  * Returns an array of objects containing information about the geocoders
  * that currently have locations.
  * @return {Array}
@@ -873,8 +816,8 @@ ol.control.GoogleMapsDirections.prototype.setMap = function(map) {
   if (!goog.isNull(map)) {
     map.addLayer(this.vectorLayer_);
     map.addControl(this.directionsPanel_);
-    this.addGeocoder();
-    this.addGeocoder();
+    this.addGeocoder_();
+    this.addGeocoder_();
     this.manageNumWaypoints_();
 
     goog.events.listen(
@@ -896,6 +839,65 @@ ol.control.GoogleMapsDirections.prototype.setMap = function(map) {
 ol.control.GoogleMapsDirections.prototype.triggerRouteRequest = function() {
   this.clear_();
   this.route_();
+};
+
+
+/**
+ * Create and return a new waypoint geocoder, which is also added to the
+ * inner geocoders.
+ * @return {?ol.control.GoogleMapsGeocoder}
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.addGeocoder_ = function() {
+
+  var geocoder = null;
+
+  if (!this.canAddAnOtherWaypoint_()) {
+    // todo - show 'too many waypoints' message
+    return geocoder;
+  }
+
+  var map = this.getMap();
+  var container = this.geocodersContainer_;
+
+  geocoder = new ol.control.GoogleMapsGeocoder({
+    'enableReverseGeocoding': false,
+    'target': container,
+    'enableCurrentPosition': this.enableCurrentPosition_,
+    'currentPositionControl': this.currentPositionControl_,
+    // FIXME
+    'additionalAddresses': [],
+    //'additionalAddresses': this.startGeocoder_.additionalAddresses,
+    'searchButtonText': this.searchButtonText,
+    'clearButtonText': this.clearButtonText,
+    'removeButtonText': this.removeButtonText,
+    'geocoderComponentRestrictions': this.geocoderComponentRestrictions_,
+    // FIXME - use last one available instead
+    'iconStyle': this.iconStyles_[0],
+    'removable': true
+  });
+
+  map.addControl(geocoder);
+
+  goog.events.listen(
+      geocoder,
+      ol.Object.getChangeEventType(
+          ol.control.GoogleMapsGeocoder.Property.LOCATION
+      ),
+      this.handleLocationChanged_, false, this);
+
+  goog.events.listen(
+      geocoder,
+      ol.control.GoogleMapsGeocoder.EventType.REMOVE,
+      this.handleGeocoderRemove_, false, this);
+
+  this.geocoders_.push(geocoder);
+
+  this.toggleGeocoderReverseGeocodings_();
+
+  this.manageNumWaypoints_();
+
+  return geocoder;
 };
 
 
@@ -1273,7 +1275,7 @@ ol.control.GoogleMapsDirections.prototype.handleAddWPGeocoderButtonPress_ =
     function(browserEvent) {
 
   browserEvent.preventDefault();
-  this.addGeocoder();
+  this.addGeocoder_();
 };
 
 
@@ -1624,21 +1626,21 @@ ol.control.GoogleMapsDirections.prototype.loadAll_ = function(
 
   // start
   if (goog.isDefAndNotNull(object.start)) {
-    geocoder = this.addGeocoder();
+    geocoder = this.addGeocoder_();
     geocoder.load([object.start]);
   }
 
   // waypoints
   if (goog.isDefAndNotNull(object.waypoints)) {
     goog.array.forEach(object.waypoints, function(waypoint) {
-      geocoder = this.addGeocoder();
+      geocoder = this.addGeocoder_();
       geocoder.load([waypoint]);
     }, this);
   }
 
   // end
   if (goog.isDefAndNotNull(object.end)) {
-    geocoder = this.addGeocoder();
+    geocoder = this.addGeocoder_();
     geocoder.load([object.end]);
   }
 
