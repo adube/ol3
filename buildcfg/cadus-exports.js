@@ -169,7 +169,7 @@ goog.exportProperty(
 
 goog.exportProperty(
     ol.control.GoogleMapsDirections.EventType,
-    'CLEAR',
+    'QUERYPARAMSCHANGE',
     ol.control.GoogleMapsDirections.EventType.QUERYPARAMSCHANGE);
 
 goog.exportProperty(
