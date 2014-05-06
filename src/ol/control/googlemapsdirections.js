@@ -959,8 +959,35 @@ ol.control.GoogleMapsDirections.prototype.clear_ = function() {
 
 
 /**
- * FIXME
- *
+ * Return an array of icon images corresponding to the geocoders that have
+ * a location set.
+ * @return {Array.<string>}
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.collectGeocoderIconImages_ =
+    function() {
+
+  var iconImages = this.iconImages_;
+  var collectedIconImages = [];
+
+  var geocoder;
+  var index;
+  var location;
+  var iconImage;
+
+  this.geocoders_.forEach(function(geocoder, index) {
+    location = geocoder.getLocation();
+    iconImage = iconImages[index];
+    if (goog.isDefAndNotNull(location) && goog.isDefAndNotNull(iconImage)) {
+      collectedIconImages.push(iconImage);
+    }
+  }, this);
+
+  return collectedIconImages;
+};
+
+
+/**
  * Return an object of geocoders organized in a way that we know which ones
  * should act as 'start', 'end' and 'waypoints'.
  * @return {Object}
@@ -1380,7 +1407,8 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
 
     if (routeFeatures.getLength()) {
       // set directions in panel
-      this.directionsPanel_.setDirections(response, this.iconImages_);
+      this.directionsPanel_.setDirections(
+          response, this.collectGeocoderIconImages_());
     }
   }
 
