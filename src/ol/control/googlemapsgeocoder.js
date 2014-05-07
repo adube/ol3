@@ -1009,3 +1009,21 @@ ol.control.GoogleMapsGeocoder.prototype.setIconStyle = function(styleObject) {
     sourceFeatures[i].setStyle(this.iconStyle_);
 
 };
+
+
+/**
+ * @param {string} value
+ */
+ol.control.GoogleMapsGeocoder.prototype.setInputValue = function(value) {
+  this.input_.value = value;
+};
+
+
+/**
+ * @param {?google.maps.LatLng} location
+ */
+ol.control.GoogleMapsGeocoder.prototype.setLocation = function(location) {
+  if (goog.isDefAndNotNull(location)) {
+    this.displayLocation_(location);
+  }
+};

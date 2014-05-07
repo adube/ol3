@@ -1639,7 +1639,43 @@ ol.control.GoogleMapsDirections.prototype.handleReverseButtonPress_ =
     function(browserEvent) {
 
   browserEvent.preventDefault();
-  window.console.log('reverse');
+
+  // reverse will only work if there's currently 2 geocoders
+  if (this.geocoders_.getLength() != 2) {
+    return;
+  }
+
+  this.loading_ = true;
+
+  var firstGeocoder = this.geocoders_.getAt(0);
+  var firstLocation = firstGeocoder.getLocation();
+  var firstInputValue = firstGeocoder.getInputValue();
+  firstGeocoder.clear();
+
+  var secondGeocoder = this.geocoders_.getAt(1);
+  var secondLocation = secondGeocoder.getLocation();
+  var secondInputValue = secondGeocoder.getInputValue();
+  secondGeocoder.clear();
+
+  firstGeocoder.setLocation(secondLocation);
+  firstGeocoder.setInputValue(secondInputValue);
+
+  secondGeocoder.setLocation(firstLocation);
+  secondGeocoder.setInputValue(firstInputValue);
+
+  this.loading_ = false;
+
+  this.toggleGeocoderReverseGeocodings_();
+  this.setGeocoderIconStyles_();
+
+  this.clear_();
+
+  goog.events.dispatchEvent(this,
+      ol.control.GoogleMapsDirections.EventType.QUERYPARAMSCHANGE);
+
+  if (this.enableAutoRouting_ === true) {
+    this.route_();
+  }
 };
 
 
