@@ -7,7 +7,6 @@ goog.require('goog.dom.TagName');
 goog.require('goog.events');
 goog.require('goog.events.EventType');
 goog.require('goog.events.KeyCodes');
-goog.require('goog.net.XhrIo');
 goog.require('goog.string');
 goog.require('goog.style');
 goog.require('ol.Feature');
@@ -264,17 +263,6 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
     this.showRemoveButton();
   } else {
     this.hideRemoveButton();
-  }
-
-  /**
-   * @private
-   * @type {string}
-   */
-  this.getURL_ = goog.isDefAndNotNull(options.getURL) ?
-      options.getURL : null;
-
-  if (goog.isDefAndNotNull(this.getURL_)) {
-    this.getAddresses_();
   }
 
 };
@@ -959,48 +947,4 @@ ol.control.GoogleMapsGeocoder.prototype.setIconStyle = function(styleObject) {
   for (var i = 0; i < sourceFeatures.length; i++)
     sourceFeatures[i].setStyle(this.iconStyle_);
 
-};
-
-
-/**
- * @this {ol.control.GoogleMapsGeocoder}
- * @private
- */
-ol.control.GoogleMapsGeocoder.prototype.getAddresses_ = function() {
-  var me = this;
-  var url = this.getURL_;
-  var request = new goog.net.XhrIo();
-  var response;
-
-  goog.events.listen(request, 'complete', function() {
-    if (request.isSuccess()) {
-      response = request.getResponseJson();
-      goog.asserts.assert(goog.isDef(response));
-      me.handleGetAddressesSuccess_(response);
-    } else {
-      // TODO: handle errors
-    }
-  });
-
-  request.send(url, 'GET');
-};
-
-
-/**
- * @this {ol.control.GoogleMapsGeocoder}
- * @param {Object} response response received the request
- * @private
- */
-ol.control.GoogleMapsGeocoder.prototype.handleGetAddressesSuccess_ =
-    function(response) {
-  var me = this;
-
-  if (response.status == 1) {
-    goog.array.forEach(response.addresses, function(address) {
-      me.addAdditionalAddress(address);
-    });
-  } else {
-    // TODO: handle get addresses fail
-    //this.handleGetAddressesFail_(response);
-  }
 };

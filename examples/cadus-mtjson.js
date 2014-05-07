@@ -2,6 +2,7 @@
 // This example uses the GMapx v3 API, which we do not have an exports file for.
 goog.require('ol.Map');
 goog.require('ol.View2D');
+goog.require('ol.control.GoogleMapsAddresses');
 goog.require('ol.control.GoogleMapsDirections');
 goog.require('ol.control.GoogleMapsDirectionsPanel');
 goog.require('ol.interaction');
@@ -105,11 +106,23 @@ var createDetourIconStyle = function() {
   };
 };
 
-var directionsPanel = new ol.control.GoogleMapsDirectionsPanel();
+var directionsPanel = new ol.control.GoogleMapsDirectionsPanel({
+  'target': 'gmaps-directions-panel',
+  'arroundText': 'environ',
+  'suggestedRoutesText': 'Routes suggérées',
+  'totalDistanceText': 'Distance Totale',
+  'copyrightText': 'Données cartographiques ©2014 Google'
+});
+
+var olAdresses = new ol.control.GoogleMapsAddresses({
+  'enableCurrentPosition': false,
+  'getURL': 'data/cadus/addresses.json'
+});
 
 var directions = new ol.control.GoogleMapsDirections({
   'gmap': gmap,
   'target': 'gmaps-directions',
+  'addressesControl': olAdresses,
   'geocoderComponentRestrictions': {'country': 'CA'},
   'lineStyle': new ol.style.Style({
     stroke: new ol.style.Stroke({

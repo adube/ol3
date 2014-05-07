@@ -18,6 +18,7 @@ goog.require('ol.MapBrowserEvent.EventType');
 goog.require('ol.Object');
 goog.require('ol.View2D');
 goog.require('ol.control.Control');
+goog.require('ol.control.GoogleMapsAddresses');
 goog.require('ol.control.GoogleMapsDirectionsPanel');
 goog.require('ol.control.GoogleMapsGeocoder');
 goog.require('ol.css');
@@ -641,15 +642,14 @@ ol.control.GoogleMapsDirections = function(opt_options) {
 
   /**
    * @private
-   * @type {string}
+   * @type {ol.control.GoogleMapsAddresses}
    */
-  this.getURL_ = goog.isDefAndNotNull(options.getURL) ?
-      options.getURL : null;
+  this.addressesControl_ = options.addressesControl;
 
-  // FIXME - remove this
-  if (!goog.isNull(this.getURL_)) {
-    window.console.log(this.getURL_);
-  }
+  goog.events.listen(
+      this.addressesControl_,
+      ol.control.GoogleMapsAddresses.EventType.ADD,
+      this.handleAddressesAdd_, false, this);
 
 };
 goog.inherits(ol.control.GoogleMapsDirections, ol.control.Control);
@@ -870,14 +870,14 @@ ol.control.GoogleMapsDirections.prototype.addGeocoder_ = function() {
     return geocoder;
   }
 
+  var addresses = this.addressesControl_.getAddresses();
+
   geocoder = new ol.control.GoogleMapsGeocoder({
     'enableReverseGeocoding': false,
     'target': container,
     'enableCurrentPosition': this.enableCurrentPosition_,
     'currentPositionControl': this.currentPositionControl_,
-    // FIXME
-    'additionalAddresses': [],
-    //'additionalAddresses': this.startGeocoder_.additionalAddresses,
+    'additionalAddresses': addresses.slice(0),
     'searchButtonText': this.searchButtonText,
     'clearButtonText': this.clearButtonText,
     'removeButtonText': this.removeButtonText,
@@ -1305,6 +1305,24 @@ ol.control.GoogleMapsDirections.prototype.getInputElByTravelMode_ =
 
 
 /**
+ * Called every time a new address is added to the addresses control.  Fetch
+ * the last one added and add it to all current geocoders.
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.handleAddressesAdd_ = function() {
+  var addresses = this.addressesControl_.getAddresses();
+  var address = addresses[addresses.length - 1];
+  var geocoders = this.geocoders_;
+
+  if (goog.isDefAndNotNull(address)) {
+    geocoders.forEach(function(geocoder) {
+      geocoder.addAdditionalAddress(address);
+    }, this);
+  }
+};
+
+
+/**
  * @param {goog.events.Event} browserEvent Event.
  * @private
  */
@@ -1653,11 +1671,6 @@ ol.control.GoogleMapsDirections.prototype.loadAll_ = function(
   // travel modes
   this.toggleTravelModes_(object.travel_modes);
 
-  // routes
-  if (includeRoutes === true) {
-    this.handleDirectionsResult_(object, google.maps.DirectionsStatus.OK);
-  }
-
   this.removeAllGeocoders_();
   var geocoder;
 
@@ -1679,6 +1692,11 @@ ol.control.GoogleMapsDirections.prototype.loadAll_ = function(
   if (goog.isDefAndNotNull(object.end)) {
     geocoder = this.addGeocoder_();
     geocoder.load([object.end]);
+  }
+
+  // routes - loaded after geocoders
+  if (includeRoutes === true) {
+    this.handleDirectionsResult_(object, google.maps.DirectionsStatus.OK);
   }
 
   this.loading_ = false;
@@ -2008,6 +2026,12 @@ ol.control.GoogleMapsDirections.prototype.saveAll_ = function(includeRoutes) {
   var startGeocoder = geocoders.start;
   var endGeocoder = geocoders.end;
   var waypointGeocoders = geocoders.waypoints;
+
+  // nothing to save if we don't have at least 2 geocoders with locations,
+  // i.e. the start and end ones
+  if (goog.isNull(startGeocoder) || goog.isNull(endGeocoder)) {
+    return '';
+  }
 
   // routes, if included
   if (includeRoutes === true) {

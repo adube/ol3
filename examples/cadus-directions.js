@@ -2,6 +2,7 @@
 // This example uses the GMapx v3 API, which we do not have an exports file for.
 goog.require('ol.Map');
 goog.require('ol.View2D');
+goog.require('ol.control.GoogleMapsAddresses');
 goog.require('ol.control.GoogleMapsCurrentPosition');
 goog.require('ol.control.GoogleMapsDirections');
 goog.require('ol.control.GoogleMapsDirectionsPanel');
@@ -111,6 +112,11 @@ var olCurrentPosition = new ol.control.GoogleMapsCurrentPosition({
   'currentPositionText': 'Ma position'
 });
 
+var olAdresses = new ol.control.GoogleMapsAddresses({
+  'enableCurrentPosition': false,
+  'getURL': 'data/cadus/addresses.json'
+});
+
 var directionsPanel = new ol.control.GoogleMapsDirectionsPanel({
   'target': 'gmaps-directions-panel',
   'arroundText': 'environ',
@@ -122,6 +128,7 @@ var directionsPanel = new ol.control.GoogleMapsDirectionsPanel({
 var directions = new ol.control.GoogleMapsDirections({
   'gmap': gmap,
   'target': 'gmaps-directions',
+  'addressesControl': olAdresses,
   'enableCurrentPosition': true,
   'enableDetours': true,
   'currentPositionControl': olCurrentPosition,

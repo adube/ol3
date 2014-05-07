@@ -868,7 +868,7 @@ olx.control.FullScreenOptions.prototype.target;
 
 
 /**
- * @typedef {{addresses: (Object),
+ * @typedef {{addresses: (Array.<mtx.format.Address>),
  *     addressesTarget: (Element),
  *     currentPositionControl: (ol.control.GoogleMapsCurrentPosition),
  *     enableCurrentPosition: (boolean),
@@ -1017,7 +1017,8 @@ olx.control.GoogleMapsCurrentPositionOptions.prototype.currentPositionText;
 
 
 /**
- * @typedef {{cornerPixelSize: (number|undefined),
+ * @typedef {{addressesControl: (ol.control.GoogleMapsAddresses),
+ *     cornerPixelSize: (number|undefined),
  *     defaultTravelModes: (Array.<string>|undefined),
  *     detourIconStyle: (Array.<(null|ol.style.Style)>|null|ol.feature.FeatureStyleFunction|ol.style.Style),
  *     detourLabelProperty: (string|undefined),
@@ -1051,6 +1052,14 @@ olx.control.GoogleMapsCurrentPositionOptions.prototype.currentPositionText;
  * @todo stability experimental
  */
 olx.control.GoogleMapsDirectionsOptions;
+
+
+/**
+ * Addresses control to use to fetch additionnal adresses for the
+ * geocoder controls within the directions control.
+ * @type {ol.control.GoogleMapsAddresses}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.addressesControl;
 
 
 /**

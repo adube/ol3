@@ -250,6 +250,21 @@ goog.exportSymbol(
     'ol.control.GoogleMapsAddresses',
     ol.control.GoogleMapsAddresses);
 
+goog.exportProperty(
+    ol.control.GoogleMapsAddresses,
+    'EventType',
+    ol.control.GoogleMapsAddresses.EventType);
+
+goog.exportProperty(
+    ol.control.GoogleMapsAddresses.EventType,
+    'ADD',
+    ol.control.GoogleMapsAddresses.EventType.ADD);
+
+goog.exportProperty(
+    ol.control.GoogleMapsAddresses.EventType,
+    'REMOVE',
+    ol.control.GoogleMapsAddresses.EventType.REMOVE);
+
 goog.exportSymbol(
     'ol.control.GoogleMapsCurrentPosition',
     ol.control.GoogleMapsCurrentPosition);

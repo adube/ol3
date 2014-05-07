@@ -117,11 +117,13 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
   var addressesElement = goog.isDefAndNotNull(options.addressesTarget) ?
       goog.dom.getElement(options.addressesTarget) : null;
 
-  var listElement = goog.dom.createDom(goog.dom.TagName.UL, {
-    'class': classPrefix + '-addresses'
-  });
-  goog.dom.appendChild(addressesElement, listElement);
-
+  var listElement = null;
+  if (goog.isDefAndNotNull(addressesElement)) {
+    listElement = goog.dom.createDom(goog.dom.TagName.UL, {
+      'class': classPrefix + '-addresses'
+    });
+    goog.dom.appendChild(addressesElement, listElement);
+  }
 
   /**
    * @type {string}
@@ -130,7 +132,7 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
 
   /**
    * @private
-   * @type {Element}
+   * @type {?Element}
    */
   this.addressesList_ = listElement;
 
@@ -201,7 +203,7 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
   this.location_ = null;
 
   /**
-   * @type {Object}
+   * @type {Array.<mtx.format.Address>}
    */
   this.addresses = goog.isDefAndNotNull(options.addresses) ?
       options.addresses : [];
@@ -326,6 +328,23 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
 
 };
 goog.inherits(ol.control.GoogleMapsAddresses, ol.control.Control);
+
+
+/**
+ * @enum {string}
+ */
+ol.control.GoogleMapsAddresses.EventType = {
+  ADD: goog.events.getUniqueId('add'),
+  REMOVE: goog.events.getUniqueId('remove')
+};
+
+
+/**
+ * @return {Array.<Object>}
+ */
+ol.control.GoogleMapsAddresses.prototype.getAddresses = function() {
+  return this.addresses;
+};
 
 
 /**
@@ -509,7 +528,13 @@ ol.control.GoogleMapsAddresses.prototype.handleSaveAddressSuccess_ =
  */
 ol.control.GoogleMapsAddresses.prototype.addAddress = function(address) {
   this.addresses.push(address);
-  this.addAddressToList(address);
+
+  if (goog.isDefAndNotNull(this.addressesList_)) {
+    this.addAddressToList(address);
+  }
+
+  goog.events.dispatchEvent(this,
+      ol.control.GoogleMapsAddresses.EventType.ADD);
 };
 
 
@@ -538,6 +563,9 @@ ol.control.GoogleMapsAddresses.prototype.removeAddress = function(address) {
     this.removeAddressElements_.splice(index, 1);
     this.addressElements_.splice(index, 1);
     this.addresses.splice(index, 1);
+
+    goog.events.dispatchEvent(this,
+        ol.control.GoogleMapsAddresses.EventType.REMOVE);
   }
 
   if (goog.isDefAndNotNull(this.currentAddress) &&
@@ -612,9 +640,11 @@ ol.control.GoogleMapsAddresses.prototype.handleAddressElementPress_ = function(
   var element = browserEvent.currentTarget;
   var id = element.getAttribute('data-result');
   var address = this.getAddressByID_(id);
-  this.currentAddress = address;
 
-  this.displayAddress_(address);
+  if (!goog.isNull(address)) {
+    this.currentAddress = address;
+    this.displayAddress_(address);
+  }
 };
 
 
@@ -638,7 +668,7 @@ ol.control.GoogleMapsAddresses.prototype.handleRemoveAddressElementPress_ =
 /**
  * @private
  * @param {number} id
- * @return {mtx.format.Address} address
+ * @return {?mtx.format.Address} address
  */
 ol.control.GoogleMapsAddresses.prototype.getAddressByID_ = function(id) {
   var address = null;
