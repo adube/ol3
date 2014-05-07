@@ -9,6 +9,7 @@ goog.require('goog.events.EventType');
 goog.require('goog.events.KeyCodes');
 goog.require('goog.string');
 goog.require('goog.style');
+goog.require('goog.ui.IdGenerator');
 goog.require('ol.Feature');
 goog.require('ol.MapBrowserEvent.EventType');
 goog.require('ol.View2D');
@@ -69,6 +70,13 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
   this.removable_ = goog.isDef(options.removable) ? options.removable : false;
 
   /**
+   * @type {boolean}
+   * @private
+   */
+  this.renderAsListItem_ = goog.isDef(options.renderAsListItem) ?
+      options.renderAsListItem : false;
+
+  /**
    * @type {?ol.layer.Vector}
    * @private
    */
@@ -98,8 +106,13 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
 
   // === UI COMPONENTS ===
   var classPrefix = 'ol-gmg';
+  var id = classPrefix + goog.ui.IdGenerator.getInstance().getNextUniqueId();
 
-  var element = goog.dom.createDom(goog.dom.TagName.DIV, {
+  var elementTagName = (this.renderAsListItem_ === true) ?
+      goog.dom.TagName.LI : goog.dom.TagName.DIV;
+
+  var element = goog.dom.createDom(elementTagName, {
+    'id': id,
     'class': classPrefix + ' ' + ol.css.CLASS_UNSELECTABLE
   });
 
@@ -186,6 +199,12 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
    * @private
    */
   this.iconImageEl_ = iconImageEl;
+
+  /**
+   * @private
+   * @type {string}
+   */
+  this.id_ = id;
 
   /**
    * @private
@@ -314,6 +333,14 @@ ol.control.GoogleMapsGeocoder.Property = {
 ol.control.GoogleMapsGeocoder.prototype.addAdditionalAddress =
     function(address) {
   this.additionalAddresses.push(address);
+};
+
+
+/**
+ * @return {string}
+ */
+ol.control.GoogleMapsGeocoder.prototype.getId = function() {
+  return this.id_;
 };
 
 

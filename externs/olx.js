@@ -1363,6 +1363,7 @@ olx.control.GoogleMapsDirectionsPanelOptions.prototype.mode;
  *     iconImage: (string|undefined),
  *     iconStyle: (ol.style.Style),
  *     removable: (boolean|undefined),
+ *     renderAsListItem: (boolean|undefined),
  *     target: (Element|undefined),
  *     clearButtonText: (?string|undefined),
  *     searchButtonText: (?string|undefined),

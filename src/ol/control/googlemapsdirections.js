@@ -73,6 +73,7 @@ ol.control.GOOGLEMAPSDIRECTIONS_DETOUR_LABEL_PROPERTY = 'label';
  */
 ol.control.GoogleMapsDirections = function(opt_options) {
   var options = goog.isDef(opt_options) ? opt_options : {};
+  var me = this;
 
   /**
    * i18n - waypointButton
@@ -360,11 +361,17 @@ ol.control.GoogleMapsDirections = function(opt_options) {
 
 
   // DOM components - waypoint geocoders
-  var geocodersContainer = goog.dom.createDom(goog.dom.TagName.DIV, {
+  var geocodersContainer = goog.dom.createDom(goog.dom.TagName.UL, {
     'class': classPrefix + '-geocoders'
   });
   goog.dom.appendChild(secondContainer, geocodersContainer);
 
+  // set geocodersContainer as sortable (using jQueryUI)
+  $(geocodersContainer).sortable({
+    'stop': function(event, ui) {
+      me.handleGeocoderSortStop_(event, ui);
+    }
+  }).disableSelection();
 
   // DOM components - add waypoint
   var addGeocoderButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
@@ -885,6 +892,7 @@ ol.control.GoogleMapsDirections.prototype.addGeocoder_ = function() {
     'searchButtonText': this.searchButtonText,
     'clearButtonText': this.clearButtonText,
     'removeButtonText': this.removeButtonText,
+    'renderAsListItem': true,
     'geocoderComponentRestrictions': this.geocoderComponentRestrictions_,
     'iconImage': iconImage,
     'iconStyle': iconStyle
@@ -1197,6 +1205,28 @@ ol.control.GoogleMapsDirections.prototype.getCheckedTravelModes_ =
   }, this);
 
   return elements;
+};
+
+
+/**
+ * @param {string} id Id
+ * @return {?ol.control.GoogleMapsGeocoder}
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.getGeocoderById_ = function(id) {
+  var foundGeocoder = null;
+  var geocoder;
+
+  goog.array.some(this.geocoders_.getArray(), function(geocoder) {
+    if (id === geocoder.getId()) {
+      foundGeocoder = geocoder;
+      return true;
+    } else {
+      return false;
+    }
+  });
+
+  return foundGeocoder;
 };
 
 
@@ -1597,6 +1627,51 @@ ol.control.GoogleMapsDirections.prototype.handleSelectionCleared_ = function(
   var index = this.directionsPanel_.getSelectedRouteIndex();
   if (!goog.isNull(index)) {
     this.unselectRoute_(index);
+  }
+};
+
+
+/**
+ * @param {Object} event Event
+ * @param {Object} ui UI
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.handleGeocoderSortStop_ =
+    function(event, ui) {
+
+  var ids = $(this.geocodersContainer_).sortable('toArray');
+  var sortedGeocoders = [];
+  var geocoder;
+
+  goog.array.forEach(ids, function(id) {
+    geocoder = this.getGeocoderById_(id);
+    if (!goog.isNull(geocoder)) {
+      sortedGeocoders.push(geocoder);
+    }
+  }, this);
+
+  this.geocoders_.clear();
+  this.geocoders_.extend(sortedGeocoders);
+
+  this.toggleGeocoderReverseGeocodings_();
+  this.setGeocoderIconStyles_();
+
+  // == TODO ==
+  // it would be nice to have some sort of intelligence before clearing and
+  // re-launching a new route request:
+  //  - if the d&d geocoder doesn't have a location set, putting it anywhere
+  //    doesn't affect the current result
+  //  - if the d&d geocoder that a location set but its new position stayed
+  //    the same among geocoders that have locations, it doesn't affect the
+  //    the current result
+
+  this.clear_();
+
+  goog.events.dispatchEvent(this,
+      ol.control.GoogleMapsDirections.EventType.QUERYPARAMSCHANGE);
+
+  if (this.enableAutoRouting_ === true) {
+    this.route_();
   }
 };
 

@@ -156,3 +156,17 @@ google.maps.mt_offre.prototype.mt_heure;
  */
 
 google.maps.mt_offre.prototype.mt_horaire_ponctuelle;
+
+
+/**
+ * @param {string|Object.<string,*>=} opt_option
+ * @return {!jQuery}
+ */
+jQuery.prototype.disableSelection = function(opt_option) {};
+
+
+/**
+ * @param {string|Object.<string,*>=} opt_option
+ * @return {!jQuery}
+ */
+jQuery.prototype.sortable = function(opt_option) {};

@@ -157,6 +157,10 @@
   cursor: pointer;
 }
 
+.ol-gmg-icon-image {
+  cursor: move;
+}
+
 /**
  * GoogleMapsAddresses
  */
