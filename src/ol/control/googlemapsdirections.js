@@ -358,6 +358,14 @@ ol.control.GoogleMapsDirections = function(opt_options) {
       myAddressesLabelEl, goog.dom.createTextNode(this.myAddressesText + ': '));
   goog.dom.appendChild(secondContainer, myAddressesLabelEl);
 
+
+  // DOM components - waypoint geocoders
+  var geocodersContainer = goog.dom.createDom(goog.dom.TagName.DIV, {
+    'class': classPrefix + '-geocoders'
+  });
+  goog.dom.appendChild(secondContainer, geocodersContainer);
+
+
   // DOM components - add waypoint
   var addGeocoderButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
     'class': classPrefix + '-add-waypoint-button'
@@ -370,12 +378,6 @@ ol.control.GoogleMapsDirections = function(opt_options) {
     goog.events.EventType.TOUCHEND,
     goog.events.EventType.CLICK
   ], this.handleAddWPGeocoderButtonPress_, false, this);
-
-  // DOM components - waypoint geocoders
-  var geocodersContainer = goog.dom.createDom(goog.dom.TagName.DIV, {
-    'class': classPrefix + '-geocoders'
-  });
-  goog.dom.appendChild(secondContainer, geocodersContainer);
 
 
   /**
