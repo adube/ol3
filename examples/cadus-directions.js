@@ -138,6 +138,7 @@ var directions = new ol.control.GoogleMapsDirections({
   'currentPositionText': 'Ma position',
   'searchButtonText': 'Rechercher',
   'clearButtonText': 'Effacer',
+  'reverseButtonText': 'Inverser',
   'removeButtonText': 'Supprimer',
   'myAddressesText': 'Mes adresses',
   'myTravelModesText': 'Mes modes de transport',

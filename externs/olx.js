@@ -1046,6 +1046,7 @@ olx.control.GoogleMapsCurrentPositionOptions.prototype.currentPositionText;
  *     myAddressesText: (string|undefined),
  *     myTravelModesText: (string|undefined),
  *     removeButtonText: (?string|undefined),
+ *     reverseButtonText: (string|undefined),
  *     searchButtonText: (?string|undefined),
  *     transitText: (string|undefined),
  *     walkingText: (string|undefined)}}

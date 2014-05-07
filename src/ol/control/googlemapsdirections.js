@@ -12,6 +12,7 @@ goog.require('goog.json');
 goog.require('goog.net.EventType');
 goog.require('goog.net.XhrIo');
 goog.require('goog.structs.Map');
+goog.require('goog.style');
 goog.require('ol.Collection');
 goog.require('ol.Feature');
 goog.require('ol.MapBrowserEvent.EventType');
@@ -103,6 +104,13 @@ ol.control.GoogleMapsDirections = function(opt_options) {
    */
   this.removeButtonText = goog.isDefAndNotNull(options.removeButtonText) ?
       options.removeButtonText : undefined;
+
+  /**
+   * i18n - reverseButton
+   * @type {string}
+   */
+  this.reverseButtonText = goog.isDef(options.reverseButtonText) ?
+      options.reverseButtonText : 'Reverse';
 
   /**
    * i18n - myAddresses
@@ -360,7 +368,19 @@ ol.control.GoogleMapsDirections = function(opt_options) {
   goog.dom.appendChild(secondContainer, myAddressesLabelEl);
 
 
-  // DOM components - waypoint geocoders
+  // DOM components - reverse  button
+  var reverseButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
+    'class': classPrefix + '-reverse-button'
+  });
+  goog.dom.appendChild(reverseButton,
+      goog.dom.createTextNode(this.reverseButtonText));
+  goog.dom.appendChild(secondContainer, reverseButton);
+  goog.events.listen(reverseButton, [
+    goog.events.EventType.TOUCHEND,
+    goog.events.EventType.CLICK
+  ], this.handleReverseButtonPress_, false, this);
+
+  // DOM components - geocoders
   var geocodersContainer = goog.dom.createDom(goog.dom.TagName.UL, {
     'class': classPrefix + '-geocoders'
   });
@@ -660,6 +680,12 @@ ol.control.GoogleMapsDirections = function(opt_options) {
       this.addressesControl_,
       ol.control.GoogleMapsAddresses.EventType.ADD,
       this.handleAddressesAdd_, false, this);
+
+  /**
+   * @type {Element}
+   * @private
+   */
+  this.reverseButton_ = reverseButton;
 
 };
 goog.inherits(ol.control.GoogleMapsDirections, ol.control.Control);
@@ -1606,6 +1632,18 @@ ol.control.GoogleMapsDirections.prototype.handleMapSingleClick_ = function(
 
 
 /**
+ * @param {goog.events.Event} browserEvent Event.
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.handleReverseButtonPress_ =
+    function(browserEvent) {
+
+  browserEvent.preventDefault();
+  window.console.log('reverse');
+};
+
+
+/**
  * @param {goog.events.Event} event Event.
  * @private
  */
@@ -1798,16 +1836,17 @@ ol.control.GoogleMapsDirections.prototype.loadAll_ = function(
 ol.control.GoogleMapsDirections.prototype.manageNumGeocoders_ = function() {
   var geocoders = this.geocoders_;
   var numGeocoders = geocoders.getLength();
+  var reverseButton = this.reverseButton_;
 
   if (numGeocoders > 2) {
     geocoders.forEach(function(geocoder) {
       geocoder.showRemoveButton();
-      // FIXME - hide 'reverse' button
+      goog.style.setStyle(reverseButton, 'display', 'none');
     }, this);
   } else {
     geocoders.forEach(function(geocoder) {
       geocoder.hideRemoveButton();
-      // FIXME - show 'reverse' button
+      goog.style.setStyle(reverseButton, 'display', '');
     }, this);
   }
 };
