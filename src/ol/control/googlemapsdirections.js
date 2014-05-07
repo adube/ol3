@@ -2219,7 +2219,6 @@ ol.control.GoogleMapsDirections.prototype.selectRoute_ = function(index) {
 
 
 /**
- * FIXME - should also set the DOM icons, next to the input text
  * Loops in all current geocoders and set the appropriate icon style
  * @private
  */
