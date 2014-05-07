@@ -370,7 +370,8 @@ ol.control.GoogleMapsDirections = function(opt_options) {
   $(geocodersContainer).sortable({
     'stop': function(event, ui) {
       me.handleGeocoderSortStop_(event, ui);
-    }
+    },
+    'placeholder': classPrefix + '-highlight'
   }).disableSelection();
 
   // DOM components - add waypoint

@@ -185,6 +185,12 @@
  * GoogleMapsDirections
  */
 
+ul.ol-gmds-geocoders {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
 .ol-gmds-fieldset {
   display: none;
 }
@@ -231,4 +237,9 @@
 
 .ol-gmds-checkbox-link-end-separator {
   clear: left;
+}
+
+.ol-gmds-highlight {
+  border: 2px dashed #aaaaaa;
+  padding: 15px;
 }
