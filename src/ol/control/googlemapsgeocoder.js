@@ -51,6 +51,12 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
       options.geocoderComponentRestrictions : {};
 
   /**
+   * @type {?string}
+   * @private
+   */
+  this.iconImage_ = goog.isDef(options.iconImage) ? options.iconImage : null;
+
+  /**
    * @type {ol.style.Style}
    * @private
    */
@@ -97,6 +103,14 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
     'class': classPrefix + ' ' + ol.css.CLASS_UNSELECTABLE
   });
 
+  var iconImageEl = null;
+  if (!goog.isNull(this.iconImage_)) {
+    iconImageEl = goog.dom.createDom(goog.dom.TagName.IMG, {
+      'src': this.iconImage_,
+      'class': classPrefix + '-icon-image'
+    });
+  }
+
   var input = goog.dom.createDom(goog.dom.TagName.INPUT, {
     'class': classPrefix + '-input-text',
     'type': 'text'
@@ -125,6 +139,9 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
   var removeButtonText = goog.dom.createTextNode(this.removeButtonText);
   goog.dom.appendChild(removeButton, removeButtonText);
 
+  if (!goog.isNull(iconImageEl)) {
+    goog.dom.appendChild(element, iconImageEl);
+  }
   goog.dom.appendChild(element, input);
   goog.dom.appendChild(element, resultsList);
   goog.dom.appendChild(element, searchButton);
@@ -163,6 +180,12 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
     element: element,
     target: options.target
   });
+
+  /**
+   * @type {?Element}
+   * @private
+   */
+  this.iconImageEl_ = iconImageEl;
 
   /**
    * @private
@@ -340,6 +363,17 @@ goog.exportProperty(
     ol.control.GoogleMapsGeocoder.prototype,
     'getCoordinate',
     ol.control.GoogleMapsGeocoder.prototype.getCoordinate);
+
+
+/**
+ * Change the icon image to a new one, changing the image element src
+ * accordingly.
+ * @param {string} image Image
+ */
+ol.control.GoogleMapsGeocoder.prototype.setIconImage = function(image) {
+  this.iconImage_ = image;
+  this.iconImageEl_.src = image;
+};
 
 
 /**

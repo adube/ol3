@@ -179,6 +179,13 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
    * @type {ol.Collection}
    * @private
    */
+  this.iconImageElements_ = new ol.Collection();
+
+
+  /**
+   * @type {ol.Collection}
+   * @private
+   */
   this.routes_ = new ol.Collection();
 
 
@@ -283,6 +290,9 @@ ol.control.GoogleMapsDirectionsPanel.prototype.clearDirections = function() {
   this.routes_.clear();
   this.selectedRouteIndex_ = null;
 
+  // clear icon images
+  this.iconImageElements_.clear();
+
   //Hide suggested routes link
   this.selectorVisible_(false);
 };
@@ -384,6 +394,24 @@ ol.control.GoogleMapsDirectionsPanel.prototype.getSelectedRoute = function() {
 ol.control.GoogleMapsDirectionsPanel.prototype.getSelectedRouteIndex =
     function() {
   return this.selectedRouteIndex_;
+};
+
+
+/**
+ * Change all icon images src that are currently in DOM with those sent
+ * @param {Array.<string>} iconImages The list of icons to use
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.setIconImages =
+    function(iconImages) {
+
+  var iconImage;
+
+  this.iconImageElements_.forEach(function(iconImageEl, index) {
+    iconImage = iconImages[index];
+    if (goog.isDefAndNotNull(iconImage)) {
+      iconImageEl.src = iconImage;
+    }
+  }, this);
 };
 
 
@@ -846,6 +874,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createLegHeaderElement_ =
     'class': classPrefix + '-leg-icon'
   });
   goog.dom.appendChild(textEl, iconEl);
+  this.iconImageElements_.push(iconEl);
 
   var text = (start) ? leg.start_address : leg.end_address;
   goog.dom.appendChild(textEl, goog.dom.createTextNode(text));

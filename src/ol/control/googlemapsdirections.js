@@ -854,6 +854,7 @@ ol.control.GoogleMapsDirections.prototype.addGeocoder_ = function() {
 
   var geocoder = null;
   var geocoders = this.geocoders_;
+  var iconImages = this.iconImages_;
   var iconStyles = this.iconStyles_;
 
   if (!this.canAddAnOtherWaypoint_()) {
@@ -866,8 +867,9 @@ ol.control.GoogleMapsDirections.prototype.addGeocoder_ = function() {
 
   var numGeocoders = geocoders.getLength();
   var iconStyle = iconStyles[numGeocoders];
+  var iconImage = iconImages[numGeocoders];
 
-  if (!goog.isDefAndNotNull(iconStyle)) {
+  if (!goog.isDefAndNotNull(iconStyle) || !goog.isDefAndNotNull(iconImage)) {
     // todo - throw error: "Not enough icon styles set"
     return geocoder;
   }
@@ -884,6 +886,7 @@ ol.control.GoogleMapsDirections.prototype.addGeocoder_ = function() {
     'clearButtonText': this.clearButtonText,
     'removeButtonText': this.removeButtonText,
     'geocoderComponentRestrictions': this.geocoderComponentRestrictions_,
+    'iconImage': iconImage,
     'iconStyle': iconStyle
   });
 
@@ -2147,21 +2150,32 @@ ol.control.GoogleMapsDirections.prototype.selectRoute_ = function(index) {
 ol.control.GoogleMapsDirections.prototype.setGeocoderIconStyles_ =
     function() {
 
+  var iconImagesForPanel = [];
+
   var geocoders = this.geocoders_;
+  var iconImages = this.iconImages_;
   var iconStyles = this.iconStyles_;
 
   var geocoder;
   var index;
+  var iconImage;
   var iconStyle;
 
   geocoders.forEach(function(geocoder, index) {
     iconStyle = iconStyles[index];
-    if (goog.isDefAndNotNull(iconStyle)) {
+    iconImage = iconImages[index];
+    if (goog.isDefAndNotNull(iconStyle) && goog.isDefAndNotNull(iconImage)) {
       geocoder.setIconStyle(iconStyle);
+      geocoder.setIconImage(iconImage);
+      if (!goog.isNull(geocoder.getLocation())) {
+        iconImagesForPanel.push(iconImage);
+      }
     } else {
       // todo - throw error "Too few icon styles set"
     }
   }, this);
+
+  this.directionsPanel_.setIconImages(iconImagesForPanel);
 };
 
 

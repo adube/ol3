@@ -1360,6 +1360,7 @@ olx.control.GoogleMapsDirectionsPanelOptions.prototype.mode;
  *     enableCurrentPosition: (boolean),
  *     enableReverseGeocoding: (boolean|undefined),
  *     geocoderComponentRestrictions: (Object|undefined),
+ *     iconImage: (string|undefined),
  *     iconStyle: (ol.style.Style),
  *     removable: (boolean|undefined),
  *     target: (Element|undefined),
@@ -1398,6 +1399,13 @@ olx.control.GoogleMapsGeocoderOptions.prototype.enableReverseGeocoding;
  * @type {Object|undefined}
  */
 olx.control.GoogleMapsGeocoderOptions.prototype.geocoderComponentRestrictions;
+
+
+/**
+ * The icon image to display next to the textbox input
+ * @type {string|undefined}
+ */
+olx.control.GoogleMapsGeocoderOptions.prototype.iconImage;
 
 
 /**

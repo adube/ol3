@@ -97,6 +97,7 @@ var olGeocoder = new ol.control.GoogleMapsGeocoder({
     'lon': -72
   }],
   'geocoderComponentRestrictions': {'country': 'CA'},
+  'iconImage': 'data/icon.png',
   'iconStyle': new ol.style.Style({
     image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
       anchor: [0.5, 46],
