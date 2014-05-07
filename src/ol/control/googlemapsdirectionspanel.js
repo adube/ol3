@@ -534,8 +534,6 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
     goog.dom.appendChild(userEvalEl, goog.dom.createTextNode(' '));
     goog.dom.appendChild(leftCtnEl, userEvalEl);
 
-    goog.dom.appendChild(leftCtnEl, goog.dom.createDom(goog.dom.TagName.BR));
-
     // small icons
     goog.dom.appendChild(leftCtnEl, this.createOfferIconElement_(
         'driver', route.mt_offre.mt_est_conducteur));
