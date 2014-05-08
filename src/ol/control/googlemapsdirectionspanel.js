@@ -260,6 +260,16 @@ goog.inherits(ol.control.GoogleMapsDirectionsPanel, ol.control.Control);
 
 
 /**
+ * @enum {number}
+ */
+ol.control.GoogleMapsDirectionsPanel.Ambiance = {
+  TALK: 1,
+  MUSIC: 2,
+  RADIO: 3
+};
+
+
+/**
  * @enum {string}
  */
 ol.control.GoogleMapsDirectionsPanel.EventType = {
@@ -565,15 +575,18 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
         'seats', route.mt_offre.mt_places_dispo));
     goog.dom.appendChild(leftCtnEl, this.createOfferIconElement_(
         'smoking', route.mt_offre.mt_fume));
-    var ambiance = route.mt_offre.mt_atmosphere;
-    // FIXME - hardcoded
-    var talkAmbiance = (ambiance === 'Conversation') ? '1' : '0';
+    // ambiance icons
+    var offreAmbiance = route.mt_offre.mt_atmosphere;
+    var ambiance = ol.control.GoogleMapsDirectionsPanel.Ambiance;
+    var talkAmbiance = (offreAmbiance === ambiance.TALK) ? '1' : '0';
     goog.dom.appendChild(leftCtnEl, this.createOfferIconElement_(
         'talk', talkAmbiance));
-    // FIXME - hardcoded
-    var musicAmbiance = (ambiance === 'Musique') ? '1' : '0';
+    var musicAmbiance = (offreAmbiance === ambiance.MUSIC) ? '1' : '0';
     goog.dom.appendChild(leftCtnEl, this.createOfferIconElement_(
         'music', musicAmbiance));
+    var radioAmbiance = (offreAmbiance === ambiance.RADIO) ? '1' : '0';
+    goog.dom.appendChild(leftCtnEl, this.createOfferIconElement_(
+        'radio', radioAmbiance));
 
     // -- clear left --
     var clearEl = goog.dom.createDom(goog.dom.TagName.DIV, {

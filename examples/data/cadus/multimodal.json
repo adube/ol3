@@ -15,7 +15,7 @@
         "mt_est_conducteur": 1,
         "mt_places_dispo": 3,
         "mt_fume": 0,
-        "mt_atmosphere": "Conversation",
+        "mt_atmosphere": 2,
         "mt_prix": "5,50 $",
         "mt_horaire_ponctuelle": 1,
         "mt_date": "Jeudi 11 octobre 2013",

@@ -141,7 +141,7 @@ google.maps.mt_offre.prototype.mt_fume;
 
 
 /**
- * @type {string}
+ * @type {number}
  */
 google.maps.mt_offre.prototype.mt_atmosphere;
 
