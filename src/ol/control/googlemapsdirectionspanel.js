@@ -629,11 +629,11 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
     goog.dom.appendChild(priceEl, goog.dom.createTextNode(priceText));
 
     // -- group approved --
-    var groupEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+    var groupApprovedEl = goog.dom.createDom(goog.dom.TagName.DIV, {
       'class': classPrefix + '-offer-group-approved-' +
           route.mt_usager.mt_group_approved
     });
-    goog.dom.appendChild(rightCtnEl, groupEl);
+    goog.dom.appendChild(rightCtnEl, groupApprovedEl);
 
     // -- group --
     var groupText = route.mt_usager.mt_group_name;
