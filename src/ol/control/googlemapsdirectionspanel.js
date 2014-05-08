@@ -45,36 +45,60 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
   var options = goog.isDef(opt_options) ? opt_options : {};
 
   /**
-   * i18n - suggestedRoutes
-   * @type {?string|undefined}
+   * i18n - around
+   * @type {string}
    */
-  this.suggestedRoutesText =
-      goog.isDefAndNotNull(options.suggestedRoutesText) ?
-          options.suggestedRoutesText : 'Suggested Routes';
+  this.aroundText = goog.isDef(options.aroundText) ?
+      options.aroundText : 'about';
 
   /**
-   * i18n - around
-   * @type {?string|undefined}
+   * i18n - contact
+   * @type {string}
    */
-  this.aroundText =
-      goog.isDefAndNotNull(options.aroundText) ?
-          options.aroundText : 'about';
+  this.contactText = goog.isDef(options.contactText) ?
+      options.contactText : 'Contact';
 
   /**
    * i18n - copyright
-   * @type {?string|undefined}
+   * @type {string}
    */
-  this.copyrightText =
-      goog.isDefAndNotNull(options.copyrightText) ?
-          options.copyrightText : '©2014 Google';
+  this.copyrightText = goog.isDef(options.copyrightText) ?
+      options.copyrightText : '©2014 Google';
+
+  /**
+   * i18n - pathDetails
+   * @type {string}
+   */
+  this.pathDetailsText = goog.isDef(options.pathDetailsText) ?
+      options.pathDetailsText : 'Path details';
+
+  /**
+   * i18n - ponctual
+   * @type {string}
+   */
+  this.ponctualText = goog.isDef(options.ponctualText) ?
+      options.ponctualText : 'Ponctual';
+
+  /**
+   * i18n - recurring
+   * @type {string}
+   */
+  this.recurringText = goog.isDef(options.recurringText) ?
+      options.recurringText : 'Recurring';
+
+  /**
+   * i18n - suggestedRoutes
+   * @type {string}
+   */
+  this.suggestedRoutesText = goog.isDef(options.suggestedRoutesText) ?
+      options.suggestedRoutesText : 'Suggested Routes';
 
   /**
    * i18n - totalDistance
-   * @type {?string|undefined}
+   * @type {string}
    */
-  this.totalDistanceText =
-      goog.isDefAndNotNull(options.totalDistanceText) ?
-          options.totalDistanceText : 'Total distance';
+  this.totalDistanceText = goog.isDef(options.totalDistanceText) ?
+      options.totalDistanceText : 'Total distance';
 
   var classPrefix = 'ol-gmdp';
 
@@ -569,15 +593,14 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
     var firstLineEl = goog.dom.createDom(goog.dom.TagName.DIV, {});
     goog.dom.appendChild(rightCtnEl, firstLineEl);
 
-    // FIXME - i18n
-    var offerTypeText = route.mt_offre.mt_horaire_ponctuelle;
+    var offerTypeText = (route.mt_offre.mt_horaire_ponctuelle === 1) ?
+        this.ponctualText : this.recurringText;
     var offerTypeEl = goog.dom.createDom(goog.dom.TagName.SPAN, {});
     goog.dom.appendChild(firstLineEl, offerTypeEl);
     goog.dom.appendChild(offerTypeEl, goog.dom.createTextNode(offerTypeText));
 
     goog.dom.appendChild(firstLineEl, this.createOfferPipeElement_());
 
-    // FIXME - i18n
     var dateText = route.mt_offre.mt_date;
     var dateEl = goog.dom.createDom(goog.dom.TagName.SPAN, {
       'class': classPrefix + '-offer-header'
@@ -587,7 +610,6 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
 
     goog.dom.appendChild(firstLineEl, this.createOfferPipeElement_());
 
-    // FIXME - i18n
     var hourText = route.mt_offre.mt_heure;
     var hourEl = goog.dom.createDom(goog.dom.TagName.SPAN, {
       'class': classPrefix + '-offer-header'
@@ -599,14 +621,19 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
     var secondLineEl = goog.dom.createDom(goog.dom.TagName.DIV, {});
     goog.dom.appendChild(rightCtnEl, secondLineEl);
 
-
-    // -- price - FIXME: format price --
-    var priceText = route.mt_offre.mt_prix + ' $';
+    var priceText = route.mt_offre.mt_prix;
     var priceEl = goog.dom.createDom(goog.dom.TagName.DIV, {
       'class': classPrefix + '-offer-header'
     });
     goog.dom.appendChild(rightCtnEl, priceEl);
     goog.dom.appendChild(priceEl, goog.dom.createTextNode(priceText));
+
+    // -- group approved --
+    var groupEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+      'class': classPrefix + '-offer-group-approved-' +
+          route.mt_usager.mt_group_approved
+    });
+    goog.dom.appendChild(rightCtnEl, groupEl);
 
     // -- group --
     var groupText = route.mt_usager.mt_group_name;
@@ -632,12 +659,6 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
         goog.dom.createTextNode(route.summary));
   }
 
-  var detailLink = goog.dom.createDom(goog.dom.TagName.A, {
-    'href': '#',
-    'data-selector-index': index
-  });
-
-  // FIXME - add 'contact'
   if (goog.isDef(route.mt_usager)) {
     // -- clear left --
     var clearEl = goog.dom.createDom(goog.dom.TagName.DIV, {
@@ -646,10 +667,26 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
     goog.dom.appendChild(element, clearEl);
   }
 
-  goog.dom.appendChild(detailLink,
-      goog.dom.createTextNode('Détail du trajet'));
-
+  // detail link
+  var detailLink = goog.dom.createDom(goog.dom.TagName.A, {
+    'class': classPrefix + '-offer-details-link',
+    'href': '#',
+    'data-selector-index': index
+  });
   goog.dom.appendChild(leftCtnEl, detailLink);
+  goog.dom.appendChild(detailLink,
+      goog.dom.createTextNode(this.pathDetailsText));
+
+  // contact link
+  if (goog.isDef(route.mt_usager)) {
+    var contactLink = goog.dom.createDom(goog.dom.TagName.A, {
+      'class': classPrefix + '-offer-contact-link',
+      'href': 'mailto:' + route.mt_usager.mt_email
+    });
+    goog.dom.appendChild(leftCtnEl, contactLink);
+    goog.dom.appendChild(contactLink,
+        goog.dom.createTextNode(this.contactText));
+  }
 
   // event listeners
   goog.events.listen(detailLink, [

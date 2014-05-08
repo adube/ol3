@@ -89,6 +89,12 @@ google.maps.mt_usager.prototype.mt_first_name;
 /**
  * @type {string}
  */
+google.maps.mt_usager.prototype.mt_email;
+
+
+/**
+ * @type {string}
+ */
 google.maps.mt_usager.prototype.mt_photo;
 
 
@@ -96,6 +102,12 @@ google.maps.mt_usager.prototype.mt_photo;
  * @type {number}
  */
 google.maps.mt_usager.prototype.mt_evaluation;
+
+
+/**
+ * @type {number}
+ */
+google.maps.mt_usager.prototype.mt_group_approved;
 
 
 /**
@@ -135,7 +147,7 @@ google.maps.mt_offre.prototype.mt_atmosphere;
 
 
 /**
- * @type {number}
+ * @type {string}
  */
 google.maps.mt_offre.prototype.mt_prix;
 

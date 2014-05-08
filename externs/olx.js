@@ -1295,16 +1295,27 @@ olx.control.GoogleMapsDirectionsOptions.prototype.walkingText;
 
 
 /**
- * @typedef {{pixelBuffer: (number|undefined),
+ * @typedef {{mode: (string|undefined),
+ *     pixelBuffer: (number|undefined),
  *     target: (Element|undefined),
- *     aroundText: (?string|undefined),
- *     copyrightText: (?string|undefined),
- *     suggestedRoutesText: (?string|undefined),
- *     totalDistanceText: (?string|undefined),
- *     mode: (string|undefined)}},
+ *     aroundText: (string|undefined),
+ *     contactText: (string|undefined),
+ *     copyrightText: (string|undefined),
+ *     pathDetailsText: (string|undefined),
+ *     ponctualText: (string|undefined),
+ *     recurringText: (string|undefined),
+ *     suggestedRoutesText: (string|undefined),
+ *     totalDistanceText: (string|undefined)}}
  * @todo stability experimental
  */
 olx.control.GoogleMapsDirectionsPanelOptions;
+
+
+/**
+ * mode
+ * @type {string|undefined}
+ */
+olx.control.GoogleMapsDirectionsPanelOptions.prototype.mode;
 
 
 /**
@@ -1324,36 +1335,60 @@ olx.control.GoogleMapsDirectionsPanelOptions.prototype.target;
 
 /**
  * i18n
- * @type {?string|undefined}
+ * @type {string|undefined}
  */
 olx.control.GoogleMapsDirectionsPanelOptions.prototype.aroundText;
 
 
 /**
  * i18n
- * @type {?string|undefined}
+ * @type {string|undefined}
  */
 olx.control.GoogleMapsDirectionsPanelOptions.prototype.copyrightText;
 
 
 /**
  * i18n
- * @type {?string|undefined}
+ * @type {string|undefined}
+ */
+olx.control.GoogleMapsDirectionsPanelOptions.prototype.contactText;
+
+
+/**
+ * i18n
+ * @type {string|undefined}
+ */
+olx.control.GoogleMapsDirectionsPanelOptions.prototype.pathDetailsText;
+
+
+/**
+ * i18n
+ * @type {string|undefined}
+ */
+olx.control.GoogleMapsDirectionsPanelOptions.prototype.ponctualText;
+
+
+/**
+ * i18n
+ * @type {string|undefined}
+ */
+olx.control.GoogleMapsDirectionsPanelOptions.prototype.recurringText;
+
+
+/**
+ * i18n
+ * @type {string|undefined}
  */
 olx.control.GoogleMapsDirectionsPanelOptions.prototype.suggestedRoutesText;
 
 
 /**
  * i18n
- * @type {?string|undefined}
+ * @type {string|undefined}
  */
 olx.control.GoogleMapsDirectionsPanelOptions.prototype.totalDistanceText;
 
-/**
- * mode
- * @type {string|undefined}
- */
-olx.control.GoogleMapsDirectionsPanelOptions.prototype.mode;
+
 
 
 /**

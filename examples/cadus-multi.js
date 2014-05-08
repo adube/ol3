@@ -126,12 +126,16 @@ for (var i = 1, len = 8; i <= len; i++) {
 }
 
 var directionsPanel = new ol.control.GoogleMapsDirectionsPanel({
+  'mode': ol.control.GoogleMapsDirectionsPanel.Mode.COMPLEX,
   'target': 'gmaps-directions-panel',
   'arroundText': 'environ',
+  'contactText': 'Contacter',
   'copyrightText': 'Données cartographiques ©2014 Google',
+  'pathDetailsText': 'Détail du trajet',
+  'ponctualText': 'Ponctuel',
+  'recurringText': 'Récurrent',
   'suggestedRoutesText': 'Routes suggérées',
-  'totalDistanceText': 'Distance Totale',
-  'mode': ol.control.GoogleMapsDirectionsPanel.Mode.COMPLEX
+  'totalDistanceText': 'Distance Totale'
 });
 
 var olAdresses = new ol.control.GoogleMapsAddresses({
