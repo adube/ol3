@@ -66,6 +66,12 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
       options.copyrightText : '©2014 Google';
 
   /**
+   * i18n - from
+   * @type {string}
+   */
+  this.fromText = goog.isDef(options.fromText) ? options.fromText : 'From';
+
+  /**
    * i18n - pathDetails
    * @type {string}
    */
@@ -92,6 +98,12 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
    */
   this.suggestedRoutesText = goog.isDef(options.suggestedRoutesText) ?
       options.suggestedRoutesText : 'Suggested Routes';
+
+  /**
+   * i18n - to
+   * @type {string}
+   */
+  this.toText = goog.isDef(options.toText) ? options.toText : 'To';
 
   /**
    * i18n - totalDistance
@@ -630,10 +642,45 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
     goog.dom.appendChild(firstLineEl, hourEl);
     goog.dom.appendChild(hourEl, goog.dom.createTextNode(hourText));
 
-    // -- line 2 --
-    var secondLineEl = goog.dom.createDom(goog.dom.TagName.DIV, {});
-    goog.dom.appendChild(rightCtnEl, secondLineEl);
+    // from
+    var fromAddressText = route.legs[0].start_address;
+    var fromEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+      'class': classPrefix + '-offer-address'
+    });
+    goog.dom.appendChild(rightCtnEl, fromEl);
 
+    var fromHeaderEl = goog.dom.createDom(goog.dom.TagName.SPAN, {
+      'class': classPrefix + '-offer-header'
+    });
+    goog.dom.appendChild(fromEl, fromHeaderEl);
+    goog.dom.appendChild(fromHeaderEl,
+        goog.dom.createTextNode(this.fromText + ' : '));
+
+    var fromAddressEl = goog.dom.createDom(goog.dom.TagName.SPAN);
+    goog.dom.appendChild(fromEl, fromAddressEl);
+    goog.dom.appendChild(fromAddressEl,
+        goog.dom.createTextNode(fromAddressText));
+
+    // to
+    var toAddressText = route.legs[route.legs.length - 1].end_address;
+    var toEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+      'class': classPrefix + '-offer-address'
+    });
+    goog.dom.appendChild(rightCtnEl, toEl);
+
+    var toHeaderEl = goog.dom.createDom(goog.dom.TagName.SPAN, {
+      'class': classPrefix + '-offer-header'
+    });
+    goog.dom.appendChild(toEl, toHeaderEl);
+    goog.dom.appendChild(toHeaderEl,
+        goog.dom.createTextNode(this.toText + ' : '));
+
+    var toAddressEl = goog.dom.createDom(goog.dom.TagName.SPAN);
+    goog.dom.appendChild(toEl, toAddressEl);
+    goog.dom.appendChild(toAddressEl,
+        goog.dom.createTextNode(toAddressText));
+
+    // price
     var priceText = route.mt_offre.mt_prix;
     var priceEl = goog.dom.createDom(goog.dom.TagName.DIV, {
       'class': classPrefix + '-offer-header'

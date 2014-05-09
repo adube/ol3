@@ -131,10 +131,12 @@ var directionsPanel = new ol.control.GoogleMapsDirectionsPanel({
   'arroundText': 'environ',
   'contactText': 'Contacter',
   'copyrightText': 'Données cartographiques ©2014 Google',
+  'fromText': 'De',
   'pathDetailsText': 'Détail du trajet',
   'ponctualText': 'Ponctuel',
   'recurringText': 'Récurrent',
   'suggestedRoutesText': 'Routes suggérées',
+  'toText': 'À',
   'totalDistanceText': 'Distance Totale'
 });
 

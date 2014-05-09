@@ -1301,10 +1301,12 @@ olx.control.GoogleMapsDirectionsOptions.prototype.walkingText;
  *     aroundText: (string|undefined),
  *     contactText: (string|undefined),
  *     copyrightText: (string|undefined),
+ *     fromText: (string|undefined),
  *     pathDetailsText: (string|undefined),
  *     ponctualText: (string|undefined),
  *     recurringText: (string|undefined),
  *     suggestedRoutesText: (string|undefined),
+ *     toText: (string|undefined),
  *     totalDistanceText: (string|undefined)}}
  * @todo stability experimental
  */
@@ -1351,6 +1353,13 @@ olx.control.GoogleMapsDirectionsPanelOptions.prototype.copyrightText;
  * i18n
  * @type {string|undefined}
  */
+olx.control.GoogleMapsDirectionsPanelOptions.prototype.fromText;
+
+
+/**
+ * i18n
+ * @type {string|undefined}
+ */
 olx.control.GoogleMapsDirectionsPanelOptions.prototype.contactText;
 
 
@@ -1380,6 +1389,13 @@ olx.control.GoogleMapsDirectionsPanelOptions.prototype.recurringText;
  * @type {string|undefined}
  */
 olx.control.GoogleMapsDirectionsPanelOptions.prototype.suggestedRoutesText;
+
+
+/**
+ * i18n
+ * @type {string|undefined}
+ */
+olx.control.GoogleMapsDirectionsPanelOptions.prototype.toText;
 
 
 /**
