@@ -171,6 +171,12 @@ google.maps.mt_offre.prototype.mt_horaire_ponctuelle;
 
 
 /**
+ * @type {Array.<string>}
+ */
+google.maps.DirectionsRoute.prototype.mt_org;
+
+
+/**
  * @param {string|Object.<string,*>=} opt_option
  * @return {!jQuery}
  */

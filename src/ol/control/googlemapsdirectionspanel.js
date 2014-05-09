@@ -641,20 +641,19 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
     goog.dom.appendChild(rightCtnEl, priceEl);
     goog.dom.appendChild(priceEl, goog.dom.createTextNode(priceText));
 
-    // -- group approved --
-    var groupApprovedEl = goog.dom.createDom(goog.dom.TagName.DIV, {
-      'class': classPrefix + '-offer-group-approved-' +
-          route.mt_usager.mt_group_approved
-    });
-    goog.dom.appendChild(rightCtnEl, groupApprovedEl);
+    // organisation
+    goog.array.forEach(route.mt_org, function(organisationName) {
+      var orgApprovedEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+        'class': classPrefix + '-offer-group-approved-1'
+      });
+      goog.dom.appendChild(rightCtnEl, orgApprovedEl);
 
-    // -- group --
-    var groupText = route.mt_usager.mt_group_name;
-    var groupEl = goog.dom.createDom(goog.dom.TagName.DIV, {
-      'class': classPrefix + '-offer-group'
-    });
-    goog.dom.appendChild(rightCtnEl, groupEl);
-    goog.dom.appendChild(groupEl, goog.dom.createTextNode(groupText));
+      var orgEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+        'class': classPrefix + '-offer-group'
+      });
+      goog.dom.appendChild(rightCtnEl, orgEl);
+      goog.dom.appendChild(orgEl, goog.dom.createTextNode(organisationName));
+    }, this);
   }
   // else, the response comes from Google Maps.  Style accordingly
   else {
