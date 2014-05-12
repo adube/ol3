@@ -1477,6 +1477,8 @@ ol.control.GoogleMapsDirections.prototype.handleCheckboxLinkElPress_ =
 ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
     response, status) {
 
+  this.directionsPanel_.toggleWorkInProgress(false);
+
   var map = this.getMap();
 
   var view = map.getView();
@@ -2156,6 +2158,8 @@ ol.control.GoogleMapsDirections.prototype.routeWithMultimodalService_ =
     }
   }, undefined, this);
 
+  this.directionsPanel_.toggleWorkInProgress(true);
+
   request.send(url, method, data.toString(), headers);
 };
 
@@ -2223,6 +2227,8 @@ ol.control.GoogleMapsDirections.prototype.routeWithGoogleMapsService_ =
     travelMode: googleMapsTravelMode,
     provideRouteAlternatives: true
   };
+
+  this.directionsPanel_.toggleWorkInProgress(true);
 
   service.route(request, function(response, status) {
     me.handleDirectionsResult_(response, status);

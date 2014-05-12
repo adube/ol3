@@ -141,6 +141,15 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
     'class': classPrefix + ' ' + ol.css.CLASS_UNSELECTABLE
   });
 
+  /**
+   * @type {Element}
+   * @private
+   */
+  this.workInProgressEl_ = goog.dom.createDom(goog.dom.TagName.DIV, {
+    'class': classPrefix + '-work-in-progress'
+  });
+  goog.dom.appendChild(element, this.workInProgressEl_);
+  this.toggleWorkInProgress(false);
 
   /**
    * The container element for the route selector
@@ -458,6 +467,17 @@ ol.control.GoogleMapsDirectionsPanel.prototype.setIconImages =
       iconImageEl.src = iconImage;
     }
   }, this);
+};
+
+
+/**
+ * Show or hide the work in progress div element
+ * @param {boolean} inProgress Whether to show the in progress element or not
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.toggleWorkInProgress =
+    function(inProgress) {
+  var display = (inProgress === true) ? '' : 'none';
+  goog.style.setStyle(this.workInProgressEl_, 'display', display);
 };
 
 
