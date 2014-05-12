@@ -83,18 +83,25 @@ ol.control.GoogleMapsDirections = function(opt_options) {
           options.addWaypointButtonText : 'Add Waypoint';
 
   /**
-   * i18n - searchButton
-   * @type {string|undefined}
-   */
-  this.searchButtonText = goog.isDef(options.searchButtonText) ?
-      options.searchButtonText : undefined;
-
-  /**
    * i18n - clearButton
    * @type {string|undefined}
    */
   this.clearButtonText = goog.isDef(options.clearButtonText) ?
       options.clearButtonText : undefined;
+
+  /**
+   * i18n - myAddresses
+   * @type {string}
+   */
+  this.myAddressesText = goog.isDefAndNotNull(options.myAddressesText) ?
+      options.myAddressesText : 'My addresses';
+
+  /**
+   * i18n - myTravelModes
+   * @type {string}
+   */
+  this.myTravelModesText = goog.isDefAndNotNull(options.myTravelModesText) ?
+      options.myTravelModesText : 'My travel modes';
 
   /**
    * i18n - removeButton
@@ -111,18 +118,11 @@ ol.control.GoogleMapsDirections = function(opt_options) {
       options.reverseButtonText : 'Reverse';
 
   /**
-   * i18n - myAddresses
-   * @type {string}
+   * i18n - searchButton
+   * @type {string|undefined}
    */
-  this.myAddressesText = goog.isDefAndNotNull(options.myAddressesText) ?
-      options.myAddressesText : 'My addresses';
-
-  /**
-   * i18n - myTravelModes
-   * @type {string}
-   */
-  this.myTravelModesText = goog.isDefAndNotNull(options.myTravelModesText) ?
-      options.myTravelModesText : 'My travel modes';
+  this.searchButtonText = goog.isDef(options.searchButtonText) ?
+      options.searchButtonText : undefined;
 
   /**
    * i18n - bicycling
