@@ -124,6 +124,11 @@ goog.exportSymbol(
 
 goog.exportProperty(
     ol.control.GoogleMapsDirections.prototype,
+    'getError',
+    ol.control.GoogleMapsDirections.prototype.getError);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirections.prototype,
     'getGeocoderInfo',
     ol.control.GoogleMapsDirections.prototype.getGeocoderInfo);
 
@@ -166,6 +171,11 @@ goog.exportProperty(
     ol.control.GoogleMapsDirections.EventType,
     'CLEAR',
     ol.control.GoogleMapsDirections.EventType.CLEAR);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirections.EventType,
+    'ERROR',
+    ol.control.GoogleMapsDirections.EventType.ERROR);
 
 goog.exportProperty(
     ol.control.GoogleMapsDirections.EventType,

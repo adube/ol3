@@ -142,6 +142,9 @@ var directions = new ol.control.GoogleMapsDirections({
   'removeButtonText': 'Supprimer',
   'myAddressesText': 'Mes adresses',
   'myTravelModesText': 'Mes modes de transport',
+  'noResultFoundText': 'Aucun résultat n\'a été trouvé',
+  'noRouteText': 'Aucun itinéraire a été retourné par votre recherche',
+  'unexpectedErrorText': 'Une erreur inconnue est survenu lors du routing',
   'lineStyle': new ol.style.Style({
     stroke: new ol.style.Stroke({
       color: [80, 140, 255, 0.6],
@@ -246,3 +249,16 @@ var directions = new ol.control.GoogleMapsDirections({
   'popupPixelBuffer': 150
 });
 map.addControl(directions);
+
+var errorEl = document.getElementById('gmaps-directions-error');
+var error = '';
+directions.on(
+    ol.control.GoogleMapsDirections.EventType.ERROR,
+    function() {
+      error = directions.getError();
+      if (error === null) {
+        error = '';
+      }
+      errorEl.innerHTML = error;
+    }
+);

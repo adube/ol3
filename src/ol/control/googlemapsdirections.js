@@ -111,6 +111,13 @@ ol.control.GoogleMapsDirections = function(opt_options) {
       options.noResultFoundText : undefined;
 
   /**
+   * i18n - noRouteText
+   * @type {string}
+   */
+  this.noRouteText = goog.isDef(options.noRouteText) ?
+      options.noRouteText : 'Your search did not return any route';
+
+  /**
    * i18n - removeButton
    * @type {string|undefined}
    */
@@ -130,6 +137,13 @@ ol.control.GoogleMapsDirections = function(opt_options) {
    */
   this.searchButtonText = goog.isDef(options.searchButtonText) ?
       options.searchButtonText : undefined;
+
+  /**
+   * i18n - noRouteText
+   * @type {string}
+   */
+  this.unexpectedErrorText = goog.isDef(options.unexpectedErrorText) ?
+      options.unexpectedErrorText : 'An unexpected error occured';
 
   /**
    * i18n - bicycling
@@ -692,6 +706,13 @@ ol.control.GoogleMapsDirections = function(opt_options) {
    */
   this.reverseButton_ = reverseButton;
 
+  /**
+   * The error message currently on
+   * @type {?string}
+   * @private
+   */
+  this.error_ = null;
+
 };
 goog.inherits(ol.control.GoogleMapsDirections, ol.control.Control);
 
@@ -701,6 +722,7 @@ goog.inherits(ol.control.GoogleMapsDirections, ol.control.Control);
  */
 ol.control.GoogleMapsDirections.EventType = {
   CLEAR: goog.events.getUniqueId('clear'),
+  ERROR: goog.events.getUniqueId('error'),
   QUERYPARAMSCHANGE: goog.events.getUniqueId('queryparamchange'),
   ROUTECOMPLETE: goog.events.getUniqueId('routecomplete'),
   SELECT: goog.events.getUniqueId('select')
@@ -726,6 +748,14 @@ ol.control.GoogleMapsDirections.TravelMode = {
   DRIVING: 'driving',
   TRANSIT: 'transit',
   WALKING: 'walking'
+};
+
+
+/**
+ * @return {?string}
+ */
+ol.control.GoogleMapsDirections.prototype.getError = function() {
+  return this.error_;
 };
 
 
@@ -939,6 +969,11 @@ ol.control.GoogleMapsDirections.prototype.addGeocoder_ = function() {
           ol.control.GoogleMapsGeocoder.Property.LOCATION
       ),
       this.handleLocationChanged_, false, this);
+
+  goog.events.listen(
+      geocoder,
+      ol.control.GoogleMapsGeocoder.EventType.ERROR,
+      this.handleGeocoderError_, false, this);
 
   goog.events.listen(
       geocoder,
@@ -1461,6 +1496,8 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
 
   var routeFeatures = this.routeFeatures_;
 
+  this.setError_(null);
+
   if (status == google.maps.DirectionsStatus.OK) {
     goog.array.forEach(response.routes, function(route) {
       geometry = null;
@@ -1495,7 +1532,11 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
       // set directions in panel
       this.directionsPanel_.setDirections(
           response, this.collectGeocoderIconImages_());
+    } else {
+      this.setError_(this.noRouteText);
     }
+  } else {
+    this.setError_(this.unexpectedErrorText);
   }
 
   if (this.loading_ === false) {
@@ -1534,6 +1575,20 @@ ol.control.GoogleMapsDirections.prototype.handleDryModifyDrag_ = function(evt) {
 ol.control.GoogleMapsDirections.prototype.handleDryModifyDragEnd_ = function(
     evt) {
   this.createNewDetour_ = true;
+};
+
+
+/**
+ * @param {goog.events.Event} event Event.
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.handleGeocoderError_ = function(
+    event) {
+
+  var geocoder = event.target;
+  goog.asserts.assertInstanceof(geocoder, ol.control.GoogleMapsGeocoder);
+
+  this.setError_(geocoder.getError());
 };
 
 
@@ -1988,6 +2043,11 @@ ol.control.GoogleMapsDirections.prototype.removeGeocoder_ = function(geocoder) {
 
   goog.events.unlisten(
       geocoder,
+      ol.control.GoogleMapsGeocoder.EventType.ERROR,
+      this.handleGeocoderError_, false, this);
+
+  goog.events.unlisten(
+      geocoder,
       ol.control.GoogleMapsGeocoder.EventType.REMOVE,
       this.handleGeocoderRemove_, false, this);
 
@@ -2296,6 +2356,19 @@ ol.control.GoogleMapsDirections.prototype.selectRoute_ = function(index) {
   // dispatch event
   goog.events.dispatchEvent(this,
       ol.control.GoogleMapsDirections.EventType.SELECT);
+};
+
+
+/**
+ * @param {?string} error
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.setError_ = function(error) {
+  if (!goog.isNull(error) || !goog.isNull(this.error_)) {
+    this.error_ = error;
+    goog.events.dispatchEvent(this,
+        ol.control.GoogleMapsDirections.EventType.ERROR);
+  }
 };
 
 
