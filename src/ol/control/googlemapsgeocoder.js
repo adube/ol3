@@ -82,26 +82,42 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
    */
   this.vectorLayer_ = null;
 
+
   /**
-   * i18n - searchButton
-   * @type {?string|undefined}
+   * The error message currently on
+   * @type {?string}
+   * @private
    */
-  this.searchButtonText = goog.isDefAndNotNull(options.searchButtonText) ?
-      options.searchButtonText : 'Search';
+  this.error_ = null;
+
 
   /**
    * i18n - clearButton
-   * @type {?string|undefined}
+   * @type {string}
    */
-  this.clearButtonText = goog.isDefAndNotNull(options.clearButtonText) ?
+  this.clearButtonText = goog.isDef(options.clearButtonText) ?
       options.clearButtonText : 'Clear';
 
   /**
-   * i18n - removeButton
-   * @type {?string|undefined}
+   * i18n - noResultFound
+   * @type {string}
    */
-  this.removeButtonText = goog.isDefAndNotNull(options.removeButtonText) ?
+  this.noResultFoundText = goog.isDef(options.noResultFoundText) ?
+      options.noResultFoundText : 'No result found';
+
+  /**
+   * i18n - removeButton
+   * @type {string}
+   */
+  this.removeButtonText = goog.isDef(options.removeButtonText) ?
       options.removeButtonText : 'Remove';
+
+  /**
+   * i18n - searchButton
+   * @type {string}
+   */
+  this.searchButtonText = goog.isDef(options.searchButtonText) ?
+      options.searchButtonText : 'Search';
 
 
   // === UI COMPONENTS ===
@@ -315,6 +331,7 @@ goog.inherits(ol.control.GoogleMapsGeocoder, ol.control.Control);
  * @enum {string}
  */
 ol.control.GoogleMapsGeocoder.EventType = {
+  ERROR: goog.events.getUniqueId('error'),
   REMOVE: goog.events.getUniqueId('remove')
 };
 
@@ -333,6 +350,14 @@ ol.control.GoogleMapsGeocoder.Property = {
 ol.control.GoogleMapsGeocoder.prototype.addAdditionalAddress =
     function(address) {
   this.additionalAddresses.push(address);
+};
+
+
+/**
+ * @return {?string}
+ */
+ol.control.GoogleMapsGeocoder.prototype.getError = function() {
+  return this.error_;
 };
 
 
@@ -616,6 +641,7 @@ ol.control.GoogleMapsGeocoder.prototype.handleGeocode_ = function(
 
   this.results_ = results;
   this.clearGeocodeResults_();
+  this.setError_(null);
 
   // TODO: handle status but consider that there may still be some results
 
@@ -653,8 +679,7 @@ ol.control.GoogleMapsGeocoder.prototype.handleGeocode_ = function(
       }
       this.displayLocation_(location);
     } else {
-      // TODO: manage no results
-      alert('No results found');
+      this.setError_(this.noResultFoundText);
     }
   } else {
     //If not, then display the results in a clickable list
@@ -1008,6 +1033,19 @@ ol.control.GoogleMapsGeocoder.prototype.setIconStyle = function(styleObject) {
   for (var i = 0; i < sourceFeatures.length; i++)
     sourceFeatures[i].setStyle(this.iconStyle_);
 
+};
+
+
+/**
+ * @param {?string} error
+ * @private
+ */
+ol.control.GoogleMapsGeocoder.prototype.setError_ = function(error) {
+  if (!goog.isNull(error) || !goog.isNull(this.error_)) {
+    this.error_ = error;
+    goog.events.dispatchEvent(this,
+        ol.control.GoogleMapsGeocoder.EventType.ERROR);
+  }
 };
 
 

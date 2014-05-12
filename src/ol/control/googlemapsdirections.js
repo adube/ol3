@@ -77,31 +77,30 @@ ol.control.GoogleMapsDirections = function(opt_options) {
 
   /**
    * i18n - waypointButton
-   * @type {?string|undefined}
+   * @type {string}
    */
-  this.addWaypointButtonText =
-      goog.isDefAndNotNull(options.addWaypointButtonText) ?
+  this.addWaypointButtonText = goog.isDef(options.addWaypointButtonText) ?
           options.addWaypointButtonText : 'Add Waypoint';
 
   /**
    * i18n - searchButton
-   * @type {?string|undefined}
+   * @type {string|undefined}
    */
-  this.searchButtonText = goog.isDefAndNotNull(options.searchButtonText) ?
+  this.searchButtonText = goog.isDef(options.searchButtonText) ?
       options.searchButtonText : undefined;
 
   /**
    * i18n - clearButton
-   * @type {?string|undefined}
+   * @type {string|undefined}
    */
-  this.clearButtonText = goog.isDefAndNotNull(options.clearButtonText) ?
+  this.clearButtonText = goog.isDef(options.clearButtonText) ?
       options.clearButtonText : undefined;
 
   /**
    * i18n - removeButton
-   * @type {?string|undefined}
+   * @type {string|undefined}
    */
-  this.removeButtonText = goog.isDefAndNotNull(options.removeButtonText) ?
+  this.removeButtonText = goog.isDef(options.removeButtonText) ?
       options.removeButtonText : undefined;
 
   /**

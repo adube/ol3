@@ -109,3 +109,16 @@ var olGeocoder = new ol.control.GoogleMapsGeocoder({
   })
 });
 map.addControl(olGeocoder);
+
+var errorEl = document.getElementById('gmaps-geocoder-error');
+var error = '';
+olGeocoder.on(
+    ol.control.GoogleMapsGeocoder.EventType.ERROR,
+    function() {
+      error = olGeocoder.getError();
+      if (error === null) {
+        error = '';
+      }
+      errorEl.innerHTML = error;
+    }
+);

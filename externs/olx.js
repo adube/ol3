@@ -880,10 +880,10 @@ olx.control.FullScreenOptions.prototype.target;
  *     saveURL: (string|undefined),
  *     successCallback: (Function),
  *     target: (Element|undefined),
- *     addButtonText: (?string|undefined),
- *     clearButtonText: (?string|undefined),
- *     removeButtonText: (?string|undefined),
- *     searchButtonText: (?string|undefined)}}
+ *     addButtonText: (string|undefined),
+ *     clearButtonText: (string|undefined),
+ *     removeButtonText: (string|undefined),
+ *     searchButtonText: (string|undefined)}}
  * @todo stability experimental
  */
 olx.control.GoogleMapsAddressesOptions;
@@ -975,35 +975,35 @@ olx.control.GoogleMapsAddressesOptions.prototype.target;
 
 /**
  * i18n
- * @type {?string|undefined}
+ * @type {string|undefined}
  */
 olx.control.GoogleMapsAddressesOptions.prototype.addButtonText;
 
 
 /**
  * i18n
- * @type {?string|undefined}
+ * @type {string|undefined}
  */
 olx.control.GoogleMapsAddressesOptions.prototype.clearButtonText;
 
 
 /**
  * i18n
- * @type {?string|undefined}
+ * @type {string|undefined}
  */
 olx.control.GoogleMapsAddressesOptions.prototype.removeButtonText;
 
 
 /**
  * i18n
- * @type {?string|undefined}
+ * @type {string|undefined}
  */
 olx.control.GoogleMapsAddressesOptions.prototype.searchButtonText;
 
 
 
 /**
- * @typedef {{currentPositionText: (?string|undefined)}}
+ * @typedef {{currentPositionText: (string|undefined)}}
  * @todo stability experimental
  */
 olx.control.GoogleMapsCurrentPositionOptions;
@@ -1011,7 +1011,7 @@ olx.control.GoogleMapsCurrentPositionOptions;
 
 /**
  * i18n
- * @type {?string|undefined}
+ * @type {string|undefined}
  */
 olx.control.GoogleMapsCurrentPositionOptions.prototype.currentPositionText;
 
@@ -1037,17 +1037,17 @@ olx.control.GoogleMapsCurrentPositionOptions.prototype.currentPositionText;
  *     pixelBuffer: (number|undefined),
  *     routeDelayOnWaypointDrag: (number|undefined),
  *     target: (Element|undefined),
- *     addWaypointButtonText: (?string|undefined),
+ *     addWaypointButtonText: (string|undefined),
  *     bicyclingText: (string|undefined),
  *     carpoolingText: (string|undefined),
- *     clearButtonText: (?string|undefined),
- *     currentPositionText: (?string|undefined),
+ *     clearButtonText: (string|undefined),
+ *     currentPositionText: (string|undefined),
  *     drivingText: (string|undefined),
  *     myAddressesText: (string|undefined),
  *     myTravelModesText: (string|undefined),
- *     removeButtonText: (?string|undefined),
+ *     removeButtonText: (string|undefined),
  *     reverseButtonText: (string|undefined),
- *     searchButtonText: (?string|undefined),
+ *     searchButtonText: (string|undefined),
  *     transitText: (string|undefined),
  *     walkingText: (string|undefined)}}
  * @todo stability experimental
@@ -1213,83 +1213,83 @@ olx.control.GoogleMapsDirectionsOptions.prototype.target;
 
 /**
  * i18n
- * @type {?string|undefined}
+ * @type {string|undefined}
  */
 olx.control.GoogleMapsDirectionsOptions.prototype.addWaypointButtonText;
 
 /**
  * i18n
- * @type {?string|undefined}
+ * @type {string|undefined}
  */
 olx.control.GoogleMapsDirectionsOptions.prototype.bicyclingText;
 
 
 /**
  * i18n
- * @type {?string|undefined}
+ * @type {string|undefined}
  */
 olx.control.GoogleMapsDirectionsOptions.prototype.carpoolingText;
 
 
 /**
  * i18n
- * @type {?string|undefined}
+ * @type {string|undefined}
  */
 olx.control.GoogleMapsDirectionsOptions.prototype.clearButtonText;
 
 
 /**
  * i18n
- * @type {?string|undefined}
+ * @type {string|undefined}
  */
 olx.control.GoogleMapsDirectionsOptions.prototype.currentPositionText;
 
 
 /**
  * i18n
- * @type {?string|undefined}
+ * @type {string|undefined}
  */
 olx.control.GoogleMapsDirectionsOptions.prototype.drivingText;
 
 
 /**
  * i18n
- * @type {?string|undefined}
+ * @type {string|undefined}
  */
 olx.control.GoogleMapsDirectionsOptions.prototype.myAddressesText;
 
 
 /**
  * i18n
- * @type {?string|undefined}
+ * @type {string|undefined}
  */
 olx.control.GoogleMapsDirectionsOptions.prototype.myTravelModesText;
 
 
 /**
  * i18n
- * @type {?string|undefined}
+ * @type {string|undefined}
  */
 olx.control.GoogleMapsDirectionsOptions.prototype.removeButtonText;
 
 
 /**
  * i18n
- * @type {?string|undefined}
+ * @type {string|undefined}
  */
 olx.control.GoogleMapsDirectionsOptions.prototype.searchButtonText;
 
 
 /**
  * i18n
- * @type {?string|undefined}
+ * @type {string|undefined}
  */
 olx.control.GoogleMapsDirectionsOptions.prototype.transitText;
 
 
 /**
  * i18n
- * @type {?string|undefined}
+ * @type {string|undefined}
  */
 olx.control.GoogleMapsDirectionsOptions.prototype.walkingText;
 
@@ -1417,9 +1417,10 @@ olx.control.GoogleMapsDirectionsPanelOptions.prototype.totalDistanceText;
  *     removable: (boolean|undefined),
  *     renderAsListItem: (boolean|undefined),
  *     target: (Element|undefined),
- *     clearButtonText: (?string|undefined),
- *     searchButtonText: (?string|undefined),
- *     removeButtonText: (?string|undefined)}}
+ *     clearButtonText: (string|undefined),
+ *     noResultFoundText: (string|undefined),
+ *     searchButtonText: (string|undefined),
+ *     removeButtonText: (string|undefined)}}
  * @todo stability experimental
  */
 olx.control.GoogleMapsGeocoderOptions;
@@ -1485,21 +1486,21 @@ olx.control.GoogleMapsGeocoderOptions.prototype.target;
 
 /**
  * i18n
- * @type {?string|undefined}
+ * @type {string|undefined}
  */
 olx.control.GoogleMapsGeocoderOptions.prototype.clearButtonText;
 
 
 /**
  * i18n
- * @type {?string|undefined}
+ * @type {string|undefined}
  */
 olx.control.GoogleMapsGeocoderOptions.prototype.searchButtonText;
 
 
 /**
  * i18n
- * @type {?string|undefined}
+ * @type {string|undefined}
  */
 olx.control.GoogleMapsGeocoderOptions.prototype.removeButtonText;
 

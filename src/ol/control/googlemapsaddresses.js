@@ -41,28 +41,28 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
 
   /**
    * i18n - searchButton
-   * @type {?string}
+   * @type {string|undefined}
    */
   this.searchButtonText = goog.isDefAndNotNull(options.searchButtonText) ?
-      options.searchButtonText : null;
+      options.searchButtonText : undefined;
 
   /**
    * i18n - clearButton
-   * @type {?string}
+   * @type {string|undefined}
    */
   this.clearButtonText = goog.isDefAndNotNull(options.clearButtonText) ?
-      options.clearButtonText : null;
+      options.clearButtonText : undefined;
 
   /**
    * i18n - removeButton
-   * @type {?string}
+   * @type {string}
    */
   this.removeButtonText = goog.isDefAndNotNull(options.removeButtonText) ?
       options.removeButtonText : 'x';
 
   /**
    * i18n - addButtonText
-   * @type {?string}
+   * @type {string}
    */
   this.addButtonText = goog.isDefAndNotNull(options.addButtonText) ?
       options.addButtonText : 'Add address';
