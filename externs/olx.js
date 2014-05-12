@@ -1054,10 +1054,12 @@ olx.control.GoogleMapsCurrentPositionOptions.prototype.currentPositionText;
  *     myAddressesText: (string|undefined),
  *     myTravelModesText: (string|undefined),
  *     noResultFoundText: (string|undefined),
+ *     noRouteText: (string|undefined),
  *     removeButtonText: (string|undefined),
  *     reverseButtonText: (string|undefined),
  *     searchButtonText: (string|undefined),
  *     transitText: (string|undefined),
+ *     unexpectedErrorText: (string|undefined),
  *     walkingText: (string|undefined)}}
  * @todo stability experimental
  */
@@ -1286,6 +1288,13 @@ olx.control.GoogleMapsDirectionsOptions.prototype.noResultFoundText;
  * i18n
  * @type {string|undefined}
  */
+olx.control.GoogleMapsDirectionsOptions.prototype.noRouteText;
+
+
+/**
+ * i18n
+ * @type {string|undefined}
+ */
 olx.control.GoogleMapsDirectionsOptions.prototype.removeButtonText;
 
 
@@ -1301,6 +1310,13 @@ olx.control.GoogleMapsDirectionsOptions.prototype.searchButtonText;
  * @type {string|undefined}
  */
 olx.control.GoogleMapsDirectionsOptions.prototype.transitText;
+
+
+/**
+ * i18n
+ * @type {string|undefined}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.unexpectedErrorText;
 
 
 /**

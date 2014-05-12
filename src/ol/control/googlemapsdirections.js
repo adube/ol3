@@ -139,7 +139,7 @@ ol.control.GoogleMapsDirections = function(opt_options) {
       options.searchButtonText : undefined;
 
   /**
-   * i18n - noRouteText
+   * i18n - unexpectedErrorText
    * @type {string}
    */
   this.unexpectedErrorText = goog.isDef(options.unexpectedErrorText) ?
