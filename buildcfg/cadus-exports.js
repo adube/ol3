@@ -280,6 +280,16 @@ goog.exportProperty(
     'REMOVE',
     ol.control.GoogleMapsAddresses.EventType.REMOVE);
 
+goog.exportProperty(
+    ol.control.GoogleMapsAddresses.prototype,
+    'getError',
+    ol.control.GoogleMapsAddresses.prototype.getError);
+
+goog.exportProperty(
+    ol.control.GoogleMapsAddresses.prototype,
+    'on',
+    ol.control.GoogleMapsAddresses.prototype.on);
+
 goog.exportSymbol(
     'ol.control.GoogleMapsCurrentPosition',
     ol.control.GoogleMapsCurrentPosition);
