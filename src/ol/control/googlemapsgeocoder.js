@@ -33,6 +33,35 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
   var options = goog.isDef(opt_options) ? opt_options : {};
 
   /**
+   * i18n - clearButton
+   * @type {string}
+   */
+  this.clearButtonText = goog.isDef(options.clearButtonText) ?
+      options.clearButtonText : 'Clear';
+
+  /**
+   * i18n - noResultFound
+   * @type {string}
+   */
+  this.noResultFoundText = goog.isDef(options.noResultFoundText) ?
+      options.noResultFoundText : 'No result found';
+
+  /**
+   * i18n - removeButton
+   * @type {string}
+   */
+  this.removeButtonText = goog.isDef(options.removeButtonText) ?
+      options.removeButtonText : 'Remove';
+
+  /**
+   * i18n - searchButton
+   * @type {string}
+   */
+  this.searchButtonText = goog.isDef(options.searchButtonText) ?
+      options.searchButtonText : 'Search';
+
+
+  /**
    * @type {boolean}
    * @private
    */
@@ -89,35 +118,6 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
    * @private
    */
   this.error_ = null;
-
-
-  /**
-   * i18n - clearButton
-   * @type {string}
-   */
-  this.clearButtonText = goog.isDef(options.clearButtonText) ?
-      options.clearButtonText : 'Clear';
-
-  /**
-   * i18n - noResultFound
-   * @type {string}
-   */
-  this.noResultFoundText = goog.isDef(options.noResultFoundText) ?
-      options.noResultFoundText : 'No result found';
-
-  /**
-   * i18n - removeButton
-   * @type {string}
-   */
-  this.removeButtonText = goog.isDef(options.removeButtonText) ?
-      options.removeButtonText : 'Remove';
-
-  /**
-   * i18n - searchButton
-   * @type {string}
-   */
-  this.searchButtonText = goog.isDef(options.searchButtonText) ?
-      options.searchButtonText : 'Search';
 
 
   // === UI COMPONENTS ===
