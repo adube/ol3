@@ -882,6 +882,7 @@ olx.control.FullScreenOptions.prototype.target;
  *     target: (Element|undefined),
  *     addButtonText: (string|undefined),
  *     clearButtonText: (string|undefined),
+ *     noResultFoundText: (string|undefined),
  *     removeButtonText: (string|undefined),
  *     searchButtonText: (string|undefined)}}
  * @todo stability experimental
@@ -991,6 +992,13 @@ olx.control.GoogleMapsAddressesOptions.prototype.clearButtonText;
  * i18n
  * @type {string|undefined}
  */
+olx.control.GoogleMapsAddressesOptions.prototype.noResultFoundText;
+
+
+/**
+ * i18n
+ * @type {string|undefined}
+ */
 olx.control.GoogleMapsAddressesOptions.prototype.removeButtonText;
 
 
@@ -1045,6 +1053,7 @@ olx.control.GoogleMapsCurrentPositionOptions.prototype.currentPositionText;
  *     drivingText: (string|undefined),
  *     myAddressesText: (string|undefined),
  *     myTravelModesText: (string|undefined),
+ *     noResultFoundText: (string|undefined),
  *     removeButtonText: (string|undefined),
  *     reverseButtonText: (string|undefined),
  *     searchButtonText: (string|undefined),
@@ -1270,6 +1279,13 @@ olx.control.GoogleMapsDirectionsOptions.prototype.myTravelModesText;
  * i18n
  * @type {string|undefined}
  */
+olx.control.GoogleMapsDirectionsOptions.prototype.noResultFoundText;
+
+
+/**
+ * i18n
+ * @type {string|undefined}
+ */
 olx.control.GoogleMapsDirectionsOptions.prototype.removeButtonText;
 
 
@@ -1489,6 +1505,13 @@ olx.control.GoogleMapsGeocoderOptions.prototype.target;
  * @type {string|undefined}
  */
 olx.control.GoogleMapsGeocoderOptions.prototype.clearButtonText;
+
+
+/**
+ * i18n
+ * @type {string|undefined}
+ */
+olx.control.GoogleMapsGeocoderOptions.prototype.noResultFoundText;
 
 
 /**

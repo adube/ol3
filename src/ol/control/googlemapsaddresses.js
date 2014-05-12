@@ -54,6 +54,13 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
       options.clearButtonText : undefined;
 
   /**
+   * i18n - noResultFound
+   * @type {string|undefined}
+   */
+  this.noResultFoundText = goog.isDef(options.noResultFoundText) ?
+      options.noResultFoundText : undefined;
+
+  /**
    * i18n - removeButton
    * @type {string}
    */
@@ -238,6 +245,7 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
     'currentPositionControl': this.currentPositionControl_,
     'searchButtonText': this.searchButtonText,
     'clearButtonText': this.clearButtonText,
+    'noResultFoundText': this.noResultFoundText,
     'removeButtonText': this.removeButtonText,
     'geocoderComponentRestrictions': this.geocoderComponentRestrictions_,
     'iconStyle': this.iconStyle_

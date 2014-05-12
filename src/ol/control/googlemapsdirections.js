@@ -104,6 +104,13 @@ ol.control.GoogleMapsDirections = function(opt_options) {
       options.myTravelModesText : 'My travel modes';
 
   /**
+   * i18n - noResultFound
+   * @type {string|undefined}
+   */
+  this.noResultFoundText = goog.isDef(options.noResultFoundText) ?
+      options.noResultFoundText : undefined;
+
+  /**
    * i18n - removeButton
    * @type {string|undefined}
    */
@@ -916,6 +923,7 @@ ol.control.GoogleMapsDirections.prototype.addGeocoder_ = function() {
     'additionalAddresses': addresses.slice(0),
     'searchButtonText': this.searchButtonText,
     'clearButtonText': this.clearButtonText,
+    'noResultFoundText': this.noResultFoundText,
     'removeButtonText': this.removeButtonText,
     'renderAsListItem': true,
     'geocoderComponentRestrictions': this.geocoderComponentRestrictions_,
