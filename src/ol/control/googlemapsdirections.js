@@ -11,7 +11,6 @@ goog.require('goog.events.EventType');
 goog.require('goog.json');
 goog.require('goog.net.EventType');
 goog.require('goog.net.XhrIo');
-goog.require('goog.structs.Map');
 goog.require('goog.style');
 goog.require('ol.Collection');
 goog.require('ol.Feature');
@@ -2071,13 +2070,13 @@ ol.control.GoogleMapsDirections.prototype.routeWithMultimodalService_ =
     }
   }, this);
 
-  var data = goog.Uri.QueryData.createFromMap(
-      new goog.structs.Map({
-        start_coordinate: goog.json.serialize(startCoordinate),
-        end_coordinate: goog.json.serialize(endCoordinate),
-        waypoints: goog.json.serialize(reqWaypoints),
-        travelModes: goog.json.serialize(travelModes)
-      }));
+  var data = new goog.Uri.QueryData();
+  data.add('json', goog.json.serialize({
+    'start_coordinate': startCoordinate,
+    'end_coordinate': endCoordinate,
+    'waypoints': reqWaypoints,
+    'travel_modes': travelModes
+  }));
 
   // listen once to 'complete' event
   goog.events.listenOnce(request, goog.net.EventType.COMPLETE, function(event) {
