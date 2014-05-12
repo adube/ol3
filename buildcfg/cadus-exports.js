@@ -272,6 +272,11 @@ goog.exportProperty(
 
 goog.exportProperty(
     ol.control.GoogleMapsAddresses.EventType,
+    'ERROR',
+    ol.control.GoogleMapsAddresses.EventType.ERROR);
+
+goog.exportProperty(
+    ol.control.GoogleMapsAddresses.EventType,
     'REMOVE',
     ol.control.GoogleMapsAddresses.EventType.REMOVE);
 

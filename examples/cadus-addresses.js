@@ -88,6 +88,7 @@ var olAdresses = new ol.control.GoogleMapsAddresses({
   'searchButtonText': 'Rechercher',
   'clearButtonText': 'Effacer',
   'addButtonText': 'Ajouter une addresse',
+  'noResultFoundText': 'Aucun résultat n\'a été trouvé',
   'getURL': 'data/cadus/addresses.json',
   'saveURL': 'data/cadus/addresses-save.json',
   'geocoderComponentRestrictions': {'country': 'CA'},
@@ -102,3 +103,16 @@ var olAdresses = new ol.control.GoogleMapsAddresses({
   })
 });
 map.addControl(olAdresses);
+
+var errorEl = document.getElementById('gmaps-geocoder-error');
+var error = '';
+olAdresses.on(
+    ol.control.GoogleMapsAddresses.EventType.ERROR,
+    function() {
+      error = olAdresses.getError();
+      if (error === null) {
+        error = '';
+      }
+      errorEl.innerHTML = error;
+    }
+);

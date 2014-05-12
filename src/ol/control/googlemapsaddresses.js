@@ -258,6 +258,11 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
       ),
       this.handleLocationChanged_, false, this);
 
+  goog.events.listen(
+      this.geocoder_,
+      ol.control.GoogleMapsGeocoder.EventType.ERROR,
+      this.handleGeocoderError_, false, this);
+
   /**
    * @type {?ol.layer.Vector}
    * @private
@@ -267,6 +272,13 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
       features: []
     })
   });
+
+  /**
+   * The error message currently on
+   * @type {?string}
+   * @private
+   */
+  this.error_ = null;
 
   goog.base(this, {
     element: element,
@@ -343,6 +355,7 @@ goog.inherits(ol.control.GoogleMapsAddresses, ol.control.Control);
  */
 ol.control.GoogleMapsAddresses.EventType = {
   ADD: goog.events.getUniqueId('add'),
+  ERROR: goog.events.getUniqueId('error'),
   REMOVE: goog.events.getUniqueId('remove')
 };
 
@@ -352,6 +365,14 @@ ol.control.GoogleMapsAddresses.EventType = {
  */
 ol.control.GoogleMapsAddresses.prototype.getAddresses = function() {
   return this.addresses;
+};
+
+
+/**
+ * @return {?string}
+ */
+ol.control.GoogleMapsAddresses.prototype.getError = function() {
+  return this.error_;
 };
 
 
@@ -398,6 +419,20 @@ ol.control.GoogleMapsAddresses.prototype.handleAddButtonPress_ = function(
         null, addressText, description, location);
     this.saveAddress_(address, 'insert');
   }
+};
+
+
+/**
+ * @param {goog.events.Event} event Event.
+ * @private
+ */
+ol.control.GoogleMapsAddresses.prototype.handleGeocoderError_ = function(
+    event) {
+
+  var geocoder = event.target;
+  goog.asserts.assertInstanceof(geocoder, ol.control.GoogleMapsGeocoder);
+
+  this.setError_(geocoder.getError());
 };
 
 
@@ -776,4 +811,17 @@ ol.control.GoogleMapsAddresses.prototype.displayLocation_ = function(location) {
   extent = ol.extent.buffer(extent, 2000);
 
   view2D.fitExtent(extent, size);
+};
+
+
+/**
+ * @param {?string} error
+ * @private
+ */
+ol.control.GoogleMapsAddresses.prototype.setError_ = function(error) {
+  if (!goog.isNull(error) || !goog.isNull(this.error_)) {
+    this.error_ = error;
+    goog.events.dispatchEvent(this,
+        ol.control.GoogleMapsAddresses.EventType.ERROR);
+  }
 };
