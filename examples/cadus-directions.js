@@ -262,3 +262,11 @@ directions.on(
       errorEl.innerHTML = error;
     }
 );
+
+var enableMapEditing = function() {
+  directions.enableMapEditing();
+};
+
+var disableMapEditing = function() {
+  directions.disableMapEditing();
+};

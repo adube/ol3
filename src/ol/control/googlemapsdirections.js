@@ -713,6 +713,21 @@ ol.control.GoogleMapsDirections = function(opt_options) {
    */
   this.error_ = null;
 
+  /**
+   * This control has several features occuring when the user interacts with
+   * the map.  For example, when a user click the map, if a geocoder reverse
+   * geocoding is active, a request is sent.  An other example is the detour
+   * editing.
+   *
+   * Sometimes, we want the map to stay the way it is and block the user
+   * to make additional changes to it using those map features. That's where
+   * this flags comes handy.  It gets automatically set using the
+   * toggleMapEditing method, as described below.
+   * @type {boolean}
+   * @private
+   */
+  this.mapEditingEnabled_ = true;
+
 };
 goog.inherits(ol.control.GoogleMapsDirections, ol.control.Control);
 
@@ -748,6 +763,24 @@ ol.control.GoogleMapsDirections.TravelMode = {
   DRIVING: 'driving',
   TRANSIT: 'transit',
   WALKING: 'walking'
+};
+
+
+/**
+ * Disables the features that use the map as a point of entry,
+ * such as geocoder reverse geocoding, detour editing, etc.
+ */
+ol.control.GoogleMapsDirections.prototype.disableMapEditing = function() {
+  this.toggleMapEditing_(false);
+};
+
+
+/**
+ * Enables the features that use the map as a point of entry,
+ * such as geocoder reverse geocoding, detour editing, etc.
+ */
+ol.control.GoogleMapsDirections.prototype.enableMapEditing = function() {
+  this.toggleMapEditing_(true);
 };
 
 
@@ -889,7 +922,7 @@ ol.control.GoogleMapsDirections.prototype.setMap = function(map) {
     map.addControl(this.directionsPanel_);
     this.addGeocoder_();
     this.addGeocoder_();
-    this.manageNumWaypoints_();
+    this.manageDetoursEditing_();
 
     goog.events.listen(
         map,
@@ -984,7 +1017,7 @@ ol.control.GoogleMapsDirections.prototype.addGeocoder_ = function() {
 
   this.toggleGeocoderReverseGeocodings_();
 
-  this.manageNumWaypoints_();
+  this.manageDetoursEditing_();
 
   this.manageNumGeocoders_();
 
@@ -1139,7 +1172,7 @@ ol.control.GoogleMapsDirections.prototype.createOrUpdateDetour_ = function(
     this.route_();
   }
 
-  this.manageNumWaypoints_();
+  this.manageDetoursEditing_();
 };
 
 
@@ -1606,7 +1639,7 @@ ol.control.GoogleMapsDirections.prototype.handleGeocoderRemove_ = function(
 
   this.removeGeocoder_(geocoder);
 
-  this.manageNumWaypoints_();
+  this.manageDetoursEditing_();
 
   this.toggleGeocoderReverseGeocodings_();
 
@@ -1918,11 +1951,37 @@ ol.control.GoogleMapsDirections.prototype.loadAll_ = function(
   }
 
   this.loading_ = false;
-  this.manageNumWaypoints_();
+  this.manageDetoursEditing_();
 
   if (includeRoutes === true) {
     goog.events.dispatchEvent(this,
         ol.control.GoogleMapsDirections.EventType.ROUTECOMPLETE);
+  }
+};
+
+
+/**
+ * Checks whether to activate or deactivate the detours editing, i.e.
+ * the dry modify interaction.
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.manageDetoursEditing_ = function() {
+  var dryModify = this.dryModify_;
+  var mapEditingEnabled = this.mapEditingEnabled_;
+
+  // no need to do anything if no dry modify interaction OR if map editing
+  // features are currently disabled
+  if (goog.isNull(dryModify) || mapEditingEnabled === false) {
+    return;
+  }
+
+  var isActive = goog.isDefAndNotNull(dryModify.getMap());
+  var canAdd = this.canAddAnOtherWaypoint_();
+
+  if (isActive === false && canAdd === true) {
+    this.toggleDetoursEditing_(true);
+  } else if (isActive === true && canAdd === false) {
+    this.toggleDetoursEditing_(false);
   }
 };
 
@@ -1954,44 +2013,6 @@ ol.control.GoogleMapsDirections.prototype.manageNumGeocoders_ = function() {
 /**
  * @private
  */
-ol.control.GoogleMapsDirections.prototype.manageNumWaypoints_ = function() {
-  var map = this.getMap();
-  var dryModify = this.dryModify_;
-
-  if (goog.isNull(dryModify)) {
-    return;
-  }
-
-  if (this.canAddAnOtherWaypoint_()) {
-    goog.events.listen(
-        this.dryModify_,
-        ol.interaction.DryModify.EventType.DRAG,
-        this.handleDryModifyDrag_, false, this);
-    goog.events.listen(
-        this.dryModify_,
-        ol.interaction.DryModify.EventType.DRAGEND,
-        this.handleDryModifyDragEnd_, false, this);
-
-    if (!goog.isDefAndNotNull(dryModify.getMap())) {
-      map.addInteraction(dryModify);
-    }
-  } else {
-    goog.events.unlisten(
-        this.dryModify_,
-        ol.interaction.DryModify.EventType.DRAG,
-        this.handleDryModifyDrag_, false, this);
-    goog.events.unlisten(
-        this.dryModify_,
-        ol.interaction.DryModify.EventType.DRAGEND,
-        this.handleDryModifyDragEnd_, false, this);
-  }
-};
-
-
-/**
- * FIXME - check if we should really remove all geocoders...
- * @private
- */
 ol.control.GoogleMapsDirections.prototype.removeAllGeocoders_ =
     function() {
   var geocoder;
@@ -2018,6 +2039,7 @@ ol.control.GoogleMapsDirections.prototype.removeDetourFeature_ =
     this.lastDetourFeatureOverPointer_ = null;
     this.clear_();
     this.toggleGeocoderReverseGeocodings_();
+    this.manageDetoursEditing_();
     goog.events.dispatchEvent(this,
         ol.control.GoogleMapsDirections.EventType.QUERYPARAMSCHANGE);
     this.route_();
@@ -2433,6 +2455,49 @@ ol.control.GoogleMapsDirections.prototype.unselectRoute_ = function(index) {
 
 
 /**
+ * Enables or disables detour editing, i.e. the dry modify control.
+ * @param {boolean} enable Whether to enable or disable the dry modify
+ *     interaction used to create detour features
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.toggleDetoursEditing_ =
+    function(enable) {
+  var map = this.getMap();
+  var dryModify = this.dryModify_;
+
+  if (goog.isNull(dryModify)) {
+    return;
+  }
+
+  if (enable === true) {
+    goog.events.listen(
+        this.dryModify_,
+        ol.interaction.DryModify.EventType.DRAG,
+        this.handleDryModifyDrag_, false, this);
+    goog.events.listen(
+        this.dryModify_,
+        ol.interaction.DryModify.EventType.DRAGEND,
+        this.handleDryModifyDragEnd_, false, this);
+
+    if (!goog.isDefAndNotNull(dryModify.getMap())) {
+      map.addInteraction(dryModify);
+    }
+  } else {
+    goog.events.unlisten(
+        this.dryModify_,
+        ol.interaction.DryModify.EventType.DRAG,
+        this.handleDryModifyDrag_, false, this);
+    goog.events.unlisten(
+        this.dryModify_,
+        ol.interaction.DryModify.EventType.DRAGEND,
+        this.handleDryModifyDragEnd_, false, this);
+
+    map.removeInteraction(dryModify);
+  }
+};
+
+
+/**
  * @param {ol.Pixel} pixel Pixel.
  * @private
  */
@@ -2509,6 +2574,25 @@ ol.control.GoogleMapsDirections.prototype.toggleTravelMode_ =
     goog.dom.classes.remove(linkEl, classPrefix + '-checkbox-link-checked');
   }
 
+};
+
+
+/**
+ * Enables or disables the features that use the map as a point of entry,
+ * such as geocoder reverse geocoding, detour editing, etc.
+ * @param {boolean} enable Whether to enable map editing features or not
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.toggleMapEditing_ = function(enable) {
+  if (enable === true && this.mapEditingEnabled_ === false) {
+    this.mapEditingEnabled_ = true;
+    this.toggleGeocoderReverseGeocodings_();
+    this.manageDetoursEditing_();
+  } else if (enable === false && this.mapEditingEnabled_ === true) {
+    this.mapEditingEnabled_ = false;
+    this.disableGeocoderReverseGeocodings_();
+    this.toggleDetoursEditing_(false);
+  }
 };
 
 

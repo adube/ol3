@@ -124,6 +124,16 @@ goog.exportSymbol(
 
 goog.exportProperty(
     ol.control.GoogleMapsDirections.prototype,
+    'disableMapEditing',
+    ol.control.GoogleMapsDirections.prototype.disableMapEditing);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirections.prototype,
+    'enableMapEditing',
+    ol.control.GoogleMapsDirections.prototype.enableMapEditing);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirections.prototype,
     'getError',
     ol.control.GoogleMapsDirections.prototype.getError);
 
