@@ -738,6 +738,7 @@ goog.inherits(ol.control.GoogleMapsDirections, ol.control.Control);
 ol.control.GoogleMapsDirections.EventType = {
   CLEAR: goog.events.getUniqueId('clear'),
   ERROR: goog.events.getUniqueId('error'),
+  GEOCODERREMOVE: goog.events.getUniqueId('geocoderremove'),
   QUERYPARAMSCHANGE: goog.events.getUniqueId('queryparamchange'),
   ROUTECOMPLETE: goog.events.getUniqueId('routecomplete'),
   SELECT: goog.events.getUniqueId('select')
@@ -2076,6 +2077,9 @@ ol.control.GoogleMapsDirections.prototype.removeGeocoder_ = function(geocoder) {
       this.handleGeocoderRemove_, false, this);
 
   this.geocoders_.remove(geocoder);
+
+  goog.events.dispatchEvent(this,
+      ol.control.GoogleMapsDirections.EventType.GEOCODERREMOVE);
 
   this.manageNumGeocoders_();
 

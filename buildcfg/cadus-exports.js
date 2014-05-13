@@ -189,6 +189,11 @@ goog.exportProperty(
 
 goog.exportProperty(
     ol.control.GoogleMapsDirections.EventType,
+    'GEOCODERREMOVE',
+    ol.control.GoogleMapsDirections.EventType.GEOCODERREMOVE);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirections.EventType,
     'QUERYPARAMSCHANGE',
     ol.control.GoogleMapsDirections.EventType.QUERYPARAMSCHANGE);
 
