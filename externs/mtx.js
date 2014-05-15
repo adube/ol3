@@ -91,6 +91,10 @@ google.maps.mt_usager.prototype.mt_first_name;
  */
 google.maps.mt_usager.prototype.mt_email;
 
+/**
+ * @type {string}
+ */
+google.maps.mt_usager.prototype.mt_anonymous;
 
 /**
  * @type {string}

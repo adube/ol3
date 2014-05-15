@@ -79,6 +79,14 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
       options.pathDetailsText : 'Path details';
 
   /**
+   * i18n - anonymousContactMessage
+   * @type {string}
+   */
+  this.anonymousContactMessage = goog.isDef(options.anonymousContactMessage) ?
+      options.anonymousContactMessage :
+          'You must be connected to contact users.';
+
+  /**
    * i18n - ponctual
    * @type {string}
    */
@@ -758,10 +766,20 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
 
   // contact link
   if (goog.isDef(route.mt_usager)) {
-    var contactLink = goog.dom.createDom(goog.dom.TagName.A, {
-      'class': classPrefix + '-offer-contact-link',
-      'href': 'mailto:' + route.mt_usager.mt_email
-    });
+    var contactLink = null;
+    if (route.mt_anonymous) {
+      contactLink = goog.dom.createDom(goog.dom.TagName.A, {
+        'class': classPrefix + '-offer-contact-link .disabled',
+        'title': this.anonymousContactMessage,
+        'href': '#'
+      });
+    }
+    else {
+      contactLink = goog.dom.createDom(goog.dom.TagName.A, {
+        'class': classPrefix + '-offer-contact-link',
+        'href': 'mailto:' + route.mt_usager.mt_email
+      });
+    }
     goog.dom.appendChild(leftCtnEl, contactLink);
     goog.dom.appendChild(contactLink,
         goog.dom.createTextNode(this.contactText));

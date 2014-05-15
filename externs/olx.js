@@ -1335,6 +1335,7 @@ olx.control.GoogleMapsDirectionsOptions.prototype.walkingText;
  *     copyrightText: (string|undefined),
  *     fromText: (string|undefined),
  *     pathDetailsText: (string|undefined),
+ *     anonymousContactMessage: (string|undefined),
  *     ponctualText: (string|undefined),
  *     recurringText: (string|undefined),
  *     suggestedRoutesText: (string|undefined),
@@ -1401,6 +1402,11 @@ olx.control.GoogleMapsDirectionsPanelOptions.prototype.contactText;
  */
 olx.control.GoogleMapsDirectionsPanelOptions.prototype.pathDetailsText;
 
+/**
+ * i18n
+ * @type {string|undefined}
+ */
+olx.control.GoogleMapsDirectionsPanelOptions.prototype.anonymousContactMessage;
 
 /**
  * i18n
