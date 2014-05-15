@@ -769,7 +769,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
     var contactLink = null;
     if (route.mt_anonymous) {
       contactLink = goog.dom.createDom(goog.dom.TagName.A, {
-        'class': classPrefix + '-offer-contact-link .disabled',
+        'class': classPrefix + '-offer-contact-link disabled',
         'title': this.anonymousContactMessage,
         'href': '#'
       });
