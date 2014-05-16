@@ -31,10 +31,18 @@ view.on('change:resolution', function() {
 });
 
 var vector = new ol.layer.Vector({
-  source: new ol.source.GeoJSON({
-    url: 'data/geojson/countries.geojson',
-    projection: 'EPSG:3857'
-  }),
+  source: new ol.source.GeoJSON(({
+    object: {
+      'type': 'FeatureCollection',
+      'crs': {
+        'type': 'name',
+        'properties': {
+          'name': 'EPSG:3857'
+        }
+      },
+      'features': []
+    }
+  })),
   style: new ol.style.Style({
     fill: new ol.style.Fill({
       color: 'rgba(255, 255, 255, 0.6)'
@@ -57,8 +65,8 @@ var map = new ol.Map({
   target: olMapDiv,
   view: view
 });
-view.setCenter([0, 0]);
-view.setZoom(1);
+view.setCenter([-8140035, 6076592]);
+view.setZoom(6);
 
 olMapDiv.parentNode.removeChild(olMapDiv);
 gmap.controls[google.maps.ControlPosition.TOP_LEFT].push(olMapDiv);
