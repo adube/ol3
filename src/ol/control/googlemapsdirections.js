@@ -1571,6 +1571,8 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
     } else {
       this.setError_(this.noRouteText);
     }
+  }else if (status == google.maps.DirectionsStatus.ZERO_RESULTS) {
+    this.setError_(this.noRouteText);
   } else {
     this.setError_(this.unexpectedErrorText);
   }
