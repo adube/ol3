@@ -1568,7 +1568,7 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
       // set directions in panel
       this.directionsPanel_.setDirections(
           response, this.collectGeocoderIconImages_());
-    } else {
+    } else if (this.loading_ === false) {
       this.setError_(this.noRouteText);
     }
   }else if (status == google.maps.DirectionsStatus.ZERO_RESULTS) {

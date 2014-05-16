@@ -671,6 +671,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
     goog.dom.appendChild(hourEl, goog.dom.createTextNode(hourText));
 
     // from
+    /*
     var fromAddressText = route.legs[0].start_address;
     var fromEl = goog.dom.createDom(goog.dom.TagName.DIV, {
       'class': classPrefix + '-offer-address'
@@ -707,6 +708,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
     goog.dom.appendChild(toEl, toAddressEl);
     goog.dom.appendChild(toAddressEl,
         goog.dom.createTextNode(toAddressText));
+    */
 
     // price
     var priceText = route.mt_offre.mt_prix;
