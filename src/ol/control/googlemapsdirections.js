@@ -411,7 +411,7 @@ ol.control.GoogleMapsDirections = function(opt_options) {
       me.handleGeocoderSortStop_(event, ui);
     },
     'placeholder': classPrefix + '-highlight'
-  }).disableSelection();
+  });
 
   // DOM components - add waypoint
   var addGeocoderButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
