@@ -197,13 +197,13 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
   ], this.handleInputKeypress_, false, this);
 
   goog.events.listen(input, [
-    goog.events.EventType.INPUT
+    goog.events.EventType.INPUT,
+    goog.events.EventType.FOCUS
   ], this.handleInputInput_, false, this);
 
-  var win = goog.dom.getWindow();
-  goog.events.listen(win, [
-    goog.events.EventType.CLICK
-  ], this.handleWindowClick_, false, this);
+  goog.events.listen(input, [
+    goog.events.EventType.BLUR
+  ], this.handleFocusOut_, false, this);
 
   goog.base(this, {
     element: element,
@@ -519,7 +519,6 @@ ol.control.GoogleMapsGeocoder.prototype.load = function(results) {
  */
 ol.control.GoogleMapsGeocoder.prototype.handleInputKeypress_ = function(
     browserEvent) {
-
   if (browserEvent.keyCode == goog.events.KeyCodes.ENTER) {
     this.handleSearchButtonPress_(browserEvent);
   }
@@ -547,11 +546,20 @@ ol.control.GoogleMapsGeocoder.prototype.handleInputInput_ = function(
       }
 
       this.resetSearchingTimeout_();
+    }else {
+      var additionalAddresses = this.filterAddresses_(
+          this.additionalAddresses, value);
+      if (additionalAddresses.length > 0)
+        this.handleGeocode_(additionalAddresses, 0, false);
     }
 
     this.currentPositionControl_.setCurrentPosition(null, false);
   } else {
     this.clear();
+    var additionalAddresses = this.filterAddresses_(
+        this.additionalAddresses, value);
+    if (additionalAddresses.length > 0)
+      this.handleGeocode_(additionalAddresses, 0, false);
   }
 };
 
@@ -693,7 +701,6 @@ ol.control.GoogleMapsGeocoder.prototype.handleGeocode_ = function(
  */
 ol.control.GoogleMapsGeocoder.prototype.displayGeocodeResults_ = function() {
   var me = this;
-
   goog.array.forEach(this.results_, function(result, index) {
     var text;
 
@@ -746,7 +753,7 @@ ol.control.GoogleMapsGeocoder.prototype.clearGeocodeResults_ = function() {
  * @param {goog.events.BrowserEvent} browserEvent Browser event.
  * @private
  */
-ol.control.GoogleMapsGeocoder.prototype.handleWindowClick_ = function(
+ol.control.GoogleMapsGeocoder.prototype.handleFocusOut_ = function(
     browserEvent) {
   this.clearGeocodeResults_();
 };
@@ -758,7 +765,6 @@ ol.control.GoogleMapsGeocoder.prototype.handleWindowClick_ = function(
  */
 ol.control.GoogleMapsGeocoder.prototype.handleResultOptionPress_ = function(
     browserEvent) {
-
   this.clearGeocodeResults_();
   browserEvent.stopPropagation();
 
