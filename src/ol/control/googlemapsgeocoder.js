@@ -549,7 +549,9 @@ ol.control.GoogleMapsGeocoder.prototype.handleInputInput_ = function(
     }else {
       var additionalAddresses = this.filterAddresses_(
           this.additionalAddresses, value);
-      if (additionalAddresses.length > 0)
+      if ((additionalAddresses.length > 0) &&
+          !(additionalAddresses.length == 1 &&
+          additionalAddresses[0] === null))
         this.handleGeocode_(additionalAddresses, 0, false);
     }
 
@@ -558,7 +560,9 @@ ol.control.GoogleMapsGeocoder.prototype.handleInputInput_ = function(
     this.clear();
     var additionalAddresses = this.filterAddresses_(
         this.additionalAddresses, value);
-    if (additionalAddresses.length > 0)
+    if ((additionalAddresses.length > 0) &&
+        !(additionalAddresses.length == 1 &&
+        additionalAddresses[0] === null))
       this.handleGeocode_(additionalAddresses, 0, false);
   }
 };
