@@ -30,7 +30,9 @@ var gmap = new google.maps.Map(document.getElementById('gmap'), {
   streetViewControl: false
 });
 
-var view = new ol.View2D();
+var view = new ol.View2D({
+  maxZoom: 21 // to fix google maps num zoom levels
+});
 view.on('change:center', function() {
   var center = ol.proj.transform(view.getCenter(), 'EPSG:3857', 'EPSG:4326');
   gmap.setCenter(new google.maps.LatLng(center[1], center[0]));
