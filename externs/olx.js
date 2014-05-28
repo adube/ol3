@@ -1032,6 +1032,7 @@ olx.control.GoogleMapsCurrentPositionOptions.prototype.currentPositionText;
  *     detourLabelProperty: (string|undefined),
  *     enableAutoRouting: (boolean|undefined),
  *     enableDetours: (boolean|undefined),
+ *     enableTextInButtons: (boolean|undefined),
  *     geocoderComponentRestrictions: (Object|undefined),
  *     iconStyles: (Array.<ol.style.Style>),
  *     lineStyle: (Array.<(null|ol.style.Style)>|null|ol.feature.FeatureStyleFunction|ol.style.Style),
@@ -1118,6 +1119,13 @@ olx.control.GoogleMapsDirectionsOptions.prototype.enableAutoRouting;
  * @type {boolean|undefined}
  */
 olx.control.GoogleMapsDirectionsOptions.prototype.enableDetours;
+
+
+/**
+ * Whether to add the text in buttons or not.
+ * @type {boolean|undefined}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.enableTextInButtons;
 
 
 /**
@@ -1449,6 +1457,7 @@ olx.control.GoogleMapsDirectionsPanelOptions.prototype.totalDistanceText;
  * @typedef {{currentPositionControl: (ol.control.GoogleMapsCurrentPosition),
  *     enableCurrentPosition: (boolean),
  *     enableReverseGeocoding: (boolean|undefined),
+ *     enableTextInButtons: (boolean|undefined),
  *     geocoderComponentRestrictions: (Object|undefined),
  *     iconImage: (string|undefined),
  *     iconStyle: (ol.style.Style),
@@ -1484,6 +1493,13 @@ olx.control.GoogleMapsGeocoderOptions.prototype.enableCurrentPosition;
  * @type {boolean|undefined}
  */
 olx.control.GoogleMapsGeocoderOptions.prototype.enableReverseGeocoding;
+
+
+/**
+ * Whether to add the text in buttons or not.
+ * @type {boolean|undefined}
+ */
+olx.control.GoogleMapsGeocoderOptions.prototype.enableTextInButtons;
 
 
 /**

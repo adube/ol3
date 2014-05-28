@@ -133,6 +133,7 @@ var directions = new ol.control.GoogleMapsDirections({
   'addressesControl': olAdresses,
   'enableCurrentPosition': true,
   'enableDetours': true,
+  //'enableTextInButtons': false,
   'currentPositionControl': olCurrentPosition,
   'geocoderComponentRestrictions': {'country': 'CA'},
   'getURL': 'data/cadus/addresses.json',

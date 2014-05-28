@@ -60,6 +60,12 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
   this.searchButtonText = goog.isDef(options.searchButtonText) ?
       options.searchButtonText : 'Search';
 
+  /**
+   * @private
+   * @type {boolean}
+   */
+  this.enableTextInButtons_ = goog.isDef(options.enableTextInButtons) ?
+      options.enableTextInButtons : true;
 
   /**
    * @type {boolean}
@@ -150,23 +156,38 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
     'style': 'display: none;'
   });
 
+  // search button
   var searchButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
     'class': classPrefix + '-search-button'
   });
-  var searchButtonText = goog.dom.createTextNode(this.searchButtonText);
-  goog.dom.appendChild(searchButton, searchButtonText);
+  if (this.enableTextInButtons_) {
+    goog.dom.appendChild(
+        searchButton, goog.dom.createTextNode(this.searchButtonText));
+  } else {
+    searchButton.title = this.searchButtonText;
+  }
 
+  // clear button
   var clearButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
     'class': classPrefix + '-clear-button'
   });
-  var clearButtonText = goog.dom.createTextNode(this.clearButtonText);
-  goog.dom.appendChild(clearButton, clearButtonText);
+  if (this.enableTextInButtons_) {
+    goog.dom.appendChild(
+        clearButton, goog.dom.createTextNode(this.clearButtonText));
+  } else {
+    clearButton.title = this.clearButtonText;
+  }
 
+  // remove button
   var removeButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
     'class': classPrefix + '-remove-button'
   });
-  var removeButtonText = goog.dom.createTextNode(this.removeButtonText);
-  goog.dom.appendChild(removeButton, removeButtonText);
+  if (this.enableTextInButtons_) {
+    goog.dom.appendChild(
+        removeButton, goog.dom.createTextNode(this.removeButtonText));
+  } else {
+    removeButton.title = this.removeButtonText;
+  }
 
   if (!goog.isNull(iconImageEl)) {
     goog.dom.appendChild(element, iconImageEl);
@@ -322,6 +343,7 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
   } else {
     this.hideRemoveButton();
   }
+
 
 };
 goog.inherits(ol.control.GoogleMapsGeocoder, ol.control.Control);
