@@ -125,7 +125,6 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
    */
   this.error_ = null;
 
-
   // === UI COMPONENTS ===
   var classPrefix = 'ol-gmg';
   var id = classPrefix + goog.ui.IdGenerator.getInstance().getNextUniqueId();
@@ -750,6 +749,20 @@ ol.control.GoogleMapsGeocoder.prototype.displayGeocodeResults_ = function() {
         goog.events.EventType.TOUCHEND,
         goog.events.EventType.CLICK
       ], me.handleResultOptionPress_, false, me);
+
+      goog.events.listen(resultOption, [
+        goog.events.EventType.MOUSEOVER
+      ], function(e) {
+        e.target.className += this.id_ + '-mouseover';
+      }, false, me);
+      goog.events.listen(resultOption, [
+        goog.events.EventType.MOUSEOUT
+      ], function(e) {
+        e.target.className =
+            e.target.className.replace(this.id_ + '-mouseover', '');
+      }, false, me);
+
+
     }
   });
 
@@ -781,7 +794,8 @@ ol.control.GoogleMapsGeocoder.prototype.clearGeocodeResults_ = function() {
  */
 ol.control.GoogleMapsGeocoder.prototype.handleFocusOut_ = function(
     browserEvent) {
-  this.clearGeocodeResults_();
+  if (document.getElementsByClassName(this.id_ + '-mouseover').length === 0)
+    this.clearGeocodeResults_();
 };
 
 
