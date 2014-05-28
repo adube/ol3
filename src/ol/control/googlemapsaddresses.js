@@ -75,6 +75,15 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
       options.addButtonText : 'Add address';
 
   /**
+   * @private
+   * @type {boolean}
+   */
+  this.enableGeocoderTextInButtons_ =
+      goog.isDef(options.enableGeocoderTextInButtons) ?
+      options.enableGeocoderTextInButtons : true;
+
+
+  /**
    * Function to call when save is a success
    * @type {Function}
    */
@@ -242,6 +251,7 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
     'enableReverseGeocoding': true,
     'target': geocoderElement,
     'enableCurrentPosition': this.enableCurrentPosition_,
+    'enableTextInButtons': this.enableGeocoderTextInButtons_,
     'currentPositionControl': this.currentPositionControl_,
     'searchButtonText': this.searchButtonText,
     'clearButtonText': this.clearButtonText,

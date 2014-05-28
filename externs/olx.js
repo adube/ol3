@@ -872,6 +872,7 @@ olx.control.FullScreenOptions.prototype.target;
  *     addressesTarget: (Element),
  *     currentPositionControl: (ol.control.GoogleMapsCurrentPosition),
  *     enableCurrentPosition: (boolean),
+ *     enableGeocoderTextInButtons: (boolean|undefined),
  *     failCallback: (Function),
  *     geocoderComponentRestrictions: (Object),
  *     getURL: (string|undefined),
@@ -916,6 +917,13 @@ olx.control.GoogleMapsAddressesOptions.prototype.currentPositionControl;
  * @type {boolean}
  */
 olx.control.GoogleMapsAddressesOptions.prototype.enableCurrentPosition;
+
+
+/**
+ * Whether to add text in geocoder buttons or not
+ * @type {boolean}
+ */
+olx.control.GoogleMapsAddressesOptions.prototype.enableGeocoderTextInButtons;
 
 
 /**

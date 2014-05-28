@@ -84,6 +84,7 @@ var olAdresses = new ol.control.GoogleMapsAddresses({
   'target': 'gmaps-geocoder',
   'addressesTarget': 'addresses',
   'enableCurrentPosition': true,
+  //'enableGeocoderTextInButtons': false,
   'currentPositionControl': olCurrentPosition,
   'searchButtonText': 'Rechercher',
   'clearButtonText': 'Effacer',
