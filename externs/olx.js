@@ -1310,6 +1310,13 @@ olx.control.GoogleMapsDirectionsOptions.prototype.removeButtonText;
  * i18n
  * @type {string|undefined}
  */
+olx.control.GoogleMapsDirectionsOptions.prototype.reverseButtonText;
+
+
+/**
+ * i18n
+ * @type {string|undefined}
+ */
 olx.control.GoogleMapsDirectionsOptions.prototype.searchButtonText;
 
 
