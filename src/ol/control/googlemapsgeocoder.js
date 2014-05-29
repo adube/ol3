@@ -61,13 +61,6 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
       options.searchButtonText : 'Search';
 
   /**
-   * @private
-   * @type {boolean}
-   */
-  this.enableTextInButtons_ = goog.isDef(options.enableTextInButtons) ?
-      options.enableTextInButtons : true;
-
-  /**
    * @type {boolean}
    * @private
    */
@@ -125,8 +118,16 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
    */
   this.error_ = null;
 
+
+  /**
+   * @type {string}
+   * @private
+   */
+  this.classPrefix_ = 'ol-gmg';
+  var classPrefix = this.classPrefix_;
+
+
   // === UI COMPONENTS ===
-  var classPrefix = 'ol-gmg';
   var id = classPrefix + goog.ui.IdGenerator.getInstance().getNextUniqueId();
 
   var elementTagName = (this.renderAsListItem_ === true) ?
@@ -155,38 +156,12 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
     'style': 'display: none;'
   });
 
-  // search button
-  var searchButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
-    'class': classPrefix + '-search-button'
-  });
-  if (this.enableTextInButtons_) {
-    goog.dom.appendChild(
-        searchButton, goog.dom.createTextNode(this.searchButtonText));
-  } else {
-    searchButton.title = this.searchButtonText;
-  }
-
-  // clear button
-  var clearButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
-    'class': classPrefix + '-clear-button'
-  });
-  if (this.enableTextInButtons_) {
-    goog.dom.appendChild(
-        clearButton, goog.dom.createTextNode(this.clearButtonText));
-  } else {
-    clearButton.title = this.clearButtonText;
-  }
-
-  // remove button
-  var removeButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
-    'class': classPrefix + '-remove-button'
-  });
-  if (this.enableTextInButtons_) {
-    goog.dom.appendChild(
-        removeButton, goog.dom.createTextNode(this.removeButtonText));
-  } else {
-    removeButton.title = this.removeButtonText;
-  }
+  var searchButton = this.createButton_(
+      '-search-button', this.searchButtonText);
+  var clearButton = this.createButton_(
+      '-clear-button', this.clearButtonText);
+  var removeButton = this.createButton_(
+      '-remove-button', this.removeButtonText);
 
   if (!goog.isNull(iconImageEl)) {
     goog.dom.appendChild(element, iconImageEl);
@@ -531,6 +506,32 @@ ol.control.GoogleMapsGeocoder.prototype.enableReverseGeocoding = function() {
  */
 ol.control.GoogleMapsGeocoder.prototype.load = function(results) {
   this.handleGeocode_(results, null, true);
+};
+
+
+/**
+ * @param {string} className Class name for the button
+ * @param {string} text Text to display in the button
+ * @return {Element}
+ * @private
+ */
+ol.control.GoogleMapsGeocoder.prototype.createButton_ = function(
+    className, text) {
+
+  var classPrefix = this.classPrefix_;
+
+  var button = goog.dom.createDom(goog.dom.TagName.BUTTON, {
+    'class': classPrefix + className,
+    'title': text
+  });
+
+  var buttonText = goog.dom.createDom(goog.dom.TagName.DIV, {
+    'class': classPrefix + '-button-text'
+  });
+  goog.dom.appendChild(button, buttonText);
+  goog.dom.appendChild(buttonText, goog.dom.createTextNode(text));
+
+  return button;
 };
 
 

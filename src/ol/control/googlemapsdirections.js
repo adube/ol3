@@ -182,14 +182,6 @@ ol.control.GoogleMapsDirections = function(opt_options) {
 
 
   /**
-   * @private
-   * @type {boolean}
-   */
-  this.enableTextInButtons_ = goog.isDef(options.enableTextInButtons) ?
-      options.enableTextInButtons : true;
-
-
-  /**
    * Travel modes that should be checked by default.  Values can be:
    * 'bicycling', 'carpooling', 'driving', 'transit', 'walking'.
    * @type {Array.<string>}
@@ -394,17 +386,10 @@ ol.control.GoogleMapsDirections = function(opt_options) {
       myAddressesLabelEl, goog.dom.createTextNode(this.myAddressesText + ': '));
   goog.dom.appendChild(secondContainer, myAddressesLabelEl);
 
-
   // DOM components - reverse  button
-  var reverseButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
-    'class': classPrefix + '-reverse-button'
-  });
-  if (this.enableTextInButtons_) {
-    goog.dom.appendChild(
-        reverseButton, goog.dom.createTextNode(this.reverseButtonText));
-  } else {
-    reverseButton.title = this.reverseButtonText;
-  }
+  var reverseButton = this.createButton_(
+      '-reverse-button', this.reverseButtonText);
+
   goog.dom.appendChild(secondContainer, reverseButton);
   goog.events.listen(reverseButton, [
     goog.events.EventType.TOUCHEND,
@@ -426,15 +411,9 @@ ol.control.GoogleMapsDirections = function(opt_options) {
   });
 
   // DOM components - add waypoint
-  var addGeocoderButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
-    'class': classPrefix + '-add-waypoint-button'
-  });
-  if (this.enableTextInButtons_) {
-    goog.dom.appendChild(
-        addGeocoderButton, goog.dom.createTextNode(this.addWaypointButtonText));
-  } else {
-    addGeocoderButton.title = this.addWaypointButtonText;
-  }
+  var addGeocoderButton = this.createButton_(
+      '-add-waypoint-button', this.addWaypointButtonText);
+
   goog.dom.appendChild(secondContainer, addGeocoderButton);
   goog.events.listen(addGeocoderButton, [
     goog.events.EventType.TOUCHEND,
@@ -998,7 +977,6 @@ ol.control.GoogleMapsDirections.prototype.addGeocoder_ = function() {
     'enableReverseGeocoding': false,
     'target': container,
     'enableCurrentPosition': this.enableCurrentPosition_,
-    'enableTextInButtons': this.enableTextInButtons_,
     'currentPositionControl': this.currentPositionControl_,
     'additionalAddresses': addresses.slice(0),
     'searchButtonText': this.searchButtonText,
@@ -1147,6 +1125,32 @@ ol.control.GoogleMapsDirections.prototype.collectGeocoders_ = function() {
   }
 
   return geocoders;
+};
+
+
+/**
+ * @param {string} className Class name for the button
+ * @param {string} text Text to display in the button
+ * @return {Element}
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.createButton_ = function(
+    className, text) {
+
+  var classPrefix = this.classPrefix_;
+
+  var button = goog.dom.createDom(goog.dom.TagName.BUTTON, {
+    'class': classPrefix + className,
+    'title': text
+  });
+
+  var buttonText = goog.dom.createDom(goog.dom.TagName.DIV, {
+    'class': classPrefix + '-button-text'
+  });
+  goog.dom.appendChild(button, buttonText);
+  goog.dom.appendChild(buttonText, goog.dom.createTextNode(text));
+
+  return button;
 };
 
 
