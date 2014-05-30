@@ -85,6 +85,14 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
   this.anonymousContactMessage = goog.isDef(options.anonymousContactMessage) ?
       options.anonymousContactMessage :
           'You must be connected to contact users.';
+  /**
+   * i18n - privateContactMessage
+   * @type {string}
+   */
+  this.privateContactMessage = goog.isDef(options.privateContactMessage) ?
+      options.privateContactMessage :
+          'This user does not wish to share his email.';
+
 
   /**
    * i18n - ponctual
@@ -776,7 +784,13 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
         'href': '#'
       });
     }
-    else {
+    else if (route.mt_usager.mt_email == null) {
+      contactLink = goog.dom.createDom(goog.dom.TagName.A, {
+        'class': classPrefix + '-offer-contact-link disabled',
+        'title': this.privateContactMessage,
+        'href': '#'
+      });
+    }else {
       contactLink = goog.dom.createDom(goog.dom.TagName.A, {
         'class': classPrefix + '-offer-contact-link',
         'href': 'mailto:' + route.mt_usager.mt_email

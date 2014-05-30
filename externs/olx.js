@@ -1343,6 +1343,7 @@ olx.control.GoogleMapsDirectionsOptions.prototype.walkingText;
  *     fromText: (string|undefined),
  *     pathDetailsText: (string|undefined),
  *     anonymousContactMessage: (string|undefined),
+ *     privateContactMessage: (string|undefined),
  *     ponctualText: (string|undefined),
  *     recurringText: (string|undefined),
  *     suggestedRoutesText: (string|undefined),
@@ -1414,6 +1415,12 @@ olx.control.GoogleMapsDirectionsPanelOptions.prototype.pathDetailsText;
  * @type {string|undefined}
  */
 olx.control.GoogleMapsDirectionsPanelOptions.prototype.anonymousContactMessage;
+
+/**
+ * i18n
+ * @type {string|undefined}
+ */
+olx.control.GoogleMapsDirectionsPanelOptions.prototype.privateContactMessage;
 
 /**
  * i18n
