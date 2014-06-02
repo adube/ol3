@@ -1671,6 +1671,20 @@ olx.control.ScaleLineOptions.prototype.units;
 
 
 /**
+ * @typedef {{target: (Element|undefined)}}
+ * @todo stability experimental
+ */
+olx.control.SingleDrawOptions;
+
+
+/**
+ * Target.
+ * @type {Element|undefined}
+ */
+olx.control.SingleDrawOptions.prototype.target;
+
+
+/**
  * @typedef {{duration: (number|undefined),
  *     className: (string|undefined),
  *     label: (string|undefined),

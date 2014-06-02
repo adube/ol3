@@ -3,6 +3,7 @@
 goog.require('ol.Feature');
 goog.require('ol.Map');
 goog.require('ol.View2D');
+goog.require('ol.control.SingleDraw');
 goog.require('ol.extent');
 goog.require('ol.geom.Point');
 goog.require('ol.interaction');
@@ -108,3 +109,7 @@ view.setZoom(10);
 
 olMapDiv.parentNode.removeChild(olMapDiv);
 gmap.controls[google.maps.ControlPosition.TOP_LEFT].push(olMapDiv);
+
+var singleDraw = new ol.control.SingleDraw({
+});
+map.addControl(singleDraw);
