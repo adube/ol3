@@ -50,7 +50,7 @@ goog.inherits(ol.source.FormatVector, ol.source.Vector);
 
 /**
  * @param {goog.Uri|string} url URL.
- * @param {function(this: T, Array.<ol.Feature>)} callback Callback.
+ * @param {function(this: T, Array.<ol.Feature>, string)} callback Callback.
  * @param {T} thisArg Value to use as `this` when executing `callback`.
  * @template T
  */
@@ -99,7 +99,8 @@ ol.source.FormatVector.prototype.loadFeaturesFromURL =
             goog.asserts.fail();
           }
           if (goog.isDefAndNotNull(source)) {
-            callback.call(thisArg, this.readFeatures(source));
+            // last argument 'source' added by adube
+            callback.call(thisArg, this.readFeatures(source), source);
           } else {
             this.setState(ol.source.State.ERROR);
             goog.asserts.fail();
