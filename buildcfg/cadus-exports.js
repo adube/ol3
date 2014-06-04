@@ -4,12 +4,17 @@ goog.require('ol.control.GoogleMapsAddresses');
 goog.require('ol.control.GoogleMapsCurrentPosition');
 goog.require('ol.control.GoogleMapsDirections');
 goog.require('ol.control.GoogleMapsDirectionsPanel');
+goog.require('ol.control.SingleDraw');
+goog.require('ol.extent');
+goog.require('ol.Feature');
+goog.require('ol.geom.Point');
 goog.require('ol.interaction');
 goog.require('ol.interaction.DragPan');
 goog.require('ol.interaction.DragStyleCursor');
 goog.require('ol.layer.Vector');
 goog.require('ol.proj');
 goog.require('ol.source.GeoJSON');
+goog.require('ol.source.Vector');
 goog.require('ol.style.Circle');
 goog.require('ol.style.Fill');
 goog.require('ol.style.Icon');
@@ -40,12 +45,43 @@ goog.exportSymbol(
     ol.proj.transform);
 
 goog.exportSymbol(
+    'ol.extent',
+    ol.extent);
+
+goog.exportSymbol(
     'ol.layer.Vector',
     ol.layer.Vector);
 
 goog.exportSymbol(
+    'ol.Feature',
+    ol.Feature);
+
+goog.exportProperty(
+    ol.extent,
+    'getBottomLeft',
+    ol.extent.getBottomLeft);
+
+goog.exportProperty(
+    ol.extent,
+    'getTopRight',
+    ol.extent.getTopRight);
+
+goog.exportSymbol(
+    'ol.geom.Point',
+    ol.geom.Point);
+
+goog.exportSymbol(
     'ol.source.GeoJSON',
     ol.source.GeoJSON);
+
+goog.exportSymbol(
+    'ol.source.Vector',
+    ol.source.Vector);
+
+goog.exportProperty(
+    ol.source.Vector.prototype,
+    'addFeatures',
+    ol.source.Vector.prototype.addFeatures);
 
 goog.exportSymbol(
     'ol.style.Style',
@@ -98,6 +134,16 @@ goog.exportSymbol(
 goog.exportSymbol(
     'ol.style.Fill',
     ol.style.Fill);
+
+goog.exportProperty(
+    ol.style.Style.prototype,
+    'getFill',
+    ol.style.Style.prototype.getFill);
+
+goog.exportProperty(
+    ol.style.Style.prototype,
+    'getStroke',
+    ol.style.Style.prototype.getStroke);
 
 goog.exportSymbol(
     'ol.control.GoogleMapsDirectionsPanel',
@@ -318,3 +364,48 @@ goog.exportProperty(
     ol.control.GoogleMapsCurrentPosition.prototype,
     'setCurrentPosition',
     ol.control.GoogleMapsCurrentPosition.prototype.setCurrentPosition);
+
+goog.exportSymbol(
+    'ol.control.SingleDraw',
+    ol.control.SingleDraw);
+
+goog.exportProperty(
+    ol.control.SingleDraw.prototype,
+    'on',
+    ol.control.SingleDraw.prototype.on);
+
+goog.exportProperty(
+    ol.control.SingleDraw.prototype,
+    'stopDrawing',
+    ol.control.SingleDraw.prototype.stopDrawing);
+
+goog.exportProperty(
+    ol.control.SingleDraw,
+    'EventType',
+    ol.control.SingleDraw.EventType);
+
+goog.exportProperty(
+    ol.control.SingleDraw.EventType,
+    'DEACTIVATED',
+    ol.control.SingleDraw.EventType.DEACTIVATED);
+
+goog.exportProperty(
+    ol.control.SingleDraw.EventType,
+    'ACTIVATED',
+    ol.control.SingleDraw.EventType.ACTIVATED);
+
+goog.exportProperty(
+    ol.control.SingleDraw.EventType,
+    'DRAWINGSTOPPED',
+    ol.control.SingleDraw.EventType.DRAWINGSTOPPED);
+
+goog.exportProperty(
+    ol.control.SingleDraw.EventType,
+    'BEFOREDRAWINGERASE',
+    ol.control.SingleDraw.EventType.BEFOREDRAWINGERASE);
+
+goog.exportProperty(
+    ol.control.SingleDraw.EventType,
+    'AFTERDRAWINGERASE',
+    ol.control.SingleDraw.EventType.AFTERDRAWINGERASE);
+

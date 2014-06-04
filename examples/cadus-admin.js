@@ -1,3 +1,4 @@
+goog.require('goog.events');
 // NOCOMPILE
 // This example uses the GMapx v3 API, which we do not have an exports file for.
 goog.require('ol.Feature');
@@ -64,6 +65,16 @@ view.on('change:resolution', function() {
 var extentForPoints = [-7987726, 6145555, -7832711, 6206704];
 var numFeatures = 50;
 
+var styleDep = new ol.style.Style({
+  fill: new ol.style.Fill({color: 'rgba(0, 170, 0, 0.2)'}),
+  stroke: new ol.style.Stroke({color: '#00AA00', width: 1})
+});
+
+var styleArr = new ol.style.Style({
+  fill: new ol.style.Fill({color: 'rgba(255, 0, 0, 0.2)'}),
+  stroke: new ol.style.Stroke({color: '#FF0000', width: 1})
+});
+
 var sourceOne = new ol.source.Vector();
 sourceOne.addFeatures(generateRandomFeatures(numFeatures, extentForPoints));
 var vectorOne = new ol.layer.Vector({
@@ -71,8 +82,8 @@ var vectorOne = new ol.layer.Vector({
   style: new ol.style.Style({
     image: new ol.style.Circle({
       radius: 6,
-      fill: new ol.style.Fill({color: 'rgba(0, 170, 0, 0.3)'}),
-      stroke: new ol.style.Stroke({color: '#00AA00', width: 1})
+      fill: styleDep.getFill(),
+      stroke: styleDep.getStroke()
     })
   })
 });
@@ -84,11 +95,12 @@ var vectorTwo = new ol.layer.Vector({
   style: new ol.style.Style({
     image: new ol.style.Circle({
       radius: 6,
-      fill: new ol.style.Fill({color: 'rgba(255, 0, 0, 0.3)'}),
-      stroke: new ol.style.Stroke({color: '#FF0000', width: 1})
+      fill: styleArr.getFill(),
+      stroke: styleArr.getStroke()
     })
   })
 });
+
 
 var olMapDiv = document.getElementById('olmap');
 var map = new ol.Map({
@@ -109,7 +121,25 @@ view.setZoom(10);
 
 olMapDiv.parentNode.removeChild(olMapDiv);
 gmap.controls[google.maps.ControlPosition.TOP_LEFT].push(olMapDiv);
+var singleDraws = [];
+var styles = [styleDep, styleArr];
 
-var singleDraw = new ol.control.SingleDraw({
-});
-map.addControl(singleDraw);
+for (var i = 0; i < 2; i++) {
+  singleDraws[i] = new ol.control.SingleDraw({
+    style: styles[i],
+    className: 'ol-singledraw-' + (i + 1)
+  });
+
+  map.addControl(singleDraws[i]);
+  this.singleDraws[i].on(
+      ol.control.SingleDraw.EventType.ACTIVATED,
+      disableOtherSingleDraw
+  );
+}
+
+function disableOtherSingleDraw(evt) {
+  if (evt.target == singleDraws[0])
+    singleDraws[1].stopDrawing();
+  else
+    singleDraws[0].stopDrawing();
+}
