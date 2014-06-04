@@ -12,6 +12,7 @@ goog.require('ol.interaction.DragPan');
 goog.require('ol.layer.Vector');
 goog.require('ol.proj');
 goog.require('ol.source.Vector');
+goog.require('ol.source.GeoJSON');
 goog.require('ol.style.Icon');
 goog.require('ol.style.Style');
 
@@ -180,6 +181,21 @@ goog.exportProperty(
     ol.source.Vector.prototype,
     'getFeatures',
     ol.source.Vector.prototype.getFeatures);
+
+
+goog.exportSymbol(
+    'ol.source.GeoJSON',
+    ol.source.GeoJSON);
+
+goog.exportProperty(
+    ol.source.GeoJSON.prototype,
+    'loadFeaturesFromURL',
+    ol.source.GeoJSON.prototype.loadFeaturesFromURL);
+
+goog.exportProperty(
+    ol.source.GeoJSON.prototype,
+    'getFeatures',
+    ol.source.GeoJSON.prototype.getFeatures);
 
 
 goog.exportSymbol(
