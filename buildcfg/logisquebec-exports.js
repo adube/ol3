@@ -8,7 +8,8 @@ goog.require('ol.View2D');
 goog.require('ol.extent');
 goog.require('ol.geom.Point');
 goog.require('ol.interaction');
-goog.require('ol.interaction.DragPan');
+//goog.require('ol.interaction.DragPan');
+goog.require('ol.interaction.DragPanWithEvents');
 goog.require('ol.layer.Vector');
 goog.require('ol.proj');
 goog.require('ol.source.Vector');
@@ -230,9 +231,28 @@ goog.exportProperty(
     'extend',
     ol.Collection.prototype.extend);
 
+
+/*
 goog.exportSymbol(
     'ol.interaction.DragPan',
     ol.interaction.DragPan);
+
+goog.exportProperty(
+    ol.interaction.DragPan.prototype,
+    'on',
+    ol.interaction.DragPan.prototype.on);
+*/
+
+
+goog.exportSymbol(
+    'ol.interaction.DragPanWithEvents',
+    ol.interaction.DragPanWithEvents);
+
+goog.exportProperty(
+    ol.interaction.DragPanWithEvents.prototype,
+    'on',
+    ol.interaction.DragPanWithEvents.prototype.on);
+
 
 goog.exportProperty(
     ol.Object.prototype,
