@@ -8,6 +8,7 @@ goog.require('goog.events.EventType');
 goog.require('ol.Feature');
 goog.require('ol.control.Control');
 goog.require('ol.interaction.DragBox');
+goog.require('ol.interaction.Draw');
 goog.require('ol.layer.Vector');
 goog.require('ol.source.Vector');
 goog.require('ol.style.Fill');
@@ -59,13 +60,10 @@ ol.control.SingleDraw = function(opt_options) {
 
   /**
    * The dragboxinteraction for this control
-   * @type {ol.interaction.DragBox}
+   * @type {ol.interaction.DragBox|ol.interaction.Draw}
    * @private
    */
-  this.dragBoxInteraction_ = new ol.interaction.DragBox({
-    style: style
-  });
-
+  this.interaction_ = null;
 
   var className = goog.isDef(options.className) ?
       options.className : 'ol-singledraw';
@@ -100,7 +98,28 @@ ol.control.SingleDraw = function(opt_options) {
     target: options.target
   });
 
-  this.dragBoxInteraction_.on('boxend', this.handleDrawingEnd_, this);
+  var interactionChoice = goog.isDefAndNotNull(options.interaction) ?
+      options.interaction : 'box';
+
+  switch (interactionChoice) {
+    case 'box':
+      this.interaction_ = new ol.interaction.DragBox({
+        style: style
+      });
+      this.interaction_.on('boxend', this.handleDrawingEnd_, this);
+      break;
+    case 'draw':
+    case 'polygon':
+      var source = this.layer_.getSource();
+      goog.asserts.assertInstanceof(source, ol.source.Vector);
+
+      this.interaction_ = new ol.interaction.Draw({
+        type: ol.geom.GeometryType.POLYGON,
+        source: source
+      });
+      this.interaction_.on('drawend', this.handleDrawingEnd_, this);
+      break;
+  }
 };
 goog.inherits(ol.control.SingleDraw, ol.control.Control);
 
@@ -191,7 +210,7 @@ ol.control.SingleDraw.prototype.changeState_ = function(state) {
  * @private
  */
 ol.control.SingleDraw.prototype.startDrawing_ = function() {
-  this.getMap().addInteraction(this.dragBoxInteraction_);
+  this.getMap().addInteraction(this.interaction_);
   this.getMap().addLayer(this.layer_);
 };
 
@@ -202,14 +221,21 @@ ol.control.SingleDraw.prototype.startDrawing_ = function() {
  * @private
  */
 ol.control.SingleDraw.prototype.handleDrawingEnd_ = function(evt) {
-  this.drawing = evt.target.getGeometry();
+  if (typeof(evt.target.getGeometry) !== 'undefined')
+    this.drawing = evt.target.getGeometry();
+  else {
+    var source = this.layer_.getSource();
+    goog.asserts.assertInstanceof(source, ol.source.Vector);
+
+    this.drawing = source.getFeatures()[0].getGeometry() || null;
+  }
 
   var f = new ol.Feature(this.drawing);
   var source = this.layer_.getSource();
   goog.asserts.assertInstanceof(source, ol.source.Vector);
   source.addFeatures([f]);
 
-  this.getMap().removeInteraction(this.dragBoxInteraction_);
+  this.getMap().removeInteraction(this.interaction_);
 
   this.changeState_('Finished');
 
@@ -232,7 +258,7 @@ ol.control.SingleDraw.prototype.eraseDrawing_ = function() {
   goog.asserts.assertInstanceof(source, ol.source.Vector);
   source.clear();
   this.getMap().removeLayer(this.layer_);
-  this.getMap().removeInteraction(this.dragBoxInteraction_);
+  this.getMap().removeInteraction(this.interaction_);
 
   goog.events.dispatchEvent(this,
       ol.control.SingleDraw.EventType.AFTERDRAWINGERASE);

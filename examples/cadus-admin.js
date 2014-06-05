@@ -127,7 +127,8 @@ var styles = [styleDep, styleArr];
 for (var i = 0; i < 2; i++) {
   singleDraws[i] = new ol.control.SingleDraw({
     style: styles[i],
-    className: 'ol-singledraw-' + (i + 1)
+    className: 'ol-singledraw-' + (i + 1),
+    interaction: 'box'
   });
 
   map.addControl(singleDraws[i]);
