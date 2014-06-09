@@ -180,6 +180,11 @@ goog.exportProperty(
 
 goog.exportProperty(
     ol.source.Vector.prototype,
+    'forEachFeature',
+    ol.source.Vector.prototype.forEachFeature);
+
+goog.exportProperty(
+    ol.source.Vector.prototype,
     'getFeatures',
     ol.source.Vector.prototype.getFeatures);
 
