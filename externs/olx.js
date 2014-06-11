@@ -1688,6 +1688,20 @@ olx.control.SingleDrawOptions;
  */
 olx.control.SingleDrawOptions.prototype.target;
 
+/**
+ * @typedef {{target: (Element|undefined)}}
+ * @todo stability experimental
+ */
+olx.control.LayerSwitcherOptions;
+
+
+/**
+ * Target.
+ * @type {Element|undefined}
+ */
+olx.control.LayerSwitcherOptions.prototype.target;
+
+
 
 /**
  * @typedef {{duration: (number|undefined),

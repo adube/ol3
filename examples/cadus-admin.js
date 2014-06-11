@@ -4,6 +4,7 @@ goog.require('goog.events');
 goog.require('ol.Feature');
 goog.require('ol.Map');
 goog.require('ol.View2D');
+goog.require('ol.control.LayerSwitcher');
 goog.require('ol.control.SingleDraw');
 goog.require('ol.extent');
 goog.require('ol.geom.Point');
@@ -88,6 +89,9 @@ var vectorOne = new ol.layer.Vector({
   })
 });
 
+//Layer will not show up in layer switcher if name is not defined.
+vectorOne.set('name', 'Vector one');
+
 var sourceTwo = new ol.source.Vector();
 sourceTwo.addFeatures(generateRandomFeatures(numFeatures, extentForPoints));
 var vectorTwo = new ol.layer.Vector({
@@ -101,6 +105,8 @@ var vectorTwo = new ol.layer.Vector({
   })
 });
 
+//Layer will not show up in layer switcher if name is not defined.
+vectorTwo.set('name', 'Vector two');
 
 var olMapDiv = document.getElementById('olmap');
 var map = new ol.Map({
@@ -121,6 +127,12 @@ view.setZoom(10);
 
 olMapDiv.parentNode.removeChild(olMapDiv);
 gmap.controls[google.maps.ControlPosition.TOP_LEFT].push(olMapDiv);
+
+map.addControl(new ol.control.LayerSwitcher({
+  className: 'ol-layerswitcher',
+  layers: [vectorOne, vectorTwo]
+}));
+
 var singleDraws = [];
 var styles = [styleDep, styleArr];
 
@@ -128,7 +140,7 @@ for (var i = 0; i < 2; i++) {
   singleDraws[i] = new ol.control.SingleDraw({
     style: styles[i],
     className: 'ol-singledraw-' + (i + 1),
-    interaction: 'box'
+    interaction: 'polygon'
   });
 
   map.addControl(singleDraws[i]);

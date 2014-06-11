@@ -4,6 +4,7 @@ goog.require('ol.control.GoogleMapsAddresses');
 goog.require('ol.control.GoogleMapsCurrentPosition');
 goog.require('ol.control.GoogleMapsDirections');
 goog.require('ol.control.GoogleMapsDirectionsPanel');
+goog.require('ol.control.LayerSwitcher');
 goog.require('ol.control.SingleDraw');
 goog.require('ol.extent');
 goog.require('ol.Feature');
@@ -12,6 +13,7 @@ goog.require('ol.interaction');
 goog.require('ol.interaction.DragPan');
 goog.require('ol.interaction.DragStyleCursor');
 goog.require('ol.layer.Vector');
+goog.require('ol.Object');
 goog.require('ol.proj');
 goog.require('ol.source.GeoJSON');
 goog.require('ol.source.Vector');
@@ -51,6 +53,16 @@ goog.exportSymbol(
 goog.exportSymbol(
     'ol.layer.Vector',
     ol.layer.Vector);
+
+goog.exportProperty(
+    ol.Object.prototype,
+    'set',
+    ol.Object.prototype.set);
+
+goog.exportProperty(
+    ol.Object.prototype,
+    'get',
+    ol.Object.prototype.get);
 
 goog.exportSymbol(
     'ol.Feature',
@@ -409,3 +421,6 @@ goog.exportProperty(
     'AFTERDRAWINGERASE',
     ol.control.SingleDraw.EventType.AFTERDRAWINGERASE);
 
+goog.exportSymbol(
+    'ol.control.LayerSwitcher',
+    ol.control.LayerSwitcher);
