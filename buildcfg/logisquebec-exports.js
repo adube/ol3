@@ -113,6 +113,11 @@ goog.exportProperty(
 
 goog.exportProperty(
     ol.View2D.prototype,
+    'fitExtent',
+    ol.View2D.prototype.fitExtent);
+
+goog.exportProperty(
+    ol.View2D.prototype,
     'getResolutionForExtent',
     ol.View2D.prototype.getResolutionForExtent);
 
