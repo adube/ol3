@@ -1339,7 +1339,8 @@ olx.control.GoogleMapsDirectionsOptions.prototype.walkingText;
 
 
 /**
- * @typedef {{mode: (string|undefined),
+ * @typedef {{limit: (number|undefined),
+ *     mode: (string|undefined),
  *     pixelBuffer: (number|undefined),
  *     target: (Element|undefined),
  *     aroundText: (string|undefined),
@@ -1351,12 +1352,22 @@ olx.control.GoogleMapsDirectionsOptions.prototype.walkingText;
  *     privateContactMessage: (string|undefined),
  *     ponctualText: (string|undefined),
  *     recurringText: (string|undefined),
+ *     showMoreText: (string|undefined),
  *     suggestedRoutesText: (string|undefined),
  *     toText: (string|undefined),
  *     totalDistanceText: (string|undefined)}}
  * @todo stability experimental
  */
 olx.control.GoogleMapsDirectionsPanelOptions;
+
+
+/**
+ * The maximum number of results to show at a time.  Ifmore results are
+ * returned, then a 'show more' button is added at the end to show 'limit'
+ * more.  Only used when mode is 'complex'.
+ * @type {number|undefined}
+ */
+olx.control.GoogleMapsDirectionsPanelOptions.prototype.limit;
 
 
 /**
@@ -1439,6 +1450,13 @@ olx.control.GoogleMapsDirectionsPanelOptions.prototype.ponctualText;
  * @type {string|undefined}
  */
 olx.control.GoogleMapsDirectionsPanelOptions.prototype.recurringText;
+
+
+/**
+ * i18n
+ * @type {string|undefined}
+ */
+olx.control.GoogleMapsDirectionsPanelOptions.prototype.showMoreText;
 
 
 /**

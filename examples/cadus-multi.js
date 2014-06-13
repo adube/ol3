@@ -126,6 +126,7 @@ for (var i = 1, len = 8; i <= len; i++) {
 }
 
 var directionsPanel = new ol.control.GoogleMapsDirectionsPanel({
+  'limit': 2,
   'mode': ol.control.GoogleMapsDirectionsPanel.Mode.COMPLEX,
   'target': 'gmaps-directions-panel',
   'arroundText': 'environ',
@@ -135,6 +136,7 @@ var directionsPanel = new ol.control.GoogleMapsDirectionsPanel({
   'pathDetailsText': 'Détail du trajet',
   'ponctualText': 'Ponctuel',
   'recurringText': 'Récurrent',
+  'showMoreText': 'Voir plus de résultats',
   'suggestedRoutesText': 'Routes suggérées',
   'toText': 'À',
   'totalDistanceText': 'Distance Totale'

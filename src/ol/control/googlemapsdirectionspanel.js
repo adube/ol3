@@ -109,6 +109,13 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
       options.recurringText : 'Recurring';
 
   /**
+   * i18n - showMore
+   * @type {string}
+   */
+  this.showMoreText = goog.isDef(options.showMoreText) ?
+      options.showMoreText : 'Show more';
+
+  /**
    * i18n - suggestedRoutes
    * @type {string}
    */
@@ -152,6 +159,24 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
    */
   this.pixelBuffer_ = goog.isDefAndNotNull(options.pixelBuffer) ?
       options.pixelBuffer : ol.control.GOOGLEMAPSDIRECTIONSPANEL_PIXEL_BUFFER;
+
+
+  /**
+   * @type {number} The maximum number of results to show at a time.  If
+   *     more results are returned, then a 'show more' button is added
+   *     at the end to show 'limit' more.  Only used when mode is 'complex'.
+   * @private
+   */
+  this.limit_ = goog.isDef(options.limit) ? options.limit : 0;
+
+
+  /**
+   * @type {number} The page counter used to keep track of the results shown
+   *     and when to show/hide the 'show more' button
+   * @private
+   */
+  this.limitPageCounter_ = 0;
+
 
   var element = goog.dom.createDom(goog.dom.TagName.DIV, {
     'class': classPrefix + ' ' + ol.css.CLASS_UNSELECTABLE
@@ -287,6 +312,13 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
    */
   this.popupPlacement_ = 'top';
 
+  /**
+   * @type {?Element}
+   * @private
+   */
+  this.showMoreButtonEl_ = null;
+
+
   goog.base(this, {
     element: element,
     target: options.target
@@ -350,6 +382,9 @@ ol.control.GoogleMapsDirectionsPanel.prototype.clearDirections = function() {
   }, this);
   this.clickableSelectorElements_.clear();
 
+  // destroy 'show more' button
+  this.destroyShowMoreButton_();
+
   // remove children
   goog.dom.removeChildren(this.routesEl_);
   goog.dom.removeChildren(this.routeSelectorListEl_);
@@ -366,6 +401,9 @@ ol.control.GoogleMapsDirectionsPanel.prototype.clearDirections = function() {
 
   //Hide suggested routes link
   this.selectorVisible_(false);
+
+  // reset limit page counter
+  this.limitPageCounter_ = 0;
 };
 
 
@@ -421,6 +459,13 @@ ol.control.GoogleMapsDirectionsPanel.prototype.setDirections = function(
 
     this.routes_.push(routeObj);
   }, this);
+
+  // add 'show more' button
+  if (this.mode_ == ol.control.GoogleMapsDirectionsPanel.Mode.COMPLEX &&
+      this.limit_) {
+    this.createShowMoreButton_(routesEl);
+    this.toggleComplexModeResults_();
+  }
 
   // copyright
   var copyright = goog.dom.createDom(goog.dom.TagName.DIV, {
@@ -1685,6 +1730,15 @@ ol.control.GoogleMapsDirectionsPanel.prototype.selectorVisible_ =
 /**
  * @private
  */
+ol.control.GoogleMapsDirectionsPanel.prototype.handleShowMoreButtonPress_ =
+    function() {
+  this.toggleComplexModeResults_();
+};
+
+
+/**
+ * @private
+ */
 ol.control.GoogleMapsDirectionsPanel.prototype.handleToggleElementPress_ =
     function() {
   var element = document.getElementById(this.classPrefix_ + '-selector-toggle');
@@ -1722,4 +1776,89 @@ ol.control.GoogleMapsDirectionsPanel.prototype.selectorOpened_ =
       items.item(i).style.display = display;
     }
   }
+};
+
+
+/**
+ * Only used when mode is 'complex' and 'limit' is set.  Loop throught the
+ * results and hide the results exceeding the limit.  Show the button if some
+ * remain hidden.
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.toggleComplexModeResults_ =
+    function() {
+
+  var limit = this.limit_;
+  var mode = this.mode_;
+  var counter = this.limitPageCounter_;
+  var total = this.routes_.getLength();
+
+  if (mode !== ol.control.GoogleMapsDirectionsPanel.Mode.COMPLEX ||
+      !limit || !this.showMoreButtonEl_) {
+    return;
+  }
+
+  var end = (counter + 1) * limit;
+
+  for (var i = 0; i < total; i++) {
+    if (i < end) {
+      goog.style.setStyle(this.routesEl_.childNodes[i], 'display', '');
+    } else {
+      goog.style.setStyle(this.routesEl_.childNodes[i], 'display', 'none');
+    }
+  }
+
+  if (end >= total) {
+    goog.style.setStyle(this.showMoreButtonEl_, 'display', 'none');
+  }
+
+  this.limitPageCounter_++;
+};
+
+
+/**
+ * Create a new show more button,  register listeners and append to parent set
+ * @param {Element} parent Parent to append the button to
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.createShowMoreButton_ =
+    function(parent) {
+
+  if (this.showMoreButtonEl_) {
+    return;
+  }
+
+  var classPrefix = this.classPrefix_;
+
+  this.showMoreButtonEl_ = goog.dom.createDom(goog.dom.TagName.BUTTON, {
+    'class': classPrefix + '-show-more-button'
+  });
+  goog.dom.appendChild(this.showMoreButtonEl_, goog.dom.createTextNode(
+      this.showMoreText));
+  goog.dom.appendChild(parent, this.showMoreButtonEl_);
+
+  goog.events.listen(this.showMoreButtonEl_, [
+    goog.events.EventType.TOUCHEND,
+    goog.events.EventType.CLICK
+  ], this.handleShowMoreButtonPress_, false, this);
+};
+
+
+/**
+ * Destroy the show more button and unregister listeners
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.destroyShowMoreButton_ =
+    function() {
+
+  if (!this.showMoreButtonEl_) {
+    return;
+  }
+
+  goog.events.unlisten(this.showMoreButtonEl_, [
+    goog.events.EventType.TOUCHEND,
+    goog.events.EventType.CLICK
+  ], this.handleShowMoreButtonPress_, false, this);
+
+  this.showMoreButtonEl_ = null;
 };
