@@ -564,12 +564,12 @@ ol.control.GoogleMapsAddresses.prototype.saveAddress_ =
           me.failCallback(response, data);
         // TODO: handle errors
         // TODO: remove these lines since they are used only for testing
-        response = {
+        /*response = {
           'status': 1,
           'id': 1
         };
         me.handleSaveAddressSuccess_(response, data);
-
+        */
       }
     });
 
