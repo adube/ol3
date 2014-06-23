@@ -47,11 +47,31 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
       options.searchButtonText : undefined;
 
   /**
+   * i18n - searchButton
+   * @type {boolean}
+   */
+  this.haveAHomeAddress = false;
+
+  /**
    * i18n - clearButton
    * @type {string|undefined}
    */
   this.clearButtonText = goog.isDefAndNotNull(options.clearButtonText) ?
       options.clearButtonText : undefined;
+
+  /**
+   * i18n - home address
+   * If null or not specified, home address is not required
+   * @type {?string}
+   */
+  this.homeAddressButtonText =
+      goog.isDefAndNotNull(options.homeAddressButtonText) ?
+      options.homeAddressButtonText : null;
+  /**
+   * @private
+   * @type {Element|undefined}
+   */
+  this.homeCheck_ = undefined;
 
   /**
    * i18n - noResultFound
@@ -96,6 +116,7 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
   var input = goog.dom.createDom(goog.dom.TagName.INPUT, {
     'class': classPrefix + '-input-text',
     'type': 'text'
+
   });
 
   var element = goog.dom.createDom(goog.dom.TagName.DIV, {
@@ -114,6 +135,24 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
   goog.dom.appendChild(addButton, addButtonText);
 
   goog.dom.appendChild(element, input);
+
+  if (this.homeAddressButtonText) {
+    goog.dom.appendChild(element, goog.dom.createDom(goog.dom.TagName.LABEL, {
+      'class' : classPrefix + '-imput-home-checkbox',
+      'for' : classPrefix + '-input-home-checkbox'
+    }, this.homeAddressButtonText));
+
+    this.homeCheck_ = goog.dom.createDom(goog.dom.TagName.INPUT, {
+      'class': classPrefix + '-input-home-checkbox',
+      'id': classPrefix + '-input-home-checkbox',
+      'type': 'checkbox',
+      'disabled': true,
+      'checked': true
+    });
+    goog.dom.appendChild(element, this.homeCheck_);
+  }
+
+
   goog.dom.appendChild(element, geocoderElement);
   goog.dom.appendChild(element, addButton);
 
@@ -408,6 +447,12 @@ ol.control.GoogleMapsAddresses.prototype.handleAddButtonPress_ = function(
 
   var input = this.input_;
   var geocoder = this.geocoder_;
+  var type = 0;
+  if (this.homeAddressButtonText) {
+    if (this.homeCheck_.checked) {
+      type = 1;
+    }
+  }
 
   var addressText = geocoder.getInputValue();
   var description = input.value;
@@ -417,7 +462,7 @@ ol.control.GoogleMapsAddresses.prototype.handleAddButtonPress_ = function(
       goog.isDefAndNotNull(location)) {
 
     var address = this.generateAddress_(
-        null, addressText, description, location);
+        null, addressText, description, type, location);
     this.saveAddress_(address, 'insert');
   }
 };
@@ -454,12 +499,13 @@ ol.control.GoogleMapsAddresses.prototype.handleLocationChanged_ =
  * @param {?number} id address id if any
  * @param {string} text
  * @param {string} description
+ * @param {number} type
  * @param {google.maps.LatLng} location
  * @return {Object} address
  * @private
  */
 ol.control.GoogleMapsAddresses.prototype.generateAddress_ =
-    function(id, text, description, location) {
+    function(id, text, description, type, location) {
 
   var lat = location.lat();
   var lon = location.lng();
@@ -469,6 +515,7 @@ ol.control.GoogleMapsAddresses.prototype.generateAddress_ =
     'description': description,
     'text': text,
     'lat': lat,
+    'type': type,
     'lon': lon
   };
 
@@ -517,12 +564,12 @@ ol.control.GoogleMapsAddresses.prototype.saveAddress_ =
           me.failCallback(response, data);
         // TODO: handle errors
         // TODO: remove these lines since they are used only for testing
-        /*response = {
+        response = {
           'status': 1,
           'id': 1
         };
         me.handleSaveAddressSuccess_(response, data);
-        */
+
       }
     });
 
@@ -571,6 +618,8 @@ ol.control.GoogleMapsAddresses.prototype.handleSaveAddressSuccess_ =
  * @param {Object} address address
  */
 ol.control.GoogleMapsAddresses.prototype.addAddress = function(address) {
+  if (address.type == 1) this.addHomeAddress_();
+
   this.addresses.push(address);
 
   if (goog.isDefAndNotNull(this.addressesList_)) {
@@ -586,6 +635,9 @@ ol.control.GoogleMapsAddresses.prototype.addAddress = function(address) {
  * @param {Object} address address
  */
 ol.control.GoogleMapsAddresses.prototype.removeAddress = function(address) {
+  if (address.type == 1) {
+    return;
+  }
   var index = this.getAddressIndexByID_(address.id);
 
   if (goog.isDefAndNotNull(index)) {
@@ -633,9 +685,17 @@ ol.control.GoogleMapsAddresses.prototype.addAddressToList = function(
     'class': this.classPrefix + '-address',
     'data-result': address.id
   });
+  var removeDisabled = false;
+
+  if (this.homeAddressButtonText && address.type == 1) {
+    removeDisabled = true;
+  }
+  var removeClass = this.classPrefix + '-remove-address ';
+  if (removeDisabled)
+    removeClass += this.classPrefix + '-remove-address-disabled';
 
   var removeAddressAnchor = goog.dom.createDom(goog.dom.TagName.A, {
-    'class': this.classPrefix + '-remove-address',
+    'class': removeClass,
     'data-result': address.id
   }, this.removeButtonText);
   goog.dom.appendChild(addressElement, removeAddressAnchor);
@@ -647,6 +707,13 @@ ol.control.GoogleMapsAddresses.prototype.addAddressToList = function(
 
   var br = goog.dom.createDom(goog.dom.TagName.BR);
   goog.dom.appendChild(addressElement, br);
+
+  if (this.homeAddressButtonText && address.type == 1) {
+    var homeIcon = goog.dom.createDom(goog.dom.TagName.SPAN, {
+      'class': this.classPrefix + '-homeicon'
+    });
+    goog.dom.appendChild(addressElement, homeIcon);
+  }
 
   var addressText = goog.dom.createDom(goog.dom.TagName.SPAN, {
     'class': this.classPrefix + '-text'
@@ -825,4 +892,24 @@ ol.control.GoogleMapsAddresses.prototype.setError_ = function(error) {
     goog.events.dispatchEvent(this,
         ol.control.GoogleMapsAddresses.EventType.ERROR);
   }
+};
+
+
+/**
+ * Must call before adding a home address.
+ * @private
+ */
+ol.control.GoogleMapsAddresses.prototype.addHomeAddress_ = function() {
+  this.haveAHomeAddress = true;
+  this.homeCheck_.disabled = false;
+  this.homeCheck_.checked = false;
+  for (var i in this.addresses) {
+    if (this.addresses[i].type == 1) {
+      this.addresses[i].type = 0;
+      this.saveAddress_(this.addresses[i], 'update');
+    }
+  }
+  $('.' + this.classPrefix + '-homeicon').remove();
+  $('.' + this.classPrefix + '-remove-address-disabled').removeClass(
+      this.classPrefix + '-remove-address-disabled');
 };
