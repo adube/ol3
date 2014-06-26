@@ -94,6 +94,20 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
   this.addButtonText = goog.isDefAndNotNull(options.addButtonText) ?
       options.addButtonText : 'Add address';
 
+  /**
+   * i18n - editButtonText
+   * @type {string}
+   */
+  this.editButtonText = goog.isDefAndNotNull(options.editButtonText) ?
+      options.editButtonText : 'Edit address';
+
+  /**
+   * i18n - cancelEditButtonText
+   * @type {string}
+   */
+  this.cancelEditButtonText = goog.isDefAndNotNull(
+      options.cancelEditButtonText) ?
+      options.cancelEditButtonText : 'Cancel edit';
 
   /**
    * Function to call when save is a success
@@ -134,6 +148,22 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
   var addButtonText = goog.dom.createTextNode(this.addButtonText);
   goog.dom.appendChild(addButton, addButtonText);
 
+
+  var editButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
+    'class': classPrefix + '-edit-button',
+    'style': 'display:none'
+  });
+  var editButtonText = goog.dom.createTextNode(this.editButtonText);
+  goog.dom.appendChild(editButton, editButtonText);
+
+  var cancelButton = goog.dom.createDom(goog.dom.TagName.BUTTON, {
+    'class': classPrefix + '-cancel-edit-button',
+    'style': 'display:none'
+  });
+  var cancelEditButtonText = goog.dom.createTextNode(this.cancelEditButtonText);
+  goog.dom.appendChild(cancelButton, cancelEditButtonText);
+
+
   goog.dom.appendChild(element, input);
 
   if (this.homeAddressButtonText) {
@@ -155,11 +185,23 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
 
   goog.dom.appendChild(element, geocoderElement);
   goog.dom.appendChild(element, addButton);
+  goog.dom.appendChild(element, editButton);
+  goog.dom.appendChild(element, cancelButton);
 
   goog.events.listen(addButton, [
     goog.events.EventType.TOUCHEND,
     goog.events.EventType.CLICK
   ], this.handleAddButtonPress_, false, this);
+
+  goog.events.listen(editButton, [
+    goog.events.EventType.TOUCHEND,
+    goog.events.EventType.CLICK
+  ], this.handleEditButtonPress_, false, this);
+
+  goog.events.listen(cancelButton, [
+    goog.events.EventType.TOUCHEND,
+    goog.events.EventType.CLICK
+  ], this.handleCancelEditButtonPress_, false, this);
 
   var addressesElement = goog.isDefAndNotNull(options.addressesTarget) ?
       goog.dom.getElement(options.addressesTarget) : null;
@@ -259,6 +301,13 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
    * @type {Object}
    */
   this.currentAddress = null;
+
+  /**
+   * @type {boolean}
+   * @private
+   */
+  this.isEditing_ = false;
+
 
   /**
    * @type {Object}
@@ -469,6 +518,52 @@ ol.control.GoogleMapsAddresses.prototype.handleAddButtonPress_ = function(
 
 
 /**
+ * @param {goog.events.BrowserEvent} browserEvent Browser event.
+ * @private
+ */
+ol.control.GoogleMapsAddresses.prototype.handleEditButtonPress_ = function(
+    browserEvent) {
+
+  browserEvent.preventDefault();
+
+
+  var input = this.input_;
+  var geocoder = this.geocoder_;
+  var type = 0;
+  if (this.homeAddressButtonText) {
+    if (this.homeCheck_.checked) {
+      type = 1;
+    }
+  }
+
+  var addressText = geocoder.getInputValue();
+  var description = input.value;
+  var location = this.location_;
+  var id = this.currentAddress.id;
+
+  if (goog.isDefAndNotNull(addressText) && goog.isDefAndNotNull(description) &&
+      goog.isDefAndNotNull(location)) {
+
+    var address = this.generateAddress_(
+        id, addressText, description, type, location);
+    this.saveAddress_(address, 'update');
+  }
+};
+
+
+/**
+ * @param {goog.events.BrowserEvent} browserEvent Browser event.
+ * @private
+ */
+ol.control.GoogleMapsAddresses.prototype.handleCancelEditButtonPress_ =
+    function(browserEvent) {
+
+  browserEvent.preventDefault();
+  this.stopEditingAddress_();
+};
+
+
+/**
  * @param {goog.events.Event} event Event.
  * @private
  */
@@ -492,6 +587,14 @@ ol.control.GoogleMapsAddresses.prototype.handleLocationChanged_ =
   var geocoder = this.geocoder_;
   var location = geocoder.getLocation();
   this.location_ = goog.isDefAndNotNull(location) ? location : null;
+  if (this.location_ !== null) {
+    var view2d = this.getMap().getView().getView2D();
+    var mapExtent = view2d.calculateExtent(this.getMap().getSize());
+    var locationExtent = ol.extent.boundingExtent([
+      this.geocoder_.getCoordinate()]);
+    if (!ol.extent.intersects(mapExtent, locationExtent))
+      view2d.setCenter(this.geocoder_.getCoordinate());
+  }
 };
 
 
@@ -601,7 +704,7 @@ ol.control.GoogleMapsAddresses.prototype.handleSaveAddressSuccess_ =
       this.addAddress(address);
       this.emptyInputs_();
     } else if (action == 'update') {
-      //this.updateAddress(address);
+      this.updateAddress(address);
     } else {
       this.removeAddress(address);
     }
@@ -618,7 +721,7 @@ ol.control.GoogleMapsAddresses.prototype.handleSaveAddressSuccess_ =
  * @param {Object} address address
  */
 ol.control.GoogleMapsAddresses.prototype.addAddress = function(address) {
-  if (address.type == 1) this.addHomeAddress_();
+  if (this.homeAddressButtonText && address.type == 1) this.addHomeAddress_();
 
   this.addresses.push(address);
 
@@ -633,9 +736,50 @@ ol.control.GoogleMapsAddresses.prototype.addAddress = function(address) {
 
 /**
  * @param {Object} address address
+ * @private
+ */
+ol.control.GoogleMapsAddresses.prototype.editAddress_ = function(address) {
+  this.isEditing_ = true;
+  this.input_.value = address.description;
+  $('.' + this.classPrefix + '-add-button').hide();
+  $('.' + this.classPrefix + '-edit-button').show();
+  $('.' + this.classPrefix + '-cancel-edit-button').show();
+  $('.' + this.classPrefix + '-geocoder input').val(address.text);
+  if (this.homeAddressButtonText) {
+    if (address.type == 1) {
+      this.homeCheck_.checked = true;
+      this.homeCheck_.disabled = true;
+    }else {
+      this.homeCheck_.checked = false;
+      this.homeCheck_.disabled = false;
+    }
+  }
+};
+
+
+/**
+ * @private
+ */
+ol.control.GoogleMapsAddresses.prototype.stopEditingAddress_ =
+    function() {
+  this.isEditing_ = false;
+  $('.' + this.classPrefix + '-add-button').show();
+  $('.' + this.classPrefix + '-edit-button').hide();
+  $('.' + this.classPrefix + '-cancel-edit-button').hide();
+  if (this.haveAHomeAddress) {
+    this.homeCheck_.checked = false;
+    this.homeCheck_.disabled = false;
+  }
+  this.emptyInputs_();
+  this.clear_();
+};
+
+
+/**
+ * @param {Object} address address
  */
 ol.control.GoogleMapsAddresses.prototype.removeAddress = function(address) {
-  if (address.type == 1) {
+  if (this.homeAddressButtonText && address.type == 1) {
     return;
   }
   var index = this.getAddressIndexByID_(address.id);
@@ -670,6 +814,46 @@ ol.control.GoogleMapsAddresses.prototype.removeAddress = function(address) {
     this.clear_();
     this.currentAddress = null;
   }
+};
+
+
+/**
+ * @param {Object} address address
+ */
+ol.control.GoogleMapsAddresses.prototype.updateAddress = function(address) {
+
+  var index = this.getAddressIndexByID_(address.id);
+
+  if (goog.isDefAndNotNull(index)) {
+    this.addresses[index].description = address.description;
+    this.addresses[index].text = address.text;
+    this.addresses[index].lon = address.lon;
+    this.addresses[index].lat = address.lat;
+    this.addresses[index].type = address.type;
+
+    var listElement = this.addressElements_[index];
+    $(listElement).find('.' + this.classPrefix + '-description')
+       .html(address.description);
+    $(listElement).find('.' + this.classPrefix + '-text')
+       .html(address.text);
+
+    if (goog.isDefAndNotNull(this.currentAddress) &&
+        this.currentAddress.id == address.id) {
+      if (this.homeAddressButtonText && address.type == 1) {
+        this.addHomeAddress_(this.addresses[index]);
+        $(listElement).find('.' + this.classPrefix + '-remove-address')
+            .addClass(this.classPrefix + '-remove-address-disabled');
+        var homeIcon = goog.dom.createDom(goog.dom.TagName.SPAN, {
+          'class': this.classPrefix + '-homeicon'
+        });
+        $(listElement).find('.' + this.classPrefix + '-text').prepend(homeIcon);
+      }
+
+      this.clear_();
+      this.currentAddress = null;
+    }
+  }
+  this.stopEditingAddress_();
 };
 
 
@@ -753,8 +937,13 @@ ol.control.GoogleMapsAddresses.prototype.handleAddressElementPress_ = function(
   var address = this.getAddressByID_(id);
 
   if (!goog.isNull(address)) {
+    var oldAddress = this.currentAddress;
     this.currentAddress = address;
     this.displayAddress_(address);
+    if (this.isEditing_ && this.currentAddress == oldAddress)
+      this.stopEditingAddress_();
+    else
+      this.editAddress_(address);
   }
 };
 
@@ -848,6 +1037,8 @@ ol.control.GoogleMapsAddresses.prototype.displayLocation_ = function(location) {
   var lat, lng;
   var map = this.getMap();
 
+  this.location_ = location;
+
   var view = map.getView();
   goog.asserts.assert(goog.isDef(view));
   var view2D = view.getView2D();
@@ -897,14 +1088,18 @@ ol.control.GoogleMapsAddresses.prototype.setError_ = function(error) {
 
 /**
  * Must call before adding a home address.
+ * @param {mtx.format.Address=} opt_address
  * @private
  */
-ol.control.GoogleMapsAddresses.prototype.addHomeAddress_ = function() {
+ol.control.GoogleMapsAddresses.prototype.addHomeAddress_ =
+    function(opt_address) {
+  var except = goog.isDefAndNotNull(opt_address) ? opt_address : null;
+
   this.haveAHomeAddress = true;
   this.homeCheck_.disabled = false;
   this.homeCheck_.checked = false;
   for (var i in this.addresses) {
-    if (this.addresses[i].type == 1) {
+    if (this.addresses[i].type == 1 && this.addresses[i] != except) {
       this.addresses[i].type = 0;
       this.saveAddress_(this.addresses[i], 'update');
     }

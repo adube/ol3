@@ -89,6 +89,8 @@ var olAdresses = new ol.control.GoogleMapsAddresses({
   'clearButtonText': 'Effacer',
   'homeAddressButtonText': 'Adresse de domicile',
   'addButtonText': 'Ajouter une addresse',
+  'editButtonText': 'Modifier l\'addresse',
+  'cancelEditButtonText': 'Annuler la modification',
   'noResultFoundText': 'Aucun résultat n\'a été trouvé',
   'getURL': 'data/cadus/addresses.json',
   'saveURL': 'data/cadus/addresses-save.json',

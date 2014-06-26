@@ -886,6 +886,8 @@ olx.control.FullScreenOptions.prototype.target;
  *     successCallback: (Function),
  *     target: (Element|undefined),
  *     addButtonText: (string|undefined),
+ *     editButtonText: (string|undefined),
+ *     cancelEditButtonText: (string|undefined),
  *     clearButtonText: (string|undefined),
  *     homeAddressButtonText: (string|undefined),
  *     noResultFoundText: (string|undefined),
@@ -986,6 +988,17 @@ olx.control.GoogleMapsAddressesOptions.prototype.target;
  */
 olx.control.GoogleMapsAddressesOptions.prototype.addButtonText;
 
+/**
+ * i18n
+ * @type {string|undefined}
+ */
+olx.control.GoogleMapsAddressesOptions.prototype.editButtonText;
+
+/**
+ * i18n
+ * @type {string|undefined}
+ */
+olx.control.GoogleMapsAddressesOptions.prototype.cancelEditButtonText;
 
 /**
  * i18n

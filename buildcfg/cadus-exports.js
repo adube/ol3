@@ -1,7 +1,9 @@
 goog.require('ol.Map');
 goog.require('ol.View2D');
+goog.require('ol.View');
 goog.require('ol.control.GoogleMapsAddresses');
 goog.require('ol.control.GoogleMapsCurrentPosition');
+goog.require('ol.control.GoogleMapsGeocoder');
 goog.require('ol.control.GoogleMapsDirections');
 goog.require('ol.control.GoogleMapsDirectionsPanel');
 goog.require('ol.control.LayerSwitcher');
@@ -41,6 +43,11 @@ goog.exportProperty(
     ol.View2D.prototype,
     'getZoom',
     ol.View2D.prototype.getZoom);
+
+goog.exportProperty(
+    ol.View2D.prototype,
+    'calculateExtent',
+    ol.View2D.prototype.calculateExtent);
 
 goog.exportSymbol(
     'ol.proj.transform',
@@ -376,6 +383,25 @@ goog.exportProperty(
     ol.control.GoogleMapsCurrentPosition.prototype,
     'setCurrentPosition',
     ol.control.GoogleMapsCurrentPosition.prototype.setCurrentPosition);
+
+goog.exportSymbol(
+    'ol.control.GoogleMapsGeocoder',
+    ol.control.GoogleMapsGeocoder);
+
+goog.exportProperty(
+    ol.control.GoogleMapsGeocoder.prototype,
+    'on',
+    ol.control.GoogleMapsGeocoder.prototype.on);
+
+goog.exportProperty(
+    ol.control.GoogleMapsGeocoder,
+    'EventType',
+    ol.control.GoogleMapsGeocoder.EventType);
+
+goog.exportProperty(
+    ol.control.GoogleMapsGeocoder.EventType,
+    'ERROR',
+    ol.control.GoogleMapsGeocoder.EventType.ERROR);
 
 goog.exportSymbol(
     'ol.control.SingleDraw',
