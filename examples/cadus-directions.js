@@ -143,7 +143,7 @@ var directions = new ol.control.GoogleMapsDirections({
   'reverseButtonText': 'Inverser',
   'removeButtonText': 'Supprimer',
   'myAddressesText': 'Mes adresses',
-  'myTravelModesText': 'Mes modes de transport',
+  //'myTravelModesText': 'Mes modes de transport',
   'noResultFoundText': 'Aucun résultat n\'a été trouvé',
   'noRouteText': 'Aucun itinéraire a été retourné par votre recherche',
   'unexpectedErrorText': 'Une erreur inconnue est survenu lors du routing',

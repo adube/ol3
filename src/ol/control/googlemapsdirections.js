@@ -98,10 +98,10 @@ ol.control.GoogleMapsDirections = function(opt_options) {
 
   /**
    * i18n - myTravelModes
-   * @type {string}
+   * @type {string|null}
    */
   this.myTravelModesText = goog.isDefAndNotNull(options.myTravelModesText) ?
-      options.myTravelModesText : 'My travel modes';
+      options.myTravelModesText : null;
 
   /**
    * i18n - noResultFound
@@ -292,93 +292,93 @@ ol.control.GoogleMapsDirections = function(opt_options) {
     'class': classPrefix + '-fieldset'
   });
   goog.dom.appendChild(firstContainer, fieldsetEl);
-
-  var myTravelModesLabelEl = goog.dom.createDom(goog.dom.TagName.LABEL, {
-    'class': classPrefix + '-label'
-  });
-  goog.dom.appendChild(myTravelModesLabelEl,
-      goog.dom.createTextNode(this.myTravelModesText + ': '));
-  goog.dom.appendChild(firstContainer, myTravelModesLabelEl);
-
-
-  var checkboxLinkContainerEl = goog.dom.createDom(goog.dom.TagName.DIV, {
-    'class': classPrefix + '-checkbox-link-container'
-  });
-  goog.dom.appendChild(firstContainer, checkboxLinkContainerEl);
-
-  goog.array.forEach(travelModes, function(travelMode) {
-    var labelText = '';
-    switch (travelMode) {
-      case ol.control.GoogleMapsDirections.TravelMode.BICYCLING:
-        labelText = this.bicyclingText;
-        break;
-      case ol.control.GoogleMapsDirections.TravelMode.CARPOOLING:
-        labelText = this.carpoolingText;
-        break;
-      case ol.control.GoogleMapsDirections.TravelMode.DRIVING:
-        labelText = this.drivingText;
-        break;
-      case ol.control.GoogleMapsDirections.TravelMode.TRANSIT:
-        labelText = this.transitText;
-        break;
-      case ol.control.GoogleMapsDirections.TravelMode.WALKING:
-        labelText = this.walkingText;
-        break;
-    }
-
-    // == input ==
-    var inputOptions = {
-      'type': 'checkbox',
-      'name': travelMode
-    };
-
-    if (goog.array.indexOf(this.defaultTravelModes_, travelMode) != -1) {
-      inputOptions.checked = 'checked';
-    }
-
-    var inputEl = goog.dom.createDom(goog.dom.TagName.INPUT, inputOptions);
-    goog.dom.appendChild(fieldsetEl, inputEl);
-
-    this.travelModeInputElements_.push(inputEl);
-
-    var labelEl = goog.dom.createDom(goog.dom.TagName.LABEL, {
+  if (this.myTravelModesText) {
+    var myTravelModesLabelEl = goog.dom.createDom(goog.dom.TagName.LABEL, {
+      'class': classPrefix + '-label'
     });
-    goog.dom.appendChild(fieldsetEl, labelEl);
-    goog.dom.appendChild(labelEl, goog.dom.createTextNode(labelText));
+    goog.dom.appendChild(myTravelModesLabelEl,
+        goog.dom.createTextNode(this.myTravelModesText + ': '));
+    goog.dom.appendChild(firstContainer, myTravelModesLabelEl);
 
-    // == checkbox-like link ==
-    var checkboxLinkClass = [];
-    checkboxLinkClass.push(classPrefix + '-checkbox-link');
-    checkboxLinkClass.push(classPrefix + '-checkbox-link-' + travelMode);
 
-    if (goog.array.indexOf(this.defaultTravelModes_, travelMode) != -1) {
-      checkboxLinkClass.push(classPrefix + '-checkbox-link-checked');
-    }
+    var checkboxLinkContainerEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+      'class': classPrefix + '-checkbox-link-container'
+    });
+    goog.dom.appendChild(firstContainer, checkboxLinkContainerEl);
 
-    var checkboxLinkOptions = {
-      'class': checkboxLinkClass.join(' '),
-      'title': labelText,
-      'data-travel-mode': travelMode
-    };
+    goog.array.forEach(travelModes, function(travelMode) {
+      var labelText = '';
+      switch (travelMode) {
+        case ol.control.GoogleMapsDirections.TravelMode.BICYCLING:
+          labelText = this.bicyclingText;
+          break;
+        case ol.control.GoogleMapsDirections.TravelMode.CARPOOLING:
+          labelText = this.carpoolingText;
+          break;
+        case ol.control.GoogleMapsDirections.TravelMode.DRIVING:
+          labelText = this.drivingText;
+          break;
+        case ol.control.GoogleMapsDirections.TravelMode.TRANSIT:
+          labelText = this.transitText;
+          break;
+        case ol.control.GoogleMapsDirections.TravelMode.WALKING:
+          labelText = this.walkingText;
+          break;
+      }
 
-    var checkboxLinkEl = goog.dom.createDom(goog.dom.TagName.A,
-        checkboxLinkOptions);
+      // == input ==
+      var inputOptions = {
+        'type': 'checkbox',
+        'name': travelMode
+      };
 
-    goog.dom.appendChild(checkboxLinkContainerEl, checkboxLinkEl);
-    this.travelModeCheckboxLinkElements_.push(checkboxLinkEl);
+      if (goog.array.indexOf(this.defaultTravelModes_, travelMode) != -1) {
+        inputOptions.checked = 'checked';
+      }
+      var inputEl = goog.dom.createDom(goog.dom.TagName.INPUT, inputOptions);
+      goog.dom.appendChild(fieldsetEl, inputEl);
 
-    goog.events.listen(checkboxLinkEl, [
-      goog.events.EventType.TOUCHEND,
-      goog.events.EventType.CLICK
-    ], this.handleCheckboxLinkElPress_, false, this);
+      this.travelModeInputElements_.push(inputEl);
 
-  }, this);
+      var labelEl = goog.dom.createDom(goog.dom.TagName.LABEL, {
+      });
+      goog.dom.appendChild(fieldsetEl, labelEl);
+      goog.dom.appendChild(labelEl, goog.dom.createTextNode(labelText));
 
-  var separatorEl = goog.dom.createDom(goog.dom.TagName.DIV, {
-    'class': classPrefix + '-checkbox-link-end-separator'
-  });
-  goog.dom.appendChild(checkboxLinkContainerEl, separatorEl);
+      // == checkbox-like link ==
+      var checkboxLinkClass = [];
+      checkboxLinkClass.push(classPrefix + '-checkbox-link');
+      checkboxLinkClass.push(classPrefix + '-checkbox-link-' + travelMode);
 
+      if (goog.array.indexOf(this.defaultTravelModes_, travelMode) != -1) {
+        checkboxLinkClass.push(classPrefix + '-checkbox-link-checked');
+      }
+
+      var checkboxLinkOptions = {
+        'class': checkboxLinkClass.join(' '),
+        'title': labelText,
+        'data-travel-mode': travelMode
+      };
+
+      var checkboxLinkEl = goog.dom.createDom(goog.dom.TagName.A,
+          checkboxLinkOptions);
+
+      goog.dom.appendChild(checkboxLinkContainerEl, checkboxLinkEl);
+      this.travelModeCheckboxLinkElements_.push(checkboxLinkEl);
+
+      goog.events.listen(checkboxLinkEl, [
+        goog.events.EventType.TOUCHEND,
+        goog.events.EventType.CLICK
+      ], this.handleCheckboxLinkElPress_, false, this);
+
+    }, this);
+
+    var separatorEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+      'class': classPrefix + '-checkbox-link-end-separator'
+    });
+    goog.dom.appendChild(checkboxLinkContainerEl, separatorEl);
+
+  }
   var myAddressesLabelEl = goog.dom.createDom(goog.dom.TagName.LABEL, {
     'class': classPrefix + '-label'
   });

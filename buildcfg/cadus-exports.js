@@ -34,6 +34,21 @@ goog.exportSymbol(
     'ol.View2D',
     ol.View2D);
 
+goog.exportSymbol(
+    'ol.View',
+    ol.View);
+
+goog.exportProperty(
+    ol.View.prototype,
+    'getView2D',
+    ol.View.prototype.getView2D);
+
+goog.exportProperty(
+    ol.View2D.prototype,
+    'getView2D',
+    ol.View2D.prototype.getView2D);
+
+
 goog.exportProperty(
     ol.View2D.prototype,
     'on',
@@ -61,6 +76,10 @@ goog.exportSymbol(
     'ol.layer.Vector',
     ol.layer.Vector);
 
+goog.exportSymbol(
+    'ol.Object',
+    ol.Object);
+
 goog.exportProperty(
     ol.Object.prototype,
     'set',
@@ -70,6 +89,11 @@ goog.exportProperty(
     ol.Object.prototype,
     'get',
     ol.Object.prototype.get);
+
+goog.exportProperty(
+    ol.Object,
+    'getChangeEventType',
+    ol.Object.getChangeEventType);
 
 goog.exportSymbol(
     'ol.Feature',
@@ -84,6 +108,12 @@ goog.exportProperty(
     ol.extent,
     'getTopRight',
     ol.extent.getTopRight);
+
+goog.exportProperty(
+    ol.extent,
+    'boundingExtent',
+    ol.extent.boundingExtent);
+
 
 goog.exportSymbol(
     'ol.geom.Point',
@@ -402,6 +432,16 @@ goog.exportProperty(
     ol.control.GoogleMapsGeocoder.EventType,
     'ERROR',
     ol.control.GoogleMapsGeocoder.EventType.ERROR);
+
+goog.exportProperty(
+    ol.control.GoogleMapsGeocoder,
+    'Property',
+    ol.control.GoogleMapsGeocoder.Property);
+
+goog.exportProperty(
+    ol.control.GoogleMapsGeocoder.Property,
+    'LOCATION',
+    ol.control.GoogleMapsGeocoder.Property.LOCATION);
 
 goog.exportSymbol(
     'ol.control.SingleDraw',
