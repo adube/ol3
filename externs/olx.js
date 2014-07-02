@@ -1740,6 +1740,19 @@ olx.control.LayerSwitcherOptions;
 olx.control.LayerSwitcherOptions.prototype.target;
 
 
+/**
+ * @typedef {{target: (Element|undefined)}}
+ * @todo stability experimental
+ */
+olx.control.MTSearchOptions;
+
+
+/**
+ * Target.
+ * @type {Element|undefined}
+ */
+olx.control.MTSearchOptions.prototype.target;
+
 
 /**
  * @typedef {{duration: (number|undefined),
