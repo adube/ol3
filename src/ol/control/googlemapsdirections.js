@@ -98,7 +98,7 @@ ol.control.GoogleMapsDirections = function(opt_options) {
 
   /**
    * i18n - myTravelModes
-   * @type {string|null}
+   * @type {?string}
    */
   this.myTravelModesText = goog.isDefAndNotNull(options.myTravelModesText) ?
       options.myTravelModesText : null;
