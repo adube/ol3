@@ -97,10 +97,19 @@ var directionsPanel = new ol.control.GoogleMapsDirectionsPanel({
 });
 
 var mtSearch = new ol.control.MTSearch({
+  'directionsPanel': directionsPanel,
+  'lineStyle': new ol.style.Style({
+    stroke: new ol.style.Stroke({
+      color: [80, 140, 255, 0.6],
+      width: 6
+    })
+  }),
+  'url': 'data/cadus/multimodal.json',
+  'usePostMethod': false,
   'target': 'gmaps-directions'
 });
 map.addControl(mtSearch);
 
 var triggerRequest = function() {
-  //directions.triggerRouteRequest();
+  mtSearch.triggerRequest();
 };

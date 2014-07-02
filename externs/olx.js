@@ -1741,10 +1741,35 @@ olx.control.LayerSwitcherOptions.prototype.target;
 
 
 /**
- * @typedef {{target: (Element|undefined)}}
+ * @typedef {{directionsPanel: (ol.control.GoogleMapsDirectionsPanel),
+ *     headers: (Object|undefined),
+ *     lineStyle: (Array.<(null|ol.style.Style)>|null|ol.feature.FeatureStyleFunction|ol.style.Style),
+ *     target: (Element|undefined),
+ *     usePostMethod: (boolean|undefined)}}
  * @todo stability experimental
  */
 olx.control.MTSearchOptions;
+
+
+/**
+ * The directions panel used by this control.
+ * @type {ol.control.GoogleMapsDirectionsPanel}
+ */
+olx.control.MTSearchOptions.prototype.directionsPanel;
+
+
+/**
+ * The headers to use with the queries sent by this control
+ * @type {Object|undefined}
+ */
+olx.control.MTSearchOptions.prototype.headers;
+
+
+/**
+ * Style to draw the line for this control
+ * @type {Array.<(null|ol.style.Style)>|null|ol.feature.FeatureStyleFunction|ol.style.Style}
+ */
+olx.control.MTSearchOptions.prototype.lineStyle;
 
 
 /**
@@ -1752,6 +1777,13 @@ olx.control.MTSearchOptions;
  * @type {Element|undefined}
  */
 olx.control.MTSearchOptions.prototype.target;
+
+
+/**
+ * Whether to use POST or GET as request method.
+ * @type {Boolean|undefined}
+ */
+olx.control.MTSearchOptions.prototype.usePostMethod;
 
 
 /**
