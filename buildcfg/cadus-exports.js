@@ -473,6 +473,11 @@ goog.exportProperty(
     'setValues',
     ol.control.MTSearch.prototype.setValues);
 
+goog.exportProperty(
+    ol.control.MTSearch.prototype,
+    'triggerRequest',
+    ol.control.MTSearch.prototype.triggerRequest);
+
 
 goog.exportSymbol(
     'ol.control.SingleDraw',
