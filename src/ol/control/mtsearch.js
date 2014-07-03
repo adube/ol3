@@ -14,6 +14,7 @@ goog.require('ol.Feature');
 goog.require('ol.View2D');
 goog.require('ol.control.Control');
 goog.require('ol.control.GoogleMapsDirectionsPanel');
+goog.require('ol.extent');
 goog.require('ol.geom.LineString');
 goog.require('ol.layer.Vector');
 goog.require('ol.proj');
@@ -66,6 +67,13 @@ ol.control.MTSearch = function(opt_options) {
 
 
   /**
+   * @type {number}
+   * @private
+   */
+  this.pixelBuffer_ = 30;
+
+
+  /**
    * @type {ol.Collection}
    * @private
    */
@@ -109,6 +117,19 @@ ol.control.MTSearch = function(opt_options) {
     element: element,
     target: options.target
   });
+
+
+  // Event listeners
+
+  goog.events.listen(
+      this.directionsPanel_,
+      ol.control.GoogleMapsDirectionsPanel.EventType.SELECT,
+      this.handleSelectionChanged_, false, this);
+
+  goog.events.listen(
+      this.directionsPanel_,
+      ol.control.GoogleMapsDirectionsPanel.EventType.UNSELECT,
+      this.handleSelectionCleared_, false, this);
 
 };
 goog.inherits(ol.control.MTSearch, ol.control.Control);
@@ -160,6 +181,57 @@ ol.control.MTSearch.prototype.clear_ = function() {
   // FIXME - should an event be dispatched ?
   //goog.events.dispatchEvent(this,
   //    ol.control.GoogleMapsDirections.EventType.CLEAR);
+};
+
+
+/**
+ * Draw the selected route
+ * @private
+ */
+ol.control.MTSearch.prototype.drawRoute_ = function() {
+
+  var vectorSource = this.vectorLayer_.getSource();
+  goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
+
+  var features = [];
+
+  var selectedRouteFeatures = this.selectedRouteFeatures_;
+
+  // add selected route features.  There can be one or zero.
+  selectedRouteFeatures.forEach(function(feature) {
+    features.push(feature);
+  }, this);
+
+  // add features to layer
+  vectorSource.addFeatures(features);
+};
+
+
+/**
+ * Fix map view extent to route.
+ * @private
+ */
+ol.control.MTSearch.prototype.fitViewExtentToRoute_ = function() {
+  var map = this.getMap();
+
+  var size = map.getSize();
+  goog.asserts.assertArray(size);
+
+  var view = map.getView();
+  goog.asserts.assert(goog.isDef(view));
+  var view2D = view.getView2D();
+  goog.asserts.assertInstanceof(view2D, ol.View2D);
+
+  var vectorSource = this.vectorLayer_.getSource();
+  goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
+  var extent = vectorSource.getExtent();
+
+  var resolution = view2D.getResolutionForExtent(extent, size);
+  var pixelBuffer = this.pixelBuffer_;
+  var buffer = resolution * pixelBuffer;
+  extent = ol.extent.buffer(extent, buffer);
+
+  view2D.fitExtent(extent, size);
 };
 
 
@@ -256,6 +328,33 @@ ol.control.MTSearch.prototype.handleDirectionsResult_ = function(
 
 
 /**
+ * @param {goog.events.Event} event Event.
+ * @private
+ */
+ol.control.MTSearch.prototype.handleSelectionChanged_ = function(
+    event) {
+
+  var index = this.directionsPanel_.getSelectedRouteIndex();
+  if (!goog.isNull(index)) {
+    this.selectRoute_(index);
+  }
+};
+
+
+/**
+ * @param {goog.events.Event} event Event.
+ * @private
+ */
+ol.control.MTSearch.prototype.handleSelectionCleared_ = function(
+    event) {
+  var index = this.directionsPanel_.getSelectedRouteIndex();
+  if (!goog.isNull(index)) {
+    this.unselectRoute_(index);
+  }
+};
+
+
+/**
  * @private
  */
 ol.control.MTSearch.prototype.request_ = function() {
@@ -286,6 +385,40 @@ ol.control.MTSearch.prototype.request_ = function() {
 
 
 /**
+ * Select the route at the specified location in the collection.  Here,
+ * the selection is merely a matter of getting the route feature at the specific
+ * index and draw the routes.
+ * @param {number} index
+ * @private
+ */
+ol.control.MTSearch.prototype.selectRoute_ = function(index) {
+  var routeFeatures = this.routeFeatures_;
+  var selectedRouteFeatures = this.selectedRouteFeatures_;
+  var routeFeature = routeFeatures.getAt(index);
+
+  if (goog.isNull(routeFeature)) {
+    // todo - manage error
+    return;
+  }
+
+  // add the new route
+  selectedRouteFeatures.push(routeFeature);
+
+  // draw
+  this.drawRoute_();
+
+  // FIXME - do we want this ?
+  // fit extent
+  this.fitViewExtentToRoute_();
+
+  // FIXME - do we need this ?
+  // dispatch event
+  //goog.events.dispatchEvent(this,
+  //    ol.control.GoogleMapsDirections.EventType.SELECT);
+};
+
+
+/**
  * @param {?string} error
  * @private
  */
@@ -300,4 +433,22 @@ ol.control.MTSearch.prototype.setError_ = function(error) {
     //    ol.control.GoogleMapsDirections.EventType.ERROR);
   }
   */
+};
+
+
+/**
+ * Clear the unselected route from the map.
+ * @param {number} index
+ * @private
+ */
+ol.control.MTSearch.prototype.unselectRoute_ = function(index) {
+  var selectedRouteFeatures = this.selectedRouteFeatures_;
+
+  // clear previously selected route
+  selectedRouteFeatures.clear();
+
+  // clear vector layer
+  var vectorSource = this.vectorLayer_.getSource();
+  goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
+  vectorSource.clear();
 };
