@@ -7,10 +7,12 @@ goog.require('ol.control.GoogleMapsGeocoder');
 goog.require('ol.control.GoogleMapsDirections');
 goog.require('ol.control.GoogleMapsDirectionsPanel');
 goog.require('ol.control.LayerSwitcher');
+goog.require('ol.control.MTSearch');
 goog.require('ol.control.SingleDraw');
 goog.require('ol.extent');
 goog.require('ol.Feature');
 goog.require('ol.geom.Point');
+goog.require('ol.geom.LineString');
 goog.require('ol.interaction');
 goog.require('ol.interaction.DragPan');
 goog.require('ol.interaction.DragStyleCursor');
@@ -95,9 +97,16 @@ goog.exportProperty(
     'getChangeEventType',
     ol.Object.getChangeEventType);
 
+
 goog.exportSymbol(
     'ol.Feature',
     ol.Feature);
+
+goog.exportProperty(
+    ol.Feature.prototype,
+    'getGeometry',
+    ol.Feature.prototype.getGeometry);
+
 
 goog.exportProperty(
     ol.extent,
@@ -118,6 +127,17 @@ goog.exportProperty(
 goog.exportSymbol(
     'ol.geom.Point',
     ol.geom.Point);
+
+
+goog.exportSymbol(
+    'ol.geom.LineString',
+    ol.geom.LineString);
+
+goog.exportProperty(
+    ol.geom.LineString.prototype,
+    'getCoordinates',
+    ol.geom.LineString.prototype.getCoordinates);
+
 
 goog.exportSymbol(
     'ol.source.GeoJSON',
@@ -442,6 +462,17 @@ goog.exportProperty(
     ol.control.GoogleMapsGeocoder.Property,
     'LOCATION',
     ol.control.GoogleMapsGeocoder.Property.LOCATION);
+
+
+goog.exportSymbol(
+    'ol.control.MTSearch',
+    ol.control.MTSearch);
+
+goog.exportProperty(
+    ol.control.MTSearch.prototype,
+    'setValues',
+    ol.control.MTSearch.prototype.setValues);
+
 
 goog.exportSymbol(
     'ol.control.SingleDraw',
