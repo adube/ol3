@@ -1728,10 +1728,12 @@ ol.control.GoogleMapsDirectionsPanel.prototype.selectorVisible_ =
 
 
 /**
+ * @param {goog.events.BrowserEvent} browserEvent Browser event.
  * @private
  */
 ol.control.GoogleMapsDirectionsPanel.prototype.handleShowMoreButtonPress_ =
-    function() {
+    function(browserEvent) {
+  browserEvent.preventDefault();
   this.toggleComplexModeResults_();
 };
 
