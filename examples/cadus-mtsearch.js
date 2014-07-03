@@ -111,5 +111,6 @@ var mtSearch = new ol.control.MTSearch({
 map.addControl(mtSearch);
 
 var triggerRequest = function() {
+  mtSearch.setValues({'geom': 'foo'});
   mtSearch.triggerRequest();
 };
