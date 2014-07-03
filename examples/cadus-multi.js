@@ -174,6 +174,7 @@ var directions = new ol.control.GoogleMapsDirections({
   'drivingText': 'Auto-Solo',
   'transitText': 'Autobus',
   'walkingText': 'Marche',
+  'myTravelModesText': 'Mes modes de transport',
   'lineStyle': new ol.style.Style({
     stroke: new ol.style.Stroke({
       color: [80, 140, 255, 0.6],
