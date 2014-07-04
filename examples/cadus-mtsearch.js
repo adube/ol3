@@ -11,6 +11,7 @@ goog.require('ol.layer.Vector');
 goog.require('ol.proj');
 goog.require('ol.source.GeoJSON');
 goog.require('ol.style.Fill');
+goog.require('ol.style.Icon');
 goog.require('ol.style.Stroke');
 goog.require('ol.style.Style');
 
@@ -96,8 +97,26 @@ var directionsPanel = new ol.control.GoogleMapsDirectionsPanel({
   'totalDistanceText': 'Distance Totale'
 });
 
+var iconStyles = [];
+var iconImages = [];
+for (var i = 1, len = 8; i <= len; i++) {
+  var iconImage = 'data/icon' + i + '.png';
+  iconImages.push(iconImage);
+  iconStyles.push(new ol.style.Style({
+    image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+      anchor: [0.5, 46],
+      anchorXUnits: 'fraction',
+      anchorYUnits: 'pixels',
+      opacity: 0.75,
+      src: iconImage
+    }))
+  }));
+}
+
 var mtSearch = new ol.control.MTSearch({
   'directionsPanel': directionsPanel,
+  'iconImages': iconImages,
+  'iconStyles': iconStyles,
   'lineStyle': new ol.style.Style({
     stroke: new ol.style.Stroke({
       color: [80, 140, 255, 0.6],

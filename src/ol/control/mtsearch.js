@@ -16,6 +16,7 @@ goog.require('ol.control.Control');
 goog.require('ol.control.GoogleMapsDirectionsPanel');
 goog.require('ol.extent');
 goog.require('ol.geom.LineString');
+goog.require('ol.geom.Point');
 goog.require('ol.layer.Vector');
 goog.require('ol.proj');
 goog.require('ol.source.Vector');
@@ -59,11 +60,36 @@ ol.control.MTSearch = function(opt_options) {
 
 
   /**
+   * @type {Array.<string>}
+   * @private
+   */
+  this.iconImages_ = options.iconImages;
+
+
+  /**
+   * @type {Array.<ol.style.Style>}
+   * @private
+   */
+  this.iconStyles_ = options.iconStyles;
+
+
+
+  /**
    * User provided style for lines.
    * @type {Array.<(null|ol.style.Style)>|null|ol.feature.FeatureStyleFunction|ol.style.Style}
    * @private
    */
   this.lineStyle_ = options.lineStyle;
+
+
+  /**
+   * A collection of the marker to also add to the vector layer.  The
+   * collection itself contains arrays of ol.Feature in the same order
+   * of the routes.
+   * @type {ol.Collection}
+   * @private
+   */
+  this.markerFeatures_ = new ol.Collection();
 
 
   /**
@@ -169,6 +195,7 @@ ol.control.MTSearch.prototype.triggerRequest = function() {
  */
 ol.control.MTSearch.prototype.clear_ = function() {
 
+  this.markerFeatures_.clear();
   this.routeFeatures_.clear();
   this.selectedRouteFeatures_.clear();
 
@@ -260,15 +287,22 @@ ol.control.MTSearch.prototype.handleDirectionsResult_ = function(
   var lat, location, lng, transformedCoordinate;
   var feature;
   var coordinates;
+  var coordinate;
   var geometry;
 
   var routeFeatures = this.routeFeatures_;
+  var markerFeatures = this.markerFeatures_;
+  var routeMarkerFeatures;
+  var routeMarkerFeature;
+  var lastLeg;
+  var iIconStyle;
 
   this.setError_(null);
 
   if (status == google.maps.DirectionsStatus.OK) {
     goog.array.forEach(response.routes, function(route) {
       geometry = null;
+      routeMarkerFeatures = [];
 
       if (goog.isDefAndNotNull(route.overview_path)) {
         coordinates = [];
@@ -294,13 +328,46 @@ ol.control.MTSearch.prototype.handleDirectionsResult_ = function(
       feature = new ol.Feature(geometry);
       feature.setStyle(this.lineStyle_);
       routeFeatures.push(feature);
+
+
+      // collect the markers to use with the route
+      iIconStyle = 0;
+      goog.array.forEach(route.legs, function(leg) {
+        var coordinate;
+        if (goog.isDefAndNotNull(leg.start_coordinate)) {
+          coordinate = leg.start_coordinate;
+        } else {
+          lng = leg.start_location.lng();
+          lat = leg.start_location.lat();
+          coordinate = ol.proj.transform(
+              [lng, lat], 'EPSG:4326', projection.getCode());
+        }
+        routeMarkerFeature = new ol.Feature(new ol.geom.Point(coordinate));
+        routeMarkerFeature.setStyle(this.iconStyles_[iIconStyle++]);
+        routeMarkerFeatures.push(routeMarkerFeature);
+      }, this);
+
+      lastLeg = route.legs[route.legs.length - 1];
+      if (goog.isDefAndNotNull(lastLeg.end_coordinate)) {
+        coordinate = lastLeg.end_coordinate;
+      } else {
+        lng = lastLeg.end_location.lng();
+        lat = lastLeg.end_location.lat();
+        coordinate = ol.proj.transform(
+            [lng, lat], 'EPSG:4326', projection.getCode());
+      }
+      routeMarkerFeature = new ol.Feature(new ol.geom.Point(coordinate));
+      routeMarkerFeature.setStyle(this.iconStyles_[iIconStyle++]);
+      routeMarkerFeatures.push(routeMarkerFeature);
+
+      markerFeatures.push(routeMarkerFeatures);
     }, this);
 
     if (routeFeatures.getLength()) {
       // set directions in panel
       // FIXME - there should be images here...
       this.directionsPanel_.setDirections(
-          response, []);
+          response, this.iconImages_);
     } else {
       // FIXME
       //this.setError_(this.noRouteText);
@@ -395,6 +462,8 @@ ol.control.MTSearch.prototype.selectRoute_ = function(index) {
   var routeFeatures = this.routeFeatures_;
   var selectedRouteFeatures = this.selectedRouteFeatures_;
   var routeFeature = routeFeatures.getAt(index);
+  var routeMarkerFeatures = this.markerFeatures_.getAt(index);
+  goog.asserts.assertArray(routeMarkerFeatures);
 
   if (goog.isNull(routeFeature)) {
     // todo - manage error
@@ -403,6 +472,9 @@ ol.control.MTSearch.prototype.selectRoute_ = function(index) {
 
   // add the new route
   selectedRouteFeatures.push(routeFeature);
+
+  // add the markers as well
+  selectedRouteFeatures.extend(routeMarkerFeatures);
 
   // draw
   this.drawRoute_();

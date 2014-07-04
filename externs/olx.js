@@ -1743,6 +1743,8 @@ olx.control.LayerSwitcherOptions.prototype.target;
 /**
  * @typedef {{directionsPanel: (ol.control.GoogleMapsDirectionsPanel),
  *     headers: (Object|undefined),
+ *     iconImages: (Array.<string>),
+ *     iconStyles: (Array.<ol.style.Style>),
  *     lineStyle: (Array.<(null|ol.style.Style)>|null|ol.feature.FeatureStyleFunction|ol.style.Style),
  *     target: (Element|undefined),
  *     usePostMethod: (boolean|undefined)}}
@@ -1763,6 +1765,18 @@ olx.control.MTSearchOptions.prototype.directionsPanel;
  * @type {Object|undefined}
  */
 olx.control.MTSearchOptions.prototype.headers;
+
+
+/**
+ * @type {Array.<string>}
+ */
+olx.control.MTSearchOptions.prototype.iconImages_;
+
+
+/**
+ * @type {Array.<ol.style.Style>}
+ */
+olx.control.MTSearchOptions.prototype.iconStyles_;
 
 
 /**
