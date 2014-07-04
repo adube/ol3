@@ -236,8 +236,8 @@ goog.exportProperty(
 
 goog.exportProperty(
     ol.control.GoogleMapsDirectionsPanel.prototype,
-    'getSelectedRouteCoordinates',
-    ol.control.GoogleMapsDirectionsPanel.prototype.getSelectedRouteCoordinates);
+    'getSelectedRouteLegsAsGeoJSON',
+    ol.control.GoogleMapsDirectionsPanel.prototype.getSelectedRouteLegsAsGeoJSON);
 
 
 goog.exportSymbol(

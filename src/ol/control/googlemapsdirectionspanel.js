@@ -16,6 +16,8 @@ goog.require('ol.OverlayPositioning');
 goog.require('ol.View2D');
 goog.require('ol.control.Control');
 goog.require('ol.extent');
+goog.require('ol.format.GeoJSON');
+goog.require('ol.geom.LineString');
 goog.require('ol.proj');
 
 
@@ -489,21 +491,20 @@ ol.control.GoogleMapsDirectionsPanel.prototype.setDirections = function(
 
 
 /**
- * Returns the currently selected route coordinates separated by legs.
+ * Returns the currently selected route legs, each as GeoJSON.
  *
- * How it's done: A route have multiple legs, which have multiple steps,
- * which have a 'path' property that contains all LatLng of a step.  Those
- * LatLng are transformed into the map projection coordinates, then pushed
- * all together for each steps of a leg.
- * @return {Array.<Array.<ol.Coordinate>>}
+ * How it's done: the leg steps 'path' locations are transformed and collected
+ * all together for each leg, then written as GeoJSON.
+ * @return {Array.<GeoJSONObject>}
  */
-ol.control.GoogleMapsDirectionsPanel.prototype.getSelectedRouteCoordinates =
+ol.control.GoogleMapsDirectionsPanel.prototype.getSelectedRouteLegsAsGeoJSON =
     function() {
 
-  var routeCoordinates = [];
+  var geojson = [];
   var legCoordinates;
   var lat, lng;
   var coordinate;
+  var format = new ol.format.GeoJSON();
 
   var map = this.getMap();
 
@@ -528,11 +529,16 @@ ol.control.GoogleMapsDirectionsPanel.prototype.getSelectedRouteCoordinates =
           legCoordinates.push(coordinate);
         }, this);
       }, this);
-      routeCoordinates.push(legCoordinates);
+
+      geojson.push(
+          format.writeGeometry(
+              new ol.geom.LineString(legCoordinates)
+          )
+      );
     });
   }
 
-  return routeCoordinates;
+  return geojson;
 };
 
 
