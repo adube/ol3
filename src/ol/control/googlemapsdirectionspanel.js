@@ -491,16 +491,17 @@ ol.control.GoogleMapsDirectionsPanel.prototype.setDirections = function(
 /**
  * Returns the currently selected route coordinates separated by legs.
  *
- * How: collect each coordinates of each step using its 'path' property
- * (i.e. the linestring of each path), do so for each leg in the route.
- * @return {Array.<Array.<Array.<ol.Coordinate>>>}
+ * How it's done: A route have multiple legs, which have multiple steps,
+ * which have a 'path' property that contains all LatLng of a step.  Those
+ * LatLng are transformed into the map projection coordinates, then pushed
+ * all together for each steps of a leg.
+ * @return {Array.<Array.<ol.Coordinate>>}
  */
 ol.control.GoogleMapsDirectionsPanel.prototype.getSelectedRouteCoordinates =
     function() {
 
   var routeCoordinates = [];
   var legCoordinates;
-  var stepCoordinates;
   var lat, lng;
   var coordinate;
 
@@ -518,16 +519,14 @@ ol.control.GoogleMapsDirectionsPanel.prototype.getSelectedRouteCoordinates =
     goog.array.forEach(route.legs, function(leg) {
       legCoordinates = [];
       goog.array.forEach(leg.steps, function(step, index) {
-        stepCoordinates = [];
         goog.asserts.assertArray(step.path);
         goog.array.forEach(step.path, function(location) {
           lat = location.lat();
           lng = location.lng();
           coordinate = ol.proj.transform(
               [lng, lat], 'EPSG:4326', projection.getCode());
-          stepCoordinates.push(coordinate);
+          legCoordinates.push(coordinate);
         }, this);
-        legCoordinates.push(stepCoordinates);
       }, this);
       routeCoordinates.push(legCoordinates);
     });
