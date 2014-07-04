@@ -214,6 +214,7 @@ goog.exportProperty(
     'getStroke',
     ol.style.Style.prototype.getStroke);
 
+
 goog.exportSymbol(
     'ol.control.GoogleMapsDirectionsPanel',
     ol.control.GoogleMapsDirectionsPanel);
@@ -232,6 +233,12 @@ goog.exportProperty(
     ol.control.GoogleMapsDirectionsPanel.Mode,
     'COMPLEX',
     ol.control.GoogleMapsDirectionsPanel.Mode.COMPLEX);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirectionsPanel.prototype,
+    'getSelectedRouteCoordinates',
+    ol.control.GoogleMapsDirectionsPanel.prototype.getSelectedRouteCoordinates);
+
 
 goog.exportSymbol(
     'ol.control.GoogleMapsDirections',
