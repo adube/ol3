@@ -476,6 +476,26 @@ goog.exportSymbol(
     ol.control.MTSearch);
 
 goog.exportProperty(
+    ol.control.MTSearch,
+    'EventType',
+    ol.control.MTSearch.EventType);
+
+goog.exportProperty(
+    ol.control.MTSearch.EventType,
+    'ERROR',
+    ol.control.MTSearch.EventType.ERROR);
+
+goog.exportProperty(
+    ol.control.MTSearch.prototype,
+    'getError',
+    ol.control.MTSearch.prototype.getError);
+
+goog.exportProperty(
+    ol.control.MTSearch.prototype,
+    'on',
+    ol.control.MTSearch.prototype.on);
+
+goog.exportProperty(
     ol.control.MTSearch.prototype,
     'setValues',
     ol.control.MTSearch.prototype.setValues);

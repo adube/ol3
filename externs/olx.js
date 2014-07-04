@@ -1747,7 +1747,9 @@ olx.control.LayerSwitcherOptions.prototype.target;
  *     iconStyles: (Array.<ol.style.Style>),
  *     lineStyle: (Array.<(null|ol.style.Style)>|null|ol.feature.FeatureStyleFunction|ol.style.Style),
  *     target: (Element|undefined),
- *     usePostMethod: (boolean|undefined)}}
+ *     usePostMethod: (boolean|undefined),
+ *     noRouteText: (string|undefined),
+ *     unexpectedErrorText: (string|undefined)}}
  * @todo stability experimental
  */
 olx.control.MTSearchOptions;
@@ -1798,6 +1800,20 @@ olx.control.MTSearchOptions.prototype.target;
  * @type {Boolean|undefined}
  */
 olx.control.MTSearchOptions.prototype.usePostMethod;
+
+
+/**
+ * i18n
+ * @type {string|undefined}
+ */
+olx.control.MTSearchOptions.prototype.noRouteText;
+
+
+/**
+ * i18n
+ * @type {string|undefined}
+ */
+olx.control.MTSearchOptions.prototype.unexpectedErrorText;
 
 
 /**

@@ -32,6 +32,23 @@ goog.require('ol.source.Vector');
 ol.control.MTSearch = function(opt_options) {
   var options = goog.isDef(opt_options) ? opt_options : {};
 
+  // i18n
+
+  /**
+   * i18n - noRouteText
+   * @type {string}
+   */
+  this.noRouteText = goog.isDef(options.noRouteText) ?
+      options.noRouteText : 'Your search did not return any route';
+
+  /**
+   * i18n - unexpectedErrorText
+   * @type {string}
+   */
+  this.unexpectedErrorText = goog.isDef(options.unexpectedErrorText) ?
+      options.unexpectedErrorText : 'An unexpected error occured';
+
+
   /**
    * @type {string}
    * @private
@@ -50,6 +67,14 @@ ol.control.MTSearch = function(opt_options) {
    * @private
    */
   this.directionsPanel_ = options.directionsPanel;
+
+
+  /**
+   * The error message currently on
+   * @type {?string}
+   * @private
+   */
+  this.error_ = null;
 
 
   /**
@@ -162,6 +187,22 @@ goog.inherits(ol.control.MTSearch, ol.control.Control);
 
 
 /**
+ * @enum {string}
+ */
+ol.control.MTSearch.EventType = {
+  ERROR: goog.events.getUniqueId('error')
+};
+
+
+/**
+ * @return {?string}
+ */
+ol.control.MTSearch.prototype.getError = function() {
+  return this.error_;
+};
+
+
+/**
  * @inheritDoc
  */
 ol.control.MTSearch.prototype.setMap = function(map) {
@@ -204,10 +245,6 @@ ol.control.MTSearch.prototype.clear_ = function() {
   vectorSource.clear();
 
   this.directionsPanel_.clearDirections();
-
-  // FIXME - should an event be dispatched ?
-  //goog.events.dispatchEvent(this,
-  //    ol.control.GoogleMapsDirections.EventType.CLEAR);
 };
 
 
@@ -365,32 +402,16 @@ ol.control.MTSearch.prototype.handleDirectionsResult_ = function(
 
     if (routeFeatures.getLength()) {
       // set directions in panel
-      // FIXME - there should be images here...
       this.directionsPanel_.setDirections(
           response, this.iconImages_);
     } else {
-      // FIXME
-      //this.setError_(this.noRouteText);
-      this.setError_('');
+      this.setError_(this.noRouteText);
     }
   }else if (status == google.maps.DirectionsStatus.ZERO_RESULTS) {
-    // FIXME - todo
-    //this.setError_(this.noRouteText);
-    this.setError_('');
+    this.setError_(this.noRouteText);
   } else {
-    // FIXME - todo
-    //this.setError_(this.unexpectedErrorText);
-    this.setError_('');
+    this.setError_(this.unexpectedErrorText);
   }
-
-  // FIXME - should we trigger an event here ?
-  /*
-  if (this.loading_ === false) {
-    goog.events.dispatchEvent(this,
-        ol.control.GoogleMapsDirections.EventType.ROUTECOMPLETE);
-  }
-  */
-
 };
 
 
@@ -479,14 +500,8 @@ ol.control.MTSearch.prototype.selectRoute_ = function(index) {
   // draw
   this.drawRoute_();
 
-  // FIXME - do we want this ?
   // fit extent
   this.fitViewExtentToRoute_();
-
-  // FIXME - do we need this ?
-  // dispatch event
-  //goog.events.dispatchEvent(this,
-  //    ol.control.GoogleMapsDirections.EventType.SELECT);
 };
 
 
@@ -495,16 +510,12 @@ ol.control.MTSearch.prototype.selectRoute_ = function(index) {
  * @private
  */
 ol.control.MTSearch.prototype.setError_ = function(error) {
-  // FIXME - todo
-  /*
   if (!goog.isNull(error) || !goog.isNull(this.error_)) {
     this.error_ = error;
 
-    // FIXME - is this useful ?
-    //goog.events.dispatchEvent(this,
-    //    ol.control.GoogleMapsDirections.EventType.ERROR);
+    goog.events.dispatchEvent(this,
+        ol.control.MTSearch.EventType.ERROR);
   }
-  */
 };
 
 
