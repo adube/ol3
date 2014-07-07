@@ -1890,7 +1890,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createShowMoreButton_ =
   var classPrefix = this.classPrefix_;
 
   this.showMoreButtonEl_ = goog.dom.createDom(goog.dom.TagName.BUTTON, {
-    'class': classPrefix + '-show-more-button'
+    'class': 'button blue ' + classPrefix + '-show-more-button'
   });
   goog.dom.appendChild(this.showMoreButtonEl_, goog.dom.createTextNode(
       this.showMoreText));
