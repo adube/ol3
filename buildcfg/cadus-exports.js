@@ -487,6 +487,11 @@ goog.exportProperty(
 
 goog.exportProperty(
     ol.control.MTSearch.prototype,
+    'clear',
+    ol.control.MTSearch.prototype.clear);
+
+goog.exportProperty(
+    ol.control.MTSearch.prototype,
     'getError',
     ol.control.MTSearch.prototype.getError);
 

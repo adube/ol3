@@ -195,6 +195,14 @@ ol.control.MTSearch.EventType = {
 
 
 /**
+ * Public method used to clear the control
+ */
+ol.control.MTSearch.prototype.clear = function() {
+  this.clear_();
+};
+
+
+/**
  * @return {?string}
  */
 ol.control.MTSearch.prototype.getError = function() {
