@@ -291,6 +291,11 @@ goog.exportProperty(
 
 goog.exportProperty(
     ol.control.GoogleMapsDirections.prototype,
+    'setLayerOpacity',
+    ol.control.GoogleMapsDirections.prototype.setLayerOpacity);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirections.prototype,
     'triggerRouteRequest',
     ol.control.GoogleMapsDirections.prototype.triggerRouteRequest);
 

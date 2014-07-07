@@ -425,6 +425,16 @@ ol.control.GoogleMapsGeocoder.prototype.setIconImage = function(image) {
 
 
 /**
+ * Set all vector layer opacity to defined value, i.e. the vector layer in
+ * this control and all geocoder layers as well
+ * @param {number} value
+ */
+ol.control.GoogleMapsGeocoder.prototype.setLayerOpacity = function(value) {
+  this.vectorLayer_.setOpacity(value);
+};
+
+
+/**
  * @inheritDoc
  */
 ol.control.GoogleMapsGeocoder.prototype.setMap = function(map) {

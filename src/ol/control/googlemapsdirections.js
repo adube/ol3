@@ -870,6 +870,19 @@ ol.control.GoogleMapsDirections.prototype.loadQueryParams = function(source) {
 
 
 /**
+ * Set all vector layer opacity to defined value, i.e. the vector layer in
+ * this control and all geocoder layers as well
+ * @param {number} value
+ */
+ol.control.GoogleMapsDirections.prototype.setLayerOpacity = function(value) {
+  this.vectorLayer_.setOpacity(value);
+  this.geocoders_.forEach(function(geocoder, index) {
+    geocoder.setLayerOpacity(value);
+  }, this);
+};
+
+
+/**
  * Collect and return the query parameters AND result (routes) as MTJSON
  * @return {string} serialized json ready for save
  */
