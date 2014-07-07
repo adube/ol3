@@ -820,7 +820,10 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
     // price
     var priceText = route.mt_offre.mt_prix;
     var priceEl = goog.dom.createDom(goog.dom.TagName.DIV, {
-      'class': classPrefix + '-offer-header'
+      'class': [
+        classPrefix + '-offer-header',
+        classPrefix + '-offer-price'
+      ].join(' ')
     });
     goog.dom.appendChild(rightCtnEl, priceEl);
     goog.dom.appendChild(priceEl, goog.dom.createTextNode(priceText));
