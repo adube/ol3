@@ -1772,13 +1772,13 @@ olx.control.MTSearchOptions.prototype.headers;
 /**
  * @type {Array.<string>}
  */
-olx.control.MTSearchOptions.prototype.iconImages_;
+olx.control.MTSearchOptions.prototype.iconImages;
 
 
 /**
  * @type {Array.<ol.style.Style>}
  */
-olx.control.MTSearchOptions.prototype.iconStyles_;
+olx.control.MTSearchOptions.prototype.iconStyles;
 
 
 /**
