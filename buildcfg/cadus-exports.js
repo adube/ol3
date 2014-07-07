@@ -221,6 +221,21 @@ goog.exportSymbol(
 
 goog.exportProperty(
     ol.control.GoogleMapsDirectionsPanel,
+    'EventType',
+    ol.control.GoogleMapsDirectionsPanel.EventType);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirectionsPanel.EventType,
+    'SELECT',
+    ol.control.GoogleMapsDirectionsPanel.EventType.SELECT);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirectionsPanel.EventType,
+    'UNSELECT',
+    ol.control.GoogleMapsDirectionsPanel.EventType.UNSELECT);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirectionsPanel,
     'Mode',
     ol.control.GoogleMapsDirectionsPanel.Mode);
 
@@ -238,6 +253,11 @@ goog.exportProperty(
     ol.control.GoogleMapsDirectionsPanel.prototype,
     'getSelectedRouteLegsAsGeoJSON',
     ol.control.GoogleMapsDirectionsPanel.prototype.getSelectedRouteLegsAsGeoJSON);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirectionsPanel.prototype,
+    'on',
+    ol.control.GoogleMapsDirectionsPanel.prototype.on);
 
 
 goog.exportSymbol(
