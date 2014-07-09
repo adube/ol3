@@ -852,6 +852,16 @@ ol.control.GoogleMapsDirections.prototype.getGeocoderInfo = function() {
 
 
 /**
+ * @return {ol.control.GoogleMapsGeocoder}
+ */
+ol.control.GoogleMapsDirections.prototype.getStartGeocoder = function() {
+  var geocoder = this.geocoders_.getAt(0);
+  goog.asserts.assertInstanceof(geocoder, ol.control.GoogleMapsGeocoder);
+  return geocoder;
+};
+
+
+/**
  * Read the given source object then load its element as query parameters
  * and results (routes)
  * @param {Object} source

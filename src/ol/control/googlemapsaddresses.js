@@ -425,6 +425,9 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
       goog.array.forEach(response.addresses, function(address) {
         me.addAddress(address);
       });
+
+      goog.events.dispatchEvent(this,
+          ol.control.GoogleMapsAddresses.EventType.LOADSUCCESS);
     } else {
       // TODO: handle get addresses fail
       //this.handleGetAddressesFail_(response);
@@ -445,6 +448,7 @@ goog.inherits(ol.control.GoogleMapsAddresses, ol.control.Control);
 ol.control.GoogleMapsAddresses.EventType = {
   ADD: goog.events.getUniqueId('add'),
   ERROR: goog.events.getUniqueId('error'),
+  LOADSUCCESS: goog.events.getUniqueId('loadsuccess'),
   REMOVE: goog.events.getUniqueId('remove')
 };
 

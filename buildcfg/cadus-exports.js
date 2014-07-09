@@ -286,6 +286,11 @@ goog.exportProperty(
 
 goog.exportProperty(
     ol.control.GoogleMapsDirections.prototype,
+    'getStartGeocoder',
+    ol.control.GoogleMapsDirections.prototype.getStartGeocoder);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirections.prototype,
     'load',
     ol.control.GoogleMapsDirections.prototype.load);
 
@@ -418,6 +423,7 @@ goog.exportProperty(
     'addControl',
     ol.Map.prototype.addControl);
 
+
 goog.exportSymbol(
     'ol.control.GoogleMapsAddresses',
     ol.control.GoogleMapsAddresses);
@@ -439,8 +445,18 @@ goog.exportProperty(
 
 goog.exportProperty(
     ol.control.GoogleMapsAddresses.EventType,
+    'LOADSUCCESS',
+    ol.control.GoogleMapsAddresses.EventType.LOADSUCCESS);
+
+goog.exportProperty(
+    ol.control.GoogleMapsAddresses.EventType,
     'REMOVE',
     ol.control.GoogleMapsAddresses.EventType.REMOVE);
+
+goog.exportProperty(
+    ol.control.GoogleMapsAddresses.prototype,
+    'getAddresses',
+    ol.control.GoogleMapsAddresses.prototype.getAddresses);
 
 goog.exportProperty(
     ol.control.GoogleMapsAddresses.prototype,
@@ -451,6 +467,7 @@ goog.exportProperty(
     ol.control.GoogleMapsAddresses.prototype,
     'on',
     ol.control.GoogleMapsAddresses.prototype.on);
+
 
 goog.exportSymbol(
     'ol.control.GoogleMapsCurrentPosition',
@@ -465,6 +482,7 @@ goog.exportProperty(
     ol.control.GoogleMapsCurrentPosition.prototype,
     'setCurrentPosition',
     ol.control.GoogleMapsCurrentPosition.prototype.setCurrentPosition);
+
 
 goog.exportSymbol(
     'ol.control.GoogleMapsGeocoder',
@@ -494,6 +512,16 @@ goog.exportProperty(
     ol.control.GoogleMapsGeocoder.Property,
     'LOCATION',
     ol.control.GoogleMapsGeocoder.Property.LOCATION);
+
+goog.exportProperty(
+    ol.control.GoogleMapsGeocoder.prototype,
+    'setInputValue',
+    ol.control.GoogleMapsGeocoder.prototype.setInputValue);
+
+goog.exportProperty(
+    ol.control.GoogleMapsGeocoder.prototype,
+    'setLocation',
+    ol.control.GoogleMapsGeocoder.prototype.setLocation);
 
 
 goog.exportSymbol(
