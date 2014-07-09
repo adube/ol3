@@ -219,6 +219,20 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
   this.toggleWorkInProgress(false);
 
   /**
+   * @type {Element}
+   * @private
+   */
+  this.correspondingEl_ = goog.dom.createDom(goog.dom.TagName.DIV, {
+    'class': classPrefix + '-correspondance'
+  });
+  goog.dom.appendChild(
+      this.correspondingEl_,
+      goog.dom.createTextNode(this.correspondanceText)
+  );
+  goog.dom.appendChild(element, this.correspondingEl_);
+  this.toggleCorrespondingEl(false);
+
+  /**
    * The container element for the route selector
    * @type {Element}
    * @private
@@ -425,8 +439,9 @@ ol.control.GoogleMapsDirectionsPanel.prototype.clearDirections = function() {
   // clear icon images
   this.iconImageElements_.clear();
 
-  //Hide suggested routes link
+  //Hide suggested routes link and corresponding text
   this.selectorVisible_(false);
+  this.toggleCorrespondingEl(false);
 
   // reset limit page counter
   this.limitPageCounter_ = 0;
@@ -453,12 +468,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.setDirections = function(
   this.clearDirections();
 
   if (directionsResult.mt_corresponding == 0) {
-    var corres = goog.dom.createDom(goog.dom.TagName.DIV, {
-      'class': classPrefix + '-correspondance'
-    });
-    goog.dom.appendChild(routesEl, corres);
-    var corresText = goog.dom.createTextNode(this.correspondanceText);
-    goog.dom.appendChild(corres, corresText);
+    this.toggleCorrespondingEl(true);
   }
 
   // add routes
@@ -615,6 +625,18 @@ ol.control.GoogleMapsDirectionsPanel.prototype.setIconImages =
       iconImageEl.src = iconImage;
     }
   }, this);
+};
+
+
+/**
+ * Show or hide the corresponding text div element
+ * @param {boolean} noCorresponding Whether to show the 'no corresponding' div
+ * element or not
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.toggleCorrespondingEl =
+    function(noCorresponding) {
+  var display = (noCorresponding === true) ? '' : 'none';
+  goog.style.setStyle(this.correspondingEl_, 'display', display);
 };
 
 
