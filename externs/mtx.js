@@ -45,6 +45,11 @@ mtx.format.Address.prototype.text;
 
 
 /**
+ * @type {string}
+ */
+google.maps.prototype.mt_corresponding
+
+/**
  * @type {Array.<number>}
  */
 google.maps.DirectionsLeg.prototype.end_coordinate;

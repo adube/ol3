@@ -137,6 +137,16 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
   this.totalDistanceText = goog.isDef(options.totalDistanceText) ?
       options.totalDistanceText : 'Total distance';
 
+  /**
+   * i18n - correspondance
+   * @type {string}
+   */
+  this.correspondanceText = goog.isDef(options.correspondanceText) ?
+      options.correspondanceText :
+      'Désolé aucun résultat correspondant à votre recherche ' +
+      'n\'a été trouvé, ' + 'voici quelques résultats qui pourraient ' +
+      'tout de même vous intéresser.';
+
   var classPrefix = 'ol-gmdp';
 
   /**
@@ -427,6 +437,15 @@ ol.control.GoogleMapsDirectionsPanel.prototype.setDirections = function(
 
   // first, clear any previous direction infos
   this.clearDirections();
+
+  if (directionsResult.mt_corresponding == 0) {
+    var corres = goog.dom.createDom(goog.dom.TagName.DIV, {
+      'class': classPrefix + '-correspondance'
+    });
+    goog.dom.appendChild(routesEl, corres);
+    var corresText = goog.dom.createTextNode(this.correspondanceText);
+    goog.dom.appendChild(corres, corresText);
+  }
 
   // add routes
   goog.array.forEach(directionsResult.routes, function(route, index) {

@@ -3,6 +3,7 @@ goog.provide('ol.control.GoogleMapsDirections');
 goog.require('goog.Uri.QueryData');
 goog.require('goog.array');
 goog.require('goog.asserts');
+goog.require('goog.debug.Console');
 goog.require('goog.dom');
 goog.require('goog.dom.TagName');
 goog.require('goog.dom.classes');
@@ -1983,6 +1984,9 @@ ol.control.GoogleMapsDirections.prototype.loadAll_ = function(
 
   // routes - loaded after geocoders
   if (includeRoutes === true) {
+    /*
+       *goog.debug.Console.addLogRecord(object);
+       */
     this.handleDirectionsResult_(object, google.maps.DirectionsStatus.OK);
   }
 
