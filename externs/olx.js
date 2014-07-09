@@ -1378,6 +1378,7 @@ olx.control.GoogleMapsDirectionsOptions.prototype.walkingText;
  *     suggestedRoutesText: (string|undefined),
  *     toText: (string|undefined),
  *     totalDistanceText: (string|undefined),
+ *     totalDurationText: (string|undefined),
  *     correspondanceText: (string|undefined)}}
  * @todo stability experimental
  */
@@ -1515,6 +1516,14 @@ olx.control.GoogleMapsDirectionsPanelOptions.prototype.toText;
  * @type {string|undefined}
  */
 olx.control.GoogleMapsDirectionsPanelOptions.prototype.totalDistanceText;
+
+
+/**
+ * i18n
+ * @type {string|undefined}
+ */
+olx.control.GoogleMapsDirectionsPanelOptions.prototype.totalDurationText;
+
 
 /**
  * i18n

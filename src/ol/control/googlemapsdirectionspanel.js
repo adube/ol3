@@ -152,6 +152,13 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
       options.totalDistanceText : 'Total distance';
 
   /**
+   * i18n - totalDuration
+   * @type {string}
+   */
+  this.totalDurationText = goog.isDef(options.totalDurationText) ?
+      options.totalDurationText : 'Total duration';
+
+  /**
    * i18n - correspondance
    * @type {string}
    */
@@ -681,6 +688,16 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createRouteElement_ =
   goog.dom.appendChild(element, totalDistanceEl);
   goog.dom.appendChild(
       totalDistanceEl, goog.dom.createTextNode(totalDistanceText));
+
+  // total duration
+  var totalDurationText = this.totalDurationText + ': ' +
+      this.aroundText + ' ' + this.calculateRouteTotalDuration_(route);
+  var totalDurationEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+    'class': classPrefix + '-route-total-duration'
+  });
+  goog.dom.appendChild(element, totalDurationEl);
+  goog.dom.appendChild(
+      totalDurationEl, goog.dom.createTextNode(totalDurationText));
 
   var legCounter = 0;
 

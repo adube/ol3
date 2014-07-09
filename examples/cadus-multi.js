@@ -141,7 +141,9 @@ var directionsPanel = new ol.control.GoogleMapsDirectionsPanel({
   'showMoreText': 'Voir plus de résultats',
   'suggestedRoutesText': 'Routes suggérées',
   'toText': 'À',
-  'totalDistanceText': 'Distance Totale'
+  'totalDistanceText': 'Distance Totale',
+  'aroundText': 'environ',
+  'totalDurationText': 'Durée Totale'
 });
 
 var olAdresses = new ol.control.GoogleMapsAddresses({
