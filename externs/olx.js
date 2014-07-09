@@ -1366,12 +1366,14 @@ olx.control.GoogleMapsDirectionsOptions.prototype.walkingText;
  *     aroundText: (string|undefined),
  *     contactText: (string|undefined),
  *     copyrightText: (string|undefined),
+ *     goText: (string|undefined),
  *     fromText: (string|undefined),
  *     pathDetailsText: (string|undefined),
  *     anonymousContactMessage: (string|undefined),
  *     privateContactMessage: (string|undefined),
  *     ponctualText: (string|undefined),
  *     recurringText: (string|undefined),
+ *     returnText: (string|undefined),
  *     showMoreText: (string|undefined),
  *     suggestedRoutesText: (string|undefined),
  *     toText: (string|undefined),
@@ -1445,6 +1447,13 @@ olx.control.GoogleMapsDirectionsPanelOptions.prototype.contactText;
  * i18n
  * @type {string|undefined}
  */
+olx.control.GoogleMapsDirectionsPanelOptions.prototype.goText;
+
+
+/**
+ * i18n
+ * @type {string|undefined}
+ */
 olx.control.GoogleMapsDirectionsPanelOptions.prototype.pathDetailsText;
 
 /**
@@ -1471,6 +1480,13 @@ olx.control.GoogleMapsDirectionsPanelOptions.prototype.ponctualText;
  * @type {string|undefined}
  */
 olx.control.GoogleMapsDirectionsPanelOptions.prototype.recurringText;
+
+
+/**
+ * i18n
+ * @type {string|undefined}
+ */
+olx.control.GoogleMapsDirectionsPanelOptions.prototype.returnText;
 
 
 /**

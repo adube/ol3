@@ -74,6 +74,13 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
   this.fromText = goog.isDef(options.fromText) ? options.fromText : 'From';
 
   /**
+   * i18n - go
+   * @type {string}
+   */
+  this.goText = goog.isDef(options.goText) ?
+      options.goText : 'Go';
+
+  /**
    * i18n - pathDetails
    * @type {string}
    */
@@ -109,6 +116,13 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
    */
   this.recurringText = goog.isDef(options.recurringText) ?
       options.recurringText : 'Recurring';
+
+  /**
+   * i18n - return
+   * @type {string}
+   */
+  this.returnText = goog.isDef(options.returnText) ?
+      options.returnText : 'Return';
 
   /**
    * i18n - showMore
@@ -768,33 +782,71 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
     });
     goog.dom.appendChild(element, rightCtnEl);
 
-    // -- line 1 --
-    var firstLineEl = goog.dom.createDom(goog.dom.TagName.DIV, {});
-    goog.dom.appendChild(rightCtnEl, firstLineEl);
+    // -- schedule --
+    if (route.mt_offre.mt_horaire_ponctuelle === 1) {
+      // ---- schedule ponctual ----
+      var firstLineEl = goog.dom.createDom(goog.dom.TagName.DIV, {});
+      goog.dom.appendChild(rightCtnEl, firstLineEl);
 
-    var offerTypeText = (route.mt_offre.mt_horaire_ponctuelle === 1) ?
-        this.ponctualText : this.recurringText;
-    var offerTypeEl = goog.dom.createDom(goog.dom.TagName.SPAN, {});
-    goog.dom.appendChild(firstLineEl, offerTypeEl);
-    goog.dom.appendChild(offerTypeEl, goog.dom.createTextNode(offerTypeText));
+      var offerTypeText = (route.mt_offre.mt_horaire_ponctuelle === 1) ?
+          this.ponctualText : this.recurringText;
+      var offerTypeEl = goog.dom.createDom(goog.dom.TagName.SPAN, {});
+      goog.dom.appendChild(firstLineEl, offerTypeEl);
+      goog.dom.appendChild(offerTypeEl, goog.dom.createTextNode(offerTypeText));
 
-    goog.dom.appendChild(firstLineEl, this.createOfferPipeElement_());
+      goog.dom.appendChild(firstLineEl, this.createOfferPipeElement_());
 
-    var dateText = route.mt_offre.mt_date;
-    var dateEl = goog.dom.createDom(goog.dom.TagName.SPAN, {
-      'class': classPrefix + '-offer-header'
-    });
-    goog.dom.appendChild(firstLineEl, dateEl);
-    goog.dom.appendChild(dateEl, goog.dom.createTextNode(dateText));
+      var dateText = route.mt_offre.mt_date;
+      var dateEl = goog.dom.createDom(goog.dom.TagName.SPAN, {
+        'class': classPrefix + '-offer-header'
+      });
+      goog.dom.appendChild(firstLineEl, dateEl);
+      goog.dom.appendChild(dateEl, goog.dom.createTextNode(dateText));
 
-    goog.dom.appendChild(firstLineEl, this.createOfferPipeElement_());
+      goog.dom.appendChild(firstLineEl, this.createOfferPipeElement_());
 
-    var hourText = route.mt_offre.mt_heure;
-    var hourEl = goog.dom.createDom(goog.dom.TagName.SPAN, {
-      'class': classPrefix + '-offer-header'
-    });
-    goog.dom.appendChild(firstLineEl, hourEl);
-    goog.dom.appendChild(hourEl, goog.dom.createTextNode(hourText));
+      var hourText = route.mt_offre.mt_heure;
+      var hourEl = goog.dom.createDom(goog.dom.TagName.SPAN, {
+        'class': classPrefix + '-offer-header'
+      });
+      goog.dom.appendChild(firstLineEl, hourEl);
+      goog.dom.appendChild(hourEl, goog.dom.createTextNode(hourText));
+    } else {
+      // ---- schedule reccuring ----
+      var firstLineEl = goog.dom.createDom(goog.dom.TagName.DIV, {});
+      goog.dom.appendChild(rightCtnEl, firstLineEl);
+
+      var goPrefixEl = goog.dom.createDom(goog.dom.TagName.SPAN, {
+        'class': classPrefix + '-offer-header'
+      });
+      goog.dom.appendChild(firstLineEl, goPrefixEl);
+      goog.dom.appendChild(
+          goPrefixEl, goog.dom.createTextNode(this.goText + ': '));
+
+      var goValueEl = goog.dom.createDom(goog.dom.TagName.SPAN, {});
+      goog.dom.appendChild(firstLineEl, goValueEl);
+      goog.dom.appendChild(
+          goValueEl,
+          goog.dom.createTextNode(route.mt_offre.mt_horaire_aller)
+      );
+
+      var secondLineEl = goog.dom.createDom(goog.dom.TagName.DIV, {});
+      goog.dom.appendChild(rightCtnEl, secondLineEl);
+
+      var returnPrefixEl = goog.dom.createDom(goog.dom.TagName.SPAN, {
+        'class': classPrefix + '-offer-header'
+      });
+      goog.dom.appendChild(secondLineEl, returnPrefixEl);
+      goog.dom.appendChild(
+          returnPrefixEl, goog.dom.createTextNode(this.returnText + ': '));
+
+      var returnValueEl = goog.dom.createDom(goog.dom.TagName.SPAN, {});
+      goog.dom.appendChild(secondLineEl, returnValueEl);
+      goog.dom.appendChild(
+          returnValueEl,
+          goog.dom.createTextNode(route.mt_offre.mt_horaire_retour)
+      );
+    }
 
     // from
     /*

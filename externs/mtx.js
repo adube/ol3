@@ -174,9 +174,21 @@ google.maps.mt_offre.prototype.mt_heure;
 
 
 /**
+ * @type {string}
+ */
+google.maps.mt_offre.prototype.mt_horaire_aller;
+
+
+/**
  * @type {number}
  */
 google.maps.mt_offre.prototype.mt_horaire_ponctuelle;
+
+
+/**
+ * @type {string}
+ */
+google.maps.mt_offre.prototype.mt_horaire_retour;
 
 
 /**
