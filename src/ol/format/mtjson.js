@@ -103,6 +103,12 @@ ol.control.MTJSON_ROUTE_LEG_STEPS = 'p';
 
 
 /**
+ * @define {string} the key for a step coordinates in mtjson
+ */
+ol.control.MTJSON_ROUTE_LEG_STEP_COORDINATES = 'c';
+
+
+/**
  * @define {string} the key for a step start coordinate in mtjson
  */
 ol.control.MTJSON_ROUTE_LEG_STEP_START_COORDINATE = 's';
@@ -423,6 +429,11 @@ ol.format.MTJSON.prototype.readSteps_ = function(sourceSteps) {
 ol.format.MTJSON.prototype.readStep_ = function(sourceStep) {
   var step = {};
 
+  // coordinates
+  var coordinates = sourceStep[ol.control.MTJSON_ROUTE_LEG_STEP_COORDINATES];
+  goog.asserts.assertArray(coordinates);
+  step.coordinates = coordinates;
+
   // start coordinate
   var start = sourceStep[ol.control.MTJSON_ROUTE_LEG_STEP_START_COORDINATE];
   goog.asserts.assertArray(start);
@@ -645,6 +656,11 @@ ol.format.MTJSON.prototype.writeSteps_ = function(sourceSteps) {
  */
 ol.format.MTJSON.prototype.writeStep_ = function(sourceStep) {
   var step = {};
+
+  // coordinates
+  var coordinates = sourceStep.coordinates;
+  goog.asserts.assertArray(coordinates);
+  step[ol.control.MTJSON_ROUTE_LEG_STEP_COORDINATES] = coordinates;
 
   // start coordinate
   var start = sourceStep.start_coordinate;

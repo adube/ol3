@@ -554,36 +554,14 @@ ol.control.GoogleMapsDirectionsPanel.prototype.getSelectedRouteLegsAsGeoJSON =
 
   var geojson = [];
   var legCoordinates;
-  var lat, lng;
-  var coordinate;
   var format = new ol.format.GeoJSON();
-
-  var map = this.getMap();
-
-  var view = map.getView();
-  goog.asserts.assert(goog.isDef(view));
-  var view2D = view.getView2D();
-  goog.asserts.assertInstanceof(view2D, ol.View2D);
-
-  var projection = view2D.getProjection();
 
   var route = this.getSelectedRoute();
   if (route) {
     goog.array.forEach(route.legs, function(leg) {
       legCoordinates = [];
       goog.array.forEach(leg.steps, function(step, index) {
-        if (goog.isDef(step.path)) {
-          goog.asserts.assertArray(step.path);
-          goog.array.forEach(step.path, function(location) {
-            lat = location.lat();
-            lng = location.lng();
-            coordinate = ol.proj.transform(
-                [lng, lat], 'EPSG:4326', projection.getCode());
-            legCoordinates.push(coordinate);
-          }, this);
-        } else if (goog.isDef(step.coordinates)) {
-          legCoordinates = goog.array.concat(legCoordinates, step.coordinates);
-        }
+        legCoordinates = goog.array.concat(legCoordinates, step.coordinates);
       }, this);
 
       geojson.push(
@@ -1308,6 +1286,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createStepElement_ =
 
   var projection = view2D.getProjection();
 
+  // coordinate
   var coordinate;
   if (goog.isDefAndNotNull(step.start_location)) {
     var lat = step.start_location.lat();
@@ -1319,6 +1298,24 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createStepElement_ =
   } else if (goog.isDefAndNotNull(step.start_coordinate)) {
     coordinate = step.start_coordinate;
   }
+
+  // coordinates
+  var coordinates = [];
+  if (goog.isDefAndNotNull(step.path)) {
+    goog.asserts.assertArray(step.path);
+    goog.array.forEach(step.path, function(location) {
+      coordinates.push(
+          ol.proj.transform(
+              [location.lng(), location.lat()],
+              'EPSG:4326',
+              projection.getCode()
+          )
+      );
+    }, this);
+    step.coordinates = coordinates;
+  }
+
+  goog.asserts.assertArray(step.coordinates);
 
   var element = goog.dom.createDom(goog.dom.TagName.TR, {
     'class': classPrefix + '-step',
