@@ -544,7 +544,9 @@ ol.control.GoogleMapsDirectionsPanel.prototype.setDirections = function(
  * Returns the currently selected route legs, each as GeoJSON.
  *
  * How it's done: the leg steps 'path' locations are transformed and collected
- * all together for each leg, then written as GeoJSON.
+ * all together for each leg, then written as GeoJSON. If the 'path' is not
+ * set, then GoogleMaps didn't return the object, so we check the step
+ * 'coordinates' property instead.
  * @return {Array.<GeoJSONObject>}
  */
 ol.control.GoogleMapsDirectionsPanel.prototype.getSelectedRouteLegsAsGeoJSON =
@@ -570,14 +572,18 @@ ol.control.GoogleMapsDirectionsPanel.prototype.getSelectedRouteLegsAsGeoJSON =
     goog.array.forEach(route.legs, function(leg) {
       legCoordinates = [];
       goog.array.forEach(leg.steps, function(step, index) {
-        goog.asserts.assertArray(step.path);
-        goog.array.forEach(step.path, function(location) {
-          lat = location.lat();
-          lng = location.lng();
-          coordinate = ol.proj.transform(
-              [lng, lat], 'EPSG:4326', projection.getCode());
-          legCoordinates.push(coordinate);
-        }, this);
+        if (goog.isDef(step.path)) {
+          goog.asserts.assertArray(step.path);
+          goog.array.forEach(step.path, function(location) {
+            lat = location.lat();
+            lng = location.lng();
+            coordinate = ol.proj.transform(
+                [lng, lat], 'EPSG:4326', projection.getCode());
+            legCoordinates.push(coordinate);
+          }, this);
+        } else if (goog.isDef(step.coordinates)) {
+          legCoordinates = goog.array.concat(legCoordinates, step.coordinates);
+        }
       }, this);
 
       geojson.push(
