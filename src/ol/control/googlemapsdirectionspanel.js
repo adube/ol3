@@ -852,6 +852,8 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
       goog.dom.appendChild(hourEl, goog.dom.createTextNode(hourText));
     } else {
       // ---- schedule reccuring ----
+
+      // ------ 'aller' - mandatory
       var firstLineEl = goog.dom.createDom(goog.dom.TagName.DIV, {});
       goog.dom.appendChild(rightCtnEl, firstLineEl);
 
@@ -869,22 +871,26 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
           goog.dom.createTextNode(route.mt_offre.mt_horaire_aller)
       );
 
-      var secondLineEl = goog.dom.createDom(goog.dom.TagName.DIV, {});
-      goog.dom.appendChild(rightCtnEl, secondLineEl);
+      // ------ 'retour' - optional
+      var returnValueText = route.mt_offre.mt_horaire_retour;
+      if (returnValueText != '') {
+        var secondLineEl = goog.dom.createDom(goog.dom.TagName.DIV, {});
+        goog.dom.appendChild(rightCtnEl, secondLineEl);
 
-      var returnPrefixEl = goog.dom.createDom(goog.dom.TagName.SPAN, {
-        'class': classPrefix + '-offer-header'
-      });
-      goog.dom.appendChild(secondLineEl, returnPrefixEl);
-      goog.dom.appendChild(
-          returnPrefixEl, goog.dom.createTextNode(this.returnText + ': '));
+        var returnPrefixEl = goog.dom.createDom(goog.dom.TagName.SPAN, {
+          'class': classPrefix + '-offer-header'
+        });
+        goog.dom.appendChild(secondLineEl, returnPrefixEl);
+        goog.dom.appendChild(
+            returnPrefixEl, goog.dom.createTextNode(this.returnText + ': '));
 
-      var returnValueEl = goog.dom.createDom(goog.dom.TagName.SPAN, {});
-      goog.dom.appendChild(secondLineEl, returnValueEl);
-      goog.dom.appendChild(
-          returnValueEl,
-          goog.dom.createTextNode(route.mt_offre.mt_horaire_retour)
-      );
+        var returnValueEl = goog.dom.createDom(goog.dom.TagName.SPAN, {});
+        goog.dom.appendChild(secondLineEl, returnValueEl);
+        goog.dom.appendChild(
+            returnValueEl,
+            goog.dom.createTextNode(returnValueText)
+        );
+      }
     }
 
     // from
