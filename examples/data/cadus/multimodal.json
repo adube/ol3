@@ -46,6 +46,7 @@
               },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Rue Lafontaine</b>",
               "start_coordinate" : [-7910777.847852465,6176522.865342024],
+              "coordinates" : [[-7910777.847852465,6176522.865342024]],
               "maneuver": "",
               "travel_mode" : "DRIVING"
             }
@@ -73,7 +74,8 @@
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Ruelle Gaudreault</b>",
               "start_coordinate" : [-7909895.440512837,6177854.083222482],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : {
@@ -83,7 +85,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Rue Jacques-Cartier E</b>",
               "start_coordinate" : [-7909813.698610751,6177970.285092515],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : {
@@ -93,7 +96,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Chemin Sydenham</b>",
               "start_coordinate" : [-7909184.476320994,6177880.302735171],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : { 
@@ -103,7 +107,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b>, vers <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909211.3599780165,6177695.140685596],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : { 
@@ -113,7 +118,8 @@
               "instructions" : "Continuer tout droit sur <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909460.682241547,6177353.076201619],
               "maneuver": "straight",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             }
           ]
         }
@@ -164,6 +170,7 @@
               },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Rue Lafontaine</b>",
               "start_coordinate" : [-7910777.847852465,6176522.865342024],
+              "coordinates" : [[-7910777.847852465,6176522.865342024]],
               "maneuver": "",
               "travel_mode" : "DRIVING"
             }
@@ -191,7 +198,8 @@
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Ruelle Gaudreault</b>",
               "start_coordinate" : [-7909895.440512837,6177854.083222482],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : {
@@ -201,7 +209,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Rue Jacques-Cartier E</b>",
               "start_coordinate" : [-7909813.698610751,6177970.285092515],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : {
@@ -211,7 +220,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Chemin Sydenham</b>",
               "start_coordinate" : [-7909184.476320994,6177880.302735171],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : { 
@@ -221,7 +231,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b>, vers <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909211.3599780165,6177695.140685596],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : { 
@@ -231,7 +242,8 @@
               "instructions" : "Continuer tout droit sur <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909460.682241547,6177353.076201619],
               "maneuver": "straight",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             }
           ]
         }
@@ -280,6 +292,7 @@
               },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Rue Lafontaine</b>",
               "start_coordinate" : [-7910777.847852465,6176522.865342024],
+              "coordinates" : [[-7910777.847852465,6176522.865342024]],
               "maneuver": "",
               "travel_mode" : "DRIVING"
             }
@@ -307,7 +320,8 @@
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Ruelle Gaudreault</b>",
               "start_coordinate" : [-7909895.440512837,6177854.083222482],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : {
@@ -317,7 +331,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Rue Jacques-Cartier E</b>",
               "start_coordinate" : [-7909813.698610751,6177970.285092515],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : {
@@ -327,7 +342,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Chemin Sydenham</b>",
               "start_coordinate" : [-7909184.476320994,6177880.302735171],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : { 
@@ -337,7 +353,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b>, vers <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909211.3599780165,6177695.140685596],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : { 
@@ -347,7 +364,8 @@
               "instructions" : "Continuer tout droit sur <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909460.682241547,6177353.076201619],
               "maneuver": "straight",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             }
           ]
         }
@@ -396,6 +414,7 @@
               },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Rue Lafontaine</b>",
               "start_coordinate" : [-7910777.847852465,6176522.865342024],
+              "coordinates" : [[-7910777.847852465,6176522.865342024]],
               "maneuver": "",
               "travel_mode" : "DRIVING"
             }
@@ -423,7 +442,8 @@
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Ruelle Gaudreault</b>",
               "start_coordinate" : [-7909895.440512837,6177854.083222482],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : {
@@ -433,7 +453,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Rue Jacques-Cartier E</b>",
               "start_coordinate" : [-7909813.698610751,6177970.285092515],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : {
@@ -443,7 +464,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Chemin Sydenham</b>",
               "start_coordinate" : [-7909184.476320994,6177880.302735171],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : { 
@@ -453,7 +475,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b>, vers <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909211.3599780165,6177695.140685596],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : { 
@@ -463,7 +486,8 @@
               "instructions" : "Continuer tout droit sur <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909460.682241547,6177353.076201619],
               "maneuver": "straight",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             }
           ]
         }
@@ -512,6 +536,7 @@
               },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Rue Lafontaine</b>",
               "start_coordinate" : [-7910777.847852465,6176522.865342024],
+              "coordinates" : [[-7910777.847852465,6176522.865342024]],
               "maneuver": "",
               "travel_mode" : "DRIVING"
             }
@@ -539,7 +564,8 @@
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Ruelle Gaudreault</b>",
               "start_coordinate" : [-7909895.440512837,6177854.083222482],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : {
@@ -549,7 +575,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Rue Jacques-Cartier E</b>",
               "start_coordinate" : [-7909813.698610751,6177970.285092515],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : {
@@ -559,7 +586,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Chemin Sydenham</b>",
               "start_coordinate" : [-7909184.476320994,6177880.302735171],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : { 
@@ -569,7 +597,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b>, vers <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909211.3599780165,6177695.140685596],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : { 
@@ -579,7 +608,8 @@
               "instructions" : "Continuer tout droit sur <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909460.682241547,6177353.076201619],
               "maneuver": "straight",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             }
           ]
         }
@@ -628,6 +658,7 @@
               },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Rue Lafontaine</b>",
               "start_coordinate" : [-7910777.847852465,6176522.865342024],
+              "coordinates" : [[-7910777.847852465,6176522.865342024]],
               "maneuver": "",
               "travel_mode" : "DRIVING"
             }
@@ -655,7 +686,8 @@
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Ruelle Gaudreault</b>",
               "start_coordinate" : [-7909895.440512837,6177854.083222482],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : {
@@ -665,7 +697,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Rue Jacques-Cartier E</b>",
               "start_coordinate" : [-7909813.698610751,6177970.285092515],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : {
@@ -675,7 +708,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Chemin Sydenham</b>",
               "start_coordinate" : [-7909184.476320994,6177880.302735171],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : { 
@@ -685,7 +719,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b>, vers <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909211.3599780165,6177695.140685596],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : { 
@@ -695,7 +730,8 @@
               "instructions" : "Continuer tout droit sur <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909460.682241547,6177353.076201619],
               "maneuver": "straight",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             }
           ]
         }
@@ -744,6 +780,7 @@
               },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Rue Lafontaine</b>",
               "start_coordinate" : [-7910777.847852465,6176522.865342024],
+              "coordinates" : [[-7910777.847852465,6176522.865342024]],
               "maneuver": "",
               "travel_mode" : "DRIVING"
             }
@@ -771,7 +808,8 @@
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Ruelle Gaudreault</b>",
               "start_coordinate" : [-7909895.440512837,6177854.083222482],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : {
@@ -781,7 +819,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Rue Jacques-Cartier E</b>",
               "start_coordinate" : [-7909813.698610751,6177970.285092515],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : {
@@ -791,7 +830,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Chemin Sydenham</b>",
               "start_coordinate" : [-7909184.476320994,6177880.302735171],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : { 
@@ -801,7 +841,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b>, vers <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909211.3599780165,6177695.140685596],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : { 
@@ -811,7 +852,8 @@
               "instructions" : "Continuer tout droit sur <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909460.682241547,6177353.076201619],
               "maneuver": "straight",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             }
           ]
         }
@@ -860,6 +902,7 @@
               },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Rue Lafontaine</b>",
               "start_coordinate" : [-7910777.847852465,6176522.865342024],
+              "coordinates" : [[-7910777.847852465,6176522.865342024]],
               "maneuver": "",
               "travel_mode" : "DRIVING"
             }
@@ -887,7 +930,8 @@
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Ruelle Gaudreault</b>",
               "start_coordinate" : [-7909895.440512837,6177854.083222482],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : {
@@ -897,7 +941,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Rue Jacques-Cartier E</b>",
               "start_coordinate" : [-7909813.698610751,6177970.285092515],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : {
@@ -907,7 +952,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Chemin Sydenham</b>",
               "start_coordinate" : [-7909184.476320994,6177880.302735171],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : { 
@@ -917,7 +963,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b>, vers <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909211.3599780165,6177695.140685596],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : { 
@@ -927,7 +974,8 @@
               "instructions" : "Continuer tout droit sur <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909460.682241547,6177353.076201619],
               "maneuver": "straight",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             }
           ]
         }
@@ -976,6 +1024,7 @@
               },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Rue Lafontaine</b>",
               "start_coordinate" : [-7910777.847852465,6176522.865342024],
+              "coordinates" : [[-7910777.847852465,6176522.865342024]],
               "maneuver": "",
               "travel_mode" : "DRIVING"
             }
@@ -1003,7 +1052,8 @@
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Ruelle Gaudreault</b>",
               "start_coordinate" : [-7909895.440512837,6177854.083222482],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : {
@@ -1013,7 +1063,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Rue Jacques-Cartier E</b>",
               "start_coordinate" : [-7909813.698610751,6177970.285092515],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : {
@@ -1023,7 +1074,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Chemin Sydenham</b>",
               "start_coordinate" : [-7909184.476320994,6177880.302735171],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : { 
@@ -1033,7 +1085,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b>, vers <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909211.3599780165,6177695.140685596],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : { 
@@ -1043,7 +1096,8 @@
               "instructions" : "Continuer tout droit sur <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909460.682241547,6177353.076201619],
               "maneuver": "straight",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             }
           ]
         }
@@ -1092,6 +1146,7 @@
               },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Rue Lafontaine</b>",
               "start_coordinate" : [-7910777.847852465,6176522.865342024],
+              "coordinates" : [[-7910777.847852465,6176522.865342024]],
               "maneuver": "",
               "travel_mode" : "DRIVING"
             }
@@ -1119,7 +1174,8 @@
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Ruelle Gaudreault</b>",
               "start_coordinate" : [-7909895.440512837,6177854.083222482],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : {
@@ -1129,7 +1185,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Rue Jacques-Cartier E</b>",
               "start_coordinate" : [-7909813.698610751,6177970.285092515],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : {
@@ -1139,7 +1196,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Chemin Sydenham</b>",
               "start_coordinate" : [-7909184.476320994,6177880.302735171],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : { 
@@ -1149,7 +1207,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b>, vers <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909211.3599780165,6177695.140685596],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : { 
@@ -1159,7 +1218,8 @@
               "instructions" : "Continuer tout droit sur <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909460.682241547,6177353.076201619],
               "maneuver": "straight",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             }
           ]
         }
@@ -1208,6 +1268,7 @@
               },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Rue Lafontaine</b>",
               "start_coordinate" : [-7910777.847852465,6176522.865342024],
+              "coordinates" : [[-7910777.847852465,6176522.865342024]],
               "maneuver": "",
               "travel_mode" : "DRIVING"
             }
@@ -1235,7 +1296,8 @@
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Ruelle Gaudreault</b>",
               "start_coordinate" : [-7909895.440512837,6177854.083222482],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : {
@@ -1245,7 +1307,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Rue Jacques-Cartier E</b>",
               "start_coordinate" : [-7909813.698610751,6177970.285092515],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : {
@@ -1255,7 +1318,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Chemin Sydenham</b>",
               "start_coordinate" : [-7909184.476320994,6177880.302735171],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : { 
@@ -1265,7 +1329,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b>, vers <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909211.3599780165,6177695.140685596],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : { 
@@ -1275,7 +1340,8 @@
               "instructions" : "Continuer tout droit sur <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909460.682241547,6177353.076201619],
               "maneuver": "straight",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             }
           ]
         }
@@ -1324,6 +1390,7 @@
               },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Rue Lafontaine</b>",
               "start_coordinate" : [-7910777.847852465,6176522.865342024],
+              "coordinates" : [[-7910777.847852465,6176522.865342024]],
               "maneuver": "",
               "travel_mode" : "DRIVING"
             }
@@ -1351,7 +1418,8 @@
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Ruelle Gaudreault</b>",
               "start_coordinate" : [-7909895.440512837,6177854.083222482],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : {
@@ -1361,7 +1429,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Rue Jacques-Cartier E</b>",
               "start_coordinate" : [-7909813.698610751,6177970.285092515],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : {
@@ -1371,7 +1440,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Chemin Sydenham</b>",
               "start_coordinate" : [-7909184.476320994,6177880.302735171],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : { 
@@ -1381,7 +1451,8 @@
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b>, vers <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909211.3599780165,6177695.140685596],
               "maneuver": "",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             },
             {
               "distance" : { 
@@ -1391,7 +1462,8 @@
               "instructions" : "Continuer tout droit sur <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909460.682241547,6177353.076201619],
               "maneuver": "straight",
-              "travel_mode" : "WALKING"
+              "travel_mode" : "WALKING",
+              "coordinates" : [[1, 1]]
             }
           ]
         }
