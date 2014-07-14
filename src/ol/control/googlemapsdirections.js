@@ -1920,6 +1920,23 @@ ol.control.GoogleMapsDirections.prototype.handleHoverStopped_ = function(
 
 
 /**
+ * Check whether the travel modes are bicycling and walking
+ * @param {Array.<string>} travelModes
+ * @return {boolean}
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.isTravelModesBicyclingAndWalking_ =
+    function(travelModes) {
+
+  var tm = ol.control.GoogleMapsDirections.TravelMode;
+
+  return travelModes.length == 2 &&
+      (travelModes[0] == tm.BICYCLING && travelModes[1] == tm.WALKING) ||
+      (travelModes[0] == tm.WALKING && travelModes[1] == tm.BICYCLING);
+};
+
+
+/**
  * Check whether the travel mode is supported by GoogleMaps Directions API
  * or not.
  * @param {string} travelMode
@@ -2164,6 +2181,15 @@ ol.control.GoogleMapsDirections.prototype.route_ = function() {
         this.isTravelModeSupportedByGoogleMaps_(travelModes[0])) {
       this.routeWithGoogleMapsService_(
           startGeocoder, endGeocoder, travelModes[0], waypointGeocoders);
+    } else if (this.isTravelModesBicyclingAndWalking_(travelModes)) {
+      // exception: force the use of GoogleMaps directions service if
+      // bicycling and walking AND ONLY THEM are checked, use bicycling as mode
+      this.routeWithGoogleMapsService_(
+          startGeocoder,
+          endGeocoder,
+          ol.control.GoogleMapsDirections.TravelMode.BICYCLING,
+          waypointGeocoders
+      );
     } else {
       if (this.canUseMultimodalService_()) {
         this.routeWithMultimodalService_(
