@@ -1366,6 +1366,7 @@ olx.control.GoogleMapsDirectionsOptions.prototype.walkingText;
  *     aroundText: (string|undefined),
  *     contactText: (string|undefined),
  *     copyrightText: (string|undefined),
+ *     detourText: (string|undefined),
  *     goText: (string|undefined),
  *     fromText: (string|undefined),
  *     pathDetailsText: (string|undefined),
@@ -1428,6 +1429,13 @@ olx.control.GoogleMapsDirectionsPanelOptions.prototype.aroundText;
  * @type {string|undefined}
  */
 olx.control.GoogleMapsDirectionsPanelOptions.prototype.copyrightText;
+
+
+/**
+ * i18n
+ * @type {string|undefined}
+ */
+olx.control.GoogleMapsDirectionsPanelOptions.prototype.detourText;
 
 
 /**

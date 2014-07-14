@@ -132,6 +132,7 @@ var directionsPanel = new ol.control.GoogleMapsDirectionsPanel({
   'arroundText': 'environ',
   'contactText': 'Contacter',
   'copyrightText': 'Données cartographiques ©2014 Google',
+  'detourText': 'Détour',
   'fromText': 'De',
   'goText': 'Aller',
   'pathDetailsText': 'Détail du trajet',

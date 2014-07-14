@@ -68,6 +68,13 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
       options.copyrightText : '©2014 Google';
 
   /**
+   * i18n - detour
+   * @type {string}
+   */
+  this.detourText = goog.isDef(options.detourText) ?
+      options.detourText : 'Detour';
+
+  /**
    * i18n - from
    * @type {string}
    */
@@ -966,6 +973,30 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
     goog.dom.appendChild(rightCtnEl, priceEl);
     goog.dom.appendChild(priceEl, goog.dom.createTextNode(priceText));
 
+    // mt_duration_diff, i.e. the difference in duration
+    if (goog.isDef(route.mt_offre.mt_duration_diff)) {
+      var durationDiffEl = goog.dom.createDom(goog.dom.TagName.DIV);
+      goog.dom.appendChild(rightCtnEl, durationDiffEl);
+
+      var durationDiffTextEl = goog.dom.createDom(goog.dom.TagName.SPAN, {
+        'class': classPrefix + '-offer-header'
+      });
+      goog.dom.appendChild(
+          durationDiffTextEl,
+          goog.dom.createTextNode(this.detourText + ' : ')
+      );
+      goog.dom.appendChild(durationDiffEl, durationDiffTextEl);
+
+      var durationDiffValue = this.formatDuration_(
+          route.mt_offre.mt_duration_diff);
+      var durationDiffValueEl = goog.dom.createDom(goog.dom.TagName.SPAN, {
+        'class': classPrefix + '-offer-duration-diff'
+      });
+      goog.dom.appendChild(
+          durationDiffValueEl, goog.dom.createTextNode(durationDiffValue));
+      goog.dom.appendChild(durationDiffEl, durationDiffValueEl);
+    }
+
     // organisation
     goog.array.forEach(route.mt_org, function(organisationName) {
       var orgApprovedEl = goog.dom.createDom(goog.dom.TagName.DIV, {
@@ -1710,38 +1741,61 @@ ol.control.GoogleMapsDirectionsPanel.prototype.calculateRouteTotalDistance_ =
 ol.control.GoogleMapsDirectionsPanel.prototype.calculateRouteTotalDuration_ =
     function(route) {
 
-  var totalDuration = 0;
-  var totalDurationContent = [];
+  var duration = 0;
 
   goog.array.forEach(route.legs, function(leg) {
-    totalDuration += leg.duration.value;
+    duration += leg.duration.value;
   }, this);
+
+  return this.formatDuration_(duration);
+};
+
+
+/**
+ * Format in plain text the hours and minutes of a given duration in seconds.
+ * @param {number} duration Duration in seconds
+ * @return {string}
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.formatDuration_ = function(
+    duration) {
+
   var remainingDuration = 0;
-  if (totalDuration > 3600) {
-    var hours = Math.floor(totalDuration / 3600);
-    remainingDuration = totalDuration - hours * 3600;
-    totalDurationContent.push(hours);
+  var durationContent = [];
 
+  if (duration < 30) {
     // todo - i18n
-    var hoursSuffix = 'heure';
-    hoursSuffix += (hours > 1) ? 's' : '';
-    totalDurationContent.push(hoursSuffix);
+    durationContent.push('Moins d\'une minute');
   } else {
-    remainingDuration = totalDuration;
+
+    if (duration > 3600) {
+      var hours = Math.floor(duration / 3600);
+      remainingDuration = duration - hours * 3600;
+      durationContent.push(hours);
+
+      // todo - i18n
+      var hoursSuffix = 'heure';
+      hoursSuffix += (hours > 1) ? 's' : '';
+      durationContent.push(hoursSuffix);
+    } else {
+      remainingDuration = duration;
+    }
+
+    var minutes = Math.floor(remainingDuration / 60);
+    if (minutes > 0 || remainingDuration >= 30) {
+      if (remainingDuration - minutes * 60 >= 30) {
+        minutes++;
+      }
+      durationContent.push(minutes);
+
+      // todo - i18n
+      var minutesSuffix = 'minute';
+      minutesSuffix += (minutes > 1) ? 's' : '';
+      durationContent.push(minutesSuffix);
+    }
   }
 
-  var minutes = Math.floor(remainingDuration / 60);
-  if (remainingDuration - minutes * 60 >= 30) {
-    minutes++;
-  }
-  totalDurationContent.push(minutes);
-
-  // todo - i18n
-  var minutesSuffix = ' minute';
-  minutesSuffix += (minutes > 1) ? 's' : '';
-  totalDurationContent.push(minutesSuffix);
-
-  return goog.string.makeSafe(totalDurationContent.join(' '));
+  return goog.string.makeSafe(durationContent.join(' '));
 };
 
 
