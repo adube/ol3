@@ -577,6 +577,25 @@ ol.control.GoogleMapsDirectionsPanel.prototype.getSelectedRouteLegsAsGeoJSON =
 
 
 /**
+ * Returns the currently selected route total distance, in meters.
+ *
+ * @return {number}
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.getSelectedTotalDistanceValue =
+    function() {
+
+  var totalDistance = 0;
+  var route = this.getSelectedRoute();
+
+  route && goog.array.forEach(route.legs, function(leg) {
+    totalDistance += leg.distance.value;
+  }, this);
+
+  return totalDistance;
+};
+
+
+/**
  * Returns the selected route results.  Useful for 'save' purpose.
  * @return {Object|boolean}
  */

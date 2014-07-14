@@ -256,6 +256,11 @@ goog.exportProperty(
 
 goog.exportProperty(
     ol.control.GoogleMapsDirectionsPanel.prototype,
+    'getSelectedTotalDistanceValue',
+    ol.control.GoogleMapsDirectionsPanel.prototype.getSelectedTotalDistanceValue);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirectionsPanel.prototype,
     'on',
     ol.control.GoogleMapsDirectionsPanel.prototype.on);
 
