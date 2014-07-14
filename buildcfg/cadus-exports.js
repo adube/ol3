@@ -256,8 +256,13 @@ goog.exportProperty(
 
 goog.exportProperty(
     ol.control.GoogleMapsDirectionsPanel.prototype,
-    'getSelectedTotalDistanceValue',
-    ol.control.GoogleMapsDirectionsPanel.prototype.getSelectedTotalDistanceValue);
+    'getSelectedRouteDistanceValue',
+    ol.control.GoogleMapsDirectionsPanel.prototype.getSelectedRouteDistanceValue);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirectionsPanel.prototype,
+    'getSelectedRouteDurationValue',
+    ol.control.GoogleMapsDirectionsPanel.prototype.getSelectedRouteDurationValue);
 
 goog.exportProperty(
     ol.control.GoogleMapsDirectionsPanel.prototype,

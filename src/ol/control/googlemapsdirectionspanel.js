@@ -581,17 +581,36 @@ ol.control.GoogleMapsDirectionsPanel.prototype.getSelectedRouteLegsAsGeoJSON =
  *
  * @return {number}
  */
-ol.control.GoogleMapsDirectionsPanel.prototype.getSelectedTotalDistanceValue =
+ol.control.GoogleMapsDirectionsPanel.prototype.getSelectedRouteDistanceValue =
     function() {
 
-  var totalDistance = 0;
+  var distance = 0;
   var route = this.getSelectedRoute();
 
   route && goog.array.forEach(route.legs, function(leg) {
-    totalDistance += leg.distance.value;
+    distance += leg.distance.value;
   }, this);
 
-  return totalDistance;
+  return distance;
+};
+
+
+/**
+ * Returns the currently selected route total duration, in seconds.
+ *
+ * @return {number}
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.getSelectedRouteDurationValue =
+    function() {
+
+  var duration = 0;
+  var route = this.getSelectedRoute();
+
+  route && goog.array.forEach(route.legs, function(leg) {
+    duration += leg.duration.value;
+  }, this);
+
+  return duration;
 };
 
 
