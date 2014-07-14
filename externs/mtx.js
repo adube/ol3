@@ -162,6 +162,18 @@ google.maps.mt_offre.prototype.mt_atmosphere;
 
 
 /**
+ * @type {number}
+ */
+google.maps.mt_offre.prototype.mt_distance_diff;
+
+
+/**
+ * @type {number}
+ */
+google.maps.mt_offre.prototype.mt_duration_diff;
+
+
+/**
  * @type {string}
  */
 google.maps.mt_offre.prototype.mt_prix;
