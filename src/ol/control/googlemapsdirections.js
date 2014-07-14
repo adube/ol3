@@ -1931,8 +1931,8 @@ ol.control.GoogleMapsDirections.prototype.isTravelModesBicyclingAndWalking_ =
   var tm = ol.control.GoogleMapsDirections.TravelMode;
 
   return travelModes.length == 2 &&
-      (travelModes[0] == tm.BICYCLING && travelModes[1] == tm.WALKING) ||
-      (travelModes[0] == tm.WALKING && travelModes[1] == tm.BICYCLING);
+      ((travelModes[0] == tm.BICYCLING && travelModes[1] == tm.WALKING) ||
+      (travelModes[0] == tm.WALKING && travelModes[1] == tm.BICYCLING));
 };
 
 
