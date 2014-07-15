@@ -120,7 +120,7 @@ var olAdresses = new ol.control.GoogleMapsAddresses({
 });
 
 var directionsPanel = new ol.control.GoogleMapsDirectionsPanel({
-  'target': 'gmaps-directions-panel',
+  //'target': 'gmaps-directions-panel',
   'arroundText': 'environ',
   'suggestedRoutesText': 'Routes suggérées',
   'totalDistanceText': 'Distance Totale',
