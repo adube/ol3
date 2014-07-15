@@ -378,6 +378,9 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
     target: options.target
   });
 
+  // hide itself
+  this.toggleSelfVisibility_(false);
+
 };
 goog.inherits(ol.control.GoogleMapsDirectionsPanel, ol.control.Control);
 
@@ -459,6 +462,9 @@ ol.control.GoogleMapsDirectionsPanel.prototype.clearDirections = function() {
 
   // reset limit page counter
   this.limitPageCounter_ = 0;
+
+  // hide itself
+  this.toggleSelfVisibility_(false);
 };
 
 
@@ -544,6 +550,9 @@ ol.control.GoogleMapsDirectionsPanel.prototype.setDirections = function(
     // Display the Suggested routes button
     this.selectorVisible_(true);
   }
+
+  // show itself
+  this.toggleSelfVisibility_(true);
 };
 
 
@@ -684,6 +693,10 @@ ol.control.GoogleMapsDirectionsPanel.prototype.toggleWorkInProgress =
     function(inProgress) {
   var display = (inProgress === true) ? '' : 'none';
   goog.style.setStyle(this.workInProgressEl_, 'display', display);
+
+  if (inProgress === true) {
+    this.toggleSelfVisibility_(true);
+  }
 };
 
 
@@ -2131,4 +2144,16 @@ ol.control.GoogleMapsDirectionsPanel.prototype.destroyShowMoreButton_ =
   ], this.handleShowMoreButtonPress_, false, this);
 
   this.showMoreButtonEl_ = null;
+};
+
+
+/**
+ * Toggle self visibility
+ * @param {boolean} show Whether to show the control or hide it
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.toggleSelfVisibility_ =
+    function(show) {
+  var display = (show === true) ? '' : 'none';
+  goog.style.setStyle(this.element, 'display', display);
 };
