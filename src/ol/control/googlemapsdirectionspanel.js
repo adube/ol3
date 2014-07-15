@@ -88,6 +88,13 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
       options.goText : 'Go';
 
   /**
+   * i18n - hideDetails
+   * @type {string}
+   */
+  this.hideDetailsText = goog.isDef(options.hideDetailsText) ?
+      options.hideDetailsText : 'Hide details';
+
+  /**
    * i18n - pathDetails
    * @type {string}
    */
@@ -130,6 +137,13 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
    */
   this.returnText = goog.isDef(options.returnText) ?
       options.returnText : 'Return';
+
+  /**
+   * i18n - showDetails
+   * @type {string}
+   */
+  this.showDetailsText = goog.isDef(options.showDetailsText) ?
+      options.showDetailsText : 'Show details';
 
   /**
    * i18n - showMore
@@ -371,6 +385,29 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
    * @private
    */
   this.showMoreButtonEl_ = null;
+
+  /**
+   * @type {?Element}
+   * @private
+   */
+  this.showDetailsButtonEl_ = null;
+
+  if (this.mode_ === ol.control.GoogleMapsDirectionsPanel.Mode.SIMPLE) {
+    this.showDetailsButtonEl_ = goog.dom.createDom(goog.dom.TagName.BUTTON, {
+      'class': classPrefix + '-show-details-button'
+    });
+    goog.dom.appendChild(this.showDetailsButtonEl_, goog.dom.createTextNode(
+        this.showDetailsText));
+    goog.dom.appendChild(element, this.showDetailsButtonEl_);
+
+    goog.events.listen(this.showDetailsButtonEl_, [
+      goog.events.EventType.TOUCHEND,
+      goog.events.EventType.CLICK
+    ], this.handleShowDetailsButtonPress_, false, this);
+
+    // details are hidden by default
+    this.toogleDetailsVisibility_(false);
+  }
 
 
   goog.base(this, {
@@ -2156,4 +2193,46 @@ ol.control.GoogleMapsDirectionsPanel.prototype.toggleSelfVisibility_ =
     function(show) {
   var display = (show === true) ? '' : 'none';
   goog.style.setStyle(this.element, 'display', display);
+};
+
+
+/**
+ * @param {goog.events.BrowserEvent} browserEvent Browser event.
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.handleShowDetailsButtonPress_ =
+    function(browserEvent) {
+
+  browserEvent.preventDefault();
+
+  this.toogleDetailsVisibility_(null);
+};
+
+
+/**
+ * @param {?boolean} show Show Whether to show or hide the details
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.toogleDetailsVisibility_ =
+    function(show) {
+
+  var display;
+
+  // if 'show' is not set, reverse visibility
+  if (goog.isNull(show)) {
+    display =
+        (goog.style.getStyle(this.routesEl_, 'display') == '') ? 'none' : '';
+  } else {
+    display = (show === true) ? '' : 'none';
+  }
+
+  // show/hide routes
+  goog.style.setStyle(this.routesEl_, 'display', display);
+
+  // change button text
+  if (display === 'none') {
+    this.showDetailsButtonEl_.innerHTML = this.showDetailsText;
+  } else {
+    this.showDetailsButtonEl_.innerHTML = this.hideDetailsText;
+  }
 };

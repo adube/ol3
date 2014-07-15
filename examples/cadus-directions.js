@@ -122,6 +122,8 @@ var olAdresses = new ol.control.GoogleMapsAddresses({
 var directionsPanel = new ol.control.GoogleMapsDirectionsPanel({
   //'target': 'gmaps-directions-panel',
   'arroundText': 'environ',
+  'hideDetailsText': 'Cacher les détails',
+  'showDetailsText': 'Voir les détails',
   'suggestedRoutesText': 'Routes suggérées',
   'totalDistanceText': 'Distance Totale',
   'copyrightText': 'Données cartographiques ©2014 Google'
