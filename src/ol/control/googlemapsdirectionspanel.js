@@ -394,7 +394,7 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
 
   if (this.mode_ === ol.control.GoogleMapsDirectionsPanel.Mode.SIMPLE) {
     this.showDetailsButtonEl_ = goog.dom.createDom(goog.dom.TagName.BUTTON, {
-      'class': classPrefix + '-show-details-button'
+      'class': classPrefix + '-show-details-button button gris'
     });
     goog.dom.appendChild(this.showDetailsButtonEl_, goog.dom.createTextNode(
         this.showDetailsText));
