@@ -269,6 +269,11 @@ goog.exportProperty(
     'on',
     ol.control.GoogleMapsDirectionsPanel.prototype.on);
 
+goog.exportProperty(
+    ol.control.GoogleMapsDirectionsPanel.prototype,
+    'toggleReadOnly',
+    ol.control.GoogleMapsDirectionsPanel.prototype.toggleReadOnly);
+
 
 goog.exportSymbol(
     'ol.control.GoogleMapsDirections',
