@@ -117,6 +117,23 @@
   height: 20px;
 }
 
+.ol-gmdp .ol-gmdp-selector-toggle-opened,
+.ol-gmdp .ol-gmdp-selector-toggle-closed {
+  display: none;
+}
+
+.ol-gmdp-read-only .ol-gmdp-selector-toggle-opened,
+.ol-gmdp-read-only .ol-gmdp-selector-toggle-closed,
+.ol-gmdp-read-only .ol-gmdp-selector-item,
+.ol-gmdp-read-only .ol-gmdp-routes,
+.ol-gmdp-read-only .ol-gmdp-show-details-button {
+  display: none;
+}
+
+.ol-gmdp-read-only .ol-gmdp-selector-item-selected {
+  display: block;
+}
+
 /**
  * GoogleMapsDirectionsPanel
  */

@@ -409,6 +409,13 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
     this.toogleDetailsVisibility_(false);
   }
 
+  /**
+   * The flag used to determine if this control is on read-only mode or not.
+   * @type {boolean}
+   * @private
+   */
+  this.readOnlyEnabled_ = false;
+
 
   goog.base(this, {
     element: element,
@@ -494,7 +501,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.clearDirections = function() {
   this.iconImageElements_.clear();
 
   //Hide suggested routes link and corresponding text
-  this.selectorVisible_(false);
+  //this.selectorVisible_(false);
   this.toggleCorrespondingEl(false);
 
   // reset limit page counter
@@ -585,7 +592,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.setDirections = function(
       this.select_(0);
     }
     // Display the Suggested routes button
-    this.selectorVisible_(true);
+    //this.selectorVisible_(true);
   }
 
   // show itself
@@ -719,6 +726,30 @@ ol.control.GoogleMapsDirectionsPanel.prototype.toggleCorrespondingEl =
     function(noCorresponding) {
   var display = (noCorresponding === true) ? '' : 'none';
   goog.style.setStyle(this.correspondingEl_, 'display', display);
+};
+
+
+/**
+ * Enable/Disable the read-only mode.
+ * @param {boolean} readOnly Whether to enable or disable the read-only mode.
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.toggleReadOnly = function(
+    readOnly) {
+
+  if (readOnly === this.readOnlyEnabled_) {
+    return;
+  }
+
+  var classPrefix = this.classPrefix_;
+  var readOnlyClass = classPrefix + '-read-only';
+
+  this.readOnlyEnabled_ = readOnly;
+
+  if (readOnly === true) {
+    goog.dom.classes.add(this.element, readOnlyClass);
+  } else {
+    goog.dom.classes.remove(this.element, readOnlyClass);
+  }
 };
 
 
@@ -1996,6 +2027,11 @@ ol.control.GoogleMapsDirectionsPanel.prototype.handleSelectorElementPress_ =
     function(browserEvent) {
 
   browserEvent.preventDefault();
+
+  if (this.readOnlyEnabled_ === true) {
+    return;
+  }
+
   var element = browserEvent.currentTarget;
   var index = parseInt(element.getAttribute('data-selector-index'), 10);
 
