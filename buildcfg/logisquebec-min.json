@@ -17,7 +17,7 @@
 
   "externs": [
     "//json.js",
-    '//jquery-1.7.js',
+    "//jquery-1.7.js",
     "../externs/bingmaps.js",
     "../externs/bootstrap.js",
     "../externs/closure-compiler.js",
