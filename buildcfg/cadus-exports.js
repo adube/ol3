@@ -13,6 +13,7 @@ goog.require('ol.extent');
 goog.require('ol.Feature');
 goog.require('ol.geom.Point');
 goog.require('ol.geom.LineString');
+goog.require('ol.geom.Polygon');
 goog.require('ol.interaction');
 goog.require('ol.interaction.DragPan');
 goog.require('ol.interaction.DragStyleCursor');
@@ -137,6 +138,17 @@ goog.exportProperty(
     ol.geom.LineString.prototype,
     'getCoordinates',
     ol.geom.LineString.prototype.getCoordinates);
+
+goog.exportProperty(
+    ol.geom.LineString.prototype,
+    'getCoordinates',
+    ol.geom.LineString.prototype.getCoordinates);
+
+goog.exportProperty(
+    ol.geom.Polygon.prototype,
+    'getCoordinates',
+    ol.geom.Polygon.prototype.getCoordinates);
+
 
 
 goog.exportSymbol(
