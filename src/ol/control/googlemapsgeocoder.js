@@ -327,6 +327,8 @@ goog.inherits(ol.control.GoogleMapsGeocoder, ol.control.Control);
  * @enum {string}
  */
 ol.control.GoogleMapsGeocoder.EventType = {
+  AUTOCOMPLETEHIDE: goog.events.getUniqueId('autocompletehide'),
+  AUTOCOMPLETESHOW: goog.events.getUniqueId('autocompleteshow'),
   ERROR: goog.events.getUniqueId('error'),
   REMOVE: goog.events.getUniqueId('remove')
 };
@@ -778,6 +780,8 @@ ol.control.GoogleMapsGeocoder.prototype.displayGeocodeResults_ = function() {
   });
 
   goog.style.setStyle(this.resultsList_, 'display', '');
+  goog.events.dispatchEvent(this,
+      ol.control.GoogleMapsGeocoder.EventType.AUTOCOMPLETESHOW);
 };
 
 
@@ -786,6 +790,9 @@ ol.control.GoogleMapsGeocoder.prototype.displayGeocodeResults_ = function() {
  */
 ol.control.GoogleMapsGeocoder.prototype.clearGeocodeResults_ = function() {
   goog.style.setStyle(this.resultsList_, 'display', 'none');
+  goog.events.dispatchEvent(this,
+      ol.control.GoogleMapsGeocoder.EventType.AUTOCOMPLETEHIDE);
+
   //Unlisten to the results click event
   this.clickableResultElements_.forEach(function(element) {
     goog.events.unlisten(element, [

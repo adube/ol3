@@ -1032,6 +1032,16 @@ ol.control.GoogleMapsDirections.prototype.addGeocoder_ = function() {
       ol.control.GoogleMapsGeocoder.EventType.REMOVE,
       this.handleGeocoderRemove_, false, this);
 
+  goog.events.listen(
+      geocoder,
+      ol.control.GoogleMapsGeocoder.EventType.AUTOCOMPLETESHOW,
+      this.handleGeocoderAutoCompleteShow_, false, this);
+
+  goog.events.listen(
+      geocoder,
+      ol.control.GoogleMapsGeocoder.EventType.AUTOCOMPLETEHIDE,
+      this.handleGeocoderAutoCompleteHide_, false, this);
+
   geocoders.push(geocoder);
 
   this.toggleGeocoderReverseGeocodings_();
@@ -1657,6 +1667,26 @@ ol.control.GoogleMapsDirections.prototype.handleDryModifyDrag_ = function(evt) {
 ol.control.GoogleMapsDirections.prototype.handleDryModifyDragEnd_ = function(
     evt) {
   this.createNewDetour_ = true;
+};
+
+
+/**
+ * @param {goog.events.Event} event Event.
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.handleGeocoderAutoCompleteHide_ =
+    function(event) {
+  $(this.geocodersContainer_).sortable('enable');
+};
+
+
+/**
+ * @param {goog.events.Event} event Event.
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.handleGeocoderAutoCompleteShow_ =
+    function(event) {
+  $(this.geocodersContainer_).sortable('disable');
 };
 
 
