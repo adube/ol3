@@ -122,6 +122,7 @@
   display: none;
 }
 
+.ol-gmdp-read-only .ol-gmdp-selector-header,
 .ol-gmdp-read-only .ol-gmdp-selector-toggle-opened,
 .ol-gmdp-read-only .ol-gmdp-selector-toggle-closed,
 .ol-gmdp-read-only .ol-gmdp-selector-item,

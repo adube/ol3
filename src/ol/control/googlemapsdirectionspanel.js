@@ -284,6 +284,15 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
       this.suggestedRoutesText));
   goog.dom.appendChild(this.routeSelectorEl_, routeSelectorToggleEl);
 
+
+  var listHeaderEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+    'class': classPrefix + '-selector-header'
+  });
+  goog.dom.appendChild(listHeaderEl, goog.dom.createTextNode(
+      this.suggestedRoutesText));
+  goog.dom.appendChild(this.routeSelectorEl_, listHeaderEl);
+
+
   /**
    * The container element for route to select
    * @type {Element}
