@@ -161,7 +161,6 @@ var directions = new ol.control.GoogleMapsDirections({
   'currentPositionControl': olCurrentPosition,
   'defaultTravelModes': [
     ol.control.GoogleMapsDirections.TravelMode.CARPOOLING,
-    ol.control.GoogleMapsDirections.TravelMode.TRANSIT,
     ol.control.GoogleMapsDirections.TravelMode.WALKING
   ],
   'geocoderComponentRestrictions': {'country': 'CA'},
@@ -180,6 +179,10 @@ var directions = new ol.control.GoogleMapsDirections({
   'transitText': 'Autobus',
   'walkingText': 'Marche',
   'myTravelModesText': 'Mes modes de transport',
+  'noTransitText': 'Les horaires, les lignes et les arrêts de la Société ' +
+      'de transport du Saguenay et ceux d’Intercar ne sont pas encore' +
+      'disponibles sur montrajet.ca. Les itinéraires en autobus ' +
+      'seront intégrés dans le site à court terme.',
   'lineStyle': new ol.style.Style({
     stroke: new ol.style.Stroke({
       color: [80, 140, 255, 0.6],

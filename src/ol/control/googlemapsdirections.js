@@ -119,6 +119,13 @@ ol.control.GoogleMapsDirections = function(opt_options) {
       options.noRouteText : 'Your search did not return any route';
 
   /**
+   * i18n - noTransit
+   * @type {string|undefined}
+   */
+  this.noTransitText = goog.isDef(options.noTransitText) ?
+      options.noTransitText : 'Transits are currently not supported';
+
+  /**
    * i18n - removeButton
    * @type {string|undefined}
    */
@@ -270,6 +277,13 @@ ol.control.GoogleMapsDirections = function(opt_options) {
   this.multimodalUsePostMethod_ = goog.isDef(options.multimodalUsePostMethod) ?
       options.multimodalUsePostMethod : true;
 
+  /**
+   * @type {?Element}
+   * @private
+   */
+  this.noTransitEl_ = null;
+
+
   var firstContainer = goog.dom.createDom(goog.dom.TagName.DIV, {
     'class': classPrefix + '-container ' + classPrefix + '-container-1'
   });
@@ -379,7 +393,25 @@ ol.control.GoogleMapsDirections = function(opt_options) {
     });
     goog.dom.appendChild(checkboxLinkContainerEl, separatorEl);
 
+    // ENABLE_TRANSIT - until the transit are available, we show a message
+    //                  that they are not available in a div.  This should
+    //                  be removed/deactivated once transits are available
+    var noTransitEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+      'class': classPrefix + '-no-transit'
+    });
+    this.noTransitEl_ = noTransitEl;
+    goog.dom.appendChild(
+        noTransitEl,
+        goog.dom.createTextNode(this.noTransitText)
+    );
+    goog.dom.appendChild(firstContainer, noTransitEl);
+
+    if (goog.array.indexOf(this.defaultTravelModes_,
+        ol.control.GoogleMapsDirections.TravelMode.TRANSIT) == -1) {
+      this.toggleNoTransitMessage_(false);
+    }
   }
+
   var myAddressesLabelEl = goog.dom.createDom(goog.dom.TagName.LABEL, {
     'class': classPrefix + '-label'
   });
@@ -1554,6 +1586,13 @@ ol.control.GoogleMapsDirections.prototype.handleCheckboxLinkElPress_ =
   if (this.enableAutoRouting_ === true) {
     this.route_();
   }
+
+  // ENABLE_TRANSIT - additional check if 'transit' was checked, show/hide
+  //                  a message.  Todo: this should be removed/disabled once
+  //                  transits become available.
+  if (travelMode === ol.control.GoogleMapsDirections.TravelMode.TRANSIT) {
+    this.toggleNoTransitMessage_(inputEl.checked);
+  }
 };
 
 
@@ -2659,6 +2698,27 @@ ol.control.GoogleMapsDirections.prototype.toggleGeocoderReverseGeocodings_ =
       geocoder.disableReverseGeocoding();
     }
   }, this);
+
+};
+
+
+/**
+ * @param {boolean} show Whether to show or hide the message
+ * @private
+ */
+
+ol.control.GoogleMapsDirections.prototype.toggleNoTransitMessage_ = function(
+    show) {
+
+  if (goog.isNull(this.noTransitEl_)) {
+    return;
+  }
+
+  if (show === true) {
+    goog.style.setStyle(this.noTransitEl_, 'display', '');
+  } else {
+    goog.style.setStyle(this.noTransitEl_, 'display', 'none');
+  }
 
 };
 

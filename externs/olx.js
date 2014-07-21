@@ -1080,6 +1080,7 @@ olx.control.GoogleMapsCurrentPositionOptions.prototype.currentPositionText;
  *     myTravelModesText: (string|undefined),
  *     noResultFoundText: (string|undefined),
  *     noRouteText: (string|undefined),
+ *     noTransitText: (string|undefined),
  *     removeButtonText: (string|undefined),
  *     reverseButtonText: (string|undefined),
  *     searchButtonText: (string|undefined),
@@ -1314,6 +1315,13 @@ olx.control.GoogleMapsDirectionsOptions.prototype.noResultFoundText;
  * @type {string|undefined}
  */
 olx.control.GoogleMapsDirectionsOptions.prototype.noRouteText;
+
+
+/**
+ * i18n
+ * @type {string|undefined}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.noTransitText;
 
 
 /**
