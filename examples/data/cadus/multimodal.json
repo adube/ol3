@@ -3,10 +3,11 @@
   "mt_corresponding": 0,
   "routes": [
     {
+      "mt_anonymous": true,
       "mt_usager": {
-        "mt_last_name": "Lawrence",
+        "mt_last_name": "Lawrence (anonymous)",
         "mt_first_name": "Jennifer",
-        "mt_email": "ailesdepoulet2@yopmail.com",
+        "mt_contact": null,
         "mt_photo": "http://www.allthetests.com/quiz30/picture/pic_1387507755_6.jpg",
         "mt_evaluation": 4,
         "mt_url": "http://en.wikipedia.org/wiki/Jennifer_Lawrence"
@@ -130,9 +131,9 @@
       "waypoint_order" : [0]
     },{
       "mt_usager": {
-        "mt_last_name": "Lawrence",
+        "mt_last_name": "Lawrence (can't contact)",
         "mt_first_name": "Jennifer",
-        "mt_email": "ailesdepoulet2@yopmail.com",
+        "mt_contact": null,
         "mt_photo": "http://www.allthetests.com/quiz30/picture/pic_1387507755_6.jpg",
         "mt_evaluation": 4,
         "mt_url": ""
@@ -258,7 +259,7 @@
       "mt_usager": {
         "mt_last_name": "Lawrence",
         "mt_first_name": "Jennifer",
-        "mt_email": "ailesdepoulet2@yopmail.com",
+        "mt_contact": "http://perdu.com",
         "mt_photo": "http://www.allthetests.com/quiz30/picture/pic_1387507755_6.jpg",
         "mt_evaluation": 4
       },
@@ -381,7 +382,7 @@
       "mt_usager": {
         "mt_last_name": "Lawrence",
         "mt_first_name": "Jennifer",
-        "mt_email": "ailesdepoulet2@yopmail.com",
+        "mt_contact": "http://perdu.com",
         "mt_photo": "http://www.allthetests.com/quiz30/picture/pic_1387507755_6.jpg",
         "mt_evaluation": 4
       },
@@ -504,7 +505,7 @@
       "mt_usager": {
         "mt_last_name": "Lawrence",
         "mt_first_name": "Jennifer",
-        "mt_email": "ailesdepoulet2@yopmail.com",
+        "mt_contact": "http://perdu.com",
         "mt_photo": "http://www.allthetests.com/quiz30/picture/pic_1387507755_6.jpg",
         "mt_evaluation": 4
       },
@@ -626,7 +627,7 @@
       "mt_usager": {
         "mt_last_name": "Lawrence",
         "mt_first_name": "Jennifer",
-        "mt_email": "ailesdepoulet2@yopmail.com",
+        "mt_contact": "http://perdu.com",
         "mt_photo": "http://www.allthetests.com/quiz30/picture/pic_1387507755_6.jpg",
         "mt_evaluation": 4
       },
@@ -748,7 +749,7 @@
       "mt_usager": {
         "mt_last_name": "Lawrence",
         "mt_first_name": "Jennifer",
-        "mt_email": "ailesdepoulet2@yopmail.com",
+        "mt_contact": "http://perdu.com",
         "mt_photo": "http://www.allthetests.com/quiz30/picture/pic_1387507755_6.jpg",
         "mt_evaluation": 4
       },
@@ -870,7 +871,7 @@
       "mt_usager": {
         "mt_last_name": "Lawrence",
         "mt_first_name": "Jennifer",
-        "mt_email": "ailesdepoulet2@yopmail.com",
+        "mt_contact": "http://perdu.com",
         "mt_photo": "http://www.allthetests.com/quiz30/picture/pic_1387507755_6.jpg",
         "mt_evaluation": 4
       },
@@ -992,7 +993,7 @@
       "mt_usager": {
         "mt_last_name": "Lawrence",
         "mt_first_name": "Jennifer",
-        "mt_email": "ailesdepoulet2@yopmail.com",
+        "mt_contact": "http://perdu.com",
         "mt_photo": "http://www.allthetests.com/quiz30/picture/pic_1387507755_6.jpg",
         "mt_evaluation": 4
       },
@@ -1114,7 +1115,7 @@
       "mt_usager": {
         "mt_last_name": "Lawrence",
         "mt_first_name": "Jennifer",
-        "mt_email": "ailesdepoulet2@yopmail.com",
+        "mt_contact": "http://perdu.com",
         "mt_photo": "http://www.allthetests.com/quiz30/picture/pic_1387507755_6.jpg",
         "mt_evaluation": 4
       },
@@ -1236,7 +1237,7 @@
       "mt_usager": {
         "mt_last_name": "Lawrence",
         "mt_first_name": "Jennifer",
-        "mt_email": "ailesdepoulet2@yopmail.com",
+        "mt_contact": "http://perdu.com",
         "mt_photo": "http://www.allthetests.com/quiz30/picture/pic_1387507755_6.jpg",
         "mt_evaluation": 4
       },
@@ -1358,7 +1359,7 @@
       "mt_usager": {
         "mt_last_name": "Lawrence",
         "mt_first_name": "Jennifer",
-        "mt_email": "ailesdepoulet2@yopmail.com",
+        "mt_contact": "http://perdu.com",
         "mt_photo": "http://www.allthetests.com/quiz30/picture/pic_1387507755_6.jpg",
         "mt_evaluation": 4
       },
