@@ -100,7 +100,7 @@ google.maps.mt_usager.prototype.mt_first_name;
 /**
  * @type {string}
  */
-google.maps.mt_usager.prototype.mt_email;
+google.maps.mt_usager.prototype.mt_contact;
 
 /**
  * @type {string}

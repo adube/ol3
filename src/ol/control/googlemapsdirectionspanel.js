@@ -1165,7 +1165,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
         'href': '#'
       });
     }
-    else if (route.mt_usager.mt_email == null) {
+    else if (route.mt_usager.mt_contact == null) {
       contactLink = goog.dom.createDom(goog.dom.TagName.A, {
         'class': classPrefix + '-offer-contact-link disabled',
         'title': this.privateContactMessage,
@@ -1174,7 +1174,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
     }else {
       contactLink = goog.dom.createDom(goog.dom.TagName.A, {
         'class': classPrefix + '-offer-contact-link',
-        'href': 'mailto:' + route.mt_usager.mt_email
+        'href': route.mt_usager.mt_contact
       });
     }
     goog.dom.appendChild(leftCtnEl, contactLink);
