@@ -1093,7 +1093,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
       });
       goog.dom.appendChild(
           durationDiffTextEl,
-          goog.dom.createTextNode(this.detourText + ' : ')
+          goog.dom.createTextNode(this.detourText + ': ')
       );
       goog.dom.appendChild(durationDiffEl, durationDiffTextEl);
 
