@@ -8,7 +8,8 @@
         "mt_first_name": "Jennifer",
         "mt_email": "ailesdepoulet2@yopmail.com",
         "mt_photo": "http://www.allthetests.com/quiz30/picture/pic_1387507755_6.jpg",
-        "mt_evaluation": 4
+        "mt_evaluation": 4,
+        "mt_url": "http://en.wikipedia.org/wiki/Jennifer_Lawrence"
       },
       "mt_offre": {
         "mt_est_conducteur": 1,
@@ -133,7 +134,8 @@
         "mt_first_name": "Jennifer",
         "mt_email": "ailesdepoulet2@yopmail.com",
         "mt_photo": "http://www.allthetests.com/quiz30/picture/pic_1387507755_6.jpg",
-        "mt_evaluation": 4
+        "mt_evaluation": 4,
+        "mt_url": ""
       },
       "mt_offre": {
         "mt_est_conducteur": 1,

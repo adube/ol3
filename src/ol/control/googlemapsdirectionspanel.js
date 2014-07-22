@@ -878,17 +878,37 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
     });
     goog.dom.appendChild(element, leftCtnEl);
 
-    // -- user picture --
+    // -- user picture, is embedded in an anchor if mt_url is set --
     var userPic = goog.dom.createDom(goog.dom.TagName.IMG, {
       'src': route.mt_usager.mt_photo,
       'class': classPrefix + '-offer-user-pic'
     });
-    goog.dom.appendChild(leftCtnEl, userPic);
+    if (goog.isDef(route.mt_usager.mt_url) && route.mt_usager.mt_url != '') {
+      var userPicAnchor = goog.dom.createDom(goog.dom.TagName.A, {
+        'href': route.mt_usager.mt_url,
+        'class': classPrefix + '-offer-user-pic-anchor'
+      });
+      goog.dom.appendChild(userPicAnchor, userPic);
+      goog.dom.appendChild(leftCtnEl, userPicAnchor);
+    } else {
+      goog.dom.appendChild(leftCtnEl, userPic);
+    }
 
-    // -- user full name --
-    var userFullNameEl = goog.dom.createDom(goog.dom.TagName.DIV, {
-      'class': classPrefix + '-offer-header'
-    });
+    // -- user full name, is an anchor if mt_url is set --
+    var userFullNameEl;
+    if (goog.isDef(route.mt_usager.mt_url) && route.mt_usager.mt_url != '') {
+      userFullNameEl = goog.dom.createDom(goog.dom.TagName.A, {
+        'href': route.mt_usager.mt_url,
+        'class': [
+          classPrefix + '-offer-header',
+          classPrefix + '-offer-user-fullname'
+        ].join(' ')
+      });
+    } else {
+      userFullNameEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+        'class': classPrefix + '-offer-header'
+      });
+    }
     goog.dom.appendChild(leftCtnEl, userFullNameEl);
     var userFullNameText = route.mt_usager.mt_first_name + ' ' +
         route.mt_usager.mt_last_name;

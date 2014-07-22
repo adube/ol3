@@ -132,6 +132,12 @@ google.maps.mt_usager.prototype.mt_group_name;
 
 
 /**
+ * @type {string}
+ */
+google.maps.mt_usager.prototype.mt_url;
+
+
+/**
  * @type {Object}
  */
 google.maps.DirectionsRoute.prototype.mt_offre;

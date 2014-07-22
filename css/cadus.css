@@ -99,6 +99,10 @@
   font-weight: bold;
 }
 
+a.ol-gmdp-offer-user-fullname {
+  display: block;
+}
+
 .ol-gmdp-offer-pipe {
   margin: 0 8px;
 }
