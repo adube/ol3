@@ -124,6 +124,16 @@ goog.exportProperty(
     'boundingExtent',
     ol.extent.boundingExtent);
 
+goog.exportProperty(
+    ol.extent,
+    'createEmpty',
+    ol.extent.createEmpty);
+
+goog.exportProperty(
+    ol.extent,
+    'extendCoordinate',
+    ol.extent.extendCoordinate);
+
 
 goog.exportSymbol(
     'ol.geom.Point',
@@ -188,6 +198,12 @@ goog.exportSymbol(
 goog.exportSymbol(
     'ol.interaction.DragStyleCursor',
     ol.interaction.DragStyleCursor);
+
+
+goog.exportProperty(
+    ol.View2D.prototype,
+    'fitExtent',
+    ol.View2D.prototype.fitExtent);
 
 goog.exportProperty(
     ol.View2D.prototype,
