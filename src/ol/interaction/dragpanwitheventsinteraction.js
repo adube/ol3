@@ -25,7 +25,26 @@ goog.inherits(ol.interaction.DragPanWithEvents, ol.interaction.DragPan);
  * @enum {string}
  */
 ol.interaction.DragPanWithEvents.EventType = {
+  POINTERDOWN: 'pointerdown',
   POINTERUP: 'pointerup'
+};
+
+
+/**
+ * @inheritDoc
+ */
+ol.interaction.DragPanWithEvents.prototype.handlePointerDown =
+    function(mapBrowserEvent) {
+  var response = ol.interaction.DragPan.prototype.handlePointerDown.call(
+      this, mapBrowserEvent);
+
+  if (response) {
+    goog.events.dispatchEvent(
+        this,
+        ol.interaction.DragPanWithEvents.EventType.POINTERDOWN);
+  }
+
+  return response;
 };
 
 
