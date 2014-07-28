@@ -121,6 +121,11 @@ goog.exportProperty(
     'POINTERMOVE',
     ol.MapBrowserEvent.EventType.POINTERMOVE);
 
+goog.exportProperty(
+    ol.MapBrowserEvent.EventType,
+    'SINGLECLICK',
+    ol.MapBrowserEvent.EventType.SINGLECLICK);
+
 
 goog.exportSymbol(
     'ol.Overlay',
