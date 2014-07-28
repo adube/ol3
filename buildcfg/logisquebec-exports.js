@@ -106,6 +106,11 @@ goog.exportProperty(
     'on',
     ol.Map.prototype.on);
 
+goog.exportProperty(
+    ol.Map.prototype,
+    'un',
+    ol.Map.prototype.un);
+
 
 goog.exportSymbol(
     'ol.MapBrowserEvent',
