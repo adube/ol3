@@ -259,6 +259,11 @@ goog.exportProperty(
 
 goog.exportProperty(
     ol.control.GoogleMapsDirectionsPanel.EventType,
+    'SET',
+    ol.control.GoogleMapsDirectionsPanel.EventType.SET);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirectionsPanel.EventType,
     'UNSELECT',
     ol.control.GoogleMapsDirectionsPanel.EventType.UNSELECT);
 

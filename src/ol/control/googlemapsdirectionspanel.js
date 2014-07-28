@@ -452,9 +452,11 @@ ol.control.GoogleMapsDirectionsPanel.Ambiance = {
  * @enum {string}
  */
 ol.control.GoogleMapsDirectionsPanel.EventType = {
+  CLEAR: goog.events.getUniqueId('CLEAR'),
   HOVER: goog.events.getUniqueId('HOVER'),
   UNHOVER: goog.events.getUniqueId('UNHOVER'),
   SELECT: goog.events.getUniqueId('SELECT'),
+  SET: goog.events.getUniqueId('SET'),
   UNSELECT: goog.events.getUniqueId('UNSELECT')
 };
 
@@ -518,6 +520,9 @@ ol.control.GoogleMapsDirectionsPanel.prototype.clearDirections = function() {
 
   // hide itself
   this.toggleSelfVisibility_(false);
+
+  goog.events.dispatchEvent(this,
+      ol.control.GoogleMapsDirectionsPanel.EventType.CLEAR);
 };
 
 
@@ -606,6 +611,9 @@ ol.control.GoogleMapsDirectionsPanel.prototype.setDirections = function(
 
   // show itself
   this.toggleSelfVisibility_(true);
+
+  goog.events.dispatchEvent(this,
+      ol.control.GoogleMapsDirectionsPanel.EventType.SET);
 };
 
 
