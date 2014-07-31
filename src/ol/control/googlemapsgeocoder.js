@@ -635,9 +635,36 @@ ol.control.GoogleMapsGeocoder.prototype.geocodeByAddress_ = function(
   var me = this;
   var geocoder = this.geocoder_;
 
+  var map = this.getMap();
+
+  var view = map.getView();
+  goog.asserts.assert(goog.isDef(view));
+  var view2D = view.getView2D();
+  goog.asserts.assertInstanceof(view2D, ol.View2D);
+
+  var size = map.getSize();
+  goog.asserts.assertArray(size);
+
+  var projection = view2D.getProjection();
+
+  var extent = view2D.calculateExtent(size);
+
+  var transformedExtent = ol.proj.transform(
+      extent, projection.getCode(), 'EPSG:4326');
+
+  var southWestLocation = new google.maps.LatLng(
+      transformedExtent[1], transformedExtent[0]);
+
+  var northEastLocation = new google.maps.LatLng(
+      transformedExtent[3], transformedExtent[2]);
+
+  var latLngBounds = new google.maps.LatLngBounds(
+      southWestLocation, northEastLocation);
+
   geocoder.geocode(
       {
         'address': address,
+        'bounds': latLngBounds,
         'componentRestrictions': this.geocoderComponentRestrictions_
       },
       function(results, status) {
