@@ -46,7 +46,7 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
 
   /**
    * i18n - suggestedRoutes
-   * @type {string}
+   * @type {?string|undefined}
    */
   this.suggestedRoutesText =
       goog.isDefAndNotNull(options.suggestedRoutesText) ?
@@ -54,7 +54,7 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
 
   /**
    * i18n - around
-   * @type {string}
+   * @type {?string|undefined}
    */
   this.aroundText =
       goog.isDefAndNotNull(options.aroundText) ?
@@ -62,7 +62,7 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
 
   /**
    * i18n - copyright
-   * @type {string}
+   * @type {?string|undefined}
    */
   this.copyrightText =
       goog.isDefAndNotNull(options.copyrightText) ?
@@ -70,7 +70,7 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
 
   /**
    * i18n - totalDistance
-   * @type {string}
+   * @type {?string|undefined}
    */
   this.totalDistanceText =
       goog.isDefAndNotNull(options.totalDistanceText) ?
@@ -302,8 +302,10 @@ ol.control.GoogleMapsDirectionsPanel.prototype.setDirections = function(
     'class': classPrefix + '-copyright'
   });
   goog.dom.appendChild(routesEl, copyright);
-  var copyrightText = goog.dom.createTextNode(this.copyrightText);
-  goog.dom.appendChild(copyright, copyrightText);
+  if (goog.isDefAndNotNull(this.copyrightText)) {
+    var copyrightText = goog.dom.createTextNode(this.copyrightText);
+    goog.dom.appendChild(copyright, copyrightText);
+  }
 
   // set first route as default selection
   if (this.routes_.getLength()) {

@@ -70,28 +70,28 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
 
   /**
    * i18n - currentPosition
-   * @type {string}
+   * @type {?string|undefined}
    */
   this.currentPositionText = goog.isDefAndNotNull(options.currentPositionText) ?
       options.currentPositionText : 'My position';
 
   /**
    * i18n - searchButton
-   * @type {string}
+   * @type {?string|undefined}
    */
   this.searchButtonText = goog.isDefAndNotNull(options.searchButtonText) ?
       options.searchButtonText : 'Search';
 
   /**
    * i18n - clearButton
-   * @type {string}
+   * @type {?string|undefined}
    */
   this.clearButtonText = goog.isDefAndNotNull(options.clearButtonText) ?
       options.clearButtonText : 'Clear';
 
   /**
    * i18n - removeButton
-   * @type {string}
+   * @type {?string|undefined}
    */
   this.removeButtonText = goog.isDefAndNotNull(options.removeButtonText) ?
       options.removeButtonText : 'Remove';

@@ -69,7 +69,7 @@ ol.control.GoogleMapsDirections = function(opt_options) {
 
   /**
    * i18n - waypointButton
-   * @type {string}
+   * @type {?string|undefined}
    */
   this.addWaypointButtonText =
       goog.isDefAndNotNull(options.addWaypointButtonText) ?
@@ -77,64 +77,64 @@ ol.control.GoogleMapsDirections = function(opt_options) {
 
   /**
    * i18n - currentPosition
-   * @type {string}
+   * @type {?string|undefined}
    */
   this.currentPositionText = goog.isDefAndNotNull(options.currentPositionText) ?
-      options.currentPositionText : null;
+      options.currentPositionText : undefined;
 
   /**
    * i18n - searchButton
-   * @type {string}
+   * @type {?string|undefined}
    */
   this.searchButtonText = goog.isDefAndNotNull(options.searchButtonText) ?
-      options.searchButtonText : null;
+      options.searchButtonText : undefined;
 
   /**
    * i18n - clearButton
-   * @type {string}
+   * @type {?string|undefined}
    */
   this.clearButtonText = goog.isDefAndNotNull(options.clearButtonText) ?
-      options.clearButtonText : null;
+      options.clearButtonText : undefined;
 
   /**
    * i18n - removeButton
-   * @type {string}
+   * @type {?string|undefined}
    */
   this.removeButtonText = goog.isDefAndNotNull(options.removeButtonText) ?
-      options.removeButtonText : null;
+      options.removeButtonText : undefined;
 
 
   /**
    * i18n - suggestedRoutes
-   * @type {string}
+   * @type {?string|undefined}
    */
   this.suggestedRoutesText =
       goog.isDefAndNotNull(options.suggestedRoutesText) ?
-          options.suggestedRoutesText : null;
+          options.suggestedRoutesText : undefined;
 
   /**
    * i18n - around
-   * @type {string}
+   * @type {?string|undefined}
    */
   this.aroundText =
       goog.isDefAndNotNull(options.aroundText) ?
-          options.aroundText : null;
+          options.aroundText : undefined;
 
   /**
    * i18n - copyright
-   * @type {string}
+   * @type {?string|undefined}
    */
   this.copyrightText =
       goog.isDefAndNotNull(options.copyrightText) ?
-          options.copyrightText : null;
+          options.copyrightText : undefined;
 
   /**
    * i18n - totalDistance
-   * @type {string}
+   * @type {?string|undefined}
    */
   this.totalDistanceText =
       goog.isDefAndNotNull(options.totalDistanceText) ?
-          options.totalDistanceText : null;
+          options.totalDistanceText : undefined;
 
 
   var classPrefix = 'ol-gmds';
