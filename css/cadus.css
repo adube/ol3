@@ -92,4 +92,21 @@
   cursor: pointer;
 }
 
+/**
+ * GoogleMapsAddresses
+ */
 
+.ol-gmads-addresses{
+  max-width: 300px;
+}
+
+.ol-gmads-addresses li:hover{
+  background-color: #5ec5d5;
+  cursor: pointer;
+}
+
+.ol-gmads-remove-address{
+  float:right;
+  margin-top: 10px;
+  margin-right: 10px;
+}

@@ -454,7 +454,7 @@ ol.control.GoogleMapsGeocoder.prototype.handleInputInput_ = function(
 
     this.getCurrentPosition_(null, false);
   } else {
-    this.clearGeocodeResults_();
+    this.clear_(true);
   }
 };
 
@@ -912,4 +912,14 @@ ol.control.GoogleMapsGeocoder.prototype.formatAdress_ = function(
           address.coordinates[0])
     }
   };
+};
+
+
+/**
+ * @return {?string} input value
+ *  results format
+ */
+ol.control.GoogleMapsGeocoder.prototype.getInputValue = function() {
+  return !goog.string.isEmptySafe(this.input_.value) ?
+      this.input_.value : null;
 };
