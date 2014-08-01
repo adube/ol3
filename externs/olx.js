@@ -868,6 +868,500 @@ olx.control.FullScreenOptions.prototype.target;
 
 
 /**
+ * @typedef {{addresses: (Object),
+ *     addressesTarget: (Element),
+ *     currentPositionControl: (ol.control.GoogleMapsCurrentPosition),
+ *     enableCurrentPosition: (boolean),
+ *     failCallback: (Function),
+ *     geocoderComponentRestrictions: (Object),
+ *     getURL: (string|undefined),
+ *     iconStyle : (ol.style.Style),
+ *     saveHeaders: (Object),
+ *     saveURL: (string|undefined),
+ *     successCallback: (Function),
+ *     target: (Element|undefined),
+ *     addButtonText: (?string|undefined),
+ *     clearButtonText: (?string|undefined),
+ *     removeButtonText: (?string|undefined),
+ *     searchButtonText: (?string|undefined)}}
+ * @todo stability experimental
+ */
+olx.control.GoogleMapsAddressesOptions;
+
+
+/**
+ * Adresses
+ * @type {Object}
+ */
+olx.control.GoogleMapsAddressesOptions.prototype.addresses;
+
+
+/**
+ * Target for the addresses
+ * @type {Element}
+ */
+olx.control.GoogleMapsAddressesOptions.prototype.addressesTarget;
+
+
+/**
+ * Current position control
+ * @type {ol.control.GoogleMapsCurrentPosition}
+ */
+olx.control.GoogleMapsAddressesOptions.prototype.currentPositionControl;
+
+
+/**
+ * Whether to enable the current position control or not
+ * @type {boolean}
+ */
+olx.control.GoogleMapsAddressesOptions.prototype.enableCurrentPosition;
+
+
+/**
+ * Method called on transaction failure
+ * @type {Function}
+ */
+olx.control.GoogleMapsAddressesOptions.prototype.failCallback;
+
+
+/**
+ * Restrictions
+ * @type {Object}
+ */
+olx.control.GoogleMapsAddressesOptions.prototype.geocoderComponentRestrictions;
+
+
+/**
+ * URL to get the addresses
+ * @type {string|undefined}
+ */
+olx.control.GoogleMapsAddressesOptions.prototype.getURL;
+
+
+/**
+ * Style for the icons
+ * @type {ol.style.Style}}
+ */
+olx.control.GoogleMapsAddressesOptions.prototype.iconStyle;
+
+
+/**
+ * Save headers
+ * @type {Object}
+ */
+olx.control.GoogleMapsAddressesOptions.prototype.saveHeaders;
+
+
+/**
+ * URL to save the addresses
+ * @type {string|undefined}
+ */
+olx.control.GoogleMapsAddressesOptions.prototype.saveURL;
+
+
+/**
+ * Method called on transaction success
+ * @type {Function}
+ */
+olx.control.GoogleMapsAddressesOptions.prototype.successCallback;
+
+
+/**
+ * Target
+ * @type {Element|undefined}
+ */
+olx.control.GoogleMapsAddressesOptions.prototype.target;
+
+
+/**
+ * i18n
+ * @type {?string|undefined}
+ */
+olx.control.GoogleMapsAddressesOptions.prototype.addButtonText;
+
+
+/**
+ * i18n
+ * @type {?string|undefined}
+ */
+olx.control.GoogleMapsAddressesOptions.prototype.clearButtonText;
+
+
+/**
+ * i18n
+ * @type {?string|undefined}
+ */
+olx.control.GoogleMapsAddressesOptions.prototype.removeButtonText;
+
+
+/**
+ * i18n
+ * @type {?string|undefined}
+ */
+olx.control.GoogleMapsAddressesOptions.prototype.searchButtonText;
+
+
+
+/**
+ * @typedef {{currentPositionText: (?string|undefined)}}
+ * @todo stability experimental
+ */
+olx.control.GoogleMapsCurrentPositionOptions;
+
+
+/**
+ * i18n
+ * @type {?string|undefined}
+ */
+olx.control.GoogleMapsCurrentPositionOptions.prototype.currentPositionText;
+
+
+/**
+ * @typedef {{cornerPixelSize: (number|undefined),
+ *     detourIconStyle: (Array.<(null|ol.style.Style)>|null|ol.feature.FeatureStyleFunction|ol.style.Style),
+ *     detourLabelProperty: (string|undefined),
+ *     geocoderComponentRestrictions: (Object|undefined),
+ *     iconStyles: (Array.<ol.style.Style>),
+ *     lineStyle: (Array.<(null|ol.style.Style)>|null|ol.feature.FeatureStyleFunction|ol.style.Style),
+ *     maxWaypoints: (number|undefined),
+ *     modifyPixelTolerance: (number|undefined),
+ *     panel: (Element),
+ *     pixelBuffer: (number|undefined),
+ *     routeDelayOnWaypointDrag: (number|undefined),
+ *     target: (Element|undefined),
+ *     addWaypointButtonText: (?string|undefined),
+ *     aroundText: (?string|undefined),
+ *     clearButtonText: (?string|undefined),
+ *     copyrightText: (?string|undefined),
+ *     currentPositionText: (?string|undefined),
+ *     removeButtonText: (?string|undefined),
+ *     searchButtonText: (?string|undefined),
+ *     suggestedRoutesText: (?string|undefined),
+ *     totalDistanceText: (?string|undefined)}}
+ * @todo stability experimental
+ */
+olx.control.GoogleMapsDirectionsOptions;
+
+
+/**
+ * Size in pixels of the top-left, top-right, bottom-left and bottom-right
+ * corners where a popup position should never be.  This should set
+ * around half the size of the popup.
+ * @type {number|undefined}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.cornerPixelSize;
+
+
+/**
+ * Style used to symbolize the waypoint detour icons.
+ * @type {Array.<(null|ol.style.Style)>|null|ol.feature.FeatureStyleFunction|ol.style.Style}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.detourIconStyle;
+
+
+/**
+ * Property name to use as label for detour features
+ * @type {string|undefined}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.detourLabelProperty;
+
+
+/**
+ * Used to restrict results to a specific area
+ * @type {Object|undefined}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.geocoderComponentRestrictions;
+
+
+/**
+ * Styles used to symbolize the geocoded locations
+ * @type {Array.<ol.style.Style>}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.iconStyles;
+
+
+/**
+ * Style used to symbolize the route
+ * @type {Array.<(null|ol.style.Style)>|null|ol.feature.FeatureStyleFunction|ol.style.Style}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.lineStyle;
+
+
+/**
+ * The maximum allowed waypoints.
+ * @type {number|undefined}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.maxWaypoints;
+
+
+/**
+ * Pixel tolerance for considering the pointer close enough to a vertex for
+ * editing. Default is 8 pixels.
+ * @type {number|undefined}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.modifyPixelTolerance;
+
+
+/**
+ * Target for the directions panel.
+ * @type {Element}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.panel;
+
+
+/**
+ * Buffer size in pixels to apply to the extent of the route or single
+ * geolocation when recentering the map view to it.
+ * @type {number|undefined}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.pixelBuffer;
+
+
+/**
+ * The number of milliseconds to wait before launching a route request that
+ * includes waypoint that has been dragged, whether to add a new detour or to
+ * modify an existing waypoint of any type.
+ * @type {number|undefined}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.routeDelayOnWaypointDrag;
+
+
+/**
+ * Target
+ * @type {Element|undefined}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.target;
+
+
+/**
+ * i18n
+ * @type {?string|undefined}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.addWaypointButtonText;
+
+
+/**
+ * i18n
+ * @type {?string|undefined}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.aroundText;
+
+
+/**
+ * i18n
+ * @type {?string|undefined}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.clearButtonText;
+
+
+/**
+ * i18n
+ * @type {?string|undefined}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.copyrightText;
+
+
+/**
+ * i18n
+ * @type {?string|undefined}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.currentPositionText;
+
+
+/**
+ * i18n
+ * @type {?string|undefined}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.removeButtonText;
+
+
+/**
+ * i18n
+ * @type {?string|undefined}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.searchButtonText;
+
+
+/**
+ * i18n
+ * @type {?string|undefined}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.suggestedRoutesText;
+
+
+/**
+ * i18n
+ * @type {?string|undefined}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.totalDistanceText;
+
+
+/**
+ * @typedef {{pixelBuffer: (number|undefined),
+ *     target: (Element|undefined),
+ *     aroundText: (?string|undefined),
+ *     copyrightText: (?string|undefined),
+ *     suggestedRoutesText: (?string|undefined),
+ *     totalDistanceText: (?string|undefined)}}
+ * @todo stability experimental
+ */
+olx.control.GoogleMapsDirectionsPanelOptions;
+
+
+/**
+ * Buffer size in pixels to apply to the map view extent when checking if
+ * a coordinate is in the extent.
+ * @type {number|undefined}
+ */
+olx.control.GoogleMapsDirectionsPanelOptions.prototype.pixelBuffer;
+
+
+/**
+ * Target
+ * @type {Element|undefined}
+ */
+olx.control.GoogleMapsDirectionsPanelOptions.prototype.target;
+
+
+/**
+ * i18n
+ * @type {?string|undefined}
+ */
+olx.control.GoogleMapsDirectionsPanelOptions.prototype.aroundText;
+
+
+/**
+ * i18n
+ * @type {?string|undefined}
+ */
+olx.control.GoogleMapsDirectionsPanelOptions.prototype.copyrightText;
+
+
+/**
+ * i18n
+ * @type {?string|undefined}
+ */
+olx.control.GoogleMapsDirectionsPanelOptions.prototype.suggestedRoutesText;
+
+
+/**
+ * i18n
+ * @type {?string|undefined}
+ */
+olx.control.GoogleMapsDirectionsPanelOptions.prototype.totalDistanceText;
+
+
+/**
+ * @typedef {{currentPositionControl: (ol.control.GoogleMapsCurrentPosition),
+ *     enableCurrentPosition: (boolean),
+ *     enableReverseGeocoding: (boolean|undefined),
+ *     geocoderComponentRestrictions: (Object|undefined),
+ *     iconStyle: (ol.style.Style),
+ *     removable: (boolean|undefined),
+ *     target: (Element|undefined),
+ *     clearButtonText: (?string|undefined),
+ *     searchButtonText: (?string|undefined),
+ *     removeButtonText: (?string|undefined)}}
+ * @todo stability experimental
+ */
+olx.control.GoogleMapsGeocoderOptions;
+
+
+/**
+ * Current position control to set
+ * @type {ol.control.GoogleMapsCurrentPosition}
+ */
+olx.control.GoogleMapsGeocoderOptions.prototype.currentPositionControl;
+
+
+/**
+ * Whether to enable current position or not.
+ * @type {boolean}
+ */
+olx.control.GoogleMapsGeocoderOptions.prototype.enableCurrentPosition;
+
+
+/**
+ * Whether to activate the reverse geocoding, i.e. click on the map to get
+ * an address.
+ * @type {boolean|undefined}
+ */
+olx.control.GoogleMapsGeocoderOptions.prototype.enableReverseGeocoding;
+
+
+/**
+ * Used to restrict results to a specific area
+ * @type {Object|undefined}
+ */
+olx.control.GoogleMapsGeocoderOptions.prototype.geocoderComponentRestrictions;
+
+
+/**
+ * Styled used to symbolize the geocoded location found, generally one
+ * with an icon image.
+ * @type {ol.style.Style}
+ */
+olx.control.GoogleMapsGeocoderOptions.prototype.iconStyle;
+
+
+/**
+ * Whether the control should show a remove button or not.
+ * @type {boolean|undefined}
+ */
+olx.control.GoogleMapsGeocoderOptions.prototype.removable;
+
+
+/**
+ * Target
+ * @type {Element|undefined}
+ */
+olx.control.GoogleMapsGeocoderOptions.prototype.target;
+
+
+/**
+ * i18n
+ * @type {?string|undefined}
+ */
+olx.control.GoogleMapsGeocoderOptions.prototype.clearButtonText;
+
+
+/**
+ * i18n
+ * @type {?string|undefined}
+ */
+olx.control.GoogleMapsGeocoderOptions.prototype.searchButtonText;
+
+
+/**
+ * i18n
+ * @type {?string|undefined}
+ */
+olx.control.GoogleMapsGeocoderOptions.prototype.removeButtonText;
+
+
+/**
+ * @typedef {{className: (string|undefined),
+ *     target: (Element|undefined)}}
+ * @todo stability experimental
+ */
+olx.control.LogoOptions;
+
+
+/**
+ * CSS class name. Default is `ol-logo`.
+ * @type {string|undefined}
+ */
+olx.control.LogoOptions.prototype.className;
+
+
+/**
+ * Target.
+ * @type {Element|undefined}
+ */
+olx.control.LogoOptions.prototype.target;
+
+
+/**
  * @typedef {{className: (string|undefined),
  *     coordinateFormat: (ol.CoordinateFormatType|undefined),
  *     projection: ol.proj.ProjectionLike,
@@ -1902,6 +2396,46 @@ olx.interaction.ModifyOptions.prototype.style;
  * @type {ol.Collection}
  */
 olx.interaction.ModifyOptions.prototype.features;
+
+
+/**
+ * @typedef {{deleteCondition: (ol.events.ConditionType|undefined),
+ *     pixelTolerance: (number|undefined),
+ *     style: (ol.style.Style|Array.<ol.style.Style>|ol.feature.StyleFunction|undefined),
+ *     features: ol.Collection}}
+ * @todo stability experimental
+ */
+olx.interaction.DryModifyOptions;
+
+
+/**
+ * Condition that determines which event results in a vertex deletion. Default
+ * is a `singleclick` event with no modifier keys.
+ * @type {ol.events.ConditionType|undefined}
+ */
+olx.interaction.DryModifyOptions.prototype.deleteCondition;
+
+
+/**
+ * Pixel tolerance for considering the pointer close enough to a segment or
+ * vertex for editing. Default is 10 pixels.
+ * @type {number|undefined}
+ */
+olx.interaction.DryModifyOptions.prototype.pixelTolerance;
+
+
+/**
+ * FeatureOverlay style.
+ * @type {ol.style.Style|Array.<ol.style.Style>|ol.feature.StyleFunction|undefined}
+ */
+olx.interaction.DryModifyOptions.prototype.style;
+
+
+/**
+ * The features the interaction works on.
+ * @type {ol.Collection}
+ */
+olx.interaction.DryModifyOptions.prototype.features;
 
 
 /**

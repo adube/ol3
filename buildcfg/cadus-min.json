@@ -12,16 +12,16 @@
   "externs": [
     "//json.js",
     '//jquery-1.7.js',
-    "../build/src/external/externs/types.js",
     "../externs/bingmaps.js",
     "../externs/bootstrap.js",
     "../externs/closure-compiler.js",
     "../externs/geojson.js",
     "../externs/google_maps_api_v3_15.js",
     "../externs/oli.js",
+    "../externs/olx.js",
     "../externs/proj4js.js",
-    "../externs/topojson.js",
     "../externs/tilejson.js",
+    "../externs/topojson.js",
     "../externs/vbarray.js"
   ],
   "paths": [
