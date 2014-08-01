@@ -1,5 +1,5 @@
 goog.require('ol.Map');
-goog.require('ol.View2D');
+goog.require('ol.View');
 goog.require('ol.control');
 goog.require('ol.control.ScaleLine');
 goog.require('ol.layer.Tile');
@@ -26,10 +26,8 @@ var map = new ol.Map({
     })
   ]),
   layers: layers,
-  // The OSgeo server does not set cross origin headers, so we cannot use WebGL
-  renderer: ['canvas', 'dom'],
   target: 'map',
-  view: new ol.View2D({
+  view: new ol.View({
     projection: 'EPSG:4326',
     center: [0, 0],
     zoom: 2

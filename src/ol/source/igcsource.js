@@ -1,15 +1,19 @@
 goog.provide('ol.source.IGC');
 
 goog.require('ol.format.IGC');
-goog.require('ol.source.VectorFile');
+goog.require('ol.source.StaticVector');
 
 
 
 /**
+ * @classdesc
+ * Static vector source in IGC format
+ *
  * @constructor
- * @extends {ol.source.VectorFile}
+ * @extends {ol.source.StaticVector}
+ * @fires ol.source.VectorEvent
  * @param {olx.source.IGCOptions=} opt_options Options.
- * @todo stability experimental
+ * @api
  */
 ol.source.IGC = function(opt_options) {
 
@@ -26,4 +30,4 @@ ol.source.IGC = function(opt_options) {
   });
 
 };
-goog.inherits(ol.source.IGC, ol.source.VectorFile);
+goog.inherits(ol.source.IGC, ol.source.StaticVector);

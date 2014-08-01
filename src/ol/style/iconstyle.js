@@ -1,30 +1,16 @@
-// FIXME decide default value for snapToPixel
-
 goog.provide('ol.style.Icon');
-goog.provide('ol.style.IconAnchorOrigin');
 goog.provide('ol.style.IconAnchorUnits');
 goog.provide('ol.style.IconImageCache');
+goog.provide('ol.style.IconOrigin');
 
 goog.require('goog.array');
 goog.require('goog.asserts');
-goog.require('goog.dom');
-goog.require('goog.dom.TagName');
 goog.require('goog.events');
 goog.require('goog.events.EventTarget');
 goog.require('goog.events.EventType');
+goog.require('ol.dom');
 goog.require('ol.style.Image');
 goog.require('ol.style.ImageState');
-
-
-/**
- * @enum {string}
- */
-ol.style.IconAnchorOrigin = {
-  BOTTOM_LEFT: 'bottom-left',
-  BOTTOM_RIGHT: 'bottom-right',
-  TOP_LEFT: 'top-left',
-  TOP_RIGHT: 'top-right'
-};
 
 
 /**
@@ -36,11 +22,26 @@ ol.style.IconAnchorUnits = {
 };
 
 
+/**
+ * @enum {string}
+ */
+ol.style.IconOrigin = {
+  BOTTOM_LEFT: 'bottom-left',
+  BOTTOM_RIGHT: 'bottom-right',
+  TOP_LEFT: 'top-left',
+  TOP_RIGHT: 'top-right'
+};
+
+
 
 /**
+ * @classdesc
+ * Set icon style for vector features.
+ *
  * @constructor
  * @param {olx.style.IconOptions=} opt_options Options.
  * @extends {ol.style.Image}
+ * @api
  */
 ol.style.Icon = function(opt_options) {
 
@@ -54,10 +55,16 @@ ol.style.Icon = function(opt_options) {
 
   /**
    * @private
-   * @type {ol.style.IconAnchorOrigin}
+   * @type {Array.<number>}
+   */
+  this.normalizedAnchor_ = null;
+
+  /**
+   * @private
+   * @type {ol.style.IconOrigin}
    */
   this.anchorOrigin_ = goog.isDef(options.anchorOrigin) ?
-      options.anchorOrigin : ol.style.IconAnchorOrigin.TOP_LEFT;
+      options.anchorOrigin : ol.style.IconOrigin.TOP_LEFT;
 
   /**
    * @private
@@ -80,10 +87,51 @@ ol.style.Icon = function(opt_options) {
       goog.isDef(options.crossOrigin) ? options.crossOrigin : null;
 
   /**
+   * @type {Image}
+   */
+  var image = goog.isDef(options.img) ? options.img : null;
+
+  /**
+   * @type {string|undefined}
+   */
+  var src = options.src;
+
+  if ((!goog.isDef(src) || src.length === 0) && !goog.isNull(image)) {
+    src = image.src;
+  }
+  goog.asserts.assert(goog.isDef(src) && src.length > 0);
+
+  /**
+   * @type {ol.style.ImageState}
+   */
+  var imageState = goog.isDef(options.src) ?
+      ol.style.ImageState.IDLE : ol.style.ImageState.LOADED;
+
+  /**
    * @private
    * @type {ol.style.IconImage_}
    */
-  this.iconImage_ = ol.style.IconImage_.get(options.src, crossOrigin);
+  this.iconImage_ = ol.style.IconImage_.get(
+      image, src, crossOrigin, imageState);
+
+  /**
+   * @private
+   * @type {Array.<number>}
+   */
+  this.offset_ = goog.isDef(options.offset) ? options.offset : [0, 0];
+
+  /**
+   * @private
+   * @type {ol.style.IconOrigin}
+   */
+  this.offsetOrigin_ = goog.isDef(options.offsetOrigin) ?
+      options.offsetOrigin : ol.style.IconOrigin.TOP_LEFT;
+
+  /**
+   * @private
+   * @type {Array.<number>}
+   */
+  this.origin_ = null;
 
   /**
    * @private
@@ -112,11 +160,17 @@ ol.style.Icon = function(opt_options) {
    */
   var scale = goog.isDef(options.scale) ? options.scale : 1;
 
+  /**
+   * @type {boolean}
+   */
+  var snapToPixel = goog.isDef(options.snapToPixel) ?
+      options.snapToPixel : true;
+
   goog.base(this, {
     opacity: opacity,
     rotation: rotation,
     scale: scale,
-    snapToPixel: undefined,
+    snapToPixel: snapToPixel,
     rotateWithView: rotateWithView
   });
 
@@ -126,8 +180,12 @@ goog.inherits(ol.style.Icon, ol.style.Image);
 
 /**
  * @inheritDoc
+ * @api
  */
 ol.style.Icon.prototype.getAnchor = function() {
+  if (!goog.isNull(this.normalizedAnchor_)) {
+    return this.normalizedAnchor_;
+  }
   var anchor = this.anchor_;
   var size = this.getSize();
   if (this.anchorXUnits_ == ol.style.IconAnchorUnits.FRACTION ||
@@ -144,31 +202,42 @@ ol.style.Icon.prototype.getAnchor = function() {
     }
   }
 
-  if (this.anchorOrigin_ != ol.style.IconAnchorOrigin.TOP_LEFT) {
+  if (this.anchorOrigin_ != ol.style.IconOrigin.TOP_LEFT) {
     if (goog.isNull(size)) {
       return null;
     }
     if (anchor === this.anchor_) {
       anchor = this.anchor_.slice();
     }
-    if (this.anchorOrigin_ == ol.style.IconAnchorOrigin.TOP_RIGHT ||
-        this.anchorOrigin_ == ol.style.IconAnchorOrigin.BOTTOM_RIGHT) {
+    if (this.anchorOrigin_ == ol.style.IconOrigin.TOP_RIGHT ||
+        this.anchorOrigin_ == ol.style.IconOrigin.BOTTOM_RIGHT) {
       anchor[0] = -anchor[0] + size[0];
     }
-    if (this.anchorOrigin_ == ol.style.IconAnchorOrigin.BOTTOM_LEFT ||
-        this.anchorOrigin_ == ol.style.IconAnchorOrigin.BOTTOM_RIGHT) {
+    if (this.anchorOrigin_ == ol.style.IconOrigin.BOTTOM_LEFT ||
+        this.anchorOrigin_ == ol.style.IconOrigin.BOTTOM_RIGHT) {
       anchor[1] = -anchor[1] + size[1];
     }
   }
-  return anchor;
+  this.normalizedAnchor_ = anchor;
+  return this.normalizedAnchor_;
 };
 
 
 /**
  * @inheritDoc
+ * @api
  */
 ol.style.Icon.prototype.getImage = function(pixelRatio) {
   return this.iconImage_.getImage(pixelRatio);
+};
+
+
+/**
+ * Real Image size used.
+ * @return {ol.Size} Size.
+ */
+ol.style.Icon.prototype.getImageSize = function() {
+  return this.iconImage_.getSize();
 };
 
 
@@ -189,7 +258,39 @@ ol.style.Icon.prototype.getHitDetectionImage = function(pixelRatio) {
 
 
 /**
+ * @inheritDoc
+ * @api
+ */
+ol.style.Icon.prototype.getOrigin = function() {
+  if (!goog.isNull(this.origin_)) {
+    return this.origin_;
+  }
+  var offset = this.offset_;
+
+  if (this.offsetOrigin_ != ol.style.IconOrigin.TOP_LEFT) {
+    var size = this.getSize();
+    var iconImageSize = this.iconImage_.getSize();
+    if (goog.isNull(size) || goog.isNull(iconImageSize)) {
+      return null;
+    }
+    offset = offset.slice();
+    if (this.offsetOrigin_ == ol.style.IconOrigin.TOP_RIGHT ||
+        this.offsetOrigin_ == ol.style.IconOrigin.BOTTOM_RIGHT) {
+      offset[0] = iconImageSize[0] - size[0] - offset[0];
+    }
+    if (this.offsetOrigin_ == ol.style.IconOrigin.BOTTOM_LEFT ||
+        this.offsetOrigin_ == ol.style.IconOrigin.BOTTOM_RIGHT) {
+      offset[1] = iconImageSize[1] - size[1] - offset[1];
+    }
+  }
+  this.origin_ = offset;
+  return this.origin_;
+};
+
+
+/**
  * @return {string|undefined} Image src.
+ * @api
  */
 ol.style.Icon.prototype.getSrc = function() {
   return this.iconImage_.getSrc();
@@ -198,6 +299,7 @@ ol.style.Icon.prototype.getSrc = function() {
 
 /**
  * @inheritDoc
+ * @api
  */
 ol.style.Icon.prototype.getSize = function() {
   return goog.isNull(this.size_) ? this.iconImage_.getSize() : this.size_;
@@ -233,12 +335,14 @@ ol.style.Icon.prototype.unlistenImageChange = function(listener, thisArg) {
 
 /**
  * @constructor
- * @param {string} src Src.
+ * @param {Image} image Image.
+ * @param {string|undefined} src Src.
  * @param {?string} crossOrigin Cross origin.
+ * @param {ol.style.ImageState} imageState Image state.
  * @extends {goog.events.EventTarget}
  * @private
  */
-ol.style.IconImage_ = function(src, crossOrigin) {
+ol.style.IconImage_ = function(image, src, crossOrigin, imageState) {
 
   goog.base(this);
 
@@ -252,7 +356,7 @@ ol.style.IconImage_ = function(src, crossOrigin) {
    * @private
    * @type {Image}
    */
-  this.image_ = new Image();
+  this.image_ = goog.isNull(image) ? new Image() : image;
 
   if (!goog.isNull(crossOrigin)) {
     this.image_.crossOrigin = crossOrigin;
@@ -268,7 +372,7 @@ ol.style.IconImage_ = function(src, crossOrigin) {
    * @private
    * @type {ol.style.ImageState}
    */
-  this.imageState_ = ol.style.ImageState.IDLE;
+  this.imageState_ = imageState;
 
   /**
    * @private
@@ -278,7 +382,7 @@ ol.style.IconImage_ = function(src, crossOrigin) {
 
   /**
    * @private
-   * @type {string}
+   * @type {string|undefined}
    */
   this.src_ = src;
 
@@ -293,15 +397,17 @@ goog.inherits(ol.style.IconImage_, goog.events.EventTarget);
 
 
 /**
+ * @param {Image} image Image.
  * @param {string} src Src.
  * @param {?string} crossOrigin Cross origin.
+ * @param {ol.style.ImageState} imageState Image state.
  * @return {ol.style.IconImage_} Icon image.
  */
-ol.style.IconImage_.get = function(src, crossOrigin) {
+ol.style.IconImage_.get = function(image, src, crossOrigin, imageState) {
   var iconImageCache = ol.style.IconImageCache.getInstance();
   var iconImage = iconImageCache.get(src, crossOrigin);
   if (goog.isNull(iconImage)) {
-    iconImage = new ol.style.IconImage_(src, crossOrigin);
+    iconImage = new ol.style.IconImage_(image, src, crossOrigin, imageState);
     iconImageCache.set(src, crossOrigin, iconImage);
   }
   return iconImage;
@@ -312,12 +418,7 @@ ol.style.IconImage_.get = function(src, crossOrigin) {
  * @private
  */
 ol.style.IconImage_.prototype.determineTainting_ = function() {
-  var canvas = /** @type {HTMLCanvasElement} */
-      (goog.dom.createElement(goog.dom.TagName.CANVAS));
-  canvas.width = 1;
-  canvas.height = 1;
-  var context = /** @type {CanvasRenderingContext2D} */
-      (canvas.getContext('2d'));
+  var context = ol.dom.createCanvasContext2D(1, 1);
   context.drawImage(this.image_, 0, 0);
   try {
     context.getImageData(0, 0, 1, 1);
@@ -381,16 +482,11 @@ ol.style.IconImage_.prototype.getImageState = function() {
 ol.style.IconImage_.prototype.getHitDetectionImage = function(pixelRatio) {
   if (goog.isNull(this.hitDetectionImage_)) {
     if (this.tainting_) {
-      var canvas = /** @type {HTMLCanvasElement} */
-          (goog.dom.createElement(goog.dom.TagName.CANVAS));
       var width = this.size_[0];
       var height = this.size_[1];
-      canvas.width = width;
-      canvas.height = height;
-      var context = /** @type {CanvasRenderingContext2D} */
-          (canvas.getContext('2d'));
+      var context = ol.dom.createCanvasContext2D(width, height);
       context.fillRect(0, 0, width, height);
-      this.hitDetectionImage_ = canvas;
+      this.hitDetectionImage_ = context.canvas;
     } else {
       this.hitDetectionImage_ = this.image_;
     }

@@ -2,7 +2,8 @@ goog.require('ol.Attribution');
 goog.require('ol.Feature');
 goog.require('ol.FeatureOverlay');
 goog.require('ol.Map');
-goog.require('ol.View2D');
+goog.require('ol.View');
+goog.require('ol.control');
 goog.require('ol.geom.LineString');
 goog.require('ol.geom.Point');
 goog.require('ol.layer.Tile');
@@ -82,9 +83,13 @@ var map = new ol.Map({
       style: styleFunction
     })
   ],
-  renderer: 'canvas',
   target: 'map',
-  view: new ol.View2D({
+  controls: ol.control.defaults({
+    attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
+      collapsible: false
+    })
+  }),
+  view: new ol.View({
     center: [703365.7089403362, 5714629.865071137],
     zoom: 9
   })
@@ -126,7 +131,7 @@ $(map.getViewport()).on('mousemove', function(evt) {
   displaySnap(coordinate);
 });
 
-map.on('singleclick', function(evt) {
+map.on('click', function(evt) {
   displaySnap(evt.coordinate);
 });
 
@@ -174,7 +179,7 @@ $('#time').on('input', function(event) {
     var geometry = /** @type {ol.geom.LineString} */ (feature.getGeometry());
     var coordinate = geometry.getCoordinateAtM(m, true);
     var highlight = feature.get('highlight');
-    if (highlight == undefined) {
+    if (highlight === undefined) {
       highlight = new ol.Feature(new ol.geom.Point(coordinate));
       feature.set('highlight', highlight);
       featureOverlay.addFeature(highlight);

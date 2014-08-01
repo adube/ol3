@@ -1,15 +1,19 @@
 goog.provide('ol.source.GPX');
 
 goog.require('ol.format.GPX');
-goog.require('ol.source.VectorFile');
+goog.require('ol.source.StaticVector');
 
 
 
 /**
+ * @classdesc
+ * Static vector source in GPX format
+ *
  * @constructor
- * @extends {ol.source.VectorFile}
+ * @extends {ol.source.StaticVector}
+ * @fires ol.source.VectorEvent
  * @param {olx.source.GPXOptions=} opt_options Options.
- * @todo stability experimental
+ * @api
  */
 ol.source.GPX = function(opt_options) {
 
@@ -29,4 +33,4 @@ ol.source.GPX = function(opt_options) {
   });
 
 };
-goog.inherits(ol.source.GPX, ol.source.VectorFile);
+goog.inherits(ol.source.GPX, ol.source.StaticVector);

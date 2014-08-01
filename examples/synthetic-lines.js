@@ -1,6 +1,6 @@
 goog.require('ol.Feature');
 goog.require('ol.Map');
-goog.require('ol.View2D');
+goog.require('ol.View');
 goog.require('ol.geom.LineString');
 goog.require('ol.layer.Vector');
 goog.require('ol.source.Vector');
@@ -48,14 +48,13 @@ var vector = new ol.layer.Vector({
   })
 });
 
-var view = new ol.View2D({
+var view = new ol.View({
   center: [0, 0],
   zoom: 0
 });
 
 var map = new ol.Map({
   layers: [vector],
-  renderer: 'canvas',
   target: 'map',
   view: view
 });

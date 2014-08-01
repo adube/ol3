@@ -1,7 +1,6 @@
 goog.require('ol.Feature');
 goog.require('ol.Map');
-goog.require('ol.Overlay');
-goog.require('ol.View2D');
+goog.require('ol.View');
 goog.require('ol.geom.LineString');
 goog.require('ol.geom.Point');
 goog.require('ol.layer.Vector');
@@ -51,19 +50,13 @@ var vector = new ol.layer.Vector({
   }
 });
 
-var popup = new ol.Overlay({
-  element: document.getElementById('popup')
-});
-
 var map = new ol.Map({
   layers: [vector],
-  renderer: 'canvas',
   target: document.getElementById('map'),
-  view: new ol.View2D({
+  view: new ol.View({
     center: [0, 0],
     zoom: 2
-  }),
-  overlays: [popup]
+  })
 });
 
 var point = null;
@@ -95,7 +88,7 @@ $(map.getViewport()).on('mousemove', function(evt) {
   displaySnap(coordinate);
 });
 
-map.on('singleclick', function(evt) {
+map.on('click', function(evt) {
   displaySnap(evt.coordinate);
 });
 
