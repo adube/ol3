@@ -9,7 +9,6 @@ goog.require('ol.interaction.Pointer');
  * Allows the user to pan the map by dragging the map.
  * @constructor
  * @extends {ol.interaction.Pointer}
- * @todo stability experimental
  */
 ol.interaction.DragStyleCursor = function() {
 
