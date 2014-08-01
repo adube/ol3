@@ -786,9 +786,11 @@ ol.interaction.Modify.getDefaultStyleFunction = function() {
   };
 };
 
+
 /**
  * @return {boolean}
  */
 ol.interaction.Modify.prototype.isModifiable = function() {
   return !goog.isNull(this.vertexFeature_);
 };
+
