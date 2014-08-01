@@ -3,7 +3,7 @@ goog.require('goog.events');
 // This example uses the GMapx v3 API, which we do not have an exports file for.
 goog.require('ol.Feature');
 goog.require('ol.Map');
-goog.require('ol.View2D');
+goog.require('ol.View');
 goog.require('ol.control.LayerSwitcher');
 goog.require('ol.control.SingleDraw');
 goog.require('ol.extent');
@@ -52,7 +52,7 @@ var gmap = new google.maps.Map(document.getElementById('gmap'), {
   streetViewControl: false
 });
 
-var view = new ol.View2D({
+var view = new ol.View({
   maxZoom: 21 // to fix google maps num zoom levels
 });
 view.on('change:center', function() {
