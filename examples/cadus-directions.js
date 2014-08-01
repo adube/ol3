@@ -2,6 +2,7 @@
 // This example uses the GMapx v3 API, which we do not have an exports file for.
 goog.require('ol.Map');
 goog.require('ol.View2D');
+goog.require('ol.control.GoogleMapsCurrentPosition');
 goog.require('ol.control.GoogleMapsDirections');
 goog.require('ol.interaction');
 goog.require('ol.interaction.DragPan');
@@ -104,9 +105,16 @@ var createDetourIconStyle = function() {
   };
 };
 
+var olCurrentPosition = new ol.control.GoogleMapsCurrentPosition({
+  'geocoderComponentRestrictions': {'country': 'CA'},
+  'currentPositionText': 'Ma position'
+});
+
 var directions = new ol.control.GoogleMapsDirections({
   'gmap': gmap,
   'target': 'gmaps-directions',
+  'enableCurrentPosition': true,
+  'currentPositionControl': olCurrentPosition,
   'geocoderComponentRestrictions': {'country': 'CA'},
   'getURL': '/usager/adresses/obtenir',
   'addWaypointButtonText': 'Ajouter un point',

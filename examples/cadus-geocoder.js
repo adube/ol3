@@ -2,6 +2,7 @@
 // This example uses the GMapx v3 API, which we do not have an exports file for.
 goog.require('ol.Map');
 goog.require('ol.View2D');
+goog.require('ol.control.GoogleMapsCurrentPosition');
 goog.require('ol.control.GoogleMapsGeocoder');
 goog.require('ol.interaction');
 goog.require('ol.interaction.DragPan');
@@ -74,15 +75,21 @@ view.setZoom(14);
 olMapDiv.parentNode.removeChild(olMapDiv);
 gmap.controls[google.maps.ControlPosition.TOP_LEFT].push(olMapDiv);
 
+
+var olCurrentPosition = new ol.control.GoogleMapsCurrentPosition({
+  'geocoderComponentRestrictions': {'country': 'CA'},
+  'currentPositionText': 'Ma position'
+});
+
 var olGeocoder = new ol.control.GoogleMapsGeocoder({
   'enableReverseGeocoding': true,
   'target': 'gmaps-geocoder',
   'enableCurrentPosition': true,
-  'currentPositionText': 'Ma position',
+  'currentPositionControl': olCurrentPosition,
   'searchButtonText': 'Rechercher',
   'clearButtonText': 'Effacer',
   'removeButtonText': 'Supprimer',
-  'getURL': '/usager/adresses/obtenir',
+  //'getURL': '/usager/adresses/obtenir',
   'additionalAddresses': [{
     'description': 'Une maison',
     'text': '9999 rue Des Maisons, Maisonville',

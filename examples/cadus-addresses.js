@@ -3,6 +3,7 @@
 goog.require('ol.Map');
 goog.require('ol.View2D');
 goog.require('ol.control.GoogleMapsAddresses');
+goog.require('ol.control.GoogleMapsCurrentPosition');
 goog.require('ol.interaction');
 goog.require('ol.interaction.DragPan');
 goog.require('ol.layer.Vector');
@@ -74,11 +75,16 @@ view.setZoom(14);
 olMapDiv.parentNode.removeChild(olMapDiv);
 gmap.controls[google.maps.ControlPosition.TOP_LEFT].push(olMapDiv);
 
+var olCurrentPosition = new ol.control.GoogleMapsCurrentPosition({
+  'geocoderComponentRestrictions': {'country': 'CA'},
+  'currentPositionText': 'Ma position'
+});
+
 var olAdresses = new ol.control.GoogleMapsAddresses({
   'target': 'gmaps-geocoder',
   'addressesTarget': 'addresses',
   'enableCurrentPosition': true,
-  'currentPositionText': 'Ma position',
+  'currentPositionControl': olCurrentPosition,
   'searchButtonText': 'Rechercher',
   'clearButtonText': 'Effacer',
   'addButtonText': 'Ajouter une addresse',

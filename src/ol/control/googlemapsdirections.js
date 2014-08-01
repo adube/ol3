@@ -76,13 +76,6 @@ ol.control.GoogleMapsDirections = function(opt_options) {
           options.addWaypointButtonText : 'Add Waypoint';
 
   /**
-   * i18n - currentPosition
-   * @type {?string|undefined}
-   */
-  this.currentPositionText = goog.isDefAndNotNull(options.currentPositionText) ?
-      options.currentPositionText : undefined;
-
-  /**
    * i18n - searchButton
    * @type {?string|undefined}
    */
@@ -392,6 +385,26 @@ ol.control.GoogleMapsDirections = function(opt_options) {
    */
   this.directionsService_ = new google.maps.DirectionsService();
 
+  /**
+   * @private
+   * @type {ol.control.GoogleMapsCurrentPosition}
+   */
+  this.currentPositionControl_ = goog.isDefAndNotNull(
+      options.currentPositionControl) ?
+      options.currentPositionControl : null;
+
+  /**
+   * @type {boolean}
+   * @private
+   */
+  if (goog.isDefAndNotNull(options.enableCurrentPosition) &&
+      goog.isBoolean(options.enableCurrentPosition) &&
+      navigator.geolocation) {
+
+    this.enableCurrentPosition_ = true;
+  } else {
+    this.enableCurrentPosition_ = false;
+  }
 
   /**
    * @private
@@ -408,8 +421,9 @@ ol.control.GoogleMapsDirections = function(opt_options) {
   this.startGeocoder_ = new ol.control.GoogleMapsGeocoder({
     'enableReverseGeocoding': true,
     'target': startGeocoderElement,
+    'enableCurrentPosition': this.enableCurrentPosition_,
+    'currentPositionControl': this.currentPositionControl_,
     'getURL': this.getURL_,
-    'currentPositionText': this.currentPositionText,
     'searchButtonText': this.searchButtonText,
     'clearButtonText': this.clearButtonText,
     'removeButtonText': this.removeButtonText,
@@ -425,8 +439,9 @@ ol.control.GoogleMapsDirections = function(opt_options) {
   this.endGeocoder_ = new ol.control.GoogleMapsGeocoder({
     'enableReverseGeocoding': false,
     'target': endGeocoderElement,
+    'enableCurrentPosition': this.enableCurrentPosition_,
+    'currentPositionControl': this.currentPositionControl_,
     'getURL': this.getURL_,
-    'currentPositionText': this.currentPositionText,
     'searchButtonText': this.searchButtonText,
     'clearButtonText': this.clearButtonText,
     'removeButtonText': this.removeButtonText,
@@ -477,8 +492,9 @@ ol.control.GoogleMapsDirections.prototype.addWaypointGeocoder = function() {
   var geocoder = new ol.control.GoogleMapsGeocoder({
     'enableReverseGeocoding': false,
     'target': container,
+    'enableCurrentPosition': this.enableCurrentPosition_,
+    'currentPositionControl': this.currentPositionControl_,
     'additionalAddresses': this.startGeocoder_.additionalAddresses,
-    'currentPositionText': this.currentPositionText,
     'searchButtonText': this.searchButtonText,
     'clearButtonText': this.clearButtonText,
     'removeButtonText': this.removeButtonText,

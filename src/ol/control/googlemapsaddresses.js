@@ -39,13 +39,6 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
   var options = goog.isDef(opt_options) ? opt_options : {};
 
   /**
-   * i18n - currentPosition
-   * @type {string}
-   */
-  this.currentPositionText = goog.isDefAndNotNull(options.currentPositionText) ?
-      options.currentPositionText : null;
-
-  /**
    * i18n - searchButton
    * @type {string}
    */
@@ -67,7 +60,7 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
       options.removeButtonText : 'x';
 
   /**
-   * i18n - currentPosition
+   * i18n - addButtonText
    * @type {string}
    */
   this.addButtonText = goog.isDefAndNotNull(options.addButtonText) ?
@@ -138,6 +131,14 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
    * @type {Array} array of Element
    */
   this.removeAddressElements_ = [];
+
+  /**
+   * @private
+   * @type {ol.control.GoogleMapsCurrentPosition}
+   */
+  this.currentPositionControl_ = goog.isDefAndNotNull(
+      options.currentPositionControl) ?
+      options.currentPositionControl : null;
 
   /**
    * @type {boolean}
@@ -218,7 +219,7 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
     'enableReverseGeocoding': true,
     'target': geocoderElement,
     'enableCurrentPosition': this.enableCurrentPosition_,
-    'currentPositionText': this.currentPositionText,
+    'currentPositionControl': this.currentPositionControl_,
     'searchButtonText': this.searchButtonText,
     'clearButtonText': this.clearButtonText,
     'removeButtonText': this.removeButtonText,
