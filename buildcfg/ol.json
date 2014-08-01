@@ -4,6 +4,7 @@
     "externs": [
       "externs/jquery-1.7.js",
       "externs/bingmaps.js",
+      "externs/bootstrap.js",
       "externs/closure-compiler.js",
       "externs/geojson.js",
       "externs/google_maps_api_v3_15.js",

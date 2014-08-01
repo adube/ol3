@@ -40,7 +40,7 @@ ol.control.GoogleMapsCurrentPosition = function(opt_options) {
 
   /**
    * @private
-   * @type {Object}
+   * @type {?Object}
    */
   this.currentPosition_ = null;
 

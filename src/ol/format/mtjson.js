@@ -275,7 +275,7 @@ ol.format.MTJSON.prototype.write = function(sourceObj, serialize) {
 
   // waypoints
   var waypoints = sourceObj.waypoints;
-  goog.asserts.assertObject(waypoints);
+  goog.asserts.assertArray(waypoints);
   object[ol.control.MTJSON_WAYPOINTS] = this.writeWaypoints_(waypoints);
 
   // detours

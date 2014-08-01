@@ -3,6 +3,7 @@
   "src": ["src/**/*.js", "build/examples/all.js"],
   "compile": {
     "externs": [
+      "externs/jquery-1.7.js",
       "externs/bingmaps.js",
       "externs/bootstrap.js",
       "externs/closure-compiler.js",
@@ -10,6 +11,7 @@
       "externs/geojson.js",
       "externs/jquery-1.7.js",
       "externs/google_maps_api_v3_15.js",
+      "externs/mtx.js",
       "externs/oli.js",
       "externs/olx.js",
       "externs/proj4js.js",

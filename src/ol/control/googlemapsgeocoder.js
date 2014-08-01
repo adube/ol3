@@ -12,7 +12,6 @@ goog.require('goog.style');
 goog.require('goog.ui.IdGenerator');
 goog.require('ol.Feature');
 goog.require('ol.MapBrowserEvent.EventType');
-goog.require('ol.View');
 goog.require('ol.control.Control');
 goog.require('ol.css');
 goog.require('ol.geom.Point');
@@ -67,12 +66,10 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
    * @type {boolean}
    * @private
    */
-  this.enableReverseGeocoding_ = null;
+  this.enableReverseGeocoding_ = false;
   if (goog.isDefAndNotNull(options.enableReverseGeocoding) &&
       goog.isBoolean(options.enableReverseGeocoding)) {
     this.enableReverseGeocoding_ = options.enableReverseGeocoding;
-  } else {
-    this.enableReverseGeocoding_ = false;
   }
 
   /**
@@ -296,7 +293,7 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
    * @type {boolean}
    * @private
    */
-  this.enableCurrentPosition_ = null;
+  this.enableCurrentPosition_ = false;
   if (goog.isDefAndNotNull(options.enableCurrentPosition) &&
       goog.isBoolean(options.enableCurrentPosition) &&
       navigator.geolocation &&
@@ -304,8 +301,6 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
 
     this.enableCurrentPosition_ = true;
     this.currentPositionControl_.setCurrentPosition(null, false);
-  } else {
-    this.enableCurrentPosition_ = false;
   }
 
 
@@ -956,7 +951,7 @@ ol.control.GoogleMapsGeocoder.prototype.displayLocation_ = function(location) {
   goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
   vectorSource.addFeature(feature);
 
-  this.setValues({'location': location});
+  this.setProperties({'location': location});
 };
 
 
@@ -1009,7 +1004,7 @@ ol.control.GoogleMapsGeocoder.prototype.hideRemoveButton = function() {
  */
 ol.control.GoogleMapsGeocoder.prototype.clear = function() {
   this.clearVector_();
-  this.setValues({'location': null});
+  this.setProperties({'location': null});
   this.clearGeocodeResults_();
   this.input_.value = '';
 };

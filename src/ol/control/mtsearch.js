@@ -11,7 +11,6 @@ goog.require('goog.net.EventType');
 goog.require('goog.net.XhrIo');
 goog.require('ol.Collection');
 goog.require('ol.Feature');
-goog.require('ol.View');
 goog.require('ol.control.Control');
 goog.require('ol.control.GoogleMapsDirectionsPanel');
 goog.require('ol.extent');
@@ -489,8 +488,8 @@ ol.control.MTSearch.prototype.request_ = function() {
 ol.control.MTSearch.prototype.selectRoute_ = function(index) {
   var routeFeatures = this.routeFeatures_;
   var selectedRouteFeatures = this.selectedRouteFeatures_;
-  var routeFeature = routeFeatures.getAt(index);
-  var routeMarkerFeatures = this.markerFeatures_.getAt(index);
+  var routeFeature = routeFeatures.item(index);
+  var routeMarkerFeatures = this.markerFeatures_.item(index);
   goog.asserts.assertArray(routeMarkerFeatures);
 
   if (goog.isNull(routeFeature)) {

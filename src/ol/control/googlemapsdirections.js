@@ -18,7 +18,6 @@ goog.require('ol.Collection');
 goog.require('ol.Feature');
 goog.require('ol.MapBrowserEvent.EventType');
 goog.require('ol.Object');
-goog.require('ol.View');
 goog.require('ol.control.Control');
 goog.require('ol.control.GoogleMapsAddresses');
 goog.require('ol.control.GoogleMapsDirectionsPanel');
@@ -70,7 +69,7 @@ ol.control.GOOGLEMAPSDIRECTIONS_DETOUR_LABEL_PROPERTY = 'label';
 /**
  * @classdesc
  * Todo
- * 
+ *
  * @constructor
  * @extends {ol.control.Control}
  * @param {olx.control.GoogleMapsDirectionsOptions=} opt_options Options.
@@ -711,14 +710,12 @@ ol.control.GoogleMapsDirections = function(opt_options) {
    * @type {boolean}
    * @private
    */
-    this.enableCurrentPosition_ = null;
+  this.enableCurrentPosition_ = false;
   if (goog.isDefAndNotNull(options.enableCurrentPosition) &&
       goog.isBoolean(options.enableCurrentPosition) &&
       navigator.geolocation) {
 
     this.enableCurrentPosition_ = true;
-  } else {
-    this.enableCurrentPosition_ = false;
   }
 
   /**
@@ -892,7 +889,7 @@ ol.control.GoogleMapsDirections.prototype.getGeocoderInfo = function() {
  * @return {ol.control.GoogleMapsGeocoder}
  */
 ol.control.GoogleMapsDirections.prototype.getStartGeocoder = function() {
-  var geocoder = this.geocoders_.getAt(0);
+  var geocoder = this.geocoders_.item(0);
   goog.asserts.assertInstanceof(geocoder, ol.control.GoogleMapsGeocoder);
   return geocoder;
 };
@@ -1858,12 +1855,12 @@ ol.control.GoogleMapsDirections.prototype.handleReverseButtonPress_ =
 
   this.loading_ = true;
 
-  var firstGeocoder = this.geocoders_.getAt(0);
+  var firstGeocoder = this.geocoders_.item(0);
   var firstLocation = firstGeocoder.getLocation();
   var firstInputValue = firstGeocoder.getInputValue();
   firstGeocoder.clear();
 
-  var secondGeocoder = this.geocoders_.getAt(1);
+  var secondGeocoder = this.geocoders_.item(1);
   var secondLocation = secondGeocoder.getLocation();
   var secondInputValue = secondGeocoder.getInputValue();
   secondGeocoder.clear();
@@ -2152,7 +2149,7 @@ ol.control.GoogleMapsDirections.prototype.removeAllGeocoders_ =
     function() {
   var geocoder;
   while (this.geocoders_.getLength() > 0) {
-    geocoder = this.geocoders_.getAt(0);
+    geocoder = this.geocoders_.item(0);
     goog.asserts.assertInstanceof(geocoder, ol.control.GoogleMapsGeocoder);
     this.removeGeocoder_(geocoder);
   }
@@ -2440,7 +2437,7 @@ ol.control.GoogleMapsDirections.prototype.saveAll_ = function(includeRoutes) {
 
     if (!goog.isDefAndNotNull(selectedRoute.geometry)) {
       selectedRoute.geometry =
-          this.selectedRouteFeatures_.getAt(0).getGeometry();
+          this.selectedRouteFeatures_.item(0).getGeometry();
     }
 
     source.routes = [selectedRoute];
@@ -2512,7 +2509,7 @@ ol.control.GoogleMapsDirections.prototype.saveAll_ = function(includeRoutes) {
 ol.control.GoogleMapsDirections.prototype.selectRoute_ = function(index) {
   var routeFeatures = this.routeFeatures_;
   var selectedRouteFeatures = this.selectedRouteFeatures_;
-  var routeFeature = routeFeatures.getAt(index);
+  var routeFeature = routeFeatures.item(index);
 
   if (goog.isNull(routeFeature)) {
     // todo - manage error

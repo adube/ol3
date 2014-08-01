@@ -19,14 +19,15 @@ goog.require('ol.control.Control');
  * @api
  */
 ol.control.LayerSwitcher = function(opt_options) {
+
+  var options = goog.isDef(opt_options) ? opt_options : {};
+
   /**
    * Layers controlled by this control
    * @type {Array.<ol.layer.Vector>}
    * @private
    */
-  this.layers_ = null;
-
-  var options = goog.isDef(opt_options) ? opt_options : {};
+  this.layers_ = goog.isDef(options.layers) ? options.layers : [];
 
   /**
    * This object's classname
@@ -35,10 +36,6 @@ ol.control.LayerSwitcher = function(opt_options) {
    */
   this.className_ = goog.isDef(options.className) ?
       options.className : 'ol-layerswitcher';
-
-
-  this.layers_ = goog.isDef(options.layers) ?
-      options.layers : [];
 
   var elements = [];
   for (var i in this.layers_) {
@@ -57,10 +54,14 @@ ol.control.LayerSwitcher = function(opt_options) {
       );
       elements.push(checkbox);
 
-      elements.push(goog.dom.createDom(goog.dom.TagName.LABEL, {
+      var layerName = this.layers_[i].get('name');
+      goog.asserts.assertString(layerName);
+      var labelEl = goog.dom.createDom(goog.dom.TagName.LABEL, {
         'class' : this.className_ + '-list-layer-element',
         'for' : this.className_ + '-list-layer-element-' + i
-      }, this.layers_[i].get('name')));
+      }, layerName);
+
+      elements.push(labelEl);
     }
   }
   /**

@@ -13,7 +13,6 @@ goog.require('ol.Collection');
 goog.require('ol.MapBrowserEvent.EventType');
 goog.require('ol.Overlay');
 goog.require('ol.OverlayPositioning');
-goog.require('ol.View');
 goog.require('ol.control.Control');
 goog.require('ol.extent');
 goog.require('ol.format.GeoJSON');
@@ -702,7 +701,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.getSelectedRoute = function() {
   var routeResults = false;
 
   if (!goog.isNull(this.selectedRouteIndex_)) {
-    routeResults = this.routes_.getAt(this.selectedRouteIndex_).result;
+    routeResults = this.routes_.item(this.selectedRouteIndex_).result;
   }
 
   return routeResults;
@@ -1572,7 +1571,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.select_ = function(index) {
 
     // todo - set style to selector
 
-    route = this.routes_.getAt(this.selectedRouteIndex_);
+    route = this.routes_.item(this.selectedRouteIndex_);
 
     // hide direction details
     goog.style.setStyle(route.directionEl, 'display', 'none');
@@ -1590,7 +1589,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.select_ = function(index) {
       this.selectedRouteIndex_ != index) {
     //console.log("select: " + index);
 
-    route = this.routes_.getAt(index);
+    route = this.routes_.item(index);
 
     // todo - set style to selector
 
@@ -1605,7 +1604,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.select_ = function(index) {
   else if (!goog.isNull(this.selectedRouteIndex_) &&
       this.selectedRouteIndex_ == index &&
       this.mode_ == ol.control.GoogleMapsDirectionsPanel.Mode.COMPLEX) {
-    route = this.routes_.getAt(index);
+    route = this.routes_.item(index);
 
     //toggle off the current direction detail
     goog.style.setStyle(route.directionEl, 'display', 'none');

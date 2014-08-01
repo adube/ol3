@@ -253,14 +253,12 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
    * @type {boolean}
    * @private
    */
-  this.enableCurrentPosition_ = null;
+  this.enableCurrentPosition_ = false;
   if (goog.isDefAndNotNull(options.enableCurrentPosition) &&
       goog.isBoolean(options.enableCurrentPosition) &&
       navigator.geolocation) {
 
     this.enableCurrentPosition_ = true;
-  } else {
-    this.enableCurrentPosition_ = false;
   }
 
   /**
@@ -598,7 +596,12 @@ ol.control.GoogleMapsAddresses.prototype.handleLocationChanged_ =
   this.location_ = goog.isDefAndNotNull(location) ? location : null;
   if (this.location_ !== null) {
     var view = this.getMap().getView();
-    var mapExtent = view.calculateExtent(this.getMap().getSize());
+    goog.asserts.assert(goog.isDef(view));
+
+    var size = this.getMap().getSize();
+    goog.asserts.assertArray(size);
+
+    var mapExtent = view.calculateExtent(size);
     var locationExtent = ol.extent.boundingExtent([
       this.geocoder_.getCoordinate()]);
     if (!ol.extent.intersects(mapExtent, locationExtent))
