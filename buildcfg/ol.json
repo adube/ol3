@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "exports": ["*"],
   "compile": {
     "externs": [
@@ -65,4 +66,48 @@
     "use_types_for_optimization": true,
     "manage_closure_dependencies": true
   }
+=======
+
+  "id": "ol",
+
+  "css-allowed-unrecognized-properties": [
+    "user-select"
+  ],
+
+  "css-inputs": [
+    "../css/ol.css"
+  ],
+
+  "css-output-file": "../build/ol.css",
+
+  "externs": [
+    "//json.js",
+    '//jquery-1.7.js',
+    "../externs/bingmaps.js",
+    "../externs/bootstrap.js",
+    "../externs/closure-compiler.js",
+    "../externs/geojson.js",
+    "../externs/google_maps_api_v3_15.js",
+    "../externs/mtx.js",
+    "../externs/oli.js",
+    "../externs/olx.js",
+    "../externs/proj4js.js",
+    "../externs/tilejson.js",
+    "../externs/topojson.js",
+    "../externs/vbarray.js"
+  ],
+
+  "inherits": "base.json",
+
+  "inputs": [
+    "../build/src/external/src/exports.js"
+  ],
+
+  "output-wrapper": "// OpenLayers 3. see http://ol3js.org/\n(function(){%output%})();",
+
+  "paths": [
+    "../src"
+  ]
+
+>>>>>>> 26235a0... Add mtx.format.Address to fix 'min' issue with 'lon' property
 }

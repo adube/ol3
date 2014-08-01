@@ -278,8 +278,26 @@ def examples_star_json(name, match):
             "extra_annotation_name": [
               "api", "observable"
             ],
+<<<<<<< HEAD
             "jscomp_off": [
               "es5Strict"
+=======
+            'externs': [
+                '//jquery-1.7.js',
+                '../externs/bingmaps.js',
+                '../externs/bootstrap.js',
+                '../externs/closure-compiler.js',
+                '../externs/example.js',
+                '../externs/geojson.js',
+                '../externs/google_maps_api_v3_15.js',
+                '../externs/mtx.js',
+                '../externs/oli.js',
+                '../externs/olx.js',
+                '../externs/proj4js.js',
+                '../externs/tilejson.js',
+                '../externs/topojson.js',
+                '../externs/vbarray.js',
+>>>>>>> 26235a0... Add mtx.format.Address to fix 'min' issue with 'lon' property
             ],
             "compilation_level": "ADVANCED",
             "output_wrapper": "// OpenLayers 3. See http://ol3.js.org/\n(function(){%output%})();",

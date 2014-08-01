@@ -605,6 +605,8 @@ ol.control.GoogleMapsAddresses.prototype.addAddressToList = function(
 ol.control.GoogleMapsAddresses.prototype.handleAddressElementPress_ = function(
     browserEvent) {
 
+  browserEvent.preventDefault();
+
   this.clear_();
 
   var element = browserEvent.currentTarget;
@@ -623,6 +625,8 @@ ol.control.GoogleMapsAddresses.prototype.handleAddressElementPress_ = function(
 ol.control.GoogleMapsAddresses.prototype.handleRemoveAddressElementPress_ =
     function(browserEvent) {
 
+  browserEvent.preventDefault();
+
   var element = browserEvent.currentTarget;
   var id = element.getAttribute('data-result');
   var address = this.getAddressByID_(id);
@@ -634,7 +638,7 @@ ol.control.GoogleMapsAddresses.prototype.handleRemoveAddressElementPress_ =
 /**
  * @private
  * @param {number} id
- * @return {Object} address
+ * @return {mtx.format.Address} address
  */
 ol.control.GoogleMapsAddresses.prototype.getAddressByID_ = function(id) {
   var address = null;
@@ -683,7 +687,7 @@ ol.control.GoogleMapsAddresses.prototype.clear_ = function() {
 
 /**
  * @private
- * @param {Object} address
+ * @param {mtx.format.Address} address
  */
 ol.control.GoogleMapsAddresses.prototype.displayAddress_ = function(
     address) {
