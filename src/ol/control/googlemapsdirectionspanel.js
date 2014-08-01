@@ -215,6 +215,16 @@ goog.inherits(ol.control.GoogleMapsDirectionsPanel, ol.control.Control);
 
 
 /**
+ * @enum {string}
+ */
+ol.control.GoogleMapsDirectionsPanel.EventType = {
+  HOVER: goog.events.getUniqueId('HOVER'),
+  UNHOVER: goog.events.getUniqueId('UNHOVER'),
+  SELECT: goog.events.getUniqueId('SELECT')
+};
+
+
+/**
  * Clear the current directions.
  */
 ol.control.GoogleMapsDirectionsPanel.prototype.clearDirections = function() {
@@ -426,6 +436,16 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createRouteSelectorItemElement_ =
     goog.events.EventType.TOUCHEND,
     goog.events.EventType.CLICK
   ], this.handleSelectorElementPress_, false, this);
+
+  goog.events.listen(element, [
+    goog.events.EventType.MOUSEOVER
+  ], this.handleSelectorElementHover_, false, this);
+
+  goog.events.listen(element, [
+    goog.events.EventType.MOUSEOUT
+  ], this.handleSelectorElementUnhover_, false, this);
+
+
 
   this.clickableSelectorElements_.push(element);
 
@@ -1046,6 +1066,56 @@ ol.control.GoogleMapsDirectionsPanel.prototype.handleMapSingleClick_ =
  * @param {goog.events.BrowserEvent} browserEvent Browser event.
  * @private
  */
+ol.control.GoogleMapsDirectionsPanel.prototype.handleSelectorElementHover_ =
+    function(browserEvent) {
+
+  browserEvent.preventDefault();
+  var element = browserEvent.currentTarget;
+  var index = parseInt(element.getAttribute('data-selector-index'), 10);
+
+  this.hover_(index);
+};
+
+
+/**
+ * @param {goog.events.BrowserEvent} browserEvent Browser event.
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.handleSelectorElementUnhover_ =
+    function(browserEvent) {
+
+  browserEvent.preventDefault();
+
+  this.unhover_();
+};
+
+
+/**
+ * Hovers a route, displaying it temporarly on the map.
+ * @param {number} index Index of the route to select
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.hover_ = function(index) {
+
+  goog.events.dispatchEvent(this,
+      ol.control.GoogleMapsDirectionsPanel.EventType.HOVER);
+};
+
+
+/**
+ * Removes all temp routes on the map
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.unhover_ = function() {
+  goog.events.dispatchEvent(this,
+      ol.control.GoogleMapsDirectionsPanel.EventType.UNHOVER);
+};
+
+
+/**
+ * @param {goog.events.BrowserEvent} browserEvent Browser event.
+ * @private
+ */
 ol.control.GoogleMapsDirectionsPanel.prototype.handleSelectorElementPress_ =
     function(browserEvent) {
 
@@ -1118,9 +1188,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.handleToggleElementPress_ =
         this.classPrefix_ + '-selector-toggle-opened');
   }
   this.selectorOpened_(open);
-};
-
-
+}
 /**
  * @private
  * @param {boolean} open parameter. Call to open or close the selector panel.
@@ -1139,4 +1207,4 @@ ol.control.GoogleMapsDirectionsPanel.prototype.selectorOpened_ =
       items.item(i).style.display = display;
     }
   }
-};
+};;
