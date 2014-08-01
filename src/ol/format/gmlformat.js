@@ -1,12 +1,12 @@
 goog.provide('ol.format.GML');
 
-goog.require('goog.array');
 goog.require('goog.asserts');
 goog.require('goog.dom');
 goog.require('goog.dom.NodeType');
 goog.require('goog.object');
 goog.require('goog.string');
 goog.require('ol.Feature');
+goog.require('ol.array');
 goog.require('ol.extent');
 goog.require('ol.format.XMLFeature');
 goog.require('ol.format.XSD');
@@ -24,11 +24,14 @@ goog.require('ol.xml');
 
 
 /**
+ * @classdesc
+ * Feature format for reading and writing data in the GML format.
+ *
  * @constructor
  * @param {olx.format.GMLOptions=} opt_options
  *     Optional configuration object.
  * @extends {ol.format.XMLFeature}
- * @todo stability experimental
+ * @api
  */
 ol.format.GML = function(opt_options) {
   var options = /** @type {olx.format.GMLOptions} */
@@ -118,10 +121,12 @@ ol.format.GML.readFeatures_ = function(node, objectStack) {
   if (localName == 'FeatureCollection') {
     features = ol.xml.pushParseAndPop(null,
         ol.format.GML.FEATURE_COLLECTION_PARSERS, node, objectStack);
-  } else if (localName == 'featureMembers') {
+  } else if (localName == 'featureMembers' || localName == 'featureMember') {
     var parsers = {};
     var parsersNS = {};
-    parsers[featureType] = ol.xml.makeArrayPusher(ol.format.GML.readFeature_);
+    parsers[featureType] = (localName == 'featureMembers') ?
+        ol.xml.makeArrayPusher(ol.format.GML.readFeature_) :
+        ol.xml.makeReplacer(ol.format.GML.readFeature_);
     parsersNS[goog.object.get(context, 'featureNS')] = parsers;
     features = ol.xml.pushParseAndPop([], parsersNS, node, objectStack);
   }
@@ -137,6 +142,7 @@ ol.format.GML.readFeatures_ = function(node, objectStack) {
  */
 ol.format.GML.FEATURE_COLLECTION_PARSERS = {
   'http://www.opengis.net/gml': {
+    'featureMember': ol.xml.makeArrayPusher(ol.format.GML.readFeatures_),
     'featureMembers': ol.xml.makeReplacer(ol.format.GML.readFeatures_)
   }
 };
@@ -576,7 +582,7 @@ ol.format.GML.readPolygon_ = function(node, objectStack) {
     var ends = [flatCoordinates.length];
     var i, ii;
     for (i = 1, ii = flatLinearRings.length; i < ii; ++i) {
-      goog.array.extend(flatCoordinates, flatLinearRings[i]);
+      ol.array.safeExtend(flatCoordinates, flatLinearRings[i]);
       ends.push(flatCoordinates.length);
     }
     polygon.setFlatCoordinates(
@@ -607,7 +613,7 @@ ol.format.GML.readSurface_ = function(node, objectStack) {
     var ends = [flatCoordinates.length];
     var i, ii;
     for (i = 1, ii = flatLinearRings.length; i < ii; ++i) {
-      goog.array.extend(flatCoordinates, flatLinearRings[i]);
+      ol.array.safeExtend(flatCoordinates, flatLinearRings[i]);
       ends.push(flatCoordinates.length);
     }
     polygon.setFlatCoordinates(
@@ -1034,6 +1040,17 @@ ol.format.GML.prototype.readGeometryFromNode = function(node) {
   var geometry = ol.format.GML.readGeometry(node, [{}]);
   return (goog.isDef(geometry)) ? geometry : null;
 };
+
+
+/**
+ * Read all features from a GML FeatureCollection.
+ *
+ * @function
+ * @param {ArrayBuffer|Document|Node|Object|string} source Source.
+ * @return {Array.<ol.Feature>} Features.
+ * @api
+ */
+ol.format.GML.prototype.readFeatures;
 
 
 /**
@@ -1631,9 +1648,10 @@ ol.format.GML.GEOMETRY_NODE_FACTORY_ = function(value, objectStack,
   var multiCurve = goog.object.get(context, 'multiCurve');
   var parentNode = objectStack[objectStack.length - 1].node;
   goog.asserts.assert(ol.xml.isNode(parentNode));
+  var nodeName;
   if (!goog.isArray(value)) {
     goog.asserts.assertInstanceof(value, ol.geom.Geometry);
-    var nodeName = value.getType();
+    nodeName = value.getType();
     if (nodeName === 'MultiPolygon' && multiSurface === true) {
       nodeName = 'MultiSurface';
     } else if (nodeName === 'Polygon' && surface === true) {
@@ -1664,6 +1682,17 @@ ol.format.GML.prototype.writeGeometryNode = function(geometry) {
       ol.format.GML.GEOMETRY_NODE_FACTORY_, [geometry], []);
   return geom;
 };
+
+
+/**
+ * Encode an array of features in GML 3.1.1 Simple Features.
+ *
+ * @function
+ * @param {Array.<ol.Feature>} features Features.
+ * @return {Node} Result.
+ * @api
+ */
+ol.format.GML.prototype.writeFeatures;
 
 
 /**

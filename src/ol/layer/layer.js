@@ -10,18 +10,19 @@ goog.require('ol.source.Source');
 
 
 /**
+ * @classdesc
+ * Abstract base class; normally only used for creating subclasses and not
+ * instantiated in apps.
+ * A visual representation of raster or vector map data.
+ * Layers group together those properties that pertain to how the data is to be
+ * displayed, irrespective of the source of that data.
+ *
  * @constructor
  * @extends {ol.layer.Base}
+ * @fires ol.render.Event
+ * @fires change Triggered when the state of the source changes.
  * @param {olx.layer.LayerOptions} options Layer options.
- * @todo stability experimental
- * @todo observable brightness {number} the brightness of the layer
- * @todo observable contrast {number} the contrast of the layer
- * @todo observable hue {number} the hue of the layer
- * @todo observable opacity {number} the opacity of the layer
- * @todo observable saturation {number} the saturation of the layer
- * @todo observable visible {boolean} the visiblity of the layer
- * @todo observable maxResolution {number} the maximum resolution of the layer
- * @todo observable minResolution {number} the minimum resolution of the layer
+ * @api
  */
 ol.layer.Layer = function(options) {
 
@@ -44,6 +45,20 @@ goog.inherits(ol.layer.Layer, ol.layer.Base);
 
 
 /**
+ * Return `true` if the layer is visible, and if the passed resolution is
+ * between the layer's minResolution and maxResolution. The comparison is
+ * inclusive for `minResolution` and exclusive for `maxResolution`.
+ * @param {ol.layer.LayerState} layerState Layer state.
+ * @param {number} resolution Resolution.
+ * @return {boolean} The layer is visible at the given resolution.
+ */
+ol.layer.Layer.visibleAtResolution = function(layerState, resolution) {
+  return layerState.visible && resolution >= layerState.minResolution &&
+      resolution < layerState.maxResolution;
+};
+
+
+/**
  * @inheritDoc
  */
 ol.layer.Layer.prototype.getLayersArray = function(opt_array) {
@@ -56,21 +71,16 @@ ol.layer.Layer.prototype.getLayersArray = function(opt_array) {
 /**
  * @inheritDoc
  */
-ol.layer.Layer.prototype.getLayerStatesArray = function(opt_obj) {
-  var obj = (goog.isDef(opt_obj)) ? opt_obj : {
-    layers: [],
-    layerStates: []
-  };
-  goog.asserts.assert(obj.layers.length === obj.layerStates.length);
-  obj.layers.push(this);
-  obj.layerStates.push(this.getLayerState());
-  return obj;
+ol.layer.Layer.prototype.getLayerStatesArray = function(opt_states) {
+  var states = (goog.isDef(opt_states)) ? opt_states : [];
+  states.push(this.getLayerState());
+  return states;
 };
 
 
 /**
  * @return {ol.source.Source} Source.
- * @todo stability experimental
+ * @api
  */
 ol.layer.Layer.prototype.getSource = function() {
   return this.source_;

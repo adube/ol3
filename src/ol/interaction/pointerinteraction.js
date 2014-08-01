@@ -12,7 +12,10 @@ goog.require('ol.interaction.Interaction');
 
 
 /**
- * Base class for pointer interactions.
+ * @classdesc
+ * Abstract base class; normally only used for creating subclasses and not
+ * instantiated in apps.
+ *
  * @constructor
  * @extends {ol.interaction.Interaction}
  */
@@ -101,8 +104,7 @@ ol.interaction.Pointer.prototype.updateTrackedPointers_ =
  * @param {ol.MapBrowserPointerEvent} mapBrowserEvent Event.
  * @protected
  */
-ol.interaction.Pointer.prototype.handlePointerDrag =
-    goog.nullFunction;
+ol.interaction.Pointer.prototype.handlePointerDrag = goog.nullFunction;
 
 
 /**
@@ -110,8 +112,7 @@ ol.interaction.Pointer.prototype.handlePointerDrag =
  * @protected
  * @return {boolean} Capture dragging.
  */
-ol.interaction.Pointer.prototype.handlePointerUp =
-    goog.functions.FALSE;
+ol.interaction.Pointer.prototype.handlePointerUp = goog.functions.FALSE;
 
 
 /**
@@ -119,8 +120,7 @@ ol.interaction.Pointer.prototype.handlePointerUp =
  * @protected
  * @return {boolean} Capture dragging.
  */
-ol.interaction.Pointer.prototype.handlePointerDown =
-    goog.functions.FALSE;
+ol.interaction.Pointer.prototype.handlePointerDown = goog.functions.FALSE;
 
 
 /**
@@ -162,5 +162,4 @@ ol.interaction.Pointer.prototype.handleMapBrowserEvent =
  * @param {boolean} handled Was the event handled by the interaction?
  * @return {boolean} Should the event be stopped?
  */
-ol.interaction.Pointer.prototype.shouldStopEvent =
-    goog.functions.FALSE;
+ol.interaction.Pointer.prototype.shouldStopEvent = goog.functions.FALSE;

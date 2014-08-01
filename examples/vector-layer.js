@@ -1,6 +1,6 @@
 goog.require('ol.FeatureOverlay');
 goog.require('ol.Map');
-goog.require('ol.View2D');
+goog.require('ol.View');
 goog.require('ol.layer.Tile');
 goog.require('ol.layer.Vector');
 goog.require('ol.source.GeoJSON');
@@ -52,9 +52,8 @@ var map = new ol.Map({
     }),
     vectorLayer
   ],
-  renderer: 'canvas',
   target: 'map',
-  view: new ol.View2D({
+  view: new ol.View({
     center: [0, 0],
     zoom: 1
   })
@@ -123,6 +122,6 @@ $(map.getViewport()).on('mousemove', function(evt) {
   displayFeatureInfo(pixel);
 });
 
-map.on('singleclick', function(evt) {
+map.on('click', function(evt) {
   displayFeatureInfo(evt.pixel);
 });

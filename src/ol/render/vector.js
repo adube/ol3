@@ -15,6 +15,37 @@ goog.require('ol.style.Style');
 
 
 /**
+ * @param {ol.Feature} feature1 Feature 1.
+ * @param {ol.Feature} feature2 Feature 2.
+ * @return {number} Order.
+ */
+ol.renderer.vector.defaultOrder = function(feature1, feature2) {
+  return goog.getUid(feature1) - goog.getUid(feature2);
+};
+
+
+/**
+ * @param {number} resolution Resolution.
+ * @param {number} pixelRatio Pixel ratio.
+ * @return {number} Squared pixel tolerance.
+ */
+ol.renderer.vector.getSquaredTolerance = function(resolution, pixelRatio) {
+  var tolerance = ol.renderer.vector.getTolerance(resolution, pixelRatio);
+  return tolerance * tolerance;
+};
+
+
+/**
+ * @param {number} resolution Resolution.
+ * @param {number} pixelRatio Pixel ratio.
+ * @return {number} Pixel tolerance.
+ */
+ol.renderer.vector.getTolerance = function(resolution, pixelRatio) {
+  return ol.SIMPLIFY_TOLERANCE * resolution / pixelRatio;
+};
+
+
+/**
  * @param {ol.render.IReplayGroup} replayGroup Replay group.
  * @param {ol.geom.Geometry} geometry Geometry.
  * @param {ol.style.Style} style Style.
@@ -95,7 +126,7 @@ ol.renderer.vector.renderFeature = function(
 ol.renderer.vector.renderFeature_ = function(
     replayGroup, feature, style, squaredTolerance, data) {
   var geometry = feature.getGeometry();
-  if (goog.isNull(geometry)) {
+  if (!goog.isDefAndNotNull(geometry)) {
     return;
   }
   var simplifiedGeometry = geometry.getSimplifiedGeometry(squaredTolerance);
