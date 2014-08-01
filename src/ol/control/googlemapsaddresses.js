@@ -41,28 +41,28 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
 
   /**
    * i18n - searchButton
-   * @type {string}
+   * @type {?string}
    */
   this.searchButtonText = goog.isDefAndNotNull(options.searchButtonText) ?
       options.searchButtonText : null;
 
   /**
    * i18n - clearButton
-   * @type {string}
+   * @type {?string}
    */
   this.clearButtonText = goog.isDefAndNotNull(options.clearButtonText) ?
       options.clearButtonText : null;
 
   /**
    * i18n - removeButton
-   * @type {string}
+   * @type {?string}
    */
   this.removeButtonText = goog.isDefAndNotNull(options.removeButtonText) ?
       options.removeButtonText : 'x';
 
   /**
    * i18n - addButtonText
-   * @type {string}
+   * @type {?string}
    */
   this.addButtonText = goog.isDefAndNotNull(options.addButtonText) ?
       options.addButtonText : 'Add address';
@@ -169,14 +169,14 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
 
   /**
    * @private
-   * @type {string}
+   * @type {?string|undefined}
    */
   this.getURL_ = goog.isDefAndNotNull(options.getURL) ?
       options.getURL : null;
 
   /**
    * @private
-   * @type {string}
+   * @type {?string|undefined}
    */
   this.saveURL_ = goog.isDefAndNotNull(options.saveURL) ?
       options.saveURL : null;
@@ -268,39 +268,37 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
    * @private
    */
   this.getAddresses_ = function() {
-    var me = this;
     var url = this.getURL_;
-    var request = new goog.net.XhrIo();
-    var response;
 
-    goog.events.listen(request, 'complete', function() {
-      if (request.isSuccess()) {
+    if (goog.isDefAndNotNull(url)) {
+      var me = this;
+      var request = new goog.net.XhrIo();
+      var response;
+      goog.events.listen(request, 'complete', function() {
+        if (request.isSuccess()) {
+          response = request.getResponseJson();
+          goog.asserts.assert(goog.isDef(response));
+          me.handleGetAddressesSuccess_(response);
+        } else {
+          // TODO: handle errors
+          // TODO: remove these lines since they are used only for testing
+          /*response = {
+            'status': 1,
+            'addresses': [{
+              'id': 2,
+              'text': 'Test',
+              'description': 'Adresses de test',
+              'lat': 46,
+              'lon': -72
+            }]
+          };
+          me.handleGetAddressesSuccess_(response);
+          */
+        }
+      });
 
-        response = request.getResponseJson();
-        goog.asserts.assert(goog.isDef(response));
-        me.handleGetAddressesSuccess_(response);
-      } else {
-
-        window.console.log('this.getAddresses_ else');
-
-        // TODO: handle errors
-        // TODO: remove these lines since they are used only for testing
-        /*response = {
-          'status': 1,
-          'addresses': [{
-            'id': 2,
-            'text': 'Test',
-            'description': 'Adresses de test',
-            'lat': 46,
-            'lon': -72
-          }]
-        };
-        me.handleGetAddressesSuccess_(response);
-        */
-      }
-    });
-
-    request.send(url, 'GET');
+      request.send(url, 'GET');
+    }
   };
 
 
@@ -433,41 +431,40 @@ ol.control.GoogleMapsAddresses.prototype.emptyInputs_ = function() {
 ol.control.GoogleMapsAddresses.prototype.saveAddress_ =
     function(address, action) {
 
-  var me = this;
   var url = this.saveURL_;
-  var request = new goog.net.XhrIo();
-  var response;
 
-  var data = {
-    'address': address,
-    'action': action
-  };
+  if (goog.isDefAndNotNull(url)) {
+    var me = this;
+    var request = new goog.net.XhrIo();
+    var response;
+    var data = {
+      'address': address,
+      'action': action
+    };
 
-  goog.events.listen(request, 'complete', function() {
-    if (request.isSuccess()) {
-      response = request.getResponseJson();
-      goog.asserts.assert(goog.isDefAndNotNull(response));
-      me.handleSaveAddressSuccess_(response, data);
-      if (me.successCallback !== null)
-        me.successCallback(me, response);
-    } else {
-      if (me.failCallback !== null)
-        me.failCallback(response, data);
-      // TODO: handle errors
-      // TODO: remove these lines since they are used only for testing
-      /*response = {
-        'status': 1,
-        'id': 1
-      };
-      me.handleSaveAddressSuccess_(response, data);
-      */
-    }
-  });
+    goog.events.listen(request, 'complete', function() {
+      if (request.isSuccess()) {
+        response = request.getResponseJson();
+        goog.asserts.assert(goog.isDefAndNotNull(response));
+        me.handleSaveAddressSuccess_(response, data);
+        if (me.successCallback !== null)
+          me.successCallback(me, response);
+      } else {
+        if (me.failCallback !== null)
+          me.failCallback(response, data);
+        // TODO: handle errors
+        // TODO: remove these lines since they are used only for testing
+        /*response = {
+          'status': 1,
+          'id': 1
+        };
+        me.handleSaveAddressSuccess_(response, data);
+        */
+      }
+    });
 
-  var headers = this.saveHeaders_;
-
-  request.send(url, 'POST', goog.json.serialize(data),
-      headers);
+    request.send(url, 'POST', goog.json.serialize(data), this.saveHeaders_);
+  }
 };
 
 
