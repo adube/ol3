@@ -18,10 +18,13 @@ goog.require('ol.style.Style');
 
 
 /**
+ * @classdesc
  * Todo
+ *
  * @constructor
  * @extends {ol.control.Control}
  * @param {olx.control.SingleDrawOptions=} opt_options Options.
+ * @api
  */
 ol.control.SingleDraw = function(opt_options) {
   /**

@@ -2835,7 +2835,7 @@ olx.interaction.ModifyOptions.prototype.features;
 /**
  * @typedef {{deleteCondition: (ol.events.ConditionType|undefined),
  *     pixelTolerance: (number|undefined),
- *     style: (ol.style.Style|Array.<ol.style.Style>|ol.feature.StyleFunction|undefined),
+ *     style: (ol.style.Style|Array.<ol.style.Style>|ol.style.StyleFunction|undefined),
  *     features: ol.Collection}}
  * @todo stability experimental
  */
@@ -2860,7 +2860,7 @@ olx.interaction.DryModifyOptions.prototype.pixelTolerance;
 
 /**
  * FeatureOverlay style.
- * @type {ol.style.Style|Array.<ol.style.Style>|ol.feature.StyleFunction|undefined}
+ * @type {ol.style.Style|Array.<ol.style.Style>|ol.style.StyleFunction|undefined}
  */
 olx.interaction.DryModifyOptions.prototype.style;
 

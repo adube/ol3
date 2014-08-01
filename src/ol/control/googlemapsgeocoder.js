@@ -12,7 +12,7 @@ goog.require('goog.style');
 goog.require('goog.ui.IdGenerator');
 goog.require('ol.Feature');
 goog.require('ol.MapBrowserEvent.EventType');
-goog.require('ol.View2D');
+goog.require('ol.View');
 goog.require('ol.control.Control');
 goog.require('ol.css');
 goog.require('ol.geom.Point');
@@ -24,10 +24,13 @@ goog.require('ol.style.Style');
 
 
 /**
+ * @classdesc
  * Todo
+ *
  * @constructor
  * @extends {ol.control.Control}
  * @param {olx.control.GoogleMapsGeocoderOptions=} opt_options Options.
+ * @api
  */
 ol.control.GoogleMapsGeocoder = function(opt_options) {
   var options = goog.isDef(opt_options) ? opt_options : {};
@@ -64,6 +67,7 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
    * @type {boolean}
    * @private
    */
+  this.enableReverseGeocoding_ = null;
   if (goog.isDefAndNotNull(options.enableReverseGeocoding) &&
       goog.isBoolean(options.enableReverseGeocoding)) {
     this.enableReverseGeocoding_ = options.enableReverseGeocoding;
@@ -244,12 +248,10 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
   /**
    * @type {Array}
    */
+  this.additionalAddresses = [];
   if (goog.isDefAndNotNull(options['additionalAddresses']) &&
       goog.isArray(options['additionalAddresses'])) {
-
     this.additionalAddresses = options['additionalAddresses'];
-  } else {
-    this.additionalAddresses = [];
   }
 
   /**
@@ -294,6 +296,7 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
    * @type {boolean}
    * @private
    */
+  this.enableCurrentPosition_ = null;
   if (goog.isDefAndNotNull(options.enableCurrentPosition) &&
       goog.isBoolean(options.enableCurrentPosition) &&
       navigator.geolocation &&
@@ -398,10 +401,8 @@ ol.control.GoogleMapsGeocoder.prototype.getCoordinate = function() {
 
   var view = map.getView();
   goog.asserts.assert(goog.isDef(view));
-  var view2D = view.getView2D();
-  goog.asserts.assertInstanceof(view2D, ol.View2D);
 
-  var projection = view2D.getProjection();
+  var projection = view.getProjection();
 
   var transformedCoordinate = ol.proj.transform(
       [lng, lat], 'EPSG:4326', projection.getCode()
@@ -639,15 +640,13 @@ ol.control.GoogleMapsGeocoder.prototype.geocodeByAddress_ = function(
 
   var view = map.getView();
   goog.asserts.assert(goog.isDef(view));
-  var view2D = view.getView2D();
-  goog.asserts.assertInstanceof(view2D, ol.View2D);
 
   var size = map.getSize();
   goog.asserts.assertArray(size);
 
-  var projection = view2D.getProjection();
+  var projection = view.getProjection();
 
-  var extent = view2D.calculateExtent(size);
+  var extent = view.calculateExtent(size);
 
   var transformedExtent = ol.proj.transform(
       extent, projection.getCode(), 'EPSG:4326');
@@ -739,10 +738,8 @@ ol.control.GoogleMapsGeocoder.prototype.handleGeocode_ = function(
 
         var view = map.getView();
         goog.asserts.assert(goog.isDef(view));
-        var view2D = view.getView2D();
-        goog.asserts.assertInstanceof(view2D, ol.View2D);
 
-        var projection = view2D.getProjection();
+        var projection = view.getProjection();
 
         var transformedCoordinate = ol.proj.transform(
             result.geometry.coordinate, projection.getCode(), 'EPSG:4326');
@@ -915,10 +912,8 @@ ol.control.GoogleMapsGeocoder.prototype.handleMapSingleClick_ = function(
 
   var view = map.getView();
   goog.asserts.assert(goog.isDef(view));
-  var view2D = view.getView2D();
-  goog.asserts.assertInstanceof(view2D, ol.View2D);
 
-  var projection = view2D.getProjection();
+  var projection = view.getProjection();
 
   var transformedCoordinate = ol.proj.transform(
       coordinate, projection.getCode(), 'EPSG:4326'
@@ -938,10 +933,8 @@ ol.control.GoogleMapsGeocoder.prototype.displayLocation_ = function(location) {
 
   var view = map.getView();
   goog.asserts.assert(goog.isDef(view));
-  var view2D = view.getView2D();
-  goog.asserts.assertInstanceof(view2D, ol.View2D);
 
-  var projection = view2D.getProjection();
+  var projection = view.getProjection();
 
   lng = location.lng();
   lat = location.lat();

@@ -5,10 +5,13 @@ goog.require('ol.control.Control');
 
 
 /**
+ * @classdesc
  * Todo
+ *
  * @constructor
  * @extends {ol.control.Control}
  * @param {olx.control.GoogleMapsCurrentPositionOptions=} opt_options Options.
+ * @api
  */
 ol.control.GoogleMapsCurrentPosition = function(opt_options) {
   var options = goog.isDef(opt_options) ? opt_options : {};

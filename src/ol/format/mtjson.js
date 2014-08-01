@@ -190,8 +190,11 @@ ol.control.MTJSON_TRAVEL_MODES = 'm';
 
 
 /**
+ * @classdesc
  * Todo
+ *
  * @constructor
+ * @api
  */
 ol.format.MTJSON = function() {
 };

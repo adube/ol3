@@ -6,9 +6,13 @@ goog.require('ol.interaction.Modify');
 
 
 /**
+ * @classdesc
+ * Todo
+ *
  * @constructor
  * @extends {ol.interaction.Modify}
  * @param {olx.interaction.DryModifyOptions} options Options.
+ * @api
  */
 ol.interaction.DryModify = function(options) {
 

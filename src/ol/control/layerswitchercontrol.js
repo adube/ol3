@@ -10,9 +10,13 @@ goog.require('ol.control.Control');
 
 
 /**
+ * @classdesc
+ * Todo
+ *
  * @constructor
  * @extends {ol.control.Control}
  * @param {olx.control.LayerSwitcherOptions=} opt_options Options.
+ * @api
  */
 ol.control.LayerSwitcher = function(opt_options) {
   /**

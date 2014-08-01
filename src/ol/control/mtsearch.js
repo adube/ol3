@@ -11,7 +11,7 @@ goog.require('goog.net.EventType');
 goog.require('goog.net.XhrIo');
 goog.require('ol.Collection');
 goog.require('ol.Feature');
-goog.require('ol.View2D');
+goog.require('ol.View');
 goog.require('ol.control.Control');
 goog.require('ol.control.GoogleMapsDirectionsPanel');
 goog.require('ol.extent');
@@ -24,10 +24,13 @@ goog.require('ol.source.Vector');
 
 
 /**
+ * @classdesc
  * Todo
+ *
  * @constructor
  * @extends {ol.control.Control}
  * @param {olx.control.MTSearchOptions=} opt_options Options.
+ * @api
  */
 ol.control.MTSearch = function(opt_options) {
   var options = goog.isDef(opt_options) ? opt_options : {};
@@ -291,19 +294,17 @@ ol.control.MTSearch.prototype.fitViewExtentToRoute_ = function() {
 
   var view = map.getView();
   goog.asserts.assert(goog.isDef(view));
-  var view2D = view.getView2D();
-  goog.asserts.assertInstanceof(view2D, ol.View2D);
 
   var vectorSource = this.vectorLayer_.getSource();
   goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
   var extent = vectorSource.getExtent();
 
-  var resolution = view2D.getResolutionForExtent(extent, size);
+  var resolution = view.getResolutionForExtent(extent, size);
   var pixelBuffer = this.pixelBuffer_;
   var buffer = resolution * pixelBuffer;
   extent = ol.extent.buffer(extent, buffer);
 
-  view2D.fitExtent(extent, size);
+  view.fitExtent(extent, size);
 };
 
 
@@ -321,10 +322,8 @@ ol.control.MTSearch.prototype.handleDirectionsResult_ = function(
 
   var view = map.getView();
   goog.asserts.assert(goog.isDef(view));
-  var view2D = view.getView2D();
-  goog.asserts.assertInstanceof(view2D, ol.View2D);
 
-  var projection = view2D.getProjection();
+  var projection = view.getProjection();
 
   var vectorSource = this.vectorLayer_.getSource();
   goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);

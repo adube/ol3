@@ -18,7 +18,7 @@ goog.require('ol.Collection');
 goog.require('ol.Feature');
 goog.require('ol.MapBrowserEvent.EventType');
 goog.require('ol.Object');
-goog.require('ol.View2D');
+goog.require('ol.View');
 goog.require('ol.control.Control');
 goog.require('ol.control.GoogleMapsAddresses');
 goog.require('ol.control.GoogleMapsDirectionsPanel');
@@ -68,10 +68,13 @@ ol.control.GOOGLEMAPSDIRECTIONS_DETOUR_LABEL_PROPERTY = 'label';
 
 
 /**
+ * @classdesc
  * Todo
+ * 
  * @constructor
  * @extends {ol.control.Control}
  * @param {olx.control.GoogleMapsDirectionsOptions=} opt_options Options.
+ * @api
  */
 ol.control.GoogleMapsDirections = function(opt_options) {
   var options = goog.isDef(opt_options) ? opt_options : {};
@@ -708,6 +711,7 @@ ol.control.GoogleMapsDirections = function(opt_options) {
    * @type {boolean}
    * @private
    */
+    this.enableCurrentPosition_ = null;
   if (goog.isDefAndNotNull(options.enableCurrentPosition) &&
       goog.isBoolean(options.enableCurrentPosition) &&
       navigator.geolocation) {
@@ -1319,15 +1323,13 @@ ol.control.GoogleMapsDirections.prototype.fitViewExtentToCoordinate_ =
 
   var view = map.getView();
   goog.asserts.assert(goog.isDef(view));
-  var view2D = view.getView2D();
-  goog.asserts.assertInstanceof(view2D, ol.View2D);
 
   var size = map.getSize();
   goog.asserts.assertArray(size);
 
-  var extent = view2D.calculateExtent(size);
+  var extent = view.calculateExtent(size);
 
-  var resolution = view2D.getResolutionForExtent(extent, size);
+  var resolution = view.getResolutionForExtent(extent, size);
   var pixelBuffer = this.pixelBuffer_;
   var buffer = resolution * pixelBuffer;
 
@@ -1336,7 +1338,7 @@ ol.control.GoogleMapsDirections.prototype.fitViewExtentToCoordinate_ =
   if (!ol.extent.containsCoordinate(smallExtent, coordinate)) {
     ol.extent.extendCoordinate(extent, coordinate);
     extent = ol.extent.buffer(extent, buffer);
-    view2D.fitExtent(extent, size);
+    view.fitExtent(extent, size);
   }
 };
 
@@ -1353,19 +1355,17 @@ ol.control.GoogleMapsDirections.prototype.fitViewExtentToRoute_ = function() {
 
   var view = map.getView();
   goog.asserts.assert(goog.isDef(view));
-  var view2D = view.getView2D();
-  goog.asserts.assertInstanceof(view2D, ol.View2D);
 
   var vectorSource = this.vectorLayer_.getSource();
   goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
   var extent = vectorSource.getExtent();
 
-  var resolution = view2D.getResolutionForExtent(extent, size);
+  var resolution = view.getResolutionForExtent(extent, size);
   var pixelBuffer = this.pixelBuffer_;
   var buffer = resolution * pixelBuffer;
   extent = ol.extent.buffer(extent, buffer);
 
-  view2D.fitExtent(extent, size);
+  view.fitExtent(extent, size);
 };
 
 
@@ -1611,10 +1611,8 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
 
   var view = map.getView();
   goog.asserts.assert(goog.isDef(view));
-  var view2D = view.getView2D();
-  goog.asserts.assertInstanceof(view2D, ol.View2D);
 
-  var projection = view2D.getProjection();
+  var projection = view.getProjection();
 
   var vectorSource = this.vectorLayer_.getSource();
   goog.asserts.assertInstanceof(vectorSource, ol.source.Vector);
@@ -2362,10 +2360,8 @@ ol.control.GoogleMapsDirections.prototype.routeWithGoogleMapsService_ =
 
   var view = map.getView();
   goog.asserts.assert(goog.isDef(view));
-  var view2D = view.getView2D();
-  goog.asserts.assertInstanceof(view2D, ol.View2D);
 
-  var projection = view2D.getProjection();
+  var projection = view.getProjection();
 
   var reqWaypoints = [];
   var detourFeatures = this.detourFeatures_;

@@ -13,7 +13,7 @@ goog.require('ol.Collection');
 goog.require('ol.MapBrowserEvent.EventType');
 goog.require('ol.Overlay');
 goog.require('ol.OverlayPositioning');
-goog.require('ol.View2D');
+goog.require('ol.View');
 goog.require('ol.control.Control');
 goog.require('ol.extent');
 goog.require('ol.format.GeoJSON');
@@ -38,10 +38,13 @@ ol.control.GOOGLEMAPSDIRECTIONSPANEL_PIXEL_BUFFER = 30;
 
 
 /**
+ * @classdesc
  * Todo
+ *
  * @constructor
  * @extends {ol.control.Control}
  * @param {olx.control.GoogleMapsDirectionsPanelOptions=} opt_options Options.
+ * @api
  */
 ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
   var options = goog.isDef(opt_options) ? opt_options : {};
@@ -1373,10 +1376,8 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createLegHeaderElement_ =
 
   var view = map.getView();
   goog.asserts.assert(goog.isDef(view));
-  var view2D = view.getView2D();
-  goog.asserts.assertInstanceof(view2D, ol.View2D);
 
-  var projection = view2D.getProjection();
+  var projection = view.getProjection();
 
   // create start and end coordinates from start and end locations if
   // not existant to be able to use them later for save purpose
@@ -1468,10 +1469,8 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createStepElement_ =
 
   var view = map.getView();
   goog.asserts.assert(goog.isDef(view));
-  var view2D = view.getView2D();
-  goog.asserts.assertInstanceof(view2D, ol.View2D);
 
-  var projection = view2D.getProjection();
+  var projection = view.getProjection();
 
   // coordinate
   var coordinate;
@@ -1683,15 +1682,13 @@ ol.control.GoogleMapsDirectionsPanel.prototype.coordinateIsPopupSafe_ =
 
   var view = map.getView();
   goog.asserts.assert(goog.isDef(view));
-  var view2D = view.getView2D();
-  goog.asserts.assertInstanceof(view2D, ol.View2D);
 
   var size = map.getSize();
   goog.asserts.assertArray(size);
 
-  var extent = view2D.calculateExtent(size);
+  var extent = view.calculateExtent(size);
 
-  var resolution = view2D.getResolutionForExtent(extent, size);
+  var resolution = view.getResolutionForExtent(extent, size);
   var pixelBuffer = this.pixelBuffer_;
   var buffer = resolution * pixelBuffer;
 
@@ -1756,15 +1753,13 @@ ol.control.GoogleMapsDirectionsPanel.prototype.calculatePopupPositioning_ =
 
   var view = map.getView();
   goog.asserts.assert(goog.isDef(view));
-  var view2D = view.getView2D();
-  goog.asserts.assertInstanceof(view2D, ol.View2D);
 
   var size = map.getSize();
   goog.asserts.assertArray(size);
 
-  var extent = view2D.calculateExtent(size);
+  var extent = view.calculateExtent(size);
 
-  var resolution = view2D.getResolutionForExtent(extent, size);
+  var resolution = view.getResolutionForExtent(extent, size);
 
   var cornerPixelSize = this.cornerPixelSize_;
   var cornerSize = resolution * cornerPixelSize;
@@ -1968,7 +1963,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.handleElementPress_ =
   browserEvent.preventDefault();
 
   var element = browserEvent.currentTarget;
-  var map, view, view2D;
+  var map, view;
 
   // get coordinate from element
   var coordinate = [
@@ -1985,10 +1980,8 @@ ol.control.GoogleMapsDirectionsPanel.prototype.handleElementPress_ =
 
     view = map.getView();
     goog.asserts.assert(goog.isDef(view));
-    view2D = view.getView2D();
-    goog.asserts.assertInstanceof(view2D, ol.View2D);
 
-    view2D.setCenter(coordinate);
+    view.setCenter(coordinate);
   }
 
   this.createPopup_(coordinate, element.getAttribute('data-instructions'));

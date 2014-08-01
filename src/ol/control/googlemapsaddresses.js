@@ -18,7 +18,7 @@ goog.require('ol.Object');
 /*
 goog.require('ol.MapBrowserEvent.EventType');
 */
-goog.require('ol.View2D');
+goog.require('ol.View');
 goog.require('ol.control.Control');
 goog.require('ol.control.GoogleMapsGeocoder');
 goog.require('ol.css');
@@ -32,9 +32,13 @@ goog.require('ol.style.Style');
 
 
 /**
+ * @classdesc
+ * Todo
+ *
  * @constructor
  * @extends {ol.control.Control}
  * @param {olx.control.GoogleMapsAddressesOptions=} opt_options Options.
+ * @api
  */
 ol.control.GoogleMapsAddresses = function(opt_options) {
   var options = goog.isDef(opt_options) ? opt_options : {};
@@ -249,6 +253,7 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
    * @type {boolean}
    * @private
    */
+  this.enableCurrentPosition_ = null;
   if (goog.isDefAndNotNull(options.enableCurrentPosition) &&
       goog.isBoolean(options.enableCurrentPosition) &&
       navigator.geolocation) {
@@ -592,12 +597,12 @@ ol.control.GoogleMapsAddresses.prototype.handleLocationChanged_ =
   var location = geocoder.getLocation();
   this.location_ = goog.isDefAndNotNull(location) ? location : null;
   if (this.location_ !== null) {
-    var view2d = this.getMap().getView().getView2D();
-    var mapExtent = view2d.calculateExtent(this.getMap().getSize());
+    var view = this.getMap().getView();
+    var mapExtent = view.calculateExtent(this.getMap().getSize());
     var locationExtent = ol.extent.boundingExtent([
       this.geocoder_.getCoordinate()]);
     if (!ol.extent.intersects(mapExtent, locationExtent))
-      view2d.setCenter(this.geocoder_.getCoordinate());
+      view.setCenter(this.geocoder_.getCoordinate());
   }
 };
 
@@ -1045,10 +1050,8 @@ ol.control.GoogleMapsAddresses.prototype.displayLocation_ = function(location) {
 
   var view = map.getView();
   goog.asserts.assert(goog.isDef(view));
-  var view2D = view.getView2D();
-  goog.asserts.assertInstanceof(view2D, ol.View2D);
 
-  var projection = view2D.getProjection();
+  var projection = view.getProjection();
 
   lng = location.lng();
   lat = location.lat();
@@ -1073,7 +1076,7 @@ ol.control.GoogleMapsAddresses.prototype.displayLocation_ = function(location) {
   var extent = feature.getGeometry().getExtent();
   extent = ol.extent.buffer(extent, 2000);
 
-  view2D.fitExtent(extent, size);
+  view.fitExtent(extent, size);
 };
 
 
