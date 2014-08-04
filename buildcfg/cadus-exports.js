@@ -1,5 +1,5 @@
 goog.require('ol.Map');
-goog.require('ol.View2D');
+goog.require('ol.View');
 goog.require('ol.View');
 goog.require('ol.control.GoogleMapsAddresses');
 goog.require('ol.control.GoogleMapsCurrentPosition');
@@ -34,38 +34,23 @@ goog.exportSymbol(
     ol.Map);
 
 goog.exportSymbol(
-    'ol.View2D',
-    ol.View2D);
-
-goog.exportSymbol(
     'ol.View',
     ol.View);
 
 goog.exportProperty(
     ol.View.prototype,
-    'getView2D',
-    ol.View.prototype.getView2D);
-
-goog.exportProperty(
-    ol.View2D.prototype,
-    'getView2D',
-    ol.View2D.prototype.getView2D);
-
-
-goog.exportProperty(
-    ol.View2D.prototype,
     'on',
-    ol.View2D.prototype.on);
+    ol.View.prototype.on);
 
 goog.exportProperty(
-    ol.View2D.prototype,
+    ol.View.prototype,
     'getZoom',
-    ol.View2D.prototype.getZoom);
+    ol.View.prototype.getZoom);
 
 goog.exportProperty(
-    ol.View2D.prototype,
+    ol.View.prototype,
     'calculateExtent',
-    ol.View2D.prototype.calculateExtent);
+    ol.View.prototype.calculateExtent);
 
 goog.exportSymbol(
     'ol.proj.transform',
@@ -201,19 +186,19 @@ goog.exportSymbol(
 
 
 goog.exportProperty(
-    ol.View2D.prototype,
+    ol.View.prototype,
     'fitExtent',
-    ol.View2D.prototype.fitExtent);
+    ol.View.prototype.fitExtent);
 
 goog.exportProperty(
-    ol.View2D.prototype,
+    ol.View.prototype,
     'setCenter',
-    ol.View2D.prototype.setCenter);
+    ol.View.prototype.setCenter);
 
 goog.exportProperty(
-    ol.View2D.prototype,
+    ol.View.prototype,
     'setZoom',
-    ol.View2D.prototype.setZoom);
+    ol.View.prototype.setZoom);
 
 goog.exportProperty(
     ol.Object.prototype,
@@ -369,8 +354,8 @@ goog.exportProperty(
 
 goog.exportProperty(
     ol.control.GoogleMapsDirections.prototype,
-    'setValues',
-    ol.control.GoogleMapsDirections.prototype.setValues);
+    'setProperties',
+    ol.control.GoogleMapsDirections.prototype.setProperties);
 
 goog.exportProperty(
     ol.control.GoogleMapsDirections.prototype,
@@ -608,8 +593,8 @@ goog.exportProperty(
 
 goog.exportProperty(
     ol.control.MTSearch.prototype,
-    'setValues',
-    ol.control.MTSearch.prototype.setValues);
+    'setProperties',
+    ol.control.MTSearch.prototype.setProperties);
 
 goog.exportProperty(
     ol.control.MTSearch.prototype,

@@ -199,7 +199,7 @@ map.addControl(directions);
 
 var triggerRouteRequest = function() {
   // you can set custom properties, which are sent as additionnal query params
-  directions.setValues({'foo': 'bar'});
+  directions.setProperties({'foo': 'bar'});
 
   directions.triggerRouteRequest();
 };
