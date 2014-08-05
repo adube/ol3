@@ -297,9 +297,17 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
    */
   this.currentPositionAddress_ = null;
   if (this.currentPositionControl_) {
-    this.currentPositionAddress_ =
-        this.currentPositionControl_.createEmptyAddress();
+    // get current position address (if any), else set an empty one
+    var address = this.currentPositionControl_.getProperties()['address'];
+    if (address !== false && goog.isObject(address)) {
+      this.currentPositionAddress_ = address;
+    } else {
+      this.currentPositionAddress_ =
+          this.currentPositionControl_.createEmptyAddress();
+    }
 
+    // listen to address change to change inner currentPositionAddress_
+    // accordingly
     goog.events.listen(
         this.currentPositionControl_,
         ol.Object.getChangeEventType(
