@@ -511,16 +511,6 @@ goog.exportSymbol(
     'ol.control.GoogleMapsCurrentPosition',
     ol.control.GoogleMapsCurrentPosition);
 
-goog.exportProperty(
-    ol.control.GoogleMapsCurrentPosition.prototype,
-    'getCurrentPosition',
-    ol.control.GoogleMapsCurrentPosition.prototype.getCurrentPosition);
-
-goog.exportProperty(
-    ol.control.GoogleMapsCurrentPosition.prototype,
-    'setCurrentPosition',
-    ol.control.GoogleMapsCurrentPosition.prototype.setCurrentPosition);
-
 
 goog.exportSymbol(
     'ol.control.GoogleMapsGeocoder',
