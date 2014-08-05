@@ -12,7 +12,9 @@ goog.require('goog.style');
 goog.require('goog.ui.IdGenerator');
 goog.require('ol.Feature');
 goog.require('ol.MapBrowserEvent.EventType');
+goog.require('ol.Object');
 goog.require('ol.control.Control');
+goog.require('ol.control.GoogleMapsCurrentPosition');
 goog.require('ol.css');
 goog.require('ol.geom.Point');
 goog.require('ol.layer.Vector');
@@ -290,6 +292,23 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
       options.currentPositionControl : null;
 
   /**
+   * @type {?Object|boolean}
+   * @private
+   */
+  this.currentPositionAddress_ = null;
+  if (this.currentPositionControl_) {
+    this.currentPositionAddress_ =
+        this.currentPositionControl_.createEmptyAddress();
+
+    goog.events.listen(
+        this.currentPositionControl_,
+        ol.Object.getChangeEventType(
+            ol.control.GoogleMapsCurrentPosition.Property.ADDRESS
+        ),
+        this.handleCurrentPositionAddressChanged_, false, this);
+  }
+
+  /**
    * @type {boolean}
    * @private
    */
@@ -300,7 +319,6 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
       goog.isDefAndNotNull(this.currentPositionControl_)) {
 
     this.enableCurrentPosition_ = true;
-    this.currentPositionControl_.setCurrentPosition(null, false);
   }
 
 
@@ -544,6 +562,37 @@ ol.control.GoogleMapsGeocoder.prototype.createButton_ = function(
 
 
 /**
+ * Callback method fired when the current position address property is changed.
+ * Store the new address.  If auto-suggest result is currently displayed,
+ * refresh it.
+ * @private
+ */
+ol.control.GoogleMapsGeocoder.prototype.handleCurrentPositionAddressChanged_ =
+    function() {
+  var address = this.currentPositionControl_.getProperties()['address'];
+
+  // assert-equivalent...
+  if (!goog.isNull(address) && !goog.isObject(address) && address !== false) {
+    return;
+  }
+
+  if (this.currentPositionAddress_ !== false &&
+      goog.isNull(this.currentPositionAddress_.geometry.location)) {
+
+    this.currentPositionAddress_ = address;
+
+    var listStyle = goog.style.getStyle(this.resultsList_, 'display');
+    if (listStyle == '') {
+      this.clearGeocodeResults_();
+      this.handleInputInput_(null);
+    }
+  } else {
+    this.currentPositionAddress_ = address;
+  }
+};
+
+
+/**
  * @param {goog.events.BrowserEvent} browserEvent Browser event.
  * @private
  */
@@ -584,8 +633,6 @@ ol.control.GoogleMapsGeocoder.prototype.handleInputInput_ = function(
           additionalAddresses[0] === null))
         this.handleGeocode_(additionalAddresses, 0, false);
     }
-
-    this.currentPositionControl_.setCurrentPosition(null, false);
   } else {
     this.clear();
     var additionalAddresses = this.filterAddresses_(
@@ -758,6 +805,9 @@ ol.control.GoogleMapsGeocoder.prototype.handleGeocode_ = function(
  */
 ol.control.GoogleMapsGeocoder.prototype.displayGeocodeResults_ = function() {
   var me = this;
+
+  var classPrefix = this.classPrefix_;
+
   goog.array.forEach(this.results_, function(result, index) {
     var text;
 
@@ -768,32 +818,36 @@ ol.control.GoogleMapsGeocoder.prototype.displayGeocodeResults_ = function() {
         text = result.formatted_address;
       }
 
-
-      var resultOption = goog.dom.createDom(goog.dom.TagName.LI, {
+      var options = {
         'data-result': index
-      },
-      text);
-      me.clickableResultElements_.push(resultOption);
+      };
+      if (goog.isNull(result.geometry.location)) {
+        options['class'] = classPrefix + '-result-item-unselectable';
+      }
+      var resultOption = goog.dom.createDom(goog.dom.TagName.LI, options, text);
 
       goog.dom.appendChild(me.resultsList_, resultOption);
 
-      goog.events.listen(resultOption, [
-        goog.events.EventType.TOUCHEND,
-        goog.events.EventType.CLICK
-      ], me.handleResultOptionPress_, false, me);
+      if (!goog.isNull(result.geometry.location)) {
+        me.clickableResultElements_.push(resultOption);
 
-      goog.events.listen(resultOption, [
-        goog.events.EventType.MOUSEOVER
-      ], function(e) {
-        e.target.className += this.id_ + '-mouseover';
-      }, false, me);
-      goog.events.listen(resultOption, [
-        goog.events.EventType.MOUSEOUT
-      ], function(e) {
-        e.target.className =
-            e.target.className.replace(this.id_ + '-mouseover', '');
-      }, false, me);
+        goog.events.listen(resultOption, [
+          goog.events.EventType.TOUCHEND,
+          goog.events.EventType.CLICK
+        ], me.handleResultOptionPress_, false, me);
 
+        goog.events.listen(resultOption, [
+          goog.events.EventType.MOUSEOVER
+        ], function(e) {
+          e.target.className += this.id_ + '-mouseover';
+        }, false, me);
+        goog.events.listen(resultOption, [
+          goog.events.EventType.MOUSEOUT
+        ], function(e) {
+          e.target.className =
+              e.target.className.replace(this.id_ + '-mouseover', '');
+        }, false, me);
+      }
 
     }
   });
@@ -845,7 +899,6 @@ ol.control.GoogleMapsGeocoder.prototype.handleResultOptionPress_ = function(
   this.clearGeocodeResults_();
   browserEvent.stopPropagation();
 
-  var me = this;
   var element = browserEvent.currentTarget;
   var index = element.getAttribute('data-result');
   var result = this.results_[index];
@@ -853,22 +906,7 @@ ol.control.GoogleMapsGeocoder.prototype.handleResultOptionPress_ = function(
     this.input_.value = result.formatted_address;
   }
 
-  var currentPosition = this.currentPositionControl_.getCurrentPosition();
-
-  if (this.enableCurrentPosition_ &&
-      (goog.isNull(currentPosition) ||
-      goog.isNull(currentPosition.geometry) ||
-      goog.isNull(result) || goog.isNull(result.geometry)) &&
-      index === 0) {
-
-    this.currentPositionControl_.setCurrentPosition(
-        function(position) {
-
-          me.displayLocation_(position.geometry.location);
-        }, true);
-  } else {
-    this.displayLocation_(result.geometry.location);
-  }
+  this.displayLocation_(result.geometry.location);
 };
 
 
@@ -1038,9 +1076,8 @@ ol.control.GoogleMapsGeocoder.prototype.filterAddresses_ = function(
   var results = [];
   var description, add;
 
-  if (this.enableCurrentPosition_) {
-    var currentPosition = this.currentPositionControl_.getCurrentPosition();
-    results.push(currentPosition);
+  if (this.enableCurrentPosition_ && this.currentPositionAddress_ !== false) {
+    results.push(this.currentPositionAddress_);
   }
 
   if (goog.isDefAndNotNull(value)) {

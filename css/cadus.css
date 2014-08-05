@@ -177,6 +177,13 @@ a.ol-gmdp-offer-user-fullname {
   cursor: pointer;
 }
 
+.ol-gmg-results li.ol-gmg-result-item-unselectable{
+  background-color: #CDCDCD;
+  color: #666666;
+  cursor: wait;
+}
+
+
 .ol-gmg-icon-image {
   cursor: move;
 }

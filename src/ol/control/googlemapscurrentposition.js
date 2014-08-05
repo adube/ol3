@@ -1,5 +1,6 @@
 goog.provide('ol.control.GoogleMapsCurrentPosition');
 
+goog.require('ol.BrowserFeature');
 goog.require('ol.control.Control');
 
 
@@ -26,108 +27,146 @@ ol.control.GoogleMapsCurrentPosition = function(opt_options) {
       options.currentPositionText : 'My position';
 
   /**
-   * @type {number}
-   */
-  this.currentPositionDelay = goog.isDef(options.currentPositionDelay) ?
-      options.currentPositionDelay : 60000;
-
-  /**
-   * @private
-   * @type {?number} timeout
-   */
-  this.currentPositionTimeout_ = null;
-
-
-  /**
-   * @private
-   * @type {?Object}
-   */
-  this.currentPosition_ = null;
-
-  /**
    * @private
    * @type {google.maps.Geocoder}
    */
   this.geocoder_ = new google.maps.Geocoder();
+
+  /**
+   * @private
+   * @type {?number}
+   */
+  this.watchId_ = null;
+
+  goog.base(this, {});
+
+  this.activate_();
 };
 goog.inherits(ol.control.GoogleMapsCurrentPosition, ol.control.Control);
 
 
 /**
- * @param {Function} callback
- * @param {boolean} force
+ * @enum {string}
  */
-ol.control.GoogleMapsCurrentPosition.prototype.setCurrentPosition = function(
-    callback, force) {
-  var me = this;
-  force = goog.isDefAndNotNull(force) && force === true;
-
-  if ((goog.isNull(this.currentPosition_) ||
-      goog.isNull(this.currentPosition_.geometry)) ||
-      force === true) {
-
-    navigator.geolocation.getCurrentPosition(function(position) {
-      var lat = position.coords.latitude;
-      var lon = position.coords.longitude;
-
-      var geocoder = me.geocoder_;
-      var latlng = new google.maps.LatLng(lat, lon);
-
-      geocoder.geocode(
-          {
-            'latLng': latlng
-          },
-          function(results, status) {
-            if (status == 'OK') {
-              var currentPosition = {
-                'formatted_address': results[0].formatted_address,
-                'text': me.currentPositionText_,
-                'geometry': {
-                  'location': new google.maps.LatLng(lat, lon)
-                }
-              };
-
-              me.cacheCurrentPosition_.call(me, currentPosition);
-
-              if (goog.isDefAndNotNull(callback)) {
-                callback.call(me, currentPosition);
-              }
-            }
-          }
-      );
-    });
-  }
+ol.control.GoogleMapsCurrentPosition.Property = {
+  ADDRESS: 'address'
 };
 
 
 /**
- * @return {Object} position
+ * Create and return an empty address
+ * @return {Object}
  */
-ol.control.GoogleMapsCurrentPosition.prototype.getCurrentPosition = function() {
-  return this.currentPosition_;
+ol.control.GoogleMapsCurrentPosition.prototype.createEmptyAddress = function() {
+  return {
+    'formatted_address': null,
+    'text': this.currentPositionText_,
+    'geometry': {
+      'location': null
+    }
+  };
 };
 
 
 /**
- * @param {Object} currentPosition
+ * Activate
  * @private
  */
-ol.control.GoogleMapsCurrentPosition.prototype.cacheCurrentPosition_ = function(
-    currentPosition) {
-  var me = this;
-
-  this.currentPosition_ = currentPosition;
-
-  if (this.currentPositionTimeout_) {
-    clearTimeout(this.currentPositionTimeout_);
+ol.control.GoogleMapsCurrentPosition.prototype.activate_ = function() {
+  if (!ol.BrowserFeature.HAS_GEOLOCATION || !goog.isNull(this.watchId_)) {
+    return;
   }
 
-  if (!goog.isNull(this.currentPositionDelay)) {
-    this.currentPositionTimeout_ = setTimeout(function() {
-      me.currentPosition_ = {
-        'formatted_address': me.currentPositionText_,
-        'geometry': null
-      };
-    }, this.currentPositionDelay);
+  this.watchId_ = goog.global.navigator.geolocation.watchPosition(
+      goog.bind(this.handleGetPositionSuccess_, this),
+      goog.bind(this.handleGetPositionError_, this),
+      this.getGeolocationPositionOptions_());
+};
+
+
+/**
+ * Deactivate and clear any previous address set
+ * @private
+ */
+ol.control.GoogleMapsCurrentPosition.prototype.deactivate_ = function() {
+  if (!ol.BrowserFeature.HAS_GEOLOCATION || goog.isNull(this.watchId_)) {
+    return;
+  }
+
+  goog.global.navigator.geolocation.clearWatch(this.watchId_);
+  this.setProperties({'address': false});
+};
+
+
+/**
+ * @return {GeolocationPositionOptions}
+ * @private
+ */
+ol.control.GoogleMapsCurrentPosition.prototype.getGeolocationPositionOptions_ =
+    function() {
+  return /** @type {GeolocationPositionOptions} */ ({
+    'enableHighAccuracy': false,
+    'maximumAge': 0,
+    // 45 secs is enough for timeout when enableHighAccuracy is disabled
+    'timeout': 45000
+  });
+};
+
+
+/**
+ * @param {Object} response Response object of a geolocation get position
+ *     success
+ * @private
+ */
+ol.control.GoogleMapsCurrentPosition.prototype.handleGetPositionSuccess_ =
+    function(response) {
+
+  var geocoder = this.geocoder_;
+  var lat = response.coords.latitude;
+  var lon = response.coords.longitude;
+  var latlng = new google.maps.LatLng(lat, lon);
+  var me = this;
+
+  geocoder.geocode({'latLng': latlng}, function(results, status) {
+    me.handleGeocode_(results, status);
+  });
+};
+
+
+/**
+ * @param {Object} response Response object of a geolocation get position
+ *     error
+ * @private
+ */
+ol.control.GoogleMapsCurrentPosition.prototype.handleGetPositionError_ =
+    function(response) {
+
+  // FIXME - manage error too
+  this.deactivate_();
+};
+
+
+/**
+ * @param {Array} results
+ * @param {google.maps.GeocoderStatus.<(number|string)>} status
+ * @private
+ */
+ol.control.GoogleMapsCurrentPosition.prototype.handleGeocode_ =
+    function(results, status) {
+
+  if (status == 'OK') {
+    var currentPosition = {
+      'formatted_address': results[0].formatted_address,
+      'text': this.currentPositionText_,
+      'geometry': {
+        'location': results[0].geometry.location
+      }
+    };
+
+    this.setProperties({'address': currentPosition});
+
+  } else {
+    // FIXME - manage error too
+    this.deactivate_();
   }
 };
