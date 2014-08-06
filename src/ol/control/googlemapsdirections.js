@@ -915,6 +915,15 @@ ol.control.GoogleMapsDirections.prototype.loadQueryParams = function(source) {
 
 
 /**
+ * Read the given source object then load its query parameters elements only
+ * @param {Object} source
+ */
+ol.control.GoogleMapsDirections.prototype.getSelectedTravelModes = function() {
+  return this.getCheckedTravelModes_(true);
+};
+
+
+/**
  * Set all vector layer opacity to defined value, i.e. the vector layer in
  * this control and all geocoder layers as well
  * @param {number} value

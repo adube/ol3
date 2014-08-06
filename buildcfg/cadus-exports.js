@@ -319,6 +319,11 @@ goog.exportProperty(
 
 goog.exportProperty(
     ol.control.GoogleMapsDirections.prototype,
+    'getSelectedTravelModes',
+    ol.control.GoogleMapsDirections.prototype.getSelectedTravelModes);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirections.prototype,
     'getStartGeocoder',
     ol.control.GoogleMapsDirections.prototype.getStartGeocoder);
 
