@@ -916,7 +916,7 @@ ol.control.GoogleMapsDirections.prototype.loadQueryParams = function(source) {
 
 /**
  * Read the given source object then load its query parameters elements only
- * @param {Object} source
+ * @return {Array}
  */
 ol.control.GoogleMapsDirections.prototype.getSelectedTravelModes = function() {
   return this.getCheckedTravelModes_(true);
