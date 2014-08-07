@@ -1077,6 +1077,7 @@ olx.control.GoogleMapsCurrentPositionOptions.prototype.currentPositionText;
  *     currentPositionText: (string|undefined),
  *     drivingText: (string|undefined),
  *     myAddressesText: (string|undefined),
+ *     myAddressesTooltipText: (string|undefined),
  *     myTravelModesText: (string|undefined),
  *     noResultFoundText: (string|undefined),
  *     noRouteText: (string|undefined),
@@ -1294,6 +1295,13 @@ olx.control.GoogleMapsDirectionsOptions.prototype.drivingText;
  * @type {string|undefined}
  */
 olx.control.GoogleMapsDirectionsOptions.prototype.myAddressesText;
+
+
+/**
+ * i18n
+ * @type {string|undefined}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.myAddressesTooltipText;
 
 
 /**

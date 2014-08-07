@@ -100,6 +100,14 @@ ol.control.GoogleMapsDirections = function(opt_options) {
   this.myAddressesText = goog.isDefAndNotNull(options.myAddressesText) ?
       options.myAddressesText : 'My addresses';
 
+
+  /**
+   * i18n - myAddressesTooltip
+   * @type {string}
+   */
+  this.myAddressesTooltipText = goog.isDef(options.myAddressesTooltipText) ?
+      options.myAddressesTooltipText : 'My addresses';
+
   /**
    * i18n - myTravelModes
    * @type {?string}
@@ -421,6 +429,12 @@ ol.control.GoogleMapsDirections = function(opt_options) {
   goog.dom.appendChild(
       myAddressesLabelEl, goog.dom.createTextNode(this.myAddressesText + ': '));
   goog.dom.appendChild(secondContainer, myAddressesLabelEl);
+
+  var myAddressesTooltipEl = goog.dom.createDom(goog.dom.TagName.SPAN, {
+    'class': classPrefix + '-tooltip-my-address',
+    'title': this.myAddressesTooltipText
+  });
+  goog.dom.appendChild(secondContainer, myAddressesTooltipEl);
 
   // DOM components - reverse  button
   var reverseButton = this.createButton_(
