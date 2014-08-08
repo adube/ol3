@@ -156,6 +156,11 @@ google.maps.mt_offre.prototype.mt_places_dispo;
 
 
 /**
+ * @type {string}
+ */
+google.maps.mt_offre.prototype.mt_end_address;
+
+/**
  * @type {number}
  */
 google.maps.mt_offre.prototype.mt_fume;
@@ -214,6 +219,10 @@ google.maps.mt_offre.prototype.mt_horaire_ponctuelle;
  */
 google.maps.mt_offre.prototype.mt_horaire_retour;
 
+/**
+ * @type {string}
+ */
+google.maps.mt_offre.prototype.mt_start_address;
 
 /**
  * @type {Array.<string>}
