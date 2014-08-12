@@ -225,6 +225,11 @@ google.maps.mt_offre.prototype.mt_horaire_retour;
 google.maps.mt_offre.prototype.mt_start_address;
 
 /**
+ * @type {string}
+ */
+google.maps.mt_offre.prototype.mt_offer_name;
+
+/**
  * @type {Array.<string>}
  */
 google.maps.DirectionsRoute.prototype.mt_org;

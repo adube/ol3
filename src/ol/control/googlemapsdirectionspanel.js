@@ -1186,7 +1186,8 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
         'class': classPrefix + '-offer-contact-link',
         'href': route.mt_usager.mt_contact,
         'data-startAddress': route.mt_offre.mt_start_address,
-        'data-endAddress': route.mt_offre.mt_end_address
+        'data-endAddress': route.mt_offre.mt_end_address,
+        'data-deplacementNom': route.mt_offre.mt_offer_name
       });
     }
     goog.dom.appendChild(leftCtnEl, contactLink);
