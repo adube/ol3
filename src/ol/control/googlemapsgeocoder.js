@@ -776,7 +776,10 @@ ol.control.GoogleMapsGeocoder.prototype.handleGeocode_ = function(
       // TODO: support multiple results
       result = results[0];
 
-      formatted_address = result.formatted_address;
+      if (goog.isDefAndNotNull(result.address))
+        formatted_address = result.address;
+      else
+        formatted_address = result.formatted_address;
       // set returned value
       input.value = formatted_address;
 
@@ -911,7 +914,10 @@ ol.control.GoogleMapsGeocoder.prototype.handleResultOptionPress_ = function(
   var index = element.getAttribute('data-result');
   var result = this.results_[index];
   if (goog.isDefAndNotNull(result)) {
-    this.input_.value = result.formatted_address;
+    if (goog.isDefAndNotNull(result.address))
+      this.input_.value = result.address;
+    else
+      this.input_.value = result.formatted_address;
   }
 
   this.displayLocation_(result.geometry.location);
@@ -1123,6 +1129,7 @@ ol.control.GoogleMapsGeocoder.prototype.formatAdress_ = function(
     Using bracket notation so Google Closure Compiler
     ADVANCED_OPTIMIZATIONS will keep the original property names. */
   return {
+    'address': address['text'],
     'formatted_address': address['description'],
     'geometry': {
       'location': new google.maps.LatLng(address['lat'],

@@ -158,6 +158,7 @@ ol.control.GoogleMapsCurrentPosition.prototype.handleGeocode_ =
     var currentPosition = {
       'formatted_address': results[0].formatted_address,
       'text': this.currentPositionText_,
+      'address': results[0].formatted_address,
       'geometry': {
         'location': results[0].geometry.location
       }
