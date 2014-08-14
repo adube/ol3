@@ -468,7 +468,8 @@ ol.control.MTSearch.prototype.request_ = function() {
       var response = request.getResponseJson();
       this.handleDirectionsResult_(response, google.maps.DirectionsStatus.OK);
     } else {
-      // todo - manage error
+      this.handleDirectionsResult_(
+          null, google.maps.DirectionsStatus.UNKNOWN_ERROR);
     }
   }, undefined, this);
 
