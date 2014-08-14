@@ -33,6 +33,11 @@ goog.exportSymbol(
     'ol.Map',
     ol.Map);
 
+goog.exportProperty(
+    ol.Map.prototype,
+    'addLayer',
+    ol.Map.prototype.addLayer);
+
 goog.exportSymbol(
     'ol.View',
     ol.View);
@@ -149,6 +154,12 @@ goog.exportProperty(
 goog.exportSymbol(
     'ol.source.GeoJSON',
     ol.source.GeoJSON);
+
+goog.exportProperty(
+    ol.source.GeoJSON.prototype,
+    'readFeatures',
+    ol.source.GeoJSON.prototype.readFeatures);
+
 
 goog.exportSymbol(
     'ol.source.Vector',
