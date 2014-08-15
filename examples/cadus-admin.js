@@ -8,6 +8,7 @@ goog.require('ol.control.LayerSwitcher');
 goog.require('ol.control.SingleDraw');
 goog.require('ol.extent');
 goog.require('ol.geom.Point');
+goog.require('ol.geom.Polygon');
 goog.require('ol.interaction');
 goog.require('ol.interaction.DragPan');
 goog.require('ol.layer.Vector');
@@ -155,4 +156,15 @@ function disableOtherSingleDraw(evt) {
     singleDraws[1].stopDrawing();
   else
     singleDraws[0].stopDrawing();
+}
+
+function loadPolygon() {
+  var extent = extentForPoints;
+  var geometry = new ol.geom.Polygon([[
+    ol.extent.getBottomLeft(extent),
+    ol.extent.getTopLeft(extent),
+    ol.extent.getTopRight(extent),
+    ol.extent.getBottomRight(extent)
+  ]]);
+  singleDraws[0].loadPolygon(geometry);
 }

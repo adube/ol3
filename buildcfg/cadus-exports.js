@@ -614,6 +614,11 @@ goog.exportSymbol(
 
 goog.exportProperty(
     ol.control.SingleDraw.prototype,
+    'loadPolygon',
+    ol.control.SingleDraw.prototype.loadPolygon);
+
+goog.exportProperty(
+    ol.control.SingleDraw.prototype,
     'on',
     ol.control.SingleDraw.prototype.on);
 

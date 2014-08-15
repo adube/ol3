@@ -7,6 +7,7 @@ goog.require('goog.events');
 goog.require('goog.events.EventType');
 goog.require('ol.Feature');
 goog.require('ol.control.Control');
+goog.require('ol.geom.Geometry');
 goog.require('ol.geom.GeometryType');
 goog.require('ol.interaction.DragBox');
 goog.require('ol.interaction.Draw');
@@ -142,6 +143,17 @@ ol.control.SingleDraw.EventType = {
 
 
 /**
+ * Load polygon as if it had been drawn, using the 'states' as well.
+ * @param {ol.geom.Polygon} polygon Polygon.
+ */
+ol.control.SingleDraw.prototype.loadPolygon = function(polygon) {
+  this.changeState_('Disabled');
+  this.changeState_('Drawing');
+  this.handleDrawingEnd_(polygon);
+};
+
+
+/**
  * Handle up events.
  * @private
  * @param {goog.events.BrowserEvent} browserEvent Browser event.
@@ -221,11 +233,14 @@ ol.control.SingleDraw.prototype.startDrawing_ = function() {
 
 /**
  * Drawing stops
- * @param {ol.DragBoxEvent} evt
+ * @param {ol.geom.Geometry|ol.DragBoxEvent} evt
  * @private
  */
 ol.control.SingleDraw.prototype.handleDrawingEnd_ = function(evt) {
-  if (typeof(evt.target.getGeometry) !== 'undefined')
+  if (evt instanceof ol.geom.Geometry) {
+    this.drawing = evt;
+  }
+  else if (typeof(evt.target.getGeometry) !== 'undefined')
     this.drawing = evt.target.getGeometry();
   else {
     var source = this.layer_.getSource();
