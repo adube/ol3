@@ -10,6 +10,7 @@ goog.require('ol.control.LayerSwitcher');
 goog.require('ol.control.MTSearch');
 goog.require('ol.control.SingleDraw');
 goog.require('ol.extent');
+goog.require('ol.format.GeoJSON');
 goog.require('ol.Feature');
 goog.require('ol.geom.Point');
 goog.require('ol.geom.LineString');
@@ -123,6 +124,21 @@ goog.exportProperty(
     ol.extent,
     'extendCoordinate',
     ol.extent.extendCoordinate);
+
+
+goog.exportSymbol(
+    'ol.format.GeoJSON',
+    ol.format.GeoJSON);
+
+goog.exportProperty(
+    ol.format.GeoJSON.prototype,
+    'readGeometry',
+    ol.format.GeoJSON.prototype.readGeometry);
+
+goog.exportProperty(
+    ol.format.GeoJSON.prototype,
+    'writeGeometry',
+    ol.format.GeoJSON.prototype.writeGeometry);
 
 
 goog.exportSymbol(
