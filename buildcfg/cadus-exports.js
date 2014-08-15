@@ -623,6 +623,11 @@ goog.exportProperty(
     ol.control.SingleDraw.prototype.stopDrawing);
 
 goog.exportProperty(
+    ol.control.SingleDraw.prototype,
+    'eraseDrawing',
+    ol.control.SingleDraw.prototype.eraseDrawing);
+
+goog.exportProperty(
     ol.control.SingleDraw,
     'EventType',
     ol.control.SingleDraw.EventType);

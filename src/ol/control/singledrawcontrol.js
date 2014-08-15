@@ -276,3 +276,11 @@ ol.control.SingleDraw.prototype.stopDrawing = function() {
   if (this.state_ == 'Drawing')
     this.changeState_('Disabled');
 };
+
+
+/**
+ * Public function to erase the drawing
+ */
+ol.control.SingleDraw.prototype.eraseDrawing = function() {
+  this.changeState_('Disabled');
+};
