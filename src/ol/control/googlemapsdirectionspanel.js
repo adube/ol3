@@ -1118,15 +1118,25 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
     }
 
     // organisation
-    goog.array.forEach(route.mt_org, function(organisationName) {
+    goog.array.forEach(route.mt_organisations, function(organisation) {
+      var organisationName = organisation.mt_name;
+
       var orgApprovedEl = goog.dom.createDom(goog.dom.TagName.DIV, {
         'class': classPrefix + '-offer-group-approved-1'
       });
       goog.dom.appendChild(rightCtnEl, orgApprovedEl);
 
-      var orgEl = goog.dom.createDom(goog.dom.TagName.DIV, {
-        'class': classPrefix + '-offer-group'
-      });
+      var orgEl;
+      if (organisation.mt_url != '') {
+        orgEl = goog.dom.createDom(goog.dom.TagName.A, {
+          'class': classPrefix + '-offer-group',
+          'href': organisation.mt_url
+        });
+      } else {
+        orgEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+          'class': classPrefix + '-offer-group'
+        });
+      }
       goog.dom.appendChild(rightCtnEl, orgEl);
       goog.dom.appendChild(orgEl, goog.dom.createTextNode(organisationName));
     }, this);

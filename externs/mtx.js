@@ -229,10 +229,35 @@ google.maps.mt_offre.prototype.mt_start_address;
  */
 google.maps.mt_offre.prototype.mt_offer_name;
 
+
 /**
- * @type {Array.<string>}
+ * @type {Array.<Object>}
  */
-google.maps.DirectionsRoute.prototype.mt_org;
+google.maps.DirectionsRoute.prototype.mt_organisations;
+
+
+/**
+ * @type {string}
+ */
+google.maps.mt_organisations.prototype.mt_logo;
+
+
+/**
+ * @type {string}
+ */
+google.maps.mt_organisations.prototype.mt_name;
+
+
+/**
+ * @type {string}
+ */
+google.maps.mt_organisations.prototype.mt_status;
+
+
+/**
+ * @type {string}
+ */
+google.maps.mt_organisations.prototype.mt_url;
 
 
 /**
