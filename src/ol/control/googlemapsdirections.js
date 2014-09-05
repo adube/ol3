@@ -238,19 +238,6 @@ ol.control.GoogleMapsDirections = function(opt_options) {
     'class': classPrefix + ' ' + ol.css.CLASS_UNSELECTABLE
   });
 
-  /**
-   * How this widget should behave when more than one travel mode is selected.
-   * Possible values are:
-   *  - 'single': only one travel mode will be used in the request. The one with
-   *              the highest priority will be used
-   *  - 'multiple': all travel modes will be used in the request.  Requires a
-   *                multimodalUrl to be set to work properly.
-   * @type {string}
-   * @private
-   */
-  this.mode_ = goog.isDef(options.mode) ?
-      options.mode : ol.control.GoogleMapsDirections.Mode.SINGLE;
-
 
   /**
    * Collection of travel modes ordered (added) by the highest priority to use
@@ -293,6 +280,18 @@ ol.control.GoogleMapsDirections = function(opt_options) {
    * @private
    */
   this.noTransitEl_ = null;
+
+  /**
+   * @type {number}
+   * @private
+   */
+  this.numQueriesInProgress_ = 0;
+
+  /**
+   * @type {Array}
+   * @private
+   */
+  this.queryErrors_ = [];
 
 
   var firstContainer = goog.dom.createDom(goog.dom.TagName.DIV, {
@@ -544,6 +543,13 @@ ol.control.GoogleMapsDirections = function(opt_options) {
    */
   this.pixelBuffer_ = goog.isDefAndNotNull(options.pixelBuffer) ?
       options.pixelBuffer : ol.control.GOOGLEMAPSDIRECTIONS_PIXEL_BUFFER;
+
+
+  /**
+   * @type {Array}
+   * @private
+   */
+  this.responses_ = [];
 
 
   /**
@@ -1144,6 +1150,9 @@ ol.control.GoogleMapsDirections.prototype.canUseMultimodalService_ =
  */
 ol.control.GoogleMapsDirections.prototype.clear_ = function() {
 
+  this.responses_ = [];
+  this.setError_(null);
+
   this.routeFeatures_.clear();
   this.selectedRouteFeatures_.clear();
 
@@ -1285,6 +1294,24 @@ ol.control.GoogleMapsDirections.prototype.createOrUpdateDetour_ = function(
   }
 
   this.manageDetoursEditing_();
+};
+
+
+/**
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.decrementQueriesInProgress_ =
+    function() {
+  this.numQueriesInProgress_--;
+};
+
+
+/**
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.incrementQueriesInProgress_ =
+    function() {
+  this.numQueriesInProgress_++;
 };
 
 
@@ -1618,12 +1645,10 @@ ol.control.GoogleMapsDirections.prototype.handleCheckboxLinkElPress_ =
 
 
 /**
- * @param {google.maps.DirectionsResult|Object} response
- * @param {google.maps.DirectionsStatus} status
  * @private
  */
-ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
-    response, status) {
+ol.control.GoogleMapsDirections.prototype.handleDirectionsResults_ =
+    function() {
 
   this.directionsPanel_.toggleWorkInProgress(false);
 
@@ -1644,56 +1669,122 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
 
   var routeFeatures = this.routeFeatures_;
 
-  this.setError_(null);
+  var sortedRoutes = [];
+  var mt_corresponding;
 
-  if (status == google.maps.DirectionsStatus.OK) {
-    goog.array.forEach(response.routes, function(route) {
-      geometry = null;
-
-      if (goog.isDefAndNotNull(route.overview_path)) {
-        coordinates = [];
-        goog.array.forEach(route.overview_path, function(location) {
-          lng = location.lng();
-          lat = location.lat();
-          transformedCoordinate = ol.proj.transform(
-              [lng, lat], 'EPSG:4326', projection.getCode());
-          coordinates.push(transformedCoordinate);
-        }, this);
-        geometry = new ol.geom.LineString(coordinates);
-      } else if (goog.isDef(route.geometry)) {
-        geometry = route.geometry;
-      } else if (goog.isDef(route.coordinates)) {
-        geometry = new ol.geom.LineString(route.coordinates);
-      }
-
-      if (goog.isNull(geometry)) {
-        // todo - manage error
-        return;
-      }
-
-      feature = new ol.Feature(geometry);
-      feature.setStyle(this.lineStyle_);
-      routeFeatures.push(feature);
-    }, this);
-
-    if (routeFeatures.getLength()) {
-      // set directions in panel
-      this.directionsPanel_.setDirections(
-          response, this.collectGeocoderIconImages_());
-    } else if (this.loading_ === false) {
-      this.setError_(this.noRouteText);
+  // reorder and keep track of corresponding value, if not manually loading
+  goog.array.forEach(this.responses_, function(response) {
+    if (goog.isDef(response.mt_corresponding)) {
+      mt_corresponding = response.mt_corresponding;
     }
-  }else if (status == google.maps.DirectionsStatus.ZERO_RESULTS) {
+
+    goog.array.forEach(response.routes, function(route) {
+      if (this.loading_ === true) {
+        sortedRoutes.push(route);
+      } else {
+        // set weight, if not set
+        if (!goog.isDef(route.mt_weight)) {
+          route.mt_weight = this.directionsPanel_.calculateRouteWeight(route);
+        }
+
+        // position according to weight, smallest first
+        var insertIndex;
+        goog.array.every(sortedRoutes, function(sortedRoute, index) {
+          if (sortedRoute.mt_weight > route.mt_weight) {
+            insertIndex = index;
+            return false;
+          } else {
+            return true;
+          }
+        });
+        if (insertIndex) {
+          goog.array.insertAt(sortedRoutes, route, insertIndex);
+        } else {
+          sortedRoutes.push(route);
+        }
+      }
+    }, this);
+  }, this);
+
+  goog.array.forEach(sortedRoutes, function(route) {
+
+    geometry = null;
+
+    if (goog.isDefAndNotNull(route.overview_path)) {
+      coordinates = [];
+      goog.array.forEach(route.overview_path, function(location) {
+        lng = location.lng();
+        lat = location.lat();
+        transformedCoordinate = ol.proj.transform(
+            [lng, lat], 'EPSG:4326', projection.getCode());
+        coordinates.push(transformedCoordinate);
+      }, this);
+      geometry = new ol.geom.LineString(coordinates);
+    } else if (goog.isDef(route.geometry)) {
+      geometry = route.geometry;
+    } else if (goog.isDef(route.coordinates)) {
+      geometry = new ol.geom.LineString(route.coordinates);
+    }
+
+    if (goog.isNull(geometry)) {
+      // todo - manage error
+      return;
+    }
+
+    feature = new ol.Feature(geometry);
+    feature.setStyle(this.lineStyle_);
+    routeFeatures.push(feature);
+  }, this);
+
+  if (routeFeatures.getLength()) {
+    var response = {
+      routes: sortedRoutes
+    };
+
+    if (goog.isDefAndNotNull(mt_corresponding)) {
+      response.mt_corresponding = mt_corresponding;
+    }
+
+    // set directions in panel
+    this.directionsPanel_.setDirections(
+        response, this.collectGeocoderIconImages_());
+  } else if (this.loading_ === false) {
     this.setError_(this.noRouteText);
-  } else {
-    this.setError_(this.unexpectedErrorText);
+  } else if (this.queryErrors_.length) {
+    // FIXME
+    this.setError_(this.queryErrors_.join(' '));
   }
 
   if (this.loading_ === false) {
     goog.events.dispatchEvent(this,
         ol.control.GoogleMapsDirections.EventType.ROUTECOMPLETE);
   }
+};
 
+
+/**
+ * @param {google.maps.DirectionsResult|Object} response
+ * @param {google.maps.DirectionsStatus} status
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
+    response, status) {
+
+  if (status == google.maps.DirectionsStatus.OK) {
+    this.responses_ = this.responses_.concat(response);
+  } else if (status == google.maps.DirectionsStatus.ZERO_RESULTS) {
+    this.queryErrors_.push(this.noRouteText);
+  } else {
+    this.queryErrors_.push(this.unexpectedErrorText);
+  }
+
+  if (this.loading_ === false) {
+    this.decrementQueriesInProgress_();
+  }
+
+  if (this.loading_ === true || this.numQueriesInProgress_ === 0) {
+    this.handleDirectionsResults_();
+  }
 };
 
 
@@ -2264,36 +2355,19 @@ ol.control.GoogleMapsDirections.prototype.route_ = function() {
     travelModes.push(ol.control.GoogleMapsDirections.TravelMode.DRIVING);
   }
 
-  if (this.mode_ === ol.control.GoogleMapsDirections.Mode.MULTIPLE) {
-    if (travelModes.length === 1 &&
-        this.isTravelModeSupportedByGoogleMaps_(travelModes[0])) {
-      this.routeWithGoogleMapsService_(
-          startGeocoder, endGeocoder, travelModes[0], waypointGeocoders);
-    } else if (this.isTravelModesBicyclingAndWalking_(travelModes)) {
-      // exception: force the use of GoogleMaps directions service if
-      // bicycling and walking AND ONLY THEM are checked, use bicycling as mode
-      this.routeWithGoogleMapsService_(
-          startGeocoder,
-          endGeocoder,
-          ol.control.GoogleMapsDirections.TravelMode.BICYCLING,
-          waypointGeocoders
-      );
+  this.directionsPanel_.toggleWorkInProgress(true);
+
+  var travelMode;
+  for (var i = 0, len = travelModes.length; i < len; i++) {
+    travelMode = travelModes[i];
+    if (travelMode == ol.control.GoogleMapsDirections.TravelMode.CARPOOLING &&
+        this.canUseMultimodalService_()) {
+      this.routeWithMultimodalService_(
+          startGeocoder, endGeocoder, travelModes, waypointGeocoders);
     } else {
-      if (this.canUseMultimodalService_()) {
-        this.routeWithMultimodalService_(
-            startGeocoder, endGeocoder, travelModes, waypointGeocoders);
-      } else {
-        // todo - throw an error
-        window.console.log(
-            'Error: No multimodal service set.  Mode: ' +
-            this.mode_
-        );
-      }
+      this.routeWithGoogleMapsService_(
+          startGeocoder, endGeocoder, travelMode, waypointGeocoders);
     }
-  } else {
-    var travelMode = this.getHighestPriorityTravelMode_(travelModes);
-    this.routeWithGoogleMapsService_(
-        startGeocoder, endGeocoder, travelMode, waypointGeocoders);
   }
 };
 
@@ -2350,7 +2424,7 @@ ol.control.GoogleMapsDirections.prototype.routeWithMultimodalService_ =
     }
   }, undefined, this);
 
-  this.directionsPanel_.toggleWorkInProgress(true);
+  this.incrementQueriesInProgress_();
 
   request.send(url, method, data.toString(), headers);
 };
@@ -2418,7 +2492,7 @@ ol.control.GoogleMapsDirections.prototype.routeWithGoogleMapsService_ =
     provideRouteAlternatives: true
   };
 
-  this.directionsPanel_.toggleWorkInProgress(true);
+  this.incrementQueriesInProgress_();
 
   service.route(request, function(response, status) {
     me.handleDirectionsResult_(response, status);

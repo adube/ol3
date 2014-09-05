@@ -60,6 +60,10 @@
                 "text" : "1,1 km",
                 "value" : 1059
               },
+              "duration" : {
+                "text" : "2 minutes",
+                "value" : 123
+              },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Rue Lafontaine</b>",
               "start_coordinate" : [-7910777.847852465,6176522.865342024],
               "coordinates" : [[-7910777.847852465,6176522.865342024]],
@@ -87,6 +91,13 @@
                 "text" : "94 m",
                 "value" : 94
               },
+              "duration" : {
+                "text" : "3 minutes",
+                "value" : 153
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
+              },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Ruelle Gaudreault</b>",
               "start_coordinate" : [-7909895.440512837,6177854.083222482],
               "maneuver": "",
@@ -97,6 +108,9 @@
               "distance" : {
                 "text" : "0,4 km",
                 "value" : 431
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Rue Jacques-Cartier E</b>",
               "start_coordinate" : [-7909813.698610751,6177970.285092515],
@@ -108,6 +122,9 @@
               "distance" : {
                 "text" : "0,1 km",
                 "value" : 121
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Chemin Sydenham</b>",
               "start_coordinate" : [-7909184.476320994,6177880.302735171],
@@ -119,6 +136,9 @@
               "distance" : { 
                 "text" : "0,3 km",
                 "value" : 301
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b>, vers <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909211.3599780165,6177695.140685596],
@@ -130,6 +150,9 @@
               "distance" : { 
                 "text" : "0,4 km",
                 "value" : 412
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Continuer tout droit sur <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909460.682241547,6177353.076201619],
@@ -200,6 +223,13 @@
                 "text" : "1,1 km",
                 "value" : 1059
               },
+              "duration" : {
+                "text" : "2 minutes",
+                "value" : 123
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
+              },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Rue Lafontaine</b>",
               "start_coordinate" : [-7910777.847852465,6176522.865342024],
               "coordinates" : [[-7910777.847852465,6176522.865342024]],
@@ -227,6 +257,13 @@
                 "text" : "94 m",
                 "value" : 94
               },
+              "duration" : {
+                "text" : "3 minutes",
+                "value" : 153
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
+              },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Ruelle Gaudreault</b>",
               "start_coordinate" : [-7909895.440512837,6177854.083222482],
               "maneuver": "",
@@ -237,6 +274,9 @@
               "distance" : {
                 "text" : "0,4 km",
                 "value" : 431
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Rue Jacques-Cartier E</b>",
               "start_coordinate" : [-7909813.698610751,6177970.285092515],
@@ -248,6 +288,9 @@
               "distance" : {
                 "text" : "0,1 km",
                 "value" : 121
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Chemin Sydenham</b>",
               "start_coordinate" : [-7909184.476320994,6177880.302735171],
@@ -259,6 +302,9 @@
               "distance" : { 
                 "text" : "0,3 km",
                 "value" : 301
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b>, vers <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909211.3599780165,6177695.140685596],
@@ -270,6 +316,9 @@
               "distance" : { 
                 "text" : "0,4 km",
                 "value" : 412
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Continuer tout droit sur <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909460.682241547,6177353.076201619],
@@ -337,6 +386,13 @@
                 "text" : "1,1 km",
                 "value" : 1059
               },
+              "duration" : {
+                "text" : "2 minutes",
+                "value" : 123
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
+              },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Rue Lafontaine</b>",
               "start_coordinate" : [-7910777.847852465,6176522.865342024],
               "coordinates" : [[-7910777.847852465,6176522.865342024]],
@@ -364,6 +420,13 @@
                 "text" : "94 m",
                 "value" : 94
               },
+              "duration" : {
+                "text" : "3 minutes",
+                "value" : 153
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
+              },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Ruelle Gaudreault</b>",
               "start_coordinate" : [-7909895.440512837,6177854.083222482],
               "maneuver": "",
@@ -374,6 +437,9 @@
               "distance" : {
                 "text" : "0,4 km",
                 "value" : 431
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Rue Jacques-Cartier E</b>",
               "start_coordinate" : [-7909813.698610751,6177970.285092515],
@@ -385,6 +451,9 @@
               "distance" : {
                 "text" : "0,1 km",
                 "value" : 121
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Chemin Sydenham</b>",
               "start_coordinate" : [-7909184.476320994,6177880.302735171],
@@ -396,6 +465,9 @@
               "distance" : { 
                 "text" : "0,3 km",
                 "value" : 301
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b>, vers <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909211.3599780165,6177695.140685596],
@@ -407,6 +479,9 @@
               "distance" : { 
                 "text" : "0,4 km",
                 "value" : 412
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Continuer tout droit sur <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909460.682241547,6177353.076201619],
@@ -474,6 +549,13 @@
                 "text" : "1,1 km",
                 "value" : 1059
               },
+              "duration" : {
+                "text" : "2 minutes",
+                "value" : 123
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
+              },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Rue Lafontaine</b>",
               "start_coordinate" : [-7910777.847852465,6176522.865342024],
               "coordinates" : [[-7910777.847852465,6176522.865342024]],
@@ -501,6 +583,13 @@
                 "text" : "94 m",
                 "value" : 94
               },
+              "duration" : {
+                "text" : "3 minutes",
+                "value" : 153
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
+              },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Ruelle Gaudreault</b>",
               "start_coordinate" : [-7909895.440512837,6177854.083222482],
               "maneuver": "",
@@ -511,6 +600,9 @@
               "distance" : {
                 "text" : "0,4 km",
                 "value" : 431
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Rue Jacques-Cartier E</b>",
               "start_coordinate" : [-7909813.698610751,6177970.285092515],
@@ -522,6 +614,9 @@
               "distance" : {
                 "text" : "0,1 km",
                 "value" : 121
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Chemin Sydenham</b>",
               "start_coordinate" : [-7909184.476320994,6177880.302735171],
@@ -533,6 +628,9 @@
               "distance" : { 
                 "text" : "0,3 km",
                 "value" : 301
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b>, vers <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909211.3599780165,6177695.140685596],
@@ -544,6 +642,9 @@
               "distance" : { 
                 "text" : "0,4 km",
                 "value" : 412
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Continuer tout droit sur <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909460.682241547,6177353.076201619],
@@ -610,6 +711,13 @@
                 "text" : "1,1 km",
                 "value" : 1059
               },
+              "duration" : {
+                "text" : "2 minutes",
+                "value" : 123
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
+              },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Rue Lafontaine</b>",
               "start_coordinate" : [-7910777.847852465,6176522.865342024],
               "coordinates" : [[-7910777.847852465,6176522.865342024]],
@@ -637,6 +745,13 @@
                 "text" : "94 m",
                 "value" : 94
               },
+              "duration" : {
+                "text" : "3 minutes",
+                "value" : 153
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
+              },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Ruelle Gaudreault</b>",
               "start_coordinate" : [-7909895.440512837,6177854.083222482],
               "maneuver": "",
@@ -647,6 +762,9 @@
               "distance" : {
                 "text" : "0,4 km",
                 "value" : 431
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Rue Jacques-Cartier E</b>",
               "start_coordinate" : [-7909813.698610751,6177970.285092515],
@@ -658,6 +776,9 @@
               "distance" : {
                 "text" : "0,1 km",
                 "value" : 121
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Chemin Sydenham</b>",
               "start_coordinate" : [-7909184.476320994,6177880.302735171],
@@ -669,6 +790,9 @@
               "distance" : { 
                 "text" : "0,3 km",
                 "value" : 301
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b>, vers <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909211.3599780165,6177695.140685596],
@@ -680,6 +804,9 @@
               "distance" : { 
                 "text" : "0,4 km",
                 "value" : 412
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Continuer tout droit sur <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909460.682241547,6177353.076201619],
@@ -746,6 +873,13 @@
                 "text" : "1,1 km",
                 "value" : 1059
               },
+              "duration" : {
+                "text" : "2 minutes",
+                "value" : 123
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
+              },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Rue Lafontaine</b>",
               "start_coordinate" : [-7910777.847852465,6176522.865342024],
               "coordinates" : [[-7910777.847852465,6176522.865342024]],
@@ -773,6 +907,13 @@
                 "text" : "94 m",
                 "value" : 94
               },
+              "duration" : {
+                "text" : "3 minutes",
+                "value" : 153
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
+              },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Ruelle Gaudreault</b>",
               "start_coordinate" : [-7909895.440512837,6177854.083222482],
               "maneuver": "",
@@ -783,6 +924,9 @@
               "distance" : {
                 "text" : "0,4 km",
                 "value" : 431
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Rue Jacques-Cartier E</b>",
               "start_coordinate" : [-7909813.698610751,6177970.285092515],
@@ -794,6 +938,9 @@
               "distance" : {
                 "text" : "0,1 km",
                 "value" : 121
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Chemin Sydenham</b>",
               "start_coordinate" : [-7909184.476320994,6177880.302735171],
@@ -805,6 +952,9 @@
               "distance" : { 
                 "text" : "0,3 km",
                 "value" : 301
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b>, vers <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909211.3599780165,6177695.140685596],
@@ -816,6 +966,9 @@
               "distance" : { 
                 "text" : "0,4 km",
                 "value" : 412
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Continuer tout droit sur <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909460.682241547,6177353.076201619],
@@ -882,6 +1035,13 @@
                 "text" : "1,1 km",
                 "value" : 1059
               },
+              "duration" : {
+                "text" : "2 minutes",
+                "value" : 123
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
+              },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Rue Lafontaine</b>",
               "start_coordinate" : [-7910777.847852465,6176522.865342024],
               "coordinates" : [[-7910777.847852465,6176522.865342024]],
@@ -909,6 +1069,13 @@
                 "text" : "94 m",
                 "value" : 94
               },
+              "duration" : {
+                "text" : "3 minutes",
+                "value" : 153
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
+              },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Ruelle Gaudreault</b>",
               "start_coordinate" : [-7909895.440512837,6177854.083222482],
               "maneuver": "",
@@ -919,6 +1086,9 @@
               "distance" : {
                 "text" : "0,4 km",
                 "value" : 431
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Rue Jacques-Cartier E</b>",
               "start_coordinate" : [-7909813.698610751,6177970.285092515],
@@ -930,6 +1100,9 @@
               "distance" : {
                 "text" : "0,1 km",
                 "value" : 121
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Chemin Sydenham</b>",
               "start_coordinate" : [-7909184.476320994,6177880.302735171],
@@ -941,6 +1114,9 @@
               "distance" : { 
                 "text" : "0,3 km",
                 "value" : 301
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b>, vers <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909211.3599780165,6177695.140685596],
@@ -952,6 +1128,9 @@
               "distance" : { 
                 "text" : "0,4 km",
                 "value" : 412
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Continuer tout droit sur <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909460.682241547,6177353.076201619],
@@ -1018,6 +1197,13 @@
                 "text" : "1,1 km",
                 "value" : 1059
               },
+              "duration" : {
+                "text" : "2 minutes",
+                "value" : 123
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
+              },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Rue Lafontaine</b>",
               "start_coordinate" : [-7910777.847852465,6176522.865342024],
               "coordinates" : [[-7910777.847852465,6176522.865342024]],
@@ -1045,6 +1231,13 @@
                 "text" : "94 m",
                 "value" : 94
               },
+              "duration" : {
+                "text" : "3 minutes",
+                "value" : 153
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
+              },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Ruelle Gaudreault</b>",
               "start_coordinate" : [-7909895.440512837,6177854.083222482],
               "maneuver": "",
@@ -1055,6 +1248,9 @@
               "distance" : {
                 "text" : "0,4 km",
                 "value" : 431
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Rue Jacques-Cartier E</b>",
               "start_coordinate" : [-7909813.698610751,6177970.285092515],
@@ -1066,6 +1262,9 @@
               "distance" : {
                 "text" : "0,1 km",
                 "value" : 121
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Chemin Sydenham</b>",
               "start_coordinate" : [-7909184.476320994,6177880.302735171],
@@ -1077,6 +1276,9 @@
               "distance" : { 
                 "text" : "0,3 km",
                 "value" : 301
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b>, vers <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909211.3599780165,6177695.140685596],
@@ -1088,6 +1290,9 @@
               "distance" : { 
                 "text" : "0,4 km",
                 "value" : 412
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Continuer tout droit sur <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909460.682241547,6177353.076201619],
@@ -1154,6 +1359,13 @@
                 "text" : "1,1 km",
                 "value" : 1059
               },
+              "duration" : {
+                "text" : "2 minutes",
+                "value" : 123
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
+              },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Rue Lafontaine</b>",
               "start_coordinate" : [-7910777.847852465,6176522.865342024],
               "coordinates" : [[-7910777.847852465,6176522.865342024]],
@@ -1181,6 +1393,13 @@
                 "text" : "94 m",
                 "value" : 94
               },
+              "duration" : {
+                "text" : "3 minutes",
+                "value" : 153
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
+              },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Ruelle Gaudreault</b>",
               "start_coordinate" : [-7909895.440512837,6177854.083222482],
               "maneuver": "",
@@ -1191,6 +1410,9 @@
               "distance" : {
                 "text" : "0,4 km",
                 "value" : 431
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Rue Jacques-Cartier E</b>",
               "start_coordinate" : [-7909813.698610751,6177970.285092515],
@@ -1202,6 +1424,9 @@
               "distance" : {
                 "text" : "0,1 km",
                 "value" : 121
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Chemin Sydenham</b>",
               "start_coordinate" : [-7909184.476320994,6177880.302735171],
@@ -1213,6 +1438,9 @@
               "distance" : { 
                 "text" : "0,3 km",
                 "value" : 301
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b>, vers <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909211.3599780165,6177695.140685596],
@@ -1224,6 +1452,9 @@
               "distance" : { 
                 "text" : "0,4 km",
                 "value" : 412
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Continuer tout droit sur <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909460.682241547,6177353.076201619],
@@ -1290,6 +1521,13 @@
                 "text" : "1,1 km",
                 "value" : 1059
               },
+              "duration" : {
+                "text" : "2 minutes",
+                "value" : 123
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
+              },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Rue Lafontaine</b>",
               "start_coordinate" : [-7910777.847852465,6176522.865342024],
               "coordinates" : [[-7910777.847852465,6176522.865342024]],
@@ -1317,6 +1555,13 @@
                 "text" : "94 m",
                 "value" : 94
               },
+              "duration" : {
+                "text" : "3 minutes",
+                "value" : 153
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
+              },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Ruelle Gaudreault</b>",
               "start_coordinate" : [-7909895.440512837,6177854.083222482],
               "maneuver": "",
@@ -1327,6 +1572,9 @@
               "distance" : {
                 "text" : "0,4 km",
                 "value" : 431
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Rue Jacques-Cartier E</b>",
               "start_coordinate" : [-7909813.698610751,6177970.285092515],
@@ -1338,6 +1586,9 @@
               "distance" : {
                 "text" : "0,1 km",
                 "value" : 121
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Chemin Sydenham</b>",
               "start_coordinate" : [-7909184.476320994,6177880.302735171],
@@ -1349,6 +1600,9 @@
               "distance" : { 
                 "text" : "0,3 km",
                 "value" : 301
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b>, vers <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909211.3599780165,6177695.140685596],
@@ -1360,6 +1614,9 @@
               "distance" : { 
                 "text" : "0,4 km",
                 "value" : 412
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Continuer tout droit sur <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909460.682241547,6177353.076201619],
@@ -1426,6 +1683,13 @@
                 "text" : "1,1 km",
                 "value" : 1059
               },
+              "duration" : {
+                "text" : "2 minutes",
+                "value" : 123
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
+              },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Rue Lafontaine</b>",
               "start_coordinate" : [-7910777.847852465,6176522.865342024],
               "coordinates" : [[-7910777.847852465,6176522.865342024]],
@@ -1453,6 +1717,13 @@
                 "text" : "94 m",
                 "value" : 94
               },
+              "duration" : {
+                "text" : "3 minutes",
+                "value" : 153
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
+              },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Ruelle Gaudreault</b>",
               "start_coordinate" : [-7909895.440512837,6177854.083222482],
               "maneuver": "",
@@ -1463,6 +1734,9 @@
               "distance" : {
                 "text" : "0,4 km",
                 "value" : 431
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Rue Jacques-Cartier E</b>",
               "start_coordinate" : [-7909813.698610751,6177970.285092515],
@@ -1474,6 +1748,9 @@
               "distance" : {
                 "text" : "0,1 km",
                 "value" : 121
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Chemin Sydenham</b>",
               "start_coordinate" : [-7909184.476320994,6177880.302735171],
@@ -1485,6 +1762,9 @@
               "distance" : { 
                 "text" : "0,3 km",
                 "value" : 301
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b>, vers <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909211.3599780165,6177695.140685596],
@@ -1496,6 +1776,9 @@
               "distance" : { 
                 "text" : "0,4 km",
                 "value" : 412
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Continuer tout droit sur <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909460.682241547,6177353.076201619],
@@ -1562,6 +1845,13 @@
                 "text" : "1,1 km",
                 "value" : 1059
               },
+              "duration" : {
+                "text" : "2 minutes",
+                "value" : 123
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
+              },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Rue Lafontaine</b>",
               "start_coordinate" : [-7910777.847852465,6176522.865342024],
               "coordinates" : [[-7910777.847852465,6176522.865342024]],
@@ -1589,6 +1879,13 @@
                 "text" : "94 m",
                 "value" : 94
               },
+              "duration" : {
+                "text" : "3 minutes",
+                "value" : 153
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
+              },
               "instructions" : "Prendre la direction <b>nord-est</b> sur <b>Rue B\u00e9gin</b> vers <b>Ruelle Gaudreault</b>",
               "start_coordinate" : [-7909895.440512837,6177854.083222482],
               "maneuver": "",
@@ -1599,6 +1896,9 @@
               "distance" : {
                 "text" : "0,4 km",
                 "value" : 431
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Rue Jacques-Cartier E</b>",
               "start_coordinate" : [-7909813.698610751,6177970.285092515],
@@ -1610,6 +1910,9 @@
               "distance" : {
                 "text" : "0,1 km",
                 "value" : 121
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b> et continuer sur <b>Chemin Sydenham</b>",
               "start_coordinate" : [-7909184.476320994,6177880.302735171],
@@ -1621,6 +1924,9 @@
               "distance" : { 
                 "text" : "0,3 km",
                 "value" : 301
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
               "instructions" : "Tourner \u00e0 la 1re <b>\u00e0 droite</b>, vers <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909211.3599780165,6177695.140685596],
@@ -1632,8 +1938,11 @@
               "distance" : { 
                 "text" : "0,4 km",
                 "value" : 412
+              },"duration" : {
+                "text" : "1 minute",
+                "value" : 60
               },
-              "instructions" : "Continuer tout droit sur <b>Chemin Saint-Thomas</b>",
+              "instructions": "Continuer tout droit sur <b>Chemin Saint-Thomas</b>",
               "start_coordinate" : [-7909460.682241547,6177353.076201619],
               "maneuver": "straight",
               "travel_mode" : "WALKING",

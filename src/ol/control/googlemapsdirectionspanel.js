@@ -473,6 +473,33 @@ ol.control.GoogleMapsDirectionsPanel.Mode = {
 
 
 /**
+ * Calculate a route weight.  This is done by browsing each step of each
+ * leg. Their duration is then used to calculate the weight depending on
+ * the step travel mode.
+ *
+ * @param {google.maps.DirectionsRoute} route
+ * @return {number}
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.calculateRouteWeight =
+    function(route) {
+  var weight = 0;
+  goog.array.forEach(route.legs, function(leg) {
+    goog.array.forEach(leg.steps, function(step) {
+      if (step.travel_mode === google.maps.TravelMode.BICYCLING ||
+          step.travel_mode === google.maps.TravelMode.TRANSIT ||
+          step.travel_mode === google.maps.TravelMode.WALKING) {
+        weight += step.duration.value;
+      } else {
+        weight += step.duration.value * 3;
+      }
+    }, this);
+  });
+
+  return weight;
+};
+
+
+/**
  * Clear the current directions.
  */
 ol.control.GoogleMapsDirectionsPanel.prototype.clearDirections = function() {
