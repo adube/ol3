@@ -1754,7 +1754,7 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResults_ =
     this.setError_(this.queryErrors_[0]);
   } else if (this.loading_ === false) {
     this.setError_(this.noRouteText);
-  } 
+  }
 
   if (this.loading_ === false) {
     goog.events.dispatchEvent(this,
