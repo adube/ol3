@@ -165,7 +165,12 @@ var directions = new ol.control.GoogleMapsDirections({
   ],
   'geocoderComponentRestrictions': {'country': 'CA'},
   'getURL': '/usager/adresses/obtenir',
+  // to test multimodal results
   'multimodalUrl': 'data/cadus/multimodal.json',
+  // to test empty results
+  //'multimodalUrl': 'data/cadus/multimodal-empty.json',
+  // to test invalid results
+  //'multimodalUrl': 'foo',
   'multimodalUsePostMethod': false,
   'addWaypointButtonText': 'Ajouter un point',
   'currentPositionText': 'Ma position',
