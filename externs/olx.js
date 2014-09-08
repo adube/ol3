@@ -1169,6 +1169,13 @@ olx.control.GoogleMapsDirectionsOptions.prototype.lineStyle;
 
 
 /**
+ * The maximum number of routes to return.
+ * @type {number|undefined}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.maxRoutes;
+
+
+/**
  * The maximum allowed waypoints.
  * @type {number|undefined}
  */

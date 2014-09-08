@@ -706,6 +706,13 @@ ol.control.GoogleMapsDirections = function(opt_options) {
   this.loading_ = false;
 
 
+  /**
+   * @type {number}
+   * @private
+   */
+  this.maxRoutes_ = goog.isDef(options.maxRoutes) ? options.maxRoutes : 9;
+
+
   goog.base(this, {
     element: element,
     target: options.target
@@ -1732,6 +1739,10 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResults_ =
     }, this);
   }, this);
 
+  // keep only up to maxRoutes routes
+  sortedRoutes = sortedRoutes.slice(0, this.maxRoutes_);
+
+  // for each route, create a feature
   goog.array.forEach(sortedRoutes, function(route) {
 
     geometry = null;
