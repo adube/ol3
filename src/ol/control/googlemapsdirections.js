@@ -1645,6 +1645,32 @@ ol.control.GoogleMapsDirections.prototype.handleCheckboxLinkElPress_ =
 
 
 /**
+ * @param {google.maps.DirectionsResult|Object} response
+ * @param {google.maps.DirectionsStatus} status
+ * @private
+ */
+ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
+    response, status) {
+
+  if (status == google.maps.DirectionsStatus.OK) {
+    this.responses_ = this.responses_.concat(response);
+  } else if (status == google.maps.DirectionsStatus.ZERO_RESULTS) {
+    this.queryErrors_.push(this.noRouteText);
+  } else {
+    this.queryErrors_.push(this.unexpectedErrorText);
+  }
+
+  if (this.loading_ === false) {
+    this.decrementQueriesInProgress_();
+  }
+
+  if (this.loading_ === true || this.numQueriesInProgress_ === 0) {
+    this.handleDirectionsResults_();
+  }
+};
+
+
+/**
  * @private
  */
 ol.control.GoogleMapsDirections.prototype.handleDirectionsResults_ =
@@ -1759,32 +1785,6 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResults_ =
   if (this.loading_ === false) {
     goog.events.dispatchEvent(this,
         ol.control.GoogleMapsDirections.EventType.ROUTECOMPLETE);
-  }
-};
-
-
-/**
- * @param {google.maps.DirectionsResult|Object} response
- * @param {google.maps.DirectionsStatus} status
- * @private
- */
-ol.control.GoogleMapsDirections.prototype.handleDirectionsResult_ = function(
-    response, status) {
-
-  if (status == google.maps.DirectionsStatus.OK) {
-    this.responses_ = this.responses_.concat(response);
-  } else if (status == google.maps.DirectionsStatus.ZERO_RESULTS) {
-    this.queryErrors_.push(this.noRouteText);
-  } else {
-    this.queryErrors_.push(this.unexpectedErrorText);
-  }
-
-  if (this.loading_ === false) {
-    this.decrementQueriesInProgress_();
-  }
-
-  if (this.loading_ === true || this.numQueriesInProgress_ === 0) {
-    this.handleDirectionsResults_();
   }
 };
 
