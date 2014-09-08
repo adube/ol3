@@ -1748,12 +1748,13 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResults_ =
     // set directions in panel
     this.directionsPanel_.setDirections(
         response, this.collectGeocoderIconImages_());
+  } else if (this.queryErrors_.length) {
+    // show only first error
+    // todo - if at some point we want to show all messages, show them
+    this.setError_(this.queryErrors_[0]);
   } else if (this.loading_ === false) {
     this.setError_(this.noRouteText);
-  } else if (this.queryErrors_.length) {
-    // FIXME
-    this.setError_(this.queryErrors_.join(' '));
-  }
+  } 
 
   if (this.loading_ === false) {
     goog.events.dispatchEvent(this,
