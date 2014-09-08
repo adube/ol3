@@ -280,6 +280,21 @@ goog.exportProperty(
     ol.control.GoogleMapsDirectionsPanel.EventType.UNSELECT);
 
 goog.exportProperty(
+    ol.control.GoogleMapsDirectionsPanel,
+    'Mode',
+    ol.control.GoogleMapsDirectionsPanel.Mode);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirectionsPanel.Mode,
+    'SIMPLE',
+    ol.control.GoogleMapsDirectionsPanel.Mode.SIMPLE);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirectionsPanel.Mode,
+    'COMPLEX',
+    ol.control.GoogleMapsDirectionsPanel.Mode.COMPLEX);
+
+goog.exportProperty(
     ol.control.GoogleMapsDirectionsPanel.prototype,
     'getSelectedRouteLegsAsGeoJSON',
     ol.control.GoogleMapsDirectionsPanel.prototype.getSelectedRouteLegsAsGeoJSON);
@@ -413,21 +428,6 @@ goog.exportProperty(
     ol.control.GoogleMapsDirections.EventType,
     'SELECT',
     ol.control.GoogleMapsDirections.EventType.SELECT);
-
-goog.exportProperty(
-    ol.control.GoogleMapsDirections,
-    'Mode',
-    ol.control.GoogleMapsDirections.Mode);
-
-goog.exportProperty(
-    ol.control.GoogleMapsDirections.Mode,
-    'SINGLE',
-    ol.control.GoogleMapsDirections.Mode.SINGLE);
-
-goog.exportProperty(
-    ol.control.GoogleMapsDirections.Mode,
-    'MULTIPLE',
-    ol.control.GoogleMapsDirections.Mode.MULTIPLE);
 
 goog.exportProperty(
     ol.control.GoogleMapsDirections,
