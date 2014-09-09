@@ -191,6 +191,21 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
       'n\'a été trouvé, ' + 'voici quelques résultats qui pourraient ' +
       'tout de même vous intéresser.';
 
+  /**
+   * i18n - distance
+   * @type {string}
+   */
+  this.distanceText = goog.isDef(options.distanceText) ?
+      options.distanceText : 'Distance';
+
+  /**
+   * i18n - duration
+   * @type {string}
+   */
+  this.durationText = goog.isDef(options.durationText) ?
+      options.durationText : 'Duration';
+
+
   var classPrefix = 'ol-gmdp';
 
   /**
@@ -469,6 +484,44 @@ ol.control.GoogleMapsDirectionsPanel.EventType = {
 ol.control.GoogleMapsDirectionsPanel.Mode = {
   SIMPLE: 'simple',
   COMPLEX: 'complex'
+};
+
+
+/**
+ * Calculate route travel mode.  Can either come from mt_travel_mode at
+ * the route level (if it comes from the multimodal service), else it is
+ * calculated using the steps.  The first occurence of bicycling, transit
+ * or driving is immediately used.  Only if all occurences of travel_mode
+ * in the steps are walking that the travel mode gets returned as walking.
+ *
+ * @param {google.maps.DirectionsRoute} route
+ * @return {google.maps.TravelMode.<(number|string)>|number|string}
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.calculateRouteTravelMode =
+    function(route) {
+  var travelMode;
+
+  if (goog.isDef(route.mt_travel_mode)) {
+    travelMode = route.mt_travel_mode;
+  } else {
+    goog.array.every(route.legs, function(leg) {
+      goog.array.every(leg.steps, function(step) {
+        if (step.travel_mode === google.maps.TravelMode.BICYCLING ||
+            step.travel_mode === google.maps.TravelMode.DRIVING ||
+            step.travel_mode === google.maps.TravelMode.TRANSIT) {
+          travelMode = step.travel_mode;
+        }
+        return !goog.isDefAndNotNull(travelMode);
+      }, this);
+      return !goog.isDefAndNotNull(travelMode);
+    });
+
+    if (!goog.isDefAndNotNull(travelMode)) {
+      travelMode = google.maps.TravelMode.WALKING;
+    }
+  }
+
+  return travelMode;
 };
 
 
@@ -883,8 +936,6 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createRouteElement_ =
 ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
     function(route, index) {
 
-  var leftCtnEl;
-  var rightCtnEl;
   var classPrefix = this.classPrefix_;
 
   var elementClasses = [];
@@ -905,15 +956,23 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
   goog.dom.appendChild(element, numEl);
   goog.dom.appendChild(numEl, goog.dom.createTextNode(index + 1));
 
+
+  // left and right containers creation
+  var leftCtnEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+    'class': classPrefix + '-offer-left'
+  });
+  goog.dom.appendChild(element, leftCtnEl);
+
+  var rightCtnEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+    'class': classPrefix + '-offer-right'
+  });
+  goog.dom.appendChild(element, rightCtnEl);
+
   // if route has any 'mt_*' property, that means the response comes
   // from the multimodal service
   if (goog.isDef(route.mt_usager)) {
 
     // == LEFT START ==
-    leftCtnEl = goog.dom.createDom(goog.dom.TagName.DIV, {
-      'class': classPrefix + '-offer-left'
-    });
-    goog.dom.appendChild(element, leftCtnEl);
 
     // -- user picture, is embedded in an anchor if mt_url is set --
     var userPic = goog.dom.createDom(goog.dom.TagName.IMG, {
@@ -992,10 +1051,6 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
     // == LEFT END ==
 
     // == RIGHT START ==
-    rightCtnEl = goog.dom.createDom(goog.dom.TagName.DIV, {
-      'class': classPrefix + '-offer-right'
-    });
-    goog.dom.appendChild(element, rightCtnEl);
 
     // -- schedule --
     if (route.mt_offre.mt_horaire_ponctuelle === 1) {
@@ -1170,27 +1225,111 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
   }
   // else, the response comes from Google Maps.  Style accordingly
   else {
-    // only need the 'left' container, set class as 'single'
-    leftCtnEl = goog.dom.createDom(goog.dom.TagName.DIV, {
-      'class': classPrefix + '-offer-single'
-    });
-    goog.dom.appendChild(element, leftCtnEl);
 
+    // == LEFT START ==
+
+    // travel mode picture
+    var travelModePic;
+    var travelMode = this.calculateRouteTravelMode(route);
+
+    switch (travelMode) {
+
+      case google.maps.TravelMode.BICYCLING:
+        travelModePic = goog.dom.createDom(goog.dom.TagName.DIV, {
+          'class': [
+            classPrefix + '-offer-travelmode-pic',
+            classPrefix + '-offer-travelmode-pic-bicycling'
+          ].join(' ')
+        });
+        break;
+
+      case google.maps.TravelMode.DRIVING:
+        travelModePic = goog.dom.createDom(goog.dom.TagName.DIV, {
+          'class': [
+            classPrefix + '-offer-travelmode-pic',
+            classPrefix + '-offer-travelmode-pic-driving'
+          ].join(' ')
+        });
+        break;
+
+      case google.maps.TravelMode.TRANSIT:
+        travelModePic = goog.dom.createDom(goog.dom.TagName.DIV, {
+          'class': [
+            classPrefix + '-offer-travelmode-pic',
+            classPrefix + '-offer-travelmode-pic-transit'
+          ].join(' ')
+        });
+        break;
+
+      case google.maps.TravelMode.WALKING:
+      default:
+        travelModePic = goog.dom.createDom(goog.dom.TagName.DIV, {
+          'class': [
+            classPrefix + '-offer-travelmode-pic',
+            classPrefix + '-offer-travelmode-pic-walking'
+          ].join(' ')
+        });
+        break;
+    }
+
+    goog.dom.appendChild(leftCtnEl, travelModePic);
+
+    // summary
     var summaryEl = goog.dom.createDom(goog.dom.TagName.DIV, {
       'class': classPrefix + '-offer-header'
     });
     goog.dom.appendChild(leftCtnEl, summaryEl);
     goog.dom.appendChild(summaryEl,
         goog.dom.createTextNode(route.summary));
-  }
 
-  if (goog.isDef(route.mt_usager)) {
     // -- clear left --
     var clearEl = goog.dom.createDom(goog.dom.TagName.DIV, {
       'class': classPrefix + '-clear-left'
     });
-    goog.dom.appendChild(element, clearEl);
+    goog.dom.appendChild(leftCtnEl, clearEl);
+
+    // == LEFT END ==
+
+    // == RIGHT START ==
+
+    // total distance
+    var totalDistanceEl = goog.dom.createDom(goog.dom.TagName.DIV);
+    goog.dom.appendChild(rightCtnEl, totalDistanceEl);
+    goog.dom.appendChild(
+        totalDistanceEl,
+        goog.dom.createDom(goog.dom.TagName.SPAN, {
+          'class': classPrefix + '-offer-header'
+        }, this.distanceText + ': ')
+    );
+    goog.dom.appendChild(
+        totalDistanceEl,
+        goog.dom.createDom(goog.dom.TagName.SPAN, {
+        }, this.calculateRouteTotalDistance_(route))
+    );
+
+    // total duration
+    var totalDistanceEl = goog.dom.createDom(goog.dom.TagName.DIV);
+    goog.dom.appendChild(rightCtnEl, totalDistanceEl);
+    goog.dom.appendChild(
+        totalDistanceEl,
+        goog.dom.createDom(goog.dom.TagName.SPAN, {
+          'class': classPrefix + '-offer-header'
+        }, this.durationText + ': ')
+    );
+    goog.dom.appendChild(
+        totalDistanceEl,
+        goog.dom.createDom(goog.dom.TagName.SPAN, {
+        }, this.calculateRouteTotalDuration_(route))
+    );
+
+    // == RIGHT END ==
   }
+
+  // -- clear left --
+  var clearEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+    'class': classPrefix + '-clear-left'
+  });
+  goog.dom.appendChild(element, clearEl);
 
   // detail link
   var detailLink = goog.dom.createDom(goog.dom.TagName.A, {

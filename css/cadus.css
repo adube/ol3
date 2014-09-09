@@ -84,11 +84,43 @@
   padding: 8px 18px 8px 8px;
 }
 
+.ol-gmdp-offer-travelmode-pic,
 .ol-gmdp-offer-user-pic {
-  width: 75px;
   float: left;
-  height: auto;
   margin: 0 5px 5px 0;
+}
+
+.ol-gmdp-offer-user-pic {
+  height: auto;
+  width: 75px;
+}
+
+.ol-gmdp-offer-travelmode-pic {
+  background-color: #A2AEA9;
+  background-image: url('../img/travel-mode-sprites.png');
+  border: 1px solid #b6b6b6;
+  height: 45px;
+  width: 45px;
+}
+
+.ol-gmdp-offer-travelmode-pic-bicycling {
+  background-position: 0 -90px;
+}
+
+.ol-gmdp-offer-travelmode-pic-carpooling {
+  background-position: 0 -180px;
+}
+
+.ol-gmdp-offer-travelmode-pic-driving {
+  background-position: 0 0;
+}
+
+.ol-gmdp-offer-travelmode-pic-walking {
+  background-position: 0 -45px;
+}
+
+.ol-gmdp-offer-travelmode-pic-transit {
+  background-position: 0 -135px;
 }
 
 .ol-gmdp-clear-left {

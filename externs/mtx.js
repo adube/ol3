@@ -239,6 +239,12 @@ google.maps.DirectionsRoute.prototype.mt_organisations;
 /**
  * @type {number}
  */
+google.maps.DirectionsRoute.prototype.mt_travel_mode;
+
+
+/**
+ * @type {number}
+ */
 google.maps.DirectionsRoute.prototype.mt_weight;
 
 
