@@ -1727,7 +1727,7 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResults_ =
             return true;
           }
         });
-        if (insertIndex) {
+        if (goog.isDefAndNotNull(insertIndex)) {
           goog.array.insertAt(sortedRoutes, route, insertIndex);
         } else {
           sortedRoutes.push(route);
