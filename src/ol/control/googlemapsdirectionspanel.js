@@ -501,9 +501,11 @@ ol.control.GoogleMapsDirectionsPanel.prototype.calculateRouteTravelMode =
     function(route) {
   var travelMode;
 
+  // if already set, use it
   if (goog.isDef(route.mt_travel_mode)) {
     travelMode = route.mt_travel_mode;
   } else {
+    // calculate travel mode, then save
     goog.array.every(route.legs, function(leg) {
       goog.array.every(leg.steps, function(step) {
         if (step.travel_mode === google.maps.TravelMode.BICYCLING ||
@@ -519,6 +521,8 @@ ol.control.GoogleMapsDirectionsPanel.prototype.calculateRouteTravelMode =
     if (!goog.isDefAndNotNull(travelMode)) {
       travelMode = google.maps.TravelMode.WALKING;
     }
+
+    route.mt_travel_mode = travelMode;
   }
 
   return travelMode;
@@ -528,25 +532,35 @@ ol.control.GoogleMapsDirectionsPanel.prototype.calculateRouteTravelMode =
 /**
  * Calculate a route weight.  This is done by browsing each step of each
  * leg. Their duration is then used to calculate the weight depending on
- * the step travel mode.
+ * the step travel mode. If already set as route.mt_weight, use it instead.
  *
  * @param {google.maps.DirectionsRoute} route
  * @return {number}
  */
 ol.control.GoogleMapsDirectionsPanel.prototype.calculateRouteWeight =
     function(route) {
-  var weight = 0;
-  goog.array.forEach(route.legs, function(leg) {
-    goog.array.forEach(leg.steps, function(step) {
-      if (step.travel_mode === google.maps.TravelMode.BICYCLING ||
-          step.travel_mode === google.maps.TravelMode.TRANSIT ||
-          step.travel_mode === google.maps.TravelMode.WALKING) {
-        weight += step.duration.value;
-      } else {
-        weight += step.duration.value * 3;
-      }
-    }, this);
-  });
+
+  var weight;
+
+  // if already set, use it
+  if (goog.isDef(route.mt_weight)) {
+    weight = route.mt_weight;
+  } else {
+    // calculate. then save
+    weight = 0;
+    goog.array.forEach(route.legs, function(leg) {
+      goog.array.forEach(leg.steps, function(step) {
+        if (step.travel_mode === google.maps.TravelMode.BICYCLING ||
+            step.travel_mode === google.maps.TravelMode.TRANSIT ||
+            step.travel_mode === google.maps.TravelMode.WALKING) {
+          weight += step.duration.value;
+        } else {
+          weight += step.duration.value * 3;
+        }
+      }, this);
+    });
+    route.mt_weight = weight;
+  }
 
   return weight;
 };
@@ -648,7 +662,8 @@ ol.control.GoogleMapsDirectionsPanel.prototype.setDirections = function(
     else {
       containerEl = goog.dom.createDom(goog.dom.TagName.DIV, {
         'class': classPrefix + '-offer-result',
-        'data-route-index': index
+        'data-route-index': index,
+        'data-route-weight': this.calculateRouteWeight(route)
       });
 
       offerEl = this.createOfferElement_(route, index);

@@ -1715,15 +1715,12 @@ ol.control.GoogleMapsDirections.prototype.handleDirectionsResults_ =
       if (this.loading_ === true) {
         sortedRoutes.push(route);
       } else {
-        // set weight, if not set
-        if (!goog.isDef(route.mt_weight)) {
-          route.mt_weight = this.directionsPanel_.calculateRouteWeight(route);
-        }
+        var weight = this.directionsPanel_.calculateRouteWeight(route);
 
         // position according to weight, smallest first
         var insertIndex;
         goog.array.every(sortedRoutes, function(sortedRoute, index) {
-          if (sortedRoute.mt_weight > route.mt_weight) {
+          if (sortedRoute.mt_weight > weight) {
             insertIndex = index;
             return false;
           } else {
