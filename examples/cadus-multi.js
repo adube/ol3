@@ -144,7 +144,10 @@ var directionsPanel = new ol.control.GoogleMapsDirectionsPanel({
   'toText': 'À',
   'totalDistanceText': 'Distance Totale',
   'aroundText': 'environ',
-  'totalDurationText': 'Durée Totale'
+  'totalDurationText': 'Durée Totale',
+  'durationText': 'Durée',
+  'distanceText': 'Distance'
+
 });
 
 var olAdresses = new ol.control.GoogleMapsAddresses({
@@ -166,7 +169,7 @@ var directions = new ol.control.GoogleMapsDirections({
   'geocoderComponentRestrictions': {'country': 'CA'},
   'getURL': '/usager/adresses/obtenir',
   // to test multimodal results
-  'multimodalUrl': 'data/cadus/multimodal.json',
+  'multimodalUrl': 'data/cadus/multimodal-three.json',
   // to test empty results
   //'multimodalUrl': 'data/cadus/multimodal-empty.json',
   // to test invalid results
