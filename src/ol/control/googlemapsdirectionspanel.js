@@ -1222,15 +1222,9 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
       goog.dom.appendChild(durationDiffEl, durationDiffValueEl);
     }
 
-    // organisation
-    goog.array.forEach(route.mt_organisations, function(organisation) {
-      var organisationName = organisation.mt_name;
-
-      var orgApprovedEl = goog.dom.createDom(goog.dom.TagName.DIV, {
-        'class': classPrefix + '-offer-group-approved-1'
-      });
-      goog.dom.appendChild(rightCtnEl, orgApprovedEl);
-
+    // organisation - only display the first one, if any
+    var organisation = route.mt_organisations[0];
+    if (goog.isDefAndNotNull(organisation)) {
       var orgEl;
       if (organisation.mt_url != '') {
         orgEl = goog.dom.createDom(goog.dom.TagName.A, {
@@ -1243,8 +1237,38 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
         });
       }
       goog.dom.appendChild(rightCtnEl, orgEl);
-      goog.dom.appendChild(orgEl, goog.dom.createTextNode(organisationName));
-    }, this);
+
+      // add logo (if set), else add name only
+      if (organisation.mt_logo != '') {
+        goog.dom.appendChild(
+            orgEl,
+            goog.dom.createDom(goog.dom.TagName.IMG, {
+              'src': organisation.mt_logo,
+              'class': classPrefix + '-offer-group-logo',
+              'title': organisation.mt_name
+            })
+        );
+      } else {
+        goog.dom.appendChild(
+            orgEl,
+            goog.dom.createDom(goog.dom.TagName.SPAN, {
+              'class': classPrefix + '-offer-group-name'
+            }, organisation.mt_name)
+        );
+      }
+
+      // add status (if set)
+      if (organisation.mt_status != '') {
+        var statusText = (organisation.mt_logo != '') ?
+            organisation.mt_status : ', ' + organisation.mt_status;
+        goog.dom.appendChild(
+            orgEl,
+            goog.dom.createDom(goog.dom.TagName.SPAN, {
+              'class': classPrefix + '-offer-group-status'
+            }, statusText)
+        );
+      }
+    }
   }
   // else, the response comes from Google Maps.  Style accordingly
   else {

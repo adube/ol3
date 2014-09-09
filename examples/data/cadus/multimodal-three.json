@@ -3,6 +3,7 @@
   "mt_corresponding": 0,
   "routes": [
     {
+      "mt_weight": 1,
       "mt_anonymous": true,
       "mt_usager": {
         "mt_last_name": "Lawrence (anonymous)",
@@ -29,9 +30,9 @@
         "mt_offer_name": "offre awesome"
       },
       "mt_organisations": [{
-          "mt_logo": "",
-          "mt_name": "UQAC",
-          "mt_status": "",
+          "mt_logo": "http://www.allthetests.com/quiz30/picture/pic_1387507755_6.jpg",
+          "mt_name": "UQAC (avec logo)",
+          "mt_status": "Superstar",
           "mt_url": "http://perdu.com"
       }, {
          "mt_logo": "",
@@ -192,8 +193,8 @@
       },
       "mt_organisations": [{
           "mt_logo": "",
-          "mt_name": "UQAC",
-          "mt_status": "",
+          "mt_name": "UQAC (sans logo)",
+          "mt_status": "Superstar",
           "mt_url": "http://perdu.com"
       }, {
          "mt_logo": "",

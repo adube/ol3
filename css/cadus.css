@@ -171,6 +171,12 @@ a.ol-gmdp-offer-user-fullname {
   display: block;
 }
 
+.ol-gmdp-offer-group-logo {
+  max-height: 30px;
+  padding: 0 5px 0 0;
+  width: auto;
+}
+
 /**
  * GoogleMapsDirectionsPanel
  */
