@@ -1405,7 +1405,9 @@ olx.control.GoogleMapsDirectionsOptions.prototype.walkingText;
  *     toText: (string|undefined),
  *     totalDistanceText: (string|undefined),
  *     totalDurationText: (string|undefined),
- *     correspondanceText: (string|undefined)}}
+ *     correspondanceText: (string|undefined),
+ *     durationText: (string|undefined),
+ *     distanceText: (string|undefined)}}
  * @todo stability experimental
  */
 olx.control.GoogleMapsDirectionsPanelOptions;
@@ -1578,6 +1580,19 @@ olx.control.GoogleMapsDirectionsPanelOptions.prototype.totalDurationText;
  */
 olx.control.GoogleMapsDirectionsPanelOptions.prototype.correspondanceText;
 
+
+/**
+ * i18n
+ * @type {string|undefined}
+ */
+olx.control.GoogleMapsDirectionsPanelOptions.prototype.durationText;
+
+
+/**
+ * i18n
+ * @type {string|undefined}
+ */
+olx.control.GoogleMapsDirectionsPanelOptions.prototype.distanceText;
 
 
 /**
