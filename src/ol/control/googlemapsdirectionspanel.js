@@ -541,6 +541,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.calculateRouteWeight =
     function(route) {
 
   var weight;
+  var hasDriving = false;
 
   // if already set, use it
   if (goog.isDef(route.mt_weight)) {
@@ -556,9 +557,16 @@ ol.control.GoogleMapsDirectionsPanel.prototype.calculateRouteWeight =
           weight += step.duration.value;
         } else {
           weight += step.duration.value * 3;
+          hasDriving = true;
         }
       }, this);
     });
+
+    // if the route uses driving travel mode, add 6 minutes to weight
+    if (hasDriving) {
+      weight += 360;
+    }
+
     route.mt_weight = weight;
   }
 
