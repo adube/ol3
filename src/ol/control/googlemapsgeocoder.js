@@ -843,7 +843,6 @@ ol.control.GoogleMapsGeocoder.prototype.displayGeocodeResults_ = function() {
         me.clickableResultElements_.push(resultOption);
 
         goog.events.listen(resultOption, [
-          goog.events.EventType.TOUCHEND,
           goog.events.EventType.CLICK
         ], me.handleResultOptionPress_, false, me);
 
@@ -880,7 +879,6 @@ ol.control.GoogleMapsGeocoder.prototype.clearGeocodeResults_ = function() {
   //Unlisten to the results click event
   this.clickableResultElements_.forEach(function(element) {
     goog.events.unlisten(element, [
-      goog.events.EventType.TOUCHEND,
       goog.events.EventType.CLICK
     ], this.handleResultOptionPress_, false, this);
   }, this);
