@@ -393,7 +393,6 @@ ol.control.GoogleMapsDirections = function(opt_options) {
       this.travelModeCheckboxLinkElements_.push(checkboxLinkEl);
 
       goog.events.listen(checkboxLinkEl, [
-        goog.events.EventType.TOUCHEND,
         goog.events.EventType.CLICK
       ], this.handleCheckboxLinkElPress_, false, this);
 
@@ -442,7 +441,6 @@ ol.control.GoogleMapsDirections = function(opt_options) {
 
   goog.dom.appendChild(secondContainer, reverseButton);
   goog.events.listen(reverseButton, [
-    goog.events.EventType.TOUCHEND,
     goog.events.EventType.CLICK
   ], this.handleReverseButtonPress_, false, this);
 
@@ -466,7 +464,6 @@ ol.control.GoogleMapsDirections = function(opt_options) {
 
   goog.dom.appendChild(secondContainer, addGeocoderButton);
   goog.events.listen(addGeocoderButton, [
-    goog.events.EventType.TOUCHEND,
     goog.events.EventType.CLICK
   ], this.handleAddWPGeocoderButtonPress_, false, this);
 

@@ -176,17 +176,14 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
   goog.dom.appendChild(element, removeButton);
 
   goog.events.listen(searchButton, [
-    goog.events.EventType.TOUCHEND,
     goog.events.EventType.CLICK
   ], this.handleSearchButtonPress_, false, this);
 
   goog.events.listen(clearButton, [
-    goog.events.EventType.TOUCHEND,
     goog.events.EventType.CLICK
   ], this.handleClearButtonPress_, false, this);
 
   goog.events.listen(removeButton, [
-    goog.events.EventType.TOUCHEND,
     goog.events.EventType.CLICK
   ], this.handleRemoveButtonPress_, false, this);
 
