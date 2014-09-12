@@ -193,17 +193,14 @@ ol.control.GoogleMapsAddresses = function(opt_options) {
   goog.dom.appendChild(element, cancelButton);
 
   goog.events.listen(addButton, [
-    goog.events.EventType.TOUCHEND,
     goog.events.EventType.CLICK
   ], this.handleAddButtonPress_, false, this);
 
   goog.events.listen(editButton, [
-    goog.events.EventType.TOUCHEND,
     goog.events.EventType.CLICK
   ], this.handleEditButtonPress_, false, this);
 
   goog.events.listen(cancelButton, [
-    goog.events.EventType.TOUCHEND,
     goog.events.EventType.CLICK
   ], this.handleCancelEditButtonPress_, false, this);
 
@@ -799,13 +796,11 @@ ol.control.GoogleMapsAddresses.prototype.removeAddress = function(address) {
   if (goog.isDefAndNotNull(index)) {
     var removeAddressElement = this.removeAddressElements_[index];
     goog.events.unlisten(removeAddressElement, [
-      goog.events.EventType.TOUCHEND,
       goog.events.EventType.CLICK
     ], this.handleRemoveAddressElementPress_, false, this);
 
     var listElement = this.addressElements_[index];
     goog.events.unlisten(listElement, [
-      goog.events.EventType.TOUCHEND,
       goog.events.EventType.CLICK
     ], this.handleAddressElementPress_, false, this);
 
@@ -922,12 +917,10 @@ ol.control.GoogleMapsAddresses.prototype.addAddressToList = function(
   this.removeAddressElements_.push(removeAddressAnchor);
 
   goog.events.listen(addressElement, [
-    goog.events.EventType.TOUCHEND,
     goog.events.EventType.CLICK
   ], me.handleAddressElementPress_, false, me);
 
   goog.events.listen(removeAddressAnchor, [
-    goog.events.EventType.TOUCHEND,
     goog.events.EventType.CLICK
   ], me.handleRemoveAddressElementPress_, false, me);
 };

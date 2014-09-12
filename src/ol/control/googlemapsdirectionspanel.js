@@ -427,7 +427,6 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
     goog.dom.appendChild(element, this.showDetailsButtonEl_);
 
     goog.events.listen(this.showDetailsButtonEl_, [
-      goog.events.EventType.TOUCHEND,
       goog.events.EventType.CLICK
     ], this.handleShowDetailsButtonPress_, false, this);
 
@@ -583,7 +582,6 @@ ol.control.GoogleMapsDirectionsPanel.prototype.clearDirections = function() {
   // to unlisten them
   this.clickableDirectionElements_.forEach(function(element) {
     goog.events.unlisten(element, [
-      goog.events.EventType.TOUCHEND,
       goog.events.EventType.CLICK
     ], this.handleElementPress_, false, this);
   }, this);
@@ -592,7 +590,6 @@ ol.control.GoogleMapsDirectionsPanel.prototype.clearDirections = function() {
   // unlisten selector elements too
   this.clickableSelectorElements_.forEach(function(element) {
     goog.events.unlisten(element, [
-      goog.events.EventType.TOUCHEND,
       goog.events.EventType.CLICK
     ], this.handleSelectorElementPress_, false, this);
   }, this);
@@ -1420,7 +1417,6 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
 
   // event listeners
   goog.events.listen(detailLink, [
-    goog.events.EventType.TOUCHEND,
     goog.events.EventType.CLICK
   ], this.handleSelectorElementPress_, false, this);
 
@@ -1519,7 +1515,6 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createRouteSelectorItemElement_ =
 
   // event listeners
   goog.events.listen(element, [
-    goog.events.EventType.TOUCHEND,
     goog.events.EventType.CLICK
   ], this.handleSelectorElementPress_, false, this);
 
@@ -1644,7 +1639,6 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createLegHeaderElement_ =
 
   // event listeners
   goog.events.listen(element, [
-    goog.events.EventType.TOUCHEND,
     goog.events.EventType.CLICK
   ], this.handleElementPress_, false, this);
 
@@ -1770,7 +1764,6 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createStepElement_ =
 
   // event listeners
   goog.events.listen(element, [
-    goog.events.EventType.TOUCHEND,
     goog.events.EventType.CLICK
   ], this.handleElementPress_, false, this);
 
@@ -2449,7 +2442,6 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createShowMoreButton_ =
   goog.dom.appendChild(parent, this.showMoreButtonEl_);
 
   goog.events.listen(this.showMoreButtonEl_, [
-    goog.events.EventType.TOUCHEND,
     goog.events.EventType.CLICK
   ], this.handleShowMoreButtonPress_, false, this);
 };
@@ -2467,7 +2459,6 @@ ol.control.GoogleMapsDirectionsPanel.prototype.destroyShowMoreButton_ =
   }
 
   goog.events.unlisten(this.showMoreButtonEl_, [
-    goog.events.EventType.TOUCHEND,
     goog.events.EventType.CLICK
   ], this.handleShowMoreButtonPress_, false, this);
 
