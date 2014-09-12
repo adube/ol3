@@ -38,12 +38,14 @@ ol.control.LayerSwitcher = function(opt_options) {
       options.className : 'ol-layerswitcher';
 
   var elements = [];
+  var layer;
   for (var i in this.layers_) {
-    if (this.layers_[i].get('name')) {
+    layer = this.layers_[i];
+    if (layer.get('name')) {
       var checkbox = goog.dom.createDom(goog.dom.TagName.INPUT, {
         'id' : this.className_ + '-list-layer-element-' + i,
         'type': 'checkbox',
-        'checked': 'checked'
+        'checked': (layer.getVisible()) ? 'checked' : ''
       });
       goog.events.listen(
           checkbox,
@@ -54,7 +56,7 @@ ol.control.LayerSwitcher = function(opt_options) {
       );
       elements.push(checkbox);
 
-      var layerName = this.layers_[i].get('name');
+      var layerName = layer.get('name');
       goog.asserts.assertString(layerName);
       var labelEl = goog.dom.createDom(goog.dom.TagName.LABEL, {
         'class' : this.className_ + '-list-layer-element',
