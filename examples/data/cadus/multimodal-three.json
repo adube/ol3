@@ -25,7 +25,9 @@
         "mt_date": "",
         "mt_heure": "",
         "mt_horaire_aller": "Lun à ven de 08:00:00",
-        "mt_horaire_retour": "Lun à ven de 17:00:00",
+        "mt_horaire_aller_reg": true,
+        "mt_horaire_retour": "Horaire irrégulier",
+        "mt_horaire_retour_reg": false,
         "mt_duration_diff": -12,
         "mt_offer_name": "offre awesome"
       },

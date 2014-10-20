@@ -209,6 +209,12 @@ google.maps.mt_offre.prototype.mt_horaire_aller;
 
 
 /**
+ * @type {boolean}
+ */
+google.maps.mt_offre.prototype.mt_horaire_aller_reg;
+
+
+/**
  * @type {number}
  */
 google.maps.mt_offre.prototype.mt_horaire_ponctuelle;
@@ -218,6 +224,13 @@ google.maps.mt_offre.prototype.mt_horaire_ponctuelle;
  * @type {string}
  */
 google.maps.mt_offre.prototype.mt_horaire_retour;
+
+
+/**
+ * @type {boolean}
+ */
+google.maps.mt_offre.prototype.mt_horaire_retour_reg;
+
 
 /**
  * @type {string}

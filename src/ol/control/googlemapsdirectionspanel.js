@@ -1115,12 +1115,16 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
       goog.dom.appendChild(
           goPrefixEl, goog.dom.createTextNode(this.goText + ': '));
 
-      var goValueEl = goog.dom.createDom(goog.dom.TagName.SPAN, {});
-      goog.dom.appendChild(firstLineEl, goValueEl);
-      goog.dom.appendChild(
-          goValueEl,
-          goog.dom.createTextNode(route.mt_offre.mt_horaire_aller)
+      var goValueElOptions = {};
+      if (route.mt_offre.mt_horaire_aller_reg === false) {
+        goValueElOptions.class = classPrefix + '-offer-schedule-irregular';
+      }
+      var goValueEl = goog.dom.createDom(
+          goog.dom.TagName.SPAN,
+          goValueElOptions,
+          route.mt_offre.mt_horaire_aller
       );
+      goog.dom.appendChild(firstLineEl, goValueEl);
 
       // ------ 'retour' - optional
       var returnValueText = route.mt_offre.mt_horaire_retour;
@@ -1135,12 +1139,17 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
         goog.dom.appendChild(
             returnPrefixEl, goog.dom.createTextNode(this.returnText + ': '));
 
-        var returnValueEl = goog.dom.createDom(goog.dom.TagName.SPAN, {});
-        goog.dom.appendChild(secondLineEl, returnValueEl);
-        goog.dom.appendChild(
-            returnValueEl,
-            goog.dom.createTextNode(returnValueText)
+        var returnValueElOptions = {};
+        if (route.mt_offre.mt_horaire_retour_reg === false) {
+          returnValueElOptions.class =
+              classPrefix + '-offer-schedule-irregular';
+        }
+        var returnValueEl = goog.dom.createDom(
+            goog.dom.TagName.SPAN,
+            returnValueElOptions,
+            returnValueText
         );
+        goog.dom.appendChild(secondLineEl, returnValueEl);
       }
     }
 
