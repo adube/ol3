@@ -1117,13 +1117,13 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
 
       var goValueElOptions = {};
       if (route.mt_offre.mt_horaire_aller_reg === false) {
-        goValueElOptions.class = classPrefix + '-offer-schedule-irregular';
+        goValueElOptions['class'] = classPrefix + '-offer-schedule-irregular';
       }
       var goValueEl = goog.dom.createDom(
           goog.dom.TagName.SPAN,
           goValueElOptions,
           route.mt_offre.mt_horaire_aller
-      );
+          );
       goog.dom.appendChild(firstLineEl, goValueEl);
 
       // ------ 'retour' - optional
@@ -1141,14 +1141,14 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
 
         var returnValueElOptions = {};
         if (route.mt_offre.mt_horaire_retour_reg === false) {
-          returnValueElOptions.class =
+          returnValueElOptions['class'] =
               classPrefix + '-offer-schedule-irregular';
         }
         var returnValueEl = goog.dom.createDom(
             goog.dom.TagName.SPAN,
             returnValueElOptions,
             returnValueText
-        );
+            );
         goog.dom.appendChild(secondLineEl, returnValueEl);
       }
     }
