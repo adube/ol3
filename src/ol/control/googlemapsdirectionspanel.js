@@ -1,5 +1,6 @@
 goog.provide('ol.control.GoogleMapsDirectionsPanel');
 
+goog.require('goog.Uri.QueryData');
 goog.require('goog.array');
 goog.require('goog.asserts');
 goog.require('goog.dom');
@@ -7,6 +8,10 @@ goog.require('goog.dom.TagName');
 goog.require('goog.dom.classes');
 goog.require('goog.events');
 goog.require('goog.events.EventType');
+goog.require('goog.json');
+goog.require('goog.net.EventType');
+goog.require('goog.net.XhrIo');
+goog.require('goog.object');
 goog.require('goog.string');
 goog.require('goog.style');
 goog.require('ol.Collection');
@@ -204,6 +209,29 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
    */
   this.durationText = goog.isDef(options.durationText) ?
       options.durationText : 'Duration';
+
+  /**
+   * i18n - addBookmarkAnother
+   * @type {string}
+   */
+  this.addBookmarkAnotherText = goog.isDef(options.addBookmarkAnotherText) ?
+      options.addBookmarkAnotherText :
+      'This result is already in your bookmarks for an other route';
+
+  /**
+   * i18n - addBookmarkNone
+   * @type {string}
+   */
+  this.addBookmarkNoneText = goog.isDef(options.addBookmarkNoneText) ?
+      options.addBookmarkNoneText : 'Add bookmark';
+
+  /**
+   * i18n - addBookmarkThis
+   * @type {string}
+   */
+  this.addBookmarkThisText = goog.isDef(options.addBookmarkThisText) ?
+      options.addBookmarkThisText :
+      'This result is already in your bookmarks';
 
 
   var classPrefix = 'ol-gmdp';
@@ -442,6 +470,22 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
   this.readOnlyEnabled_ = false;
 
 
+  /**
+   * @type {Object}
+   * @private
+   */
+  this.bookmarkHeaders_ = goog.isDef(options.bookmarkHeaders) ?
+      options.bookmarkHeaders : {};
+
+
+  /**
+   * @type {boolean}
+   * @private
+   */
+  this.bookmarkUsePostMethod_ = goog.isDef(options.bookmarkUsePostMethod) ?
+      options.bookmarkUsePostMethod : true;
+
+
   goog.base(this, {
     element: element,
     target: options.target
@@ -461,6 +505,16 @@ ol.control.GoogleMapsDirectionsPanel.Ambiance = {
   TALK: 1,
   MUSIC: 2,
   RADIO: 3
+};
+
+
+/**
+ * @enum {string}
+ */
+ol.control.GoogleMapsDirectionsPanel.BookmarkStatus = {
+  ANOTHER: 'another',
+  NONE: 'none',
+  THIS: 'this'
 };
 
 
@@ -976,6 +1030,43 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
   goog.dom.appendChild(element, numEl);
   goog.dom.appendChild(numEl, goog.dom.createTextNode(index + 1));
 
+  // bookmarkEl (link or span)
+  if (goog.isDef(route.mt_favori)) {
+    var statusList = ol.control.GoogleMapsDirectionsPanel.BookmarkStatus;
+    var bookmarkEl;
+    if (route.mt_favori.mt_status == statusList.NONE) {
+      bookmarkEl = goog.dom.createDom(goog.dom.TagName.A, {
+        'href': route.mt_favori.mt_url,
+        'data-route-index': index,
+        'class': [
+          classPrefix + '-bookmark',
+          classPrefix + '-bookmark-none'
+        ].join(' '),
+        'title': this.addBookmarkNoneText
+      });
+      goog.events.listen(bookmarkEl, [
+        goog.events.EventType.CLICK
+      ], this.handleBookmarkElementPress_, false, this);
+      goog.dom.appendChild(element, this.createBookmarkInactiveElement_(false));
+    } else if (route.mt_favori.mt_status == statusList.ANOTHER) {
+      bookmarkEl = goog.dom.createDom(goog.dom.TagName.A, {
+        'href': route.mt_favori.mt_url,
+        'data-route-index': index,
+        'class': [
+          classPrefix + '-bookmark',
+          classPrefix + '-bookmark-another'
+        ].join(' '),
+        'title': this.addBookmarkAnotherText
+      });
+      goog.events.listen(bookmarkEl, [
+        goog.events.EventType.CLICK
+      ], this.handleBookmarkElementPress_, false, this);
+      goog.dom.appendChild(element, this.createBookmarkInactiveElement_(false));
+    } else {
+      bookmarkEl = this.createBookmarkInactiveElement_(true);
+    }
+    goog.dom.appendChild(element, bookmarkEl);
+  }
 
   // left and right containers creation
   var leftCtnEl = goog.dom.createDom(goog.dom.TagName.DIV, {
@@ -1473,6 +1564,28 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferIconElement_ =
   });
 
   return iconEl;
+};
+
+
+/**
+ * Create an 'inactive' bookmark element, i.e. a <span> instead of a link
+ * @param {boolean} visible Whether to create the element visible or not
+ * @return {Element}
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.createBookmarkInactiveElement_ =
+    function(visible) {
+  var display = visible ? '' : 'none';
+  var classPrefix = this.classPrefix_;
+  var element = goog.dom.createDom(goog.dom.TagName.SPAN, {
+    'class': [
+      classPrefix + '-bookmark',
+      classPrefix + '-bookmark-this'
+    ].join(' '),
+    'title': this.addBookmarkThisText
+  });
+  goog.style.setStyle(element, 'display', display);
+  return element;
 };
 
 
@@ -2212,6 +2325,81 @@ ol.control.GoogleMapsDirectionsPanel.prototype.handleElementPress_ =
   }
 
   this.createPopup_(coordinate, element.getAttribute('data-instructions'));
+};
+
+
+/**
+ * @param {goog.events.Event} event Event.
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.handleBookmarkElementPress_ =
+    function(event) {
+  event.preventDefault();
+
+  var element = event.currentTarget;
+  var request = new goog.net.XhrIo();
+  var url = element.href;
+  var headers = this.bookmarkHeaders_;
+  var method = (this.bookmarkUsePostMethod_ === true) ? 'POST' : 'GET';
+
+  var routeIndex = parseInt(element.getAttribute('data-route-index'), 10);
+  var route = this.routes_.item(routeIndex);
+
+  var data = new goog.Uri.QueryData();
+  var properties = this.getProperties();
+
+  var result = route.result;
+  goog.object.extend(properties, {'resultat_raw_data': result});
+
+  var resultModeOffre = result.mt_offre.mt_mode_offre;
+  goog.object.extend(properties, {'resultat_mode_offre': resultModeOffre});
+
+  var resultUserId = result.mt_usager.mt_id;
+  goog.object.extend(properties, {'resultat_usager_id': resultUserId});
+
+  var resultatId = route.result.mt_offre.mt_id;
+  if (resultModeOffre) {
+    goog.object.extend(properties, {'offre_id': resultatId});
+  } else {
+    goog.object.extend(properties, {'recherche_id': resultatId});
+  }
+
+  // FIXME - add self offre_id or recherche_id
+  // ...
+
+  // FIXME - add title
+  // ...
+
+  data.add('json', goog.json.serialize(properties));
+
+  // listen once to 'complete' event
+  goog.events.listenOnce(request, goog.net.EventType.COMPLETE, function(event) {
+    var self = this.self;
+    var classPrefix = self.classPrefix_;
+    var element = /** @type {Element} */ (this.element);
+    var request = event.currentTarget;
+    if (request.isSuccess()) {
+      var response = /** @type {mtx.format.ResponseJson} */
+          (request.getResponseJson());
+      // TODO - manage error
+      if (response.errors.length) {
+        window.console.log(response.errors.join(' '));
+      } else {
+        console.log('success');
+        goog.style.setStyle(element, 'display', 'none');
+        var parent = goog.dom.getParentElement(element);
+        var inactive = goog.dom.getElementByClass(
+            classPrefix + '-bookmark-this', parent);
+        goog.style.setStyle(inactive, 'display', '');
+      }
+    } else {
+      // TODO - manage error
+      window.console.log(
+          'Error - an unknown error occured when adding the bookmark.');
+    }
+  }, undefined, {self: this, element: element});
+
+  request.send(url, method, data.toString(), headers);
 };
 
 

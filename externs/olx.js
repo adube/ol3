@@ -1396,6 +1396,8 @@ olx.control.GoogleMapsDirectionsOptions.prototype.walkingText;
  *     pathDetailsText: (string|undefined),
  *     anonymousContactMessage: (string|undefined),
  *     privateContactMessage: (string|undefined),
+ *     bookmarkHeaders: (Object|undefined),
+ *     bookmarkUsePostMethod: (boolean|undefined),
  *     ponctualText: (string|undefined),
  *     recurringText: (string|undefined),
  *     returnText: (string|undefined),
@@ -1407,7 +1409,10 @@ olx.control.GoogleMapsDirectionsOptions.prototype.walkingText;
  *     totalDurationText: (string|undefined),
  *     correspondanceText: (string|undefined),
  *     durationText: (string|undefined),
- *     distanceText: (string|undefined)}}
+ *     distanceText: (string|undefined),
+ *     addBookmarkAnotherText: (string|undefined),
+ *     addBookmarkNoneText: (string|undefined),
+ *     addBookmarkThisText: (string|undefined)}}
  * @todo stability experimental
  */
 olx.control.GoogleMapsDirectionsPanelOptions;
@@ -1511,6 +1516,21 @@ olx.control.GoogleMapsDirectionsPanelOptions.prototype.anonymousContactMessage;
  */
 olx.control.GoogleMapsDirectionsPanelOptions.prototype.privateContactMessage;
 
+
+/**
+ * The headers to use with requests sent to the bookmark service
+ * @type {Object|undefined}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.bookmarkHeaders;
+
+
+/**
+ * Whether to use 'POST' or not, i.e. 'GET'. Defaults to true.
+ * @type {boolean|undefined}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.bookmarkUsePostMethod;
+
+
 /**
  * i18n
  * @type {string|undefined}
@@ -1593,6 +1613,27 @@ olx.control.GoogleMapsDirectionsPanelOptions.prototype.durationText;
  * @type {string|undefined}
  */
 olx.control.GoogleMapsDirectionsPanelOptions.prototype.distanceText;
+
+
+/**
+ * i18n
+ * @type {string|undefined}
+ */
+olx.control.GoogleMapsDirectionsPanelOptions.prototype.addBookmarkAnotherText;
+
+
+/**
+ * i18n
+ * @type {string|undefined}
+ */
+olx.control.GoogleMapsDirectionsPanelOptions.prototype.addBookmarkNoneText;
+
+
+/**
+ * i18n
+ * @type {string|undefined}
+ */
+olx.control.GoogleMapsDirectionsPanelOptions.prototype.addBookmarkThisText;
 
 
 /**

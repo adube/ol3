@@ -6,6 +6,7 @@
       "mt_weight": 1,
       "mt_anonymous": true,
       "mt_usager": {
+        "mt_id": 10,
         "mt_last_name": "Lawrence (anonymous)",
         "mt_first_name": "Jennifer",
         "mt_contact": null,
@@ -13,7 +14,13 @@
         "mt_evaluation": 4,
         "mt_url": "http://en.wikipedia.org/wiki/Jennifer_Lawrence"
       },
+      "mt_favori": {
+        "mt_status": "another",
+        "mt_url": "data/cadus/bookmark-add.json"
+      },
       "mt_offre": {
+        "mt_id": 55,
+        "mt_mode_offre": true,
         "mt_est_conducteur": 1,
         "mt_start_address": "Rue des chiens",
         "mt_end_address": "Rue des chats",

@@ -74,6 +74,27 @@
   color: white;
 }
 
+.ol-gmdp-bookmark {
+  background-image: url('../img/stars.png');
+  display: block;
+  float: right;
+  margin: 2px;
+  width: 25px;
+  height: 24px;
+}
+
+.ol-gmdp-bookmark-none {
+  background-position: -25px 0;
+}
+
+.ol-gmdp-bookmark-this {
+  background-position: 0 0;
+}
+
+.ol-gmdp-bookmark-another {
+  background-position: -75px 0;
+}
+
 .ol-gmdp-offer-left {
   float: left;
   padding: 8px 8px 8px 2px;

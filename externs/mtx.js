@@ -45,6 +45,32 @@ mtx.format.Address.prototype.text;
 
 
 /**
+ * @typedef {{errors: (Array.<string>),
+ *     status: (string),
+ *     data: (Array|undefined)}}
+ */
+mtx.format.ResponseJson;
+
+
+/**
+ * @type {Array.<string>}
+ */
+mtx.format.ResponseJson.prototype.errors;
+
+
+/**
+ * @type {string}
+ */
+mtx.format.ResponseJson.prototype.status;
+
+
+/**
+ * @type {Array|undefined}
+ */
+mtx.format.ResponseJson.prototype.data;
+
+
+/**
  * @type {string}
  */
 google.maps.prototype.mt_corresponding
@@ -83,6 +109,12 @@ google.maps.DirectionsRoute.prototype.summary;
  * @type {Object}
  */
 google.maps.DirectionsRoute.prototype.mt_usager;
+
+
+/**
+ * @type {number}
+ */
+google.maps.mt_usager.prototype.mt_id;
 
 
 /**
@@ -141,6 +173,18 @@ google.maps.mt_usager.prototype.mt_url;
  * @type {Object}
  */
 google.maps.DirectionsRoute.prototype.mt_offre;
+
+
+/**
+ * @type {number}
+ */
+google.maps.mt_offre.prototype.mt_id;
+
+
+/**
+ * @type {boolean}
+ */
+google.maps.mt_offre.prototype.mt_mode_offre;
 
 
 /**

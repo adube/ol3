@@ -146,8 +146,8 @@ var directionsPanel = new ol.control.GoogleMapsDirectionsPanel({
   'aroundText': 'environ',
   'totalDurationText': 'Durée Totale',
   'durationText': 'Durée',
-  'distanceText': 'Distance'
-
+  'distanceText': 'Distance',
+  'bookmarkUsePostMethod': false
 });
 
 var olAdresses = new ol.control.GoogleMapsAddresses({
