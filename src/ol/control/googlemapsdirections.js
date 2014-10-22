@@ -447,6 +447,7 @@ ol.control.GoogleMapsDirections = function(opt_options) {
   var geocodersContainer = goog.dom.createDom(goog.dom.TagName.UL, {
     'class': classPrefix + '-geocoders'
   });
+
   goog.dom.appendChild(secondContainer, geocodersContainer);
 
   // set geocodersContainer as sortable (using jQueryUI)
@@ -454,6 +455,7 @@ ol.control.GoogleMapsDirections = function(opt_options) {
     'stop': function(event, ui) {
       me.handleGeocoderSortStop_(event, ui);
     },
+    'cancel': 'button, input',
     'placeholder': classPrefix + '-highlight'
   });
 

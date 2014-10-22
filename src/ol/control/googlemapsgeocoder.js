@@ -154,6 +154,14 @@ ol.control.GoogleMapsGeocoder = function(opt_options) {
     'type': 'text'
   });
 
+  //Don't remove this, it'll break #693
+  goog.events.listen(input, [
+    goog.events.EventType.CLICK
+  ], function(e) {
+    this.input_.focus();
+  }, false, this);
+
+
   var resultsList = goog.dom.createDom(goog.dom.TagName.OL, {
     'class': classPrefix + '-results',
     'style': 'display: none;'
