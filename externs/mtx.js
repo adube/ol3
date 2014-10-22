@@ -281,10 +281,17 @@ google.maps.mt_offre.prototype.mt_horaire_retour_reg;
  */
 google.maps.mt_offre.prototype.mt_start_address;
 
+
 /**
  * @type {string}
  */
 google.maps.mt_offre.prototype.mt_offer_name;
+
+
+/**
+ * @type {string}
+ */
+google.maps.mt_offre.prototype.mt_favori;
 
 
 /**
@@ -321,6 +328,24 @@ google.maps.mt_organisations.prototype.mt_name;
  * @type {string}
  */
 google.maps.mt_organisations.prototype.mt_status;
+
+
+/**
+ * @type {Array.<Object>}
+ */
+google.maps.DirectionsRoute.prototype.mt_favoris;
+
+
+/**
+ * @type {string}
+ */
+google.maps.mt_favoris.prototype.mt_status;
+
+
+/**
+ * @type {string}
+ */
+google.maps.mt_favoris.prototype.mt_url;
 
 
 /**
