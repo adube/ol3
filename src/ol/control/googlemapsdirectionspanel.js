@@ -1207,11 +1207,16 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
           goPrefixEl, goog.dom.createTextNode(this.goText + ': '));
 
       var goValueElOptions = {};
-      if (route.mt_offre.mt_horaire_aller_reg === false) {
+      var goTagName;
+      if (route.mt_offre.mt_horaire_aller_reg === true) {
+        goTagName = goog.dom.TagName.SPAN;
+      } else {
+        goTagName = goog.dom.TagName.A;
+        goValueElOptions['href'] = route.mt_offre.mt_horaire_irr_url;
         goValueElOptions['class'] = classPrefix + '-offer-schedule-irregular';
       }
       var goValueEl = goog.dom.createDom(
-          goog.dom.TagName.SPAN,
+          goTagName,
           goValueElOptions,
           route.mt_offre.mt_horaire_aller
           );
@@ -1231,12 +1236,17 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
             returnPrefixEl, goog.dom.createTextNode(this.returnText + ': '));
 
         var returnValueElOptions = {};
-        if (route.mt_offre.mt_horaire_retour_reg === false) {
+        var returnTagName;
+        if (route.mt_offre.mt_horaire_retour_reg === true) {
+          returnTagName = goog.dom.TagName.SPAN;
+        } else {
+          returnTagName = goog.dom.TagName.A;
+          returnValueElOptions['href'] = route.mt_offre.mt_horaire_irr_url;
           returnValueElOptions['class'] =
               classPrefix + '-offer-schedule-irregular';
         }
         var returnValueEl = goog.dom.createDom(
-            goog.dom.TagName.SPAN,
+            returnTagName,
             returnValueElOptions,
             returnValueText
             );

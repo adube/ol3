@@ -35,6 +35,7 @@
         "mt_horaire_aller_reg": true,
         "mt_horaire_retour": "Horaire irrégulier",
         "mt_horaire_retour_reg": false,
+        "mt_horaire_irr_url": "http://perdu.com",
         "mt_duration_diff": -12,
         "mt_offer_name": "offre awesome"
       },
