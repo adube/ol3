@@ -2355,32 +2355,23 @@ ol.control.GoogleMapsDirectionsPanel.prototype.handleBookmarkElementPress_ =
   var routeIndex = parseInt(element.getAttribute('data-route-index'), 10);
   var route = this.routes_.item(routeIndex);
 
-  var data = new goog.Uri.QueryData();
-  var properties = this.getProperties();
+  var data = {};
 
-  var result = route.result;
-  goog.object.extend(properties, {'resultat_raw_data': result});
-
-  var resultModeOffre = result.mt_offre.mt_mode_offre;
-  goog.object.extend(properties, {'resultat_mode_offre': resultModeOffre});
-
-  var resultUserId = result.mt_usager.mt_id;
-  goog.object.extend(properties, {'resultat_usager_id': resultUserId});
+  var resultModeOffre = route.result.mt_offre.mt_mode_offre;
+  // FIXME - add self offre_id or recherche_id
+  // FIXME - add title
+  goog.object.extend(data, {
+    'resultat_mode_offre': resultModeOffre,
+    'resultat_raw_data': route.result,
+    'resultat_usager_id': route.result.mt_usager.mt_id
+  });
 
   var resultatId = route.result.mt_offre.mt_id;
   if (resultModeOffre) {
-    goog.object.extend(properties, {'offre_id': resultatId});
+    goog.object.extend(data, {'offre_id': resultatId});
   } else {
-    goog.object.extend(properties, {'recherche_id': resultatId});
+    goog.object.extend(data, {'recherche_id': resultatId});
   }
-
-  // FIXME - add self offre_id or recherche_id
-  // ...
-
-  // FIXME - add title
-  // ...
-
-  data.add('json', goog.json.serialize(properties));
 
   // listen once to 'complete' event
   goog.events.listenOnce(request, goog.net.EventType.COMPLETE, function(event) {
@@ -2409,7 +2400,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.handleBookmarkElementPress_ =
     }
   }, undefined, {self: this, element: element});
 
-  request.send(url, method, data.toString(), headers);
+  request.send(url, method, goog.json.serialize(data), headers);
 };
 
 
