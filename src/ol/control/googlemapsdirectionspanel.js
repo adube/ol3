@@ -2357,8 +2357,12 @@ ol.control.GoogleMapsDirectionsPanel.prototype.handleBookmarkElementPress_ =
 
   var data = {};
 
+  // One of 'offre_id' or 'recherche_id' is set at the app level, and is
+  // optionnal (when editing an 'offre' or 'recherche').  The foreign key,
+  // which is one of 'offre_id' or 'recherche_id' is set __here__
+  goog.object.extend(data, this.getProperties());
+
   var resultModeOffre = route.result.mt_offre.mt_mode_offre;
-  // FIXME - add self offre_id or recherche_id
   // FIXME - add title
   goog.object.extend(data, {
     'resultat_mode_offre': resultModeOffre,
@@ -2366,6 +2370,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.handleBookmarkElementPress_ =
     'resultat_usager_id': route.result.mt_usager.mt_id
   });
 
+  // __here__
   var resultatId = route.result.mt_offre.mt_id;
   if (resultModeOffre) {
     goog.object.extend(data, {'offre_id': resultatId});
