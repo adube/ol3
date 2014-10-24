@@ -962,6 +962,10 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createRouteElement_ =
     'data-route-index': index
   });
 
+  if (goog.isDef(route.mt_usager)) {
+    goog.dom.classes.add(element, classPrefix + '-route-mt');
+  }
+
   // total distance
   var totalDistanceText = this.totalDistanceText + ': ' +
       this.calculateRouteTotalDistance_(route);
@@ -1082,6 +1086,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
   // if route has any 'mt_*' property, that means the response comes
   // from the multimodal service
   if (goog.isDef(route.mt_usager)) {
+    goog.dom.classes.add(element, classPrefix + '-offer-mt');
 
     // == LEFT START ==
 
