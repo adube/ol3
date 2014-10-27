@@ -2368,11 +2368,19 @@ ol.control.GoogleMapsDirectionsPanel.prototype.handleBookmarkElementPress_ =
   goog.object.extend(data, this.getProperties());
 
   var resultModeOffre = route.result.mt_offre.mt_mode_offre;
-  // FIXME - add title
+  var legs = route.result.legs;
+  // use result user full name as title
+  var bookmarkTitle = [
+    route.result.mt_usager.mt_first_name,
+    route.result.mt_usager.mt_last_name
+  ].join(' ');
   goog.object.extend(data, {
+    'adresse_destination': legs[legs.length - 1].end_address,
+    'adresse_origine': legs[0].start_address,
     'resultat_mode_offre': resultModeOffre,
     'resultat_raw_data': route.result,
-    'resultat_usager_id': route.result.mt_usager.mt_id
+    'resultat_usager_id': route.result.mt_usager.mt_id,
+    'titre': bookmarkTitle
   });
 
   // __here__
