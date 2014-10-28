@@ -296,6 +296,11 @@ goog.exportProperty(
 
 goog.exportProperty(
     ol.control.GoogleMapsDirectionsPanel.prototype,
+    'select',
+    ol.control.GoogleMapsDirectionsPanel.prototype.select);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirectionsPanel.prototype,
     'getSelectedRouteLegsAsGeoJSON',
     ol.control.GoogleMapsDirectionsPanel.prototype.getSelectedRouteLegsAsGeoJSON);
 

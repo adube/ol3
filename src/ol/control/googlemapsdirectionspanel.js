@@ -774,6 +774,16 @@ ol.control.GoogleMapsDirectionsPanel.prototype.setDirections = function(
 
 
 /**
+ * Select a route, which displays its direction details.  Unselect any
+ * previously selected route too.
+ * @param {number} index Index of the route to select
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.select = function(index) {
+  this.select_(index);
+};
+
+
+/**
  * Returns the currently selected route legs, each as GeoJSON.
  *
  * How it's done: the leg steps 'path' locations are transformed and collected
