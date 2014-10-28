@@ -941,6 +941,55 @@ ol.control.GoogleMapsDirections.prototype.loadQueryParams = function(source) {
 
 
 /**
+ * Manually load a route result object.
+ *
+ * WARNING - This method is solely intended to be used once, after the
+ * instanciation of the control.
+ * @param {google.maps.DirectionsRoute} route
+ */
+ol.control.GoogleMapsDirections.prototype.loadRoute = function(route) {
+  this.loading_ = true;
+
+  var map = this.getMap();
+
+  var view = map.getView();
+  goog.asserts.assert(goog.isDef(view));
+
+  var projection = view.getProjection();
+
+  // collect addresses
+  var addresses = [];
+  var coordinates = [];
+  goog.array.forEach(route.legs, function(leg) {
+    addresses.push(leg.start_address);
+    coordinates.push(leg.start_coordinate);
+  }, this);
+  addresses.push(route.legs[route.legs.length - 1].end_address);
+  coordinates.push(route.legs[route.legs.length - 1].end_coordinate);
+
+  // add missing geocoders required
+  for (var i = 2; i < addresses.length; i++) {
+    this.addGeocoder_();
+  }
+
+  // set geocoder locations and input values
+  var location;
+  this.geocoders_.forEach(function(geocoder, index) {
+    geocoder.disableReverseGeocoding();
+    geocoder.setInputValue(addresses[index]);
+    location = ol.proj.transform(coordinates[index], projection.getCode(),
+        'EPSG:4326');
+    geocoder.setLocation(new google.maps.LatLng(location[1], location[0]));
+  }, this);
+
+  this.handleDirectionsResult_({'routes': [route]},
+      google.maps.DirectionsStatus.OK);
+
+  this.loading_ = false;
+};
+
+
+/**
  * Read the given source object then load its query parameters elements only
  * @return {Array}
  */

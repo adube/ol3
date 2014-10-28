@@ -366,6 +366,11 @@ goog.exportProperty(
 
 goog.exportProperty(
     ol.control.GoogleMapsDirections.prototype,
+    'loadRoute',
+    ol.control.GoogleMapsDirections.prototype.loadRoute);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirections.prototype,
     'on',
     ol.control.GoogleMapsDirections.prototype.on);
 
