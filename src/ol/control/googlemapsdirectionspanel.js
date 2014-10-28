@@ -1138,35 +1138,39 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
         userFullNameText));
 
     // -- user eval --
-    var userEvalClasses = [];
-    userEvalClasses.push(classPrefix + '-offer-user-eval');
-    userEvalClasses.push(classPrefix + '-offer-user-eval-' +
-        route.mt_usager.mt_evaluation);
-    var userEvalEl = goog.dom.createDom(goog.dom.TagName.DIV, {
-      'class': userEvalClasses.join(' ')
-    });
-    goog.dom.appendChild(userEvalEl, goog.dom.createTextNode(' '));
-    goog.dom.appendChild(leftCtnEl, userEvalEl);
+    if (goog.isDef(route.mt_usager.mt_evaluation)) {
+      var userEvalClasses = [];
+      userEvalClasses.push(classPrefix + '-offer-user-eval');
+      userEvalClasses.push(classPrefix + '-offer-user-eval-' +
+          route.mt_usager.mt_evaluation);
+      var userEvalEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+        'class': userEvalClasses.join(' ')
+      });
+      goog.dom.appendChild(userEvalEl, goog.dom.createTextNode(' '));
+      goog.dom.appendChild(leftCtnEl, userEvalEl);
+    }
 
     // small icons
-    goog.dom.appendChild(leftCtnEl, this.createOfferIconElement_(
-        'driver', route.mt_offre.mt_est_conducteur));
-    goog.dom.appendChild(leftCtnEl, this.createOfferIconElement_(
-        'seats', route.mt_offre.mt_places_dispo));
-    goog.dom.appendChild(leftCtnEl, this.createOfferIconElement_(
-        'smoking', route.mt_offre.mt_fume));
-    // ambiance icons
-    var offreAmbiance = route.mt_offre.mt_atmosphere;
-    var ambiance = ol.control.GoogleMapsDirectionsPanel.Ambiance;
-    var talkAmbiance = (offreAmbiance === ambiance.TALK) ? '1' : '0';
-    goog.dom.appendChild(leftCtnEl, this.createOfferIconElement_(
-        'talk', talkAmbiance));
-    var musicAmbiance = (offreAmbiance === ambiance.MUSIC) ? '1' : '0';
-    goog.dom.appendChild(leftCtnEl, this.createOfferIconElement_(
-        'music', musicAmbiance));
-    var radioAmbiance = (offreAmbiance === ambiance.RADIO) ? '1' : '0';
-    goog.dom.appendChild(leftCtnEl, this.createOfferIconElement_(
-        'radio', radioAmbiance));
+    if (goog.isDef(route.mt_offre)) {
+      goog.dom.appendChild(leftCtnEl, this.createOfferIconElement_(
+          'driver', route.mt_offre.mt_est_conducteur));
+      goog.dom.appendChild(leftCtnEl, this.createOfferIconElement_(
+          'seats', route.mt_offre.mt_places_dispo));
+      goog.dom.appendChild(leftCtnEl, this.createOfferIconElement_(
+          'smoking', route.mt_offre.mt_fume));
+      // ambiance icons
+      var offreAmbiance = route.mt_offre.mt_atmosphere;
+      var ambiance = ol.control.GoogleMapsDirectionsPanel.Ambiance;
+      var talkAmbiance = (offreAmbiance === ambiance.TALK) ? '1' : '0';
+      goog.dom.appendChild(leftCtnEl, this.createOfferIconElement_(
+          'talk', talkAmbiance));
+      var musicAmbiance = (offreAmbiance === ambiance.MUSIC) ? '1' : '0';
+      goog.dom.appendChild(leftCtnEl, this.createOfferIconElement_(
+          'music', musicAmbiance));
+      var radioAmbiance = (offreAmbiance === ambiance.RADIO) ? '1' : '0';
+      goog.dom.appendChild(leftCtnEl, this.createOfferIconElement_(
+          'radio', radioAmbiance));
+    }
 
     // -- clear left --
     var clearEl = goog.dom.createDom(goog.dom.TagName.DIV, {
@@ -1179,169 +1183,174 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
     // == RIGHT START ==
 
     // -- schedule --
-    if (route.mt_offre.mt_horaire_ponctuelle === 1) {
-      // ---- schedule ponctual ----
-      var firstLineEl = goog.dom.createDom(goog.dom.TagName.DIV, {});
-      goog.dom.appendChild(rightCtnEl, firstLineEl);
+    if (goog.isDef(route.mt_offre)) {
+      if (route.mt_offre.mt_horaire_ponctuelle === 1) {
+        // ---- schedule ponctual ----
+        var firstLineEl = goog.dom.createDom(goog.dom.TagName.DIV, {});
+        goog.dom.appendChild(rightCtnEl, firstLineEl);
 
-      var offerTypeText = (route.mt_offre.mt_horaire_ponctuelle === 1) ?
-          this.ponctualText : this.recurringText;
-      var offerTypeEl = goog.dom.createDom(goog.dom.TagName.SPAN, {});
-      goog.dom.appendChild(firstLineEl, offerTypeEl);
-      goog.dom.appendChild(offerTypeEl, goog.dom.createTextNode(offerTypeText));
+        var offerTypeText = (route.mt_offre.mt_horaire_ponctuelle === 1) ?
+            this.ponctualText : this.recurringText;
+        var offerTypeEl = goog.dom.createDom(goog.dom.TagName.SPAN, {});
+        goog.dom.appendChild(firstLineEl, offerTypeEl);
+        goog.dom.appendChild(
+            offerTypeEl,
+            goog.dom.createTextNode(offerTypeText)
+        );
 
-      goog.dom.appendChild(firstLineEl, this.createOfferPipeElement_());
+        goog.dom.appendChild(firstLineEl, this.createOfferPipeElement_());
 
-      var dateText = route.mt_offre.mt_date;
-      var dateEl = goog.dom.createDom(goog.dom.TagName.SPAN, {
-        'class': classPrefix + '-offer-header'
-      });
-      goog.dom.appendChild(firstLineEl, dateEl);
-      goog.dom.appendChild(dateEl, goog.dom.createTextNode(dateText));
-
-      goog.dom.appendChild(firstLineEl, this.createOfferPipeElement_());
-
-      var hourText = route.mt_offre.mt_heure;
-      var hourEl = goog.dom.createDom(goog.dom.TagName.SPAN, {
-        'class': classPrefix + '-offer-header'
-      });
-      goog.dom.appendChild(firstLineEl, hourEl);
-      goog.dom.appendChild(hourEl, goog.dom.createTextNode(hourText));
-    } else {
-      // ---- schedule reccuring ----
-
-      // ------ 'aller' - mandatory
-      var firstLineEl = goog.dom.createDom(goog.dom.TagName.DIV, {});
-      goog.dom.appendChild(rightCtnEl, firstLineEl);
-
-      var goPrefixEl = goog.dom.createDom(goog.dom.TagName.SPAN, {
-        'class': classPrefix + '-offer-header'
-      });
-      goog.dom.appendChild(firstLineEl, goPrefixEl);
-      goog.dom.appendChild(
-          goPrefixEl, goog.dom.createTextNode(this.goText + ': '));
-
-      var goValueElOptions = {};
-      var goTagName;
-      if (route.mt_offre.mt_horaire_aller_reg === true) {
-        goTagName = goog.dom.TagName.SPAN;
-      } else {
-        goTagName = goog.dom.TagName.A;
-        goValueElOptions['href'] = route.mt_offre.mt_horaire_irr_url;
-        goValueElOptions['class'] = classPrefix + '-offer-schedule-irregular';
-      }
-      var goValueEl = goog.dom.createDom(
-          goTagName,
-          goValueElOptions,
-          route.mt_offre.mt_horaire_aller
-          );
-      goog.dom.appendChild(firstLineEl, goValueEl);
-
-      // ------ 'retour' - optional
-      var returnValueText = route.mt_offre.mt_horaire_retour;
-      if (returnValueText != '') {
-        var secondLineEl = goog.dom.createDom(goog.dom.TagName.DIV, {});
-        goog.dom.appendChild(rightCtnEl, secondLineEl);
-
-        var returnPrefixEl = goog.dom.createDom(goog.dom.TagName.SPAN, {
+        var dateText = route.mt_offre.mt_date;
+        var dateEl = goog.dom.createDom(goog.dom.TagName.SPAN, {
           'class': classPrefix + '-offer-header'
         });
-        goog.dom.appendChild(secondLineEl, returnPrefixEl);
+        goog.dom.appendChild(firstLineEl, dateEl);
+        goog.dom.appendChild(dateEl, goog.dom.createTextNode(dateText));
+
+        goog.dom.appendChild(firstLineEl, this.createOfferPipeElement_());
+
+        var hourText = route.mt_offre.mt_heure;
+        var hourEl = goog.dom.createDom(goog.dom.TagName.SPAN, {
+          'class': classPrefix + '-offer-header'
+        });
+        goog.dom.appendChild(firstLineEl, hourEl);
+        goog.dom.appendChild(hourEl, goog.dom.createTextNode(hourText));
+      } else {
+        // ---- schedule reccuring ----
+
+        // ------ 'aller' - mandatory
+        var firstLineEl = goog.dom.createDom(goog.dom.TagName.DIV, {});
+        goog.dom.appendChild(rightCtnEl, firstLineEl);
+
+        var goPrefixEl = goog.dom.createDom(goog.dom.TagName.SPAN, {
+          'class': classPrefix + '-offer-header'
+        });
+        goog.dom.appendChild(firstLineEl, goPrefixEl);
         goog.dom.appendChild(
-            returnPrefixEl, goog.dom.createTextNode(this.returnText + ': '));
+            goPrefixEl, goog.dom.createTextNode(this.goText + ': '));
 
-        var returnValueElOptions = {};
-        var returnTagName;
-        if (route.mt_offre.mt_horaire_retour_reg === true) {
-          returnTagName = goog.dom.TagName.SPAN;
+        var goValueElOptions = {};
+        var goTagName;
+        if (route.mt_offre.mt_horaire_aller_reg === true) {
+          goTagName = goog.dom.TagName.SPAN;
         } else {
-          returnTagName = goog.dom.TagName.A;
-          returnValueElOptions['href'] = route.mt_offre.mt_horaire_irr_url;
-          returnValueElOptions['class'] =
-              classPrefix + '-offer-schedule-irregular';
+          goTagName = goog.dom.TagName.A;
+          goValueElOptions['href'] = route.mt_offre.mt_horaire_irr_url;
+          goValueElOptions['class'] = classPrefix + '-offer-schedule-irregular';
         }
-        var returnValueEl = goog.dom.createDom(
-            returnTagName,
-            returnValueElOptions,
-            returnValueText
+        var goValueEl = goog.dom.createDom(
+            goTagName,
+            goValueElOptions,
+            route.mt_offre.mt_horaire_aller
             );
-        goog.dom.appendChild(secondLineEl, returnValueEl);
+        goog.dom.appendChild(firstLineEl, goValueEl);
+
+        // ------ 'retour' - optional
+        var returnValueText = route.mt_offre.mt_horaire_retour;
+        if (returnValueText != '') {
+          var secondLineEl = goog.dom.createDom(goog.dom.TagName.DIV, {});
+          goog.dom.appendChild(rightCtnEl, secondLineEl);
+
+          var returnPrefixEl = goog.dom.createDom(goog.dom.TagName.SPAN, {
+            'class': classPrefix + '-offer-header'
+          });
+          goog.dom.appendChild(secondLineEl, returnPrefixEl);
+          goog.dom.appendChild(
+              returnPrefixEl, goog.dom.createTextNode(this.returnText + ': '));
+
+          var returnValueElOptions = {};
+          var returnTagName;
+          if (route.mt_offre.mt_horaire_retour_reg === true) {
+            returnTagName = goog.dom.TagName.SPAN;
+          } else {
+            returnTagName = goog.dom.TagName.A;
+            returnValueElOptions['href'] = route.mt_offre.mt_horaire_irr_url;
+            returnValueElOptions['class'] =
+                classPrefix + '-offer-schedule-irregular';
+          }
+          var returnValueEl = goog.dom.createDom(
+              returnTagName,
+              returnValueElOptions,
+              returnValueText
+              );
+          goog.dom.appendChild(secondLineEl, returnValueEl);
+        }
       }
-    }
 
-    // from
-    /*
-    var fromAddressText = route.legs[0].start_address;
-    var fromEl = goog.dom.createDom(goog.dom.TagName.DIV, {
-      'class': classPrefix + '-offer-address'
-    });
-    goog.dom.appendChild(rightCtnEl, fromEl);
+      // from
+      /*
+      var fromAddressText = route.legs[0].start_address;
+      var fromEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+        'class': classPrefix + '-offer-address'
+      });
+      goog.dom.appendChild(rightCtnEl, fromEl);
 
-    var fromHeaderEl = goog.dom.createDom(goog.dom.TagName.SPAN, {
-      'class': classPrefix + '-offer-header'
-    });
-    goog.dom.appendChild(fromEl, fromHeaderEl);
-    goog.dom.appendChild(fromHeaderEl,
-        goog.dom.createTextNode(this.fromText + ' : '));
-
-    var fromAddressEl = goog.dom.createDom(goog.dom.TagName.SPAN);
-    goog.dom.appendChild(fromEl, fromAddressEl);
-    goog.dom.appendChild(fromAddressEl,
-        goog.dom.createTextNode(fromAddressText));
-
-    // to
-    var toAddressText = route.legs[route.legs.length - 1].end_address;
-    var toEl = goog.dom.createDom(goog.dom.TagName.DIV, {
-      'class': classPrefix + '-offer-address'
-    });
-    goog.dom.appendChild(rightCtnEl, toEl);
-
-    var toHeaderEl = goog.dom.createDom(goog.dom.TagName.SPAN, {
-      'class': classPrefix + '-offer-header'
-    });
-    goog.dom.appendChild(toEl, toHeaderEl);
-    goog.dom.appendChild(toHeaderEl,
-        goog.dom.createTextNode(this.toText + ' : '));
-
-    var toAddressEl = goog.dom.createDom(goog.dom.TagName.SPAN);
-    goog.dom.appendChild(toEl, toAddressEl);
-    goog.dom.appendChild(toAddressEl,
-        goog.dom.createTextNode(toAddressText));
-    */
-
-    // price
-    var priceText = route.mt_offre.mt_prix;
-    var priceEl = goog.dom.createDom(goog.dom.TagName.DIV, {
-      'class': [
-        classPrefix + '-offer-header',
-        classPrefix + '-offer-price'
-      ].join(' ')
-    });
-    goog.dom.appendChild(rightCtnEl, priceEl);
-    goog.dom.appendChild(priceEl, goog.dom.createTextNode(priceText));
-
-    // mt_duration_diff, i.e. the difference in duration
-    if (goog.isDef(route.mt_offre.mt_duration_diff)) {
-      var durationDiffEl = goog.dom.createDom(goog.dom.TagName.DIV);
-      goog.dom.appendChild(rightCtnEl, durationDiffEl);
-
-      var durationDiffTextEl = goog.dom.createDom(goog.dom.TagName.SPAN, {
+      var fromHeaderEl = goog.dom.createDom(goog.dom.TagName.SPAN, {
         'class': classPrefix + '-offer-header'
       });
-      goog.dom.appendChild(
-          durationDiffTextEl,
-          goog.dom.createTextNode(this.detourText + ': ')
-      );
-      goog.dom.appendChild(durationDiffEl, durationDiffTextEl);
+      goog.dom.appendChild(fromEl, fromHeaderEl);
+      goog.dom.appendChild(fromHeaderEl,
+          goog.dom.createTextNode(this.fromText + ' : '));
 
-      var durationDiffValue = this.formatDuration_(
-          route.mt_offre.mt_duration_diff);
-      var durationDiffValueEl = goog.dom.createDom(goog.dom.TagName.SPAN, {
-        'class': classPrefix + '-offer-duration-diff'
+      var fromAddressEl = goog.dom.createDom(goog.dom.TagName.SPAN);
+      goog.dom.appendChild(fromEl, fromAddressEl);
+      goog.dom.appendChild(fromAddressEl,
+          goog.dom.createTextNode(fromAddressText));
+
+      // to
+      var toAddressText = route.legs[route.legs.length - 1].end_address;
+      var toEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+        'class': classPrefix + '-offer-address'
       });
-      goog.dom.appendChild(
-          durationDiffValueEl, goog.dom.createTextNode(durationDiffValue));
-      goog.dom.appendChild(durationDiffEl, durationDiffValueEl);
+      goog.dom.appendChild(rightCtnEl, toEl);
+
+      var toHeaderEl = goog.dom.createDom(goog.dom.TagName.SPAN, {
+        'class': classPrefix + '-offer-header'
+      });
+      goog.dom.appendChild(toEl, toHeaderEl);
+      goog.dom.appendChild(toHeaderEl,
+          goog.dom.createTextNode(this.toText + ' : '));
+
+      var toAddressEl = goog.dom.createDom(goog.dom.TagName.SPAN);
+      goog.dom.appendChild(toEl, toAddressEl);
+      goog.dom.appendChild(toAddressEl,
+          goog.dom.createTextNode(toAddressText));
+      */
+
+      // price
+      var priceText = route.mt_offre.mt_prix;
+      var priceEl = goog.dom.createDom(goog.dom.TagName.DIV, {
+        'class': [
+          classPrefix + '-offer-header',
+          classPrefix + '-offer-price'
+        ].join(' ')
+      });
+      goog.dom.appendChild(rightCtnEl, priceEl);
+      goog.dom.appendChild(priceEl, goog.dom.createTextNode(priceText));
+
+      // mt_duration_diff, i.e. the difference in duration
+      if (goog.isDef(route.mt_offre.mt_duration_diff)) {
+        var durationDiffEl = goog.dom.createDom(goog.dom.TagName.DIV);
+        goog.dom.appendChild(rightCtnEl, durationDiffEl);
+
+        var durationDiffTextEl = goog.dom.createDom(goog.dom.TagName.SPAN, {
+          'class': classPrefix + '-offer-header'
+        });
+        goog.dom.appendChild(
+            durationDiffTextEl,
+            goog.dom.createTextNode(this.detourText + ': ')
+        );
+        goog.dom.appendChild(durationDiffEl, durationDiffTextEl);
+
+        var durationDiffValue = this.formatDuration_(
+            route.mt_offre.mt_duration_diff);
+        var durationDiffValueEl = goog.dom.createDom(goog.dom.TagName.SPAN, {
+          'class': classPrefix + '-offer-duration-diff'
+        });
+        goog.dom.appendChild(
+            durationDiffValueEl, goog.dom.createTextNode(durationDiffValue));
+        goog.dom.appendChild(durationDiffEl, durationDiffValueEl);
+      }
     }
 
     // organisation - only display the first one, if any
@@ -1511,7 +1520,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
       goog.dom.createTextNode(this.pathDetailsText));
 
   // contact link
-  if (goog.isDef(route.mt_usager)) {
+  if (goog.isDef(route.mt_usager) && goog.isDef(route.mt_offre)) {
     var contactLink = null;
     if (route.mt_anonymous) {
       contactLink = goog.dom.createDom(goog.dom.TagName.A, {
