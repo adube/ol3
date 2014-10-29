@@ -1564,10 +1564,12 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
         'href': '#'
       });
     }else {
+      var bookmarkAddUrl = goog.isDef(route.mt_favori) ?
+          route.mt_favori.mt_url : '';
       contactLink = goog.dom.createDom(goog.dom.TagName.A, {
         'class': classPrefix + '-offer-contact-link',
         'href': route.mt_usager.mt_contact,
-        'data-bookmark-add-url': route.mt_favori.mt_url,
+        'data-bookmark-add-url': bookmarkAddUrl,
         'data-startAddress': route.mt_offre.mt_start_address,
         'data-endAddress': route.mt_offre.mt_end_address,
         'data-deplacementNom': route.mt_offre.mt_offer_name,
@@ -2372,10 +2374,11 @@ ol.control.GoogleMapsDirectionsPanel.prototype.handleContactLinkPress_ =
 
   var element = event.currentTarget;
   goog.asserts.assertInstanceof(element, Element);
+  var bookmarkAddUrl = element.getAttribute('data-bookmark-add-url');
   var bookmarkId = element.getAttribute('data-bookmark-id');
   var classPrefix = this.classPrefix_;
 
-  if (!goog.isNull(bookmarkId)) {
+  if (bookmarkAddUrl == '' || !goog.isNull(bookmarkId)) {
     this.setContactInfo_(element);
     goog.events.dispatchEvent(this,
         ol.control.GoogleMapsDirectionsPanel.EventType.CONTACT);
@@ -2384,7 +2387,6 @@ ol.control.GoogleMapsDirectionsPanel.prototype.handleContactLinkPress_ =
     var routeIndex = parseInt(element.getAttribute('data-route-index'), 10);
     var route = this.routes_.item(routeIndex);
     goog.asserts.assertInstanceof(route, Object);
-    var url = element.getAttribute('data-bookmark-add-url');
     var parent = goog.dom.getParentElement(goog.dom.getParentElement(element));
     var bookmarkLinkEl = goog.dom.getElementByClass(
         classPrefix + '-bookmark-none', parent);
@@ -2392,7 +2394,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.handleContactLinkPress_ =
       bookmarkLinkEl = goog.dom.getElementByClass(
           classPrefix + '-bookmark-another', parent);
     }
-    this.issueBookmarkAddRequest_(route, url, bookmarkLinkEl);
+    this.issueBookmarkAddRequest_(route, bookmarkAddUrl, bookmarkLinkEl);
   }
 };
 
