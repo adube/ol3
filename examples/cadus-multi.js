@@ -210,3 +210,11 @@ var triggerRouteRequest = function() {
 
   directions.triggerRouteRequest();
 };
+
+directionsPanel.on(
+    ol.control.GoogleMapsDirectionsPanel.EventType.CONTACT,
+    function(event) {
+      var contactInfo = directionsPanel.getContactInfo();
+      window.console.log(contactInfo);
+    }
+);

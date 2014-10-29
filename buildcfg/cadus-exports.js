@@ -266,6 +266,11 @@ goog.exportProperty(
 
 goog.exportProperty(
     ol.control.GoogleMapsDirectionsPanel.EventType,
+    'CONTACT',
+    ol.control.GoogleMapsDirectionsPanel.EventType.CONTACT);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirectionsPanel.EventType,
     'SELECT',
     ol.control.GoogleMapsDirectionsPanel.EventType.SELECT);
 
@@ -293,6 +298,11 @@ goog.exportProperty(
     ol.control.GoogleMapsDirectionsPanel.Mode,
     'COMPLEX',
     ol.control.GoogleMapsDirectionsPanel.Mode.COMPLEX);
+
+goog.exportProperty(
+    ol.control.GoogleMapsDirectionsPanel.prototype,
+    'getContactInfo',
+    ol.control.GoogleMapsDirectionsPanel.prototype.getContactInfo);
 
 goog.exportProperty(
     ol.control.GoogleMapsDirectionsPanel.prototype,

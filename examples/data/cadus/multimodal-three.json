@@ -185,6 +185,10 @@
         "mt_evaluation": 4,
         "mt_url": ""
       },
+      "mt_favori": {
+        "mt_status": "another",
+        "mt_url": "data/cadus/bookmark-add.json"
+      },
       "mt_offre": {
         "mt_est_conducteur": 1,
         "mt_places_dispo": 3,
@@ -349,6 +353,10 @@
         "mt_contact": "http://perdu.com",
         "mt_photo": "http://www.allthetests.com/quiz30/picture/pic_1387507755_6.jpg",
         "mt_evaluation": 4
+      },
+      "mt_favori": {
+        "mt_status": "another",
+        "mt_url": "data/cadus/bookmark-add.json"
       },
       "mt_offre": {
         "mt_est_conducteur": 1,

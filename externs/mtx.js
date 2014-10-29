@@ -45,9 +45,29 @@ mtx.format.Address.prototype.text;
 
 
 /**
+ * @typedef {{href: (string|undefined),
+ *     data: (Object|undefined)}}
+ */
+mtx.format.ContactInfo;
+
+
+/**
+ * @type {string|undefined}
+ */
+mtx.format.ContactInfo.prototype.href;
+
+
+/**
+ * @type {Object|undefined}
+ */
+mtx.format.ContactInfo.prototype.data;
+
+
+/**
  * @typedef {{errors: (Array.<string>),
  *     status: (string),
- *     data: (Array|undefined)}}
+ *     data: (Array|undefined),
+ *     id: (number|undefined)}}
  */
 mtx.format.ResponseJson;
 
@@ -68,6 +88,12 @@ mtx.format.ResponseJson.prototype.status;
  * @type {Array|undefined}
  */
 mtx.format.ResponseJson.prototype.data;
+
+
+/**
+ * @type {number|undefined}
+ */
+mtx.format.ResponseJson.prototype.id;
 
 
 /**

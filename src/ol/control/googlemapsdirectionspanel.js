@@ -486,6 +486,24 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
       options.bookmarkUsePostMethod : true;
 
 
+  /**
+   * Flag used to 'pause' the contact request (i.e. when a user click on
+   * the contact link) to make sure the according route has been saved
+   * as bookmark first.
+   * @type {boolean}
+   * @private
+   */
+  this.contactRequestPending_ = false;
+
+
+  /**
+   * Hash of properties stored when a user clicks the contact link.
+   * @type {?mtx.format.ContactInfo}
+   * @private
+   */
+  this.contactInfo_ = null;
+
+
   goog.base(this, {
     element: element,
     target: options.target
@@ -523,6 +541,7 @@ ol.control.GoogleMapsDirectionsPanel.BookmarkStatus = {
  */
 ol.control.GoogleMapsDirectionsPanel.EventType = {
   CLEAR: goog.events.getUniqueId('CLEAR'),
+  CONTACT: goog.events.getUniqueId('CONTACT'),
   HOVER: goog.events.getUniqueId('HOVER'),
   UNHOVER: goog.events.getUniqueId('UNHOVER'),
   SELECT: goog.events.getUniqueId('SELECT'),
@@ -770,6 +789,15 @@ ol.control.GoogleMapsDirectionsPanel.prototype.setDirections = function(
 
   goog.events.dispatchEvent(this,
       ol.control.GoogleMapsDirectionsPanel.EventType.SET);
+};
+
+
+/**
+ * Get contact info.
+ * @return {?mtx.format.ContactInfo}
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.getContactInfo = function() {
+  return this.contactInfo_;
 };
 
 
@@ -1539,10 +1567,15 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
       contactLink = goog.dom.createDom(goog.dom.TagName.A, {
         'class': classPrefix + '-offer-contact-link',
         'href': route.mt_usager.mt_contact,
+        'data-bookmark-add-url': route.mt_favori.mt_url,
         'data-startAddress': route.mt_offre.mt_start_address,
         'data-endAddress': route.mt_offre.mt_end_address,
-        'data-deplacementNom': route.mt_offre.mt_offer_name
+        'data-deplacementNom': route.mt_offre.mt_offer_name,
+        'data-route-index': index
       });
+      goog.events.listen(contactLink, [
+        goog.events.EventType.CLICK
+      ], this.handleContactLinkPress_, false, this);
     }
     goog.dom.appendChild(leftCtnEl, contactLink);
     goog.dom.appendChild(contactLink,
@@ -2328,6 +2361,61 @@ ol.control.GoogleMapsDirectionsPanel.prototype.setMap = function(map) {
 
 
 /**
+ * Called when the contact link is clicked. Make sure the route has been
+ * saved as bookmark before doing any further action.
+ * @param {goog.events.BrowserEvent} event Browser event.
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.handleContactLinkPress_ =
+    function(event) {
+  event.preventDefault();
+
+  var element = event.currentTarget;
+  goog.asserts.assertInstanceof(element, Element);
+  var bookmarkId = element.getAttribute('data-bookmark-id');
+  var classPrefix = this.classPrefix_;
+
+  if (!goog.isNull(bookmarkId)) {
+    this.setContactInfo_(element);
+    goog.events.dispatchEvent(this,
+        ol.control.GoogleMapsDirectionsPanel.EventType.CONTACT);
+  } else {
+    this.contactRequestPending_ = true;
+    var routeIndex = parseInt(element.getAttribute('data-route-index'), 10);
+    var route = this.routes_.item(routeIndex);
+    goog.asserts.assertInstanceof(route, Object);
+    var url = element.getAttribute('data-bookmark-add-url');
+    var parent = goog.dom.getParentElement(goog.dom.getParentElement(element));
+    var bookmarkLinkEl = goog.dom.getElementByClass(
+        classPrefix + '-bookmark-none', parent);
+    if (!bookmarkLinkEl) {
+      bookmarkLinkEl = goog.dom.getElementByClass(
+          classPrefix + '-bookmark-another', parent);
+    }
+    this.issueBookmarkAddRequest_(route, url, bookmarkLinkEl);
+  }
+};
+
+
+/**
+ * Get contact info.
+ * @param {Element} element The contact link
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.setContactInfo_ =
+    function(element) {
+  var data = $(element).data();
+  goog.asserts.assertInstanceof(data, Object);
+  var href = element.href;
+  goog.asserts.assertString(href);
+  this.contactInfo_ = {
+    'data': data,
+    'href': href
+  };
+};
+
+
+/**
  * @param {goog.events.BrowserEvent} browserEvent Browser event.
  * @private
  */
@@ -2363,21 +2451,16 @@ ol.control.GoogleMapsDirectionsPanel.prototype.handleElementPress_ =
 
 
 /**
- * @param {goog.events.Event} event Event.
+ * @param {Object} route Route object
+ * @param {string} url Url
+ * @param {Element} element The bookmark link element
  * @private
  */
-ol.control.GoogleMapsDirectionsPanel.prototype.handleBookmarkElementPress_ =
-    function(event) {
-  event.preventDefault();
-
-  var element = event.currentTarget;
+ol.control.GoogleMapsDirectionsPanel.prototype.issueBookmarkAddRequest_ =
+    function(route, url, element) {
   var request = new goog.net.XhrIo();
-  var url = element.href;
   var headers = this.bookmarkHeaders_;
   var method = (this.bookmarkUsePostMethod_ === true) ? 'POST' : 'GET';
-
-  var routeIndex = parseInt(element.getAttribute('data-route-index'), 10);
-  var route = this.routes_.item(routeIndex);
 
   var data = {};
 
@@ -2423,12 +2506,27 @@ ol.control.GoogleMapsDirectionsPanel.prototype.handleBookmarkElementPress_ =
       if (response.errors.length) {
         window.console.log(response.errors.join(' '));
       } else {
-        console.log('success');
         goog.style.setStyle(element, 'display', 'none');
         var parent = goog.dom.getParentElement(element);
         var inactive = goog.dom.getElementByClass(
             classPrefix + '-bookmark-this', parent);
         goog.style.setStyle(inactive, 'display', '');
+
+        // save id in contact link
+        var id = response.id;
+        //classPrefix + '-offer-contact-link'
+        var contactLink = goog.dom.getElementByClass(
+            classPrefix + '-offer-contact-link', parent);
+        contactLink.setAttribute('data-bookmark-id', parseInt(id, 10));
+
+        if (self.contactRequestPending_) {
+          contactLink.setAttribute(
+              'data-bookmark-while-contact-request-pending', true);
+          self.setContactInfo_(contactLink);
+          goog.events.dispatchEvent(self,
+              ol.control.GoogleMapsDirectionsPanel.EventType.CONTACT);
+          self.contactRequestPending_ = false;
+        }
       }
     } else {
       // TODO - manage error
@@ -2438,6 +2536,24 @@ ol.control.GoogleMapsDirectionsPanel.prototype.handleBookmarkElementPress_ =
   }, undefined, {self: this, element: element});
 
   request.send(url, method, goog.json.serialize(data), headers);
+};
+
+
+/**
+ * @param {goog.events.Event} event Event.
+ * @private
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.handleBookmarkElementPress_ =
+    function(event) {
+  event.preventDefault();
+
+  var element = event.currentTarget;
+  goog.asserts.assertInstanceof(element, Element);
+  var url = element.href;
+  var routeIndex = parseInt(element.getAttribute('data-route-index'), 10);
+  var route = this.routes_.item(routeIndex);
+  goog.asserts.assertInstanceof(route, Object);
+  this.issueBookmarkAddRequest_(route, url, element);
 };
 
 
