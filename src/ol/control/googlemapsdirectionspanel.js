@@ -504,6 +504,15 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
   this.contactInfo_ = null;
 
 
+  /**
+   * Flag used when a bookmark request is pending to avoid multiple requests
+   * to be issued.
+   * @type {boolean}
+   * @private
+   */
+  this.bookmarkRequestPending_ = false;
+
+
   goog.base(this, {
     element: element,
     target: options.target
@@ -2460,6 +2469,13 @@ ol.control.GoogleMapsDirectionsPanel.prototype.handleElementPress_ =
  */
 ol.control.GoogleMapsDirectionsPanel.prototype.issueBookmarkAddRequest_ =
     function(route, url, element) {
+
+  if (this.bookmarkRequestPending_) {
+    return;
+  }
+
+  this.bookmarkRequestPending_ = true;
+
   var request = new goog.net.XhrIo();
   var headers = this.bookmarkHeaders_;
   var method = (this.bookmarkUsePostMethod_ === true) ? 'POST' : 'GET';
@@ -2498,6 +2514,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.issueBookmarkAddRequest_ =
   // listen once to 'complete' event
   goog.events.listenOnce(request, goog.net.EventType.COMPLETE, function(event) {
     var self = this.self;
+    self.bookmarkRequestPending_ = false;
     var classPrefix = self.classPrefix_;
     var element = /** @type {Element} */ (this.element);
     var request = event.currentTarget;
