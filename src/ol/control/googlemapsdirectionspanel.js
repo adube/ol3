@@ -1570,9 +1570,9 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
         'class': classPrefix + '-offer-contact-link',
         'href': route.mt_usager.mt_contact,
         'data-bookmark-add-url': bookmarkAddUrl,
-        'data-startAddress': route.mt_offre.mt_start_address,
-        'data-endAddress': route.mt_offre.mt_end_address,
-        'data-deplacementNom': route.mt_offre.mt_offer_name,
+        'data-startaddress': route.mt_offre.mt_start_address,
+        'data-endaddress': route.mt_offre.mt_end_address,
+        'data-deplacementnom': route.mt_offre.mt_offer_name,
         'data-route-index': index
       });
       goog.events.listen(contactLink, [
