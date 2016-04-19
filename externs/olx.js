@@ -1052,6 +1052,7 @@ olx.control.GoogleMapsCurrentPositionOptions.prototype.currentPositionText;
 /**
  * @typedef {{addressesControl: (ol.control.GoogleMapsAddresses),
  *     cornerPixelSize: (number|undefined),
+ *     availableTravelModes: (Array.<string>|undefined),
  *     defaultTravelModes: (Array.<string>|undefined),
  *     detourIconStyle: (Array.<(null|ol.style.Style)>|null|ol.feature.FeatureStyleFunction|ol.style.Style),
  *     detourLabelProperty: (string|undefined),

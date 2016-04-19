@@ -305,13 +305,16 @@ ol.control.GoogleMapsDirections = function(opt_options) {
   goog.dom.appendChild(element, secondContainer);
 
   // DOM components - travel modes
-  var travelModes = [
-    ol.control.GoogleMapsDirections.TravelMode.DRIVING,
-    ol.control.GoogleMapsDirections.TravelMode.WALKING,
-    ol.control.GoogleMapsDirections.TravelMode.BICYCLING,
-    ol.control.GoogleMapsDirections.TravelMode.TRANSIT,
-    ol.control.GoogleMapsDirections.TravelMode.CARPOOLING
-  ];
+
+  var travelModes = goog.isDef(options.availableTravelModes) ?
+      options.availableTravelModes :
+      [
+        ol.control.GoogleMapsDirections.TravelMode.DRIVING,
+        ol.control.GoogleMapsDirections.TravelMode.WALKING,
+        ol.control.GoogleMapsDirections.TravelMode.BICYCLING,
+        ol.control.GoogleMapsDirections.TravelMode.TRANSIT,
+        ol.control.GoogleMapsDirections.TravelMode.CARPOOLING
+      ];
 
   var fieldsetEl = goog.dom.createDom(goog.dom.TagName.FIELDSET, {
     'class': classPrefix + '-fieldset'
@@ -349,6 +352,8 @@ ol.control.GoogleMapsDirections = function(opt_options) {
         case ol.control.GoogleMapsDirections.TravelMode.WALKING:
           labelText = this.walkingText;
           break;
+        default:
+          throw 'Invalid travel mode';
       }
 
       // == input ==
