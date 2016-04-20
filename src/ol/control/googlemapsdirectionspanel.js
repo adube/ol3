@@ -638,7 +638,6 @@ ol.control.GoogleMapsDirectionsPanel.prototype.buildTransitSummary =
   goog.array.forEach(route.legs, function(leg) {
     goog.array.forEach(leg.steps, function(step) {
       if (step.travel_mode === google.maps.TravelMode.TRANSIT) {
-        console.log(step);
         var transit = step.transit;
 
         transitLines.push(
