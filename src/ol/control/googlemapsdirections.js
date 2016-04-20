@@ -406,24 +406,6 @@ ol.control.GoogleMapsDirections = function(opt_options) {
       'class': classPrefix + '-checkbox-link-end-separator'
     });
     goog.dom.appendChild(checkboxLinkContainerEl, separatorEl);
-
-    // ENABLE_TRANSIT - until the transit are available, we show a message
-    //                  that they are not available in a div.  This should
-    //                  be removed/deactivated once transits are available
-    var noTransitEl = goog.dom.createDom(goog.dom.TagName.DIV, {
-      'class': classPrefix + '-no-transit'
-    });
-    this.noTransitEl_ = noTransitEl;
-    goog.dom.appendChild(
-        noTransitEl,
-        goog.dom.createTextNode(this.noTransitText)
-    );
-    goog.dom.appendChild(firstContainer, noTransitEl);
-
-    if (goog.array.indexOf(this.defaultTravelModes_,
-        ol.control.GoogleMapsDirections.TravelMode.TRANSIT) == -1) {
-      this.toggleNoTransitMessage_(false);
-    }
   }
 
   var myAddressesLabelEl = goog.dom.createDom(goog.dom.TagName.LABEL, {
@@ -999,7 +981,7 @@ ol.control.GoogleMapsDirections.prototype.loadRoute = function(route) {
  * @return {Array}
  */
 ol.control.GoogleMapsDirections.prototype.getSelectedTravelModes = function() {
-  return this.getCheckedTravelModes_(true);
+  return this.getCheckedTravelModes_();
 };
 
 
@@ -1478,25 +1460,16 @@ ol.control.GoogleMapsDirections.prototype.fitViewExtentToRoute_ = function() {
 
 /**
  * Returns the list of currently checked travel mode ids.
- *
- * 'transit' - has to be temporarly ignored when checked because it is not
- *     yet available in Google Maps.
- * @param {boolean} includeIgnored Whether to include the ignored checked
- *     elements or not
  * @return {Array.<string>}
  * @private
  */
 ol.control.GoogleMapsDirections.prototype.getCheckedTravelModes_ =
-    function(includeIgnored) {
+    function() {
   var elements = [];
 
   this.travelModeInputElements_.forEach(function(inputEl) {
     if (inputEl.checked === true) {
-      // todo - ENABLE_TRANSIT - remove this when transit become available
-      if (includeIgnored ||
-          inputEl.name != ol.control.GoogleMapsDirections.TravelMode.TRANSIT) {
-        elements.push(inputEl.name);
-      }
+      elements.push(inputEl.name);
     }
   }, this);
 
@@ -1695,12 +1668,6 @@ ol.control.GoogleMapsDirections.prototype.handleCheckboxLinkElPress_ =
     this.route_();
   }
 
-  // ENABLE_TRANSIT - additional check if 'transit' was checked, show/hide
-  //                  a message.  Todo: this should be removed/disabled once
-  //                  transits become available.
-  if (travelMode === ol.control.GoogleMapsDirections.TravelMode.TRANSIT) {
-    this.toggleNoTransitMessage_(inputEl.checked);
-  }
 };
 
 
@@ -2189,10 +2156,8 @@ ol.control.GoogleMapsDirections.prototype.isTravelModeSupportedByGoogleMaps_ =
 
   var tm = ol.control.GoogleMapsDirections.TravelMode;
 
-  // todo - ENABLE_TRANSIT - add TRANSIT here when available
-
   return travelMode === tm.BICYCLING || travelMode === tm.DRIVING ||
-      travelMode === tm.WALKING;
+      travelMode === tm.WALKING || travelMode === tm.TRANSIT;
 };
 
 
@@ -2411,10 +2376,10 @@ ol.control.GoogleMapsDirections.prototype.route_ = function() {
   }
 
   // fetch travel modes
-  var travelModes = this.getCheckedTravelModes_(false);
+  var travelModes = this.getCheckedTravelModes_();
   if (!travelModes.length) {
-    // force 'driving' travel mode if none was selected
-    travelModes.push(ol.control.GoogleMapsDirections.TravelMode.DRIVING);
+    // force 'carpooling' travel mode if none was selected
+    travelModes.push(ol.control.GoogleMapsDirections.TravelMode.CARPOOLING);
   }
 
   this.directionsPanel_.toggleWorkInProgress(true);
@@ -2551,7 +2516,7 @@ ol.control.GoogleMapsDirections.prototype.routeWithGoogleMapsService_ =
     waypoints: reqWaypoints,
     optimizeWaypoints: false,
     travelMode: googleMapsTravelMode,
-    provideRouteAlternatives: true
+    provideRouteAlternatives: false
   };
 
   this.incrementQueriesInProgress_();
@@ -2574,7 +2539,7 @@ ol.control.GoogleMapsDirections.prototype.saveAll_ = function(includeRoutes) {
   var source = {};
 
   // travel modes
-  source.travel_modes = this.getCheckedTravelModes_(true);
+  source.travel_modes = this.getCheckedTravelModes_();
 
   var geocoders = this.collectGeocoders_();
   var startGeocoder = geocoders.start;

@@ -1086,8 +1086,10 @@ olx.control.GoogleMapsCurrentPositionOptions.prototype.currentPositionText;
  *     removeButtonText: (string|undefined),
  *     reverseButtonText: (string|undefined),
  *     searchButtonText: (string|undefined),
+ *     takeText: (string|undefined),
  *     transitText: (string|undefined),
  *     unexpectedErrorText: (string|undefined),
+ *     untilText: (string|undefined),
  *     walkingText: (string|undefined)}}
  * @todo stability experimental
  */
@@ -1248,6 +1250,20 @@ olx.control.GoogleMapsDirectionsOptions.prototype.pixelBuffer;
  * @type {number|undefined}
  */
 olx.control.GoogleMapsDirectionsOptions.prototype.routeDelayOnWaypointDrag;
+
+
+/**
+ * i18n
+ * @type {String|undefined}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.takeText;
+
+
+/**
+ * i18n
+ * @type {string|undefined}
+ */
+olx.control.GoogleMapsDirectionsOptions.prototype.untilText;
 
 
 /**

@@ -95,6 +95,20 @@ ol.control.GoogleMapsDirectionsPanel = function(opt_options) {
       options.goText : 'Go';
 
   /**
+   * i18n - take
+   * @type {string}
+   */
+  this.takeText = goog.isDef(options.takeText) ?
+      options.takeText : 'take';
+
+  /**
+   * i18n - until
+   * @type {string}
+   */
+  this.untilText = goog.isDef(options.untilText) ?
+      options.untilText : 'until';
+
+  /**
    * i18n - hideDetails
    * @type {string}
    */
@@ -607,6 +621,33 @@ ol.control.GoogleMapsDirectionsPanel.prototype.calculateRouteTravelMode =
   }
 
   return travelMode;
+};
+
+
+/**
+ * Build a summary of the transit route
+ *
+ * @param {google.maps.DirectionsRoute} route
+ * @return {string}
+ */
+ol.control.GoogleMapsDirectionsPanel.prototype.buildTransitSummary =
+    function(route) {
+
+  var transitLines = [];
+
+  goog.array.forEach(route.legs, function(leg) {
+    goog.array.forEach(leg.steps, function(step) {
+      if (step.travel_mode === google.maps.TravelMode.TRANSIT) {
+        console.log(step);
+        var transit = step.transit;
+
+        transitLines.push(
+            transit.line.vehicle.name + ' ' + transit.line.short_name);
+      }
+    }, this);
+  }, this);
+
+  return transitLines.join(' / ');
 };
 
 
@@ -1494,8 +1535,17 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
       'class': classPrefix + '-offer-header'
     });
     goog.dom.appendChild(leftCtnEl, summaryEl);
+
+    var summary;
+
+    if (travelMode == google.maps.TravelMode.TRANSIT) {
+      summary = this.buildTransitSummary(route);
+    } else {
+      summary = route.summary;
+    }
+
     goog.dom.appendChild(summaryEl,
-        goog.dom.createTextNode(route.summary));
+        goog.dom.createTextNode(summary));
 
     // -- clear left --
     var clearEl = goog.dom.createDom(goog.dom.TagName.DIV, {
@@ -1922,11 +1972,27 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createStepElement_ =
 
   goog.asserts.assertArray(step.coordinates);
 
+  var stepInstructions;
+  //Create custom instruction if transit
+  if (goog.isDef(step.transit)) {
+    var transit = step.transit;
+
+    var startName = transit.departure_stop.name;
+    var arrivalName = transit.arrival_stop.name;
+    var vehicleName = transit.line.vehicle.name;
+    var lineName = transit.line.short_name + ' ' + transit.line.name;
+
+    stepInstructions = this.fromText + ' ' + startName + ', ' + this.takeText +
+        ' ' + vehicleName + ' ' + lineName + ' ' + this.untilText + ' ' + arrivalName;
+  } else {
+    stepInstructions = step.instructions;
+  }
+
   var element = goog.dom.createDom(goog.dom.TagName.TR, {
     'class': classPrefix + '-step',
     'data-x': coordinate[0],
     'data-y': coordinate[1],
-    'data-instructions': step.instructions
+    'data-instructions': stepInstructions
   });
 
   // maneuver
@@ -1952,7 +2018,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createStepElement_ =
   var instructionsEl = goog.dom.createDom(goog.dom.TagName.TD, {
     'class': classPrefix + '-step-instructions'
   });
-  instructionsEl.innerHTML = step.instructions;
+  instructionsEl.innerHTML = stepInstructions;
   goog.dom.appendChild(element, instructionsEl);
 
   // distance
