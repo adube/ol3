@@ -1454,7 +1454,7 @@ ol.Map.prototype.unskipFeature = function(feature) {
  * @typedef {{controls: ol.Collection.<ol.control.Control>,
  *            interactions: ol.Collection.<ol.interaction.Interaction>,
  *            keyboardEventTarget: (Element|Document),
- *            logos: Object.<string, string>,
+ *            logos: (Object.<string, (string|Element)>),
  *            overlays: ol.Collection.<ol.Overlay>,
  *            rendererConstructor:
  *                function(new: ol.renderer.Map, Element, ol.Map),
@@ -1494,6 +1494,8 @@ ol.Map.createOptionsInternal = function(options) {
     var logo = options.logo;
     if (goog.isString(logo)) {
       logos[logo] = '';
+    } else if (goog.dom.isElement(logo)) {
+      logos['logo'] = logo;
     } else if (goog.isObject(logo)) {
       goog.asserts.assertString(logo.href, 'logo.href should be a string');
       goog.asserts.assertString(logo.src, 'logo.src should be a string');
