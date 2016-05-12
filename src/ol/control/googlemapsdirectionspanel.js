@@ -1230,23 +1230,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
     // small icons
     if (goog.isDef(route.mt_offre)) {
       goog.dom.appendChild(leftCtnEl, this.createOfferIconElement_(
-          'driver', route.mt_offre.mt_est_conducteur));
-      goog.dom.appendChild(leftCtnEl, this.createOfferIconElement_(
-          'seats', route.mt_offre.mt_places_dispo));
-      goog.dom.appendChild(leftCtnEl, this.createOfferIconElement_(
-          'smoking', route.mt_offre.mt_fume));
-      // ambiance icons
-      var offreAmbiance = route.mt_offre.mt_atmosphere;
-      var ambiance = ol.control.GoogleMapsDirectionsPanel.Ambiance;
-      var talkAmbiance = (offreAmbiance === ambiance.TALK) ? '1' : '0';
-      goog.dom.appendChild(leftCtnEl, this.createOfferIconElement_(
-          'talk', talkAmbiance));
-      var musicAmbiance = (offreAmbiance === ambiance.MUSIC) ? '1' : '0';
-      goog.dom.appendChild(leftCtnEl, this.createOfferIconElement_(
-          'music', musicAmbiance));
-      var radioAmbiance = (offreAmbiance === ambiance.RADIO) ? '1' : '0';
-      goog.dom.appendChild(leftCtnEl, this.createOfferIconElement_(
-          'radio', radioAmbiance));
+          'driver', route.mt_offre.mt_vehicule));
     }
 
     // -- clear left --
@@ -1393,17 +1377,6 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
       goog.dom.appendChild(toAddressEl,
           goog.dom.createTextNode(toAddressText));
       */
-
-      // price
-      var priceText = route.mt_offre.mt_prix;
-      var priceEl = goog.dom.createDom(goog.dom.TagName.DIV, {
-        'class': [
-          classPrefix + '-offer-header',
-          classPrefix + '-offer-price'
-        ].join(' ')
-      });
-      goog.dom.appendChild(rightCtnEl, priceEl);
-      goog.dom.appendChild(priceEl, goog.dom.createTextNode(priceText));
 
       // mt_duration_diff, i.e. the difference in duration
       if (goog.isDef(route.mt_offre.mt_duration_diff)) {

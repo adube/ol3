@@ -214,6 +214,12 @@ google.maps.mt_offre.prototype.mt_mode_offre;
 
 
 /**
+ * @type {boolean}
+ */
+google.maps.mt_offre.prototype.mt_vehicule;
+
+
+/**
  * @type {number}
  */
 google.maps.mt_offre.prototype.mt_est_conducteur;
