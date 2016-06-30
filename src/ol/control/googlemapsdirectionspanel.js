@@ -1230,7 +1230,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
     // small icons
     if (goog.isDef(route.mt_offre)) {
       goog.dom.appendChild(leftCtnEl, this.createOfferIconElement_(
-          'driver', route.mt_offre.mt_vehicule));
+          'driver', route.mt_offre.mt_vehicule, 'Je possède un véhicule'));
     }
 
     // -- clear left --
@@ -1647,11 +1647,12 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferPipeElement_ =
  * Create an offer icon element
  * @param {string} name Name of the property
  * @param {string} value Value
+ * @param {string=} opt_title title to apply to icon
  * @return {Element}
  * @private
  */
 ol.control.GoogleMapsDirectionsPanel.prototype.createOfferIconElement_ =
-    function(name, value) {
+    function(name, value, opt_title) {
 
   var classPrefix = this.classPrefix_;
 
@@ -1662,6 +1663,12 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferIconElement_ =
   var iconEl = goog.dom.createDom(goog.dom.TagName.DIV, {
     'class': iconClasses.join(' ')
   });
+
+  if (goog.isDef(opt_title)) {
+    goog.dom.setProperties(iconEl, {
+      'title': opt_title
+    });
+  }
 
   return iconEl;
 };
@@ -1955,7 +1962,8 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createStepElement_ =
     var lineName = transit.line.short_name + ' ' + transit.line.name;
 
     stepInstructions = this.fromText + ' ' + startName + ', ' + this.takeText +
-        ' ' + vehicleName + ' ' + lineName + ' ' + this.untilText + ' ' + arrivalName;
+        ' ' + vehicleName + ' ' + lineName + ' ' + this.untilText +
+        ' ' + arrivalName;
   } else {
     stepInstructions = step.instructions;
   }
