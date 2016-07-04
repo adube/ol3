@@ -156,6 +156,11 @@ a.ol-gmdp-offer-user-fullname {
   display: block;
 }
 
+a.ol-gmdp-offer-user-coordinate {
+  display: block;
+  font-size: 0.85em;
+}
+
 .ol-gmdp-offer-pipe {
   margin: 0 8px;
 }

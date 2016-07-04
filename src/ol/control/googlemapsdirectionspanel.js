@@ -1214,6 +1214,20 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
     goog.dom.appendChild(userFullNameEl, goog.dom.createTextNode(
         userFullNameText));
 
+    var coordinateLink = goog.dom.createDom(goog.dom.TagName.A, {
+      'href': route.mt_usager.mt_url,
+      'class': [
+        classPrefix + '-offer-header',
+        classPrefix + '-offer-user-coordinate'
+      ].join(' ')
+    });
+
+    var coordinateText = 'Coordonnées';
+
+    goog.dom.appendChild(leftCtnEl, coordinateLink);
+    goog.dom.appendChild(coordinateLink, goog.dom.createTextNode(
+        coordinateText));
+
     // -- user eval --
     if (goog.isDef(route.mt_usager.mt_evaluation)) {
       var userEvalClasses = [];
