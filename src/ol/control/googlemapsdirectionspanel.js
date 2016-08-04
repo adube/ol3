@@ -1122,7 +1122,7 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
   goog.dom.appendChild(numEl, goog.dom.createTextNode(index + 1));
 
   // bookmarkEl (link or span)
-  if (goog.isDef(route.mt_favori)) {
+  if (goog.isDef(route.mt_favori) && !route.mt_anonymous) {
     var statusList = ol.control.GoogleMapsDirectionsPanel.BookmarkStatus;
     var bookmarkEl;
     if (route.mt_favori.mt_status == statusList.NONE) {
@@ -1182,7 +1182,8 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
       'src': route.mt_usager.mt_photo,
       'class': classPrefix + '-offer-user-pic'
     });
-    if (goog.isDef(route.mt_usager.mt_url) && route.mt_usager.mt_url != '') {
+    if (goog.isDef(route.mt_usager.mt_url) && route.mt_usager.mt_url != '' &&
+        !route.mt_anonymous) {
       var userPicAnchor = goog.dom.createDom(goog.dom.TagName.A, {
         'href': route.mt_usager.mt_url,
         'class': classPrefix + '-offer-user-pic-anchor'
@@ -1195,7 +1196,8 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
 
     // -- user full name, is an anchor if mt_url is set --
     var userFullNameEl;
-    if (goog.isDef(route.mt_usager.mt_url) && route.mt_usager.mt_url != '') {
+    if (goog.isDef(route.mt_usager.mt_url) && route.mt_usager.mt_url != '' &&
+        !route.mt_anonymous) {
       userFullNameEl = goog.dom.createDom(goog.dom.TagName.A, {
         'href': route.mt_usager.mt_url,
         'class': [
@@ -1214,19 +1216,22 @@ ol.control.GoogleMapsDirectionsPanel.prototype.createOfferElement_ =
     goog.dom.appendChild(userFullNameEl, goog.dom.createTextNode(
         userFullNameText));
 
-    var coordinateLink = goog.dom.createDom(goog.dom.TagName.A, {
-      'href': route.mt_usager.mt_url,
-      'class': [
-        classPrefix + '-offer-header',
-        classPrefix + '-offer-user-coordinate'
-      ].join(' ')
-    });
+    if (!route.mt_anonymous) {
 
-    var coordinateText = 'Coordonnées';
+      var coordinateLink = goog.dom.createDom(goog.dom.TagName.A, {
+        'href': route.mt_usager.mt_url,
+        'class': [
+          classPrefix + '-offer-header',
+          classPrefix + '-offer-user-coordinate'
+        ].join(' ')
+      });
 
-    goog.dom.appendChild(leftCtnEl, coordinateLink);
-    goog.dom.appendChild(coordinateLink, goog.dom.createTextNode(
-        coordinateText));
+      var coordinateText = 'Coordonnées';
+
+      goog.dom.appendChild(leftCtnEl, coordinateLink);
+      goog.dom.appendChild(coordinateLink, goog.dom.createTextNode(
+          coordinateText));
+    }
 
     // -- user eval --
     if (goog.isDef(route.mt_usager.mt_evaluation)) {
