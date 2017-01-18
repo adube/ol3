@@ -1,3 +1,4 @@
+goog.require('ol.Overlay');
 goog.require('ol.Map');
 goog.require('ol.View');
 goog.require('ol.View');
@@ -31,13 +32,73 @@ goog.require('ol.style.Style');
 goog.require('ol.style.Text');
 
 goog.exportSymbol(
+    'ol.Overlay',
+    ol.Overlay);
+
+goog.exportProperty(
+    ol.Overlay.prototype,
+    'setElement',
+    ol.Overlay.prototype.setElement);
+
+goog.exportProperty(
+    ol.Overlay.prototype,
+    'setOffset',
+    ol.Overlay.prototype.setOffset);
+
+goog.exportProperty(
+    ol.Overlay.prototype,
+    'setPosition',
+    ol.Overlay.prototype.setPosition);
+
+goog.exportProperty(
+    ol.Overlay.prototype,
+    'setPositioning',
+    ol.Overlay.prototype.setPositioning);
+
+goog.exportSymbol(
     'ol.Map',
     ol.Map);
 
 goog.exportProperty(
     ol.Map.prototype,
+    'addControl',
+    ol.Map.prototype.addControl);
+
+goog.exportProperty(
+    ol.Map.prototype,
+    'addInteraction',
+    ol.Map.prototype.addInteraction);
+
+goog.exportProperty(
+    ol.Map.prototype,
     'addLayer',
     ol.Map.prototype.addLayer);
+
+goog.exportProperty(
+    ol.Map.prototype,
+    'addOverlay',
+    ol.Map.prototype.addOverlay);
+
+goog.exportProperty(
+    ol.Map.prototype,
+    'forEachFeatureAtPixel',
+    ol.Map.prototype.forEachFeatureAtPixel);
+
+goog.exportProperty(
+    ol.Map.prototype,
+    'getEventCoordinate',
+    ol.Map.prototype.getEventCoordinate);
+
+goog.exportProperty(
+    ol.Map.prototype,
+    'getEventPixel',
+    ol.Map.prototype.getEventPixel);
+
+
+goog.exportProperty(
+    ol.Map.prototype,
+    'on',
+    ol.Map.prototype.on);
 
 goog.exportSymbol(
     'ol.View',
