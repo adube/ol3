@@ -6,6 +6,8 @@
  * evouala-proj-defs.js
  */
 
+import { defaults as interactionDefaults } from '../src/ol/interaction/defaults.js';
+import InteractionMouseWheelZoom from '../src/ol/interaction/MouseWheelZoom.js'
 import Map from '../src/ol/Map.js';
 import OSM from '../src/ol/source/OSM.js';
 import TileLayer from '../src/ol/layer/Tile.js';
@@ -83,17 +85,41 @@ for (const eVoualaProjDef of eVoualaProjDefs) {
     center = [0, 0]
   }
 
-  // OL View
-  eVoualaProjDefCache[code].view = new View({
+  const viewOptions = {
     center: center,
-    maxZoom: maxZoom,
-    minZoom: minZoom,
+    constrainResolution: true,
+    // set the maximum extent of the view to the projection's extent
+    extent: olProj.getExtent(),
+    multiWorld: false,
     projection: code,
+    showFullExtent: true,
     zoom: 0,
-  })
+  }
+  if (eVoualaProjDef.resolutions) {
+    Object.assign(viewOptions, {
+      resolutions: eVoualaProjDef.resolutions,
+    });
+  } else {
+    Object.assign(viewOptions, {
+      maxZoom: maxZoom,
+      minZoom: minZoom,
+    });
+  }
+
+  // OL View
+  eVoualaProjDefCache[code].view = new View(viewOptions)
 }
 
 const map = new Map({
+  interactions: interactionDefaults({
+    altShiftDragRotate: false,
+    pinchRotate: false,
+    mouseWheelZoom: false,
+  }).extend([
+    new InteractionMouseWheelZoom({
+      constrainResolution: true,
+    }),
+  ]),
   layers: [
     new TileLayer({
       source: new OSM(),
@@ -102,3 +128,11 @@ const map = new Map({
   target: 'map',
   view: eVoualaProjDefCache[defaultCode].view
 });
+
+const resolutionEl = document.getElementById('resolution');
+const zoomEl = document.getElementById('zoom');
+map.on('moveend', () => {
+  const view = map.getView();
+  resolutionEl.value = view.getResolution();
+  zoomEl.value = view.getZoom();
+})
