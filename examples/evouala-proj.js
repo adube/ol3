@@ -16,99 +16,51 @@ import { getCenter as getExtentCenter } from '../src/ol/extent.js';
 import proj4 from 'proj4';
 import {register} from '../src/ol/proj/proj4.js';
 import { get as getProj } from '../src/ol/proj.js';
-import {eVoualaProjDefs} from './evouala-proj-defs.js';
 
-const minZoom = 0;
-const maxZoom = 29;
-const defaultCode = 'EPSG:3857';
+// =========================== //
+//  Edit these variables START //
+// =========================== //
 
-// Watch the <select> element of projections
-const projSelectEl = document.getElementById('proj')
-projSelectEl.addEventListener('change', (e) => {
-  const projSelectEl = e.target;
-  const newCode = projSelectEl.value;
+// Get from: http://localhost:6543/api/proj4?code=EPSG:32198
+const code = 'EPSG:32198'
+const def = '+proj=lcc +lat_1=60 +lat_2=46 +lat_0=44 +lon_0=-68.5 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs'
+const geodeticExtent = [-79.85,44.99,-57.1,62.62]
+const projectedExtent = [-893275.48,181371.95,586959.6,2112794.12]
+const displayExtent = [-1100000,-100000,1100000,2300000]
 
-  const newView = eVoualaProjDefCache[newCode].view;
-  map.setView(newView);
+// ========================= //
+//  Edit these variables END //
+// ========================= //
 
-  const resolutions = [];
-  for (var i = minZoom; i <= maxZoom; i++) {
-    resolutions.push(newView.getResolutionForZoom(i));
-  }
-  console.log(`${newCode} resolutions:`);
-  console.log(resolutions);
-});
 
-// Proj registration and addition to the <select> element
-const eVoualaProjDefCache = {}
-for (const eVoualaProjDef of eVoualaProjDefs) {
-  const code = eVoualaProjDef.code;
-
-  // element
-  const optionEl = document.createElement('option');
-  optionEl.value = code
-  optionEl.textContent = code
-  if (code === defaultCode) {
-    optionEl.selected = true
-  }
-  projSelectEl.appendChild(optionEl)
-
-  eVoualaProjDefCache[code] = eVoualaProjDef
-
-  // Add to OL if not defined
-  const olProj = getProj(code);
-  if (!olProj) {
-    proj4.defs(code, eVoualaProjDef.proj4);
-  }
-}
+proj4.defs(code, def)
 register(proj4);
 
-// Set extents for each projection, and create an OLView
-for (const eVoualaProjDef of eVoualaProjDefs) {
-  const code = eVoualaProjDef.code;
-
-  const olProj = getProj(code);
-  var projectedExtent = eVoualaProjDef.display_extent || eVoualaProjDef.projected_extent;
-  let center;
-  if (projectedExtent) {
-    // Replace or set the extent with the display_extent or projected_extent
-    // if available.
-    olProj.setExtent(projectedExtent);
-    center = getExtentCenter(projectedExtent)
-  }
-  if (!olProj.getWorldExtent()) {
-    var geodeticExtent = eVoualaProjDef.geodetic_extent;
-    olProj.setWorldExtent(geodeticExtent);
-  }
-
-  if (!center) {
-    center = [0, 0]
-  }
-
-  const viewOptions = {
-    center: center,
-    constrainResolution: true,
-    // set the maximum extent of the view to the projection's extent
-    extent: olProj.getExtent(),
-    multiWorld: false,
-    projection: code,
-    showFullExtent: true,
-    zoom: 0,
-  }
-  if (eVoualaProjDef.resolutions) {
-    Object.assign(viewOptions, {
-      resolutions: eVoualaProjDef.resolutions,
-    });
-  } else {
-    Object.assign(viewOptions, {
-      maxZoom: maxZoom,
-      minZoom: minZoom,
-    });
-  }
-
-  // OL View
-  eVoualaProjDefCache[code].view = new View(viewOptions)
+let center
+const olProj = getProj(code);
+var olProjExtent = displayExtent || projectedExtent
+if (olProjExtent) {
+  olProj.setExtent(olProjExtent);
+  center = getExtentCenter(projectedExtent)
 }
+
+if (!olProj.getWorldExtent()) {
+  olProj.setWorldExtent(geodeticExtent);
+}
+
+if (!center) {
+  center = [0, 0]
+}
+
+const view = new View({
+  center: center,
+  constrainResolution: true,
+  extent: olProj.getExtent(),
+  multiWorld: false,
+  projection: code,
+  showFullExtent: true,
+  zoom: 0,
+})
 
 const map = new Map({
   interactions: interactionDefaults({
@@ -126,8 +78,32 @@ const map = new Map({
     }),
   ],
   target: 'map',
-  view: eVoualaProjDefCache[defaultCode].view
+  view: view,
 });
+
+const epsg3857DefaultMinResolution = 0.03732276771737122 // a.k.a. default max zoom
+const epsg3857MinResolution = 0.00029158412279196264
+
+
+const resolutions = []
+
+let defaultMaxZoom = null
+let zoom = 0
+
+while (true) {
+  const resolution = view.getResolutionForZoom(zoom)
+  if (resolution < epsg3857DefaultMinResolution && defaultMaxZoom === null) {
+    defaultMaxZoom = zoom - 1
+  }
+  if (resolution < epsg3857MinResolution) {
+    break
+  }
+  resolutions.push(resolution)
+  zoom++
+}
+console.log('Resolutions:', resolutions);
+console.log('Default min zoom:', 1);
+console.log('Default max zoom:', defaultMaxZoom);
 
 const resolutionEl = document.getElementById('resolution');
 const zoomEl = document.getElementById('zoom');
